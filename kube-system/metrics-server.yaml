@@ -1,0 +1,26 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: metrics-server
+  namespace: kube-system
+spec:
+  interval: 1m0s
+  url: https://kubernetes-sigs.github.io/metrics-server
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: metrics-server
+  namespace: kube-system
+spec:
+  interval: 1m0s
+  releaseName: metrics-server
+  chart:
+    spec:
+      chart: metrics-server
+      sourceRef:
+        kind: HelmRepository
+        name: metrics-server
+      version: '>=3.11.0 <3.12.0'
+      interval: 1m0s
