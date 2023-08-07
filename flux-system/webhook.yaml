@@ -18,6 +18,8 @@ spec:
       name: flux-system
     - kind: GitRepository
       name: secrets
+    - kind: GitRepository
+      name: ses-email-service
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
