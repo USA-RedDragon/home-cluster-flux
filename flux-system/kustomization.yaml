@@ -3,5 +3,23 @@ kind: Kustomization
 resources:
 - gotk-components.yaml
 - gotk-sync.yaml
+- gotk-pvc.yaml
 - helm.yaml
 - webhook.yaml
+patches:
+  - patch: |
+      # Use persistent volume for storing state
+      - op: add
+        path: '/spec/template/spec/volumes/-'
+        value:
+          name: persistent-data
+          persistentVolumeClaim:
+            claimName: gotk-pvc
+      - op: replace
+        path: '/spec/template/spec/containers/0/volumeMounts/0'
+        value:
+          name: persistent-data
+          mountPath: /data
+    target:
+      kind: Deployment
+      name: source-controller
