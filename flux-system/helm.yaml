@@ -1,0 +1,25 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: usa-reddragon
+  namespace: flux-system
+spec:
+  interval: 60m
+  url: https://usa-reddragon.github.io/helm-charts
+---
+apiVersion: notification.toolkit.fluxcd.io/v1
+kind: Receiver
+metadata:
+  name: usa-reddragon
+  namespace: flux-system
+spec:
+  type: github
+  events:
+    - "ping"
+    - "push"
+  secretRef:
+    name: webhook-token
+  resources:
+    - kind: HelmRepository
+      name: usa-reddragon
