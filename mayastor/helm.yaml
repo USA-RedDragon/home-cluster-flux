@@ -1,0 +1,35 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: k8s
+  namespace: mayastor
+spec:
+  interval: 1m0s
+  url: https://openebs.github.io/mayastor-extensions
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: mayastor
+  namespace: mayastor
+spec:
+  interval: 1m0s
+  releaseName: mayastor
+  chart:
+    spec:
+      chart: mayastor
+      sourceRef:
+        kind: HelmRepository
+        name: mayastor
+      version: '>=2.3.0 <2.4.0'
+      interval: 1m0s
+  values:
+    etcd:
+      persistence:
+        storageClass: openebs-hostpath
+    loki-stack:
+      enabled: false
+    obs:
+      callhome:
+        enabled: false
