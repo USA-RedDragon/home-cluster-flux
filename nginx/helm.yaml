@@ -23,4 +23,4 @@ spec:
         kind: HelmRepository
         name: k8s
       version: '>=1.8.0 <1.9.0'
-      interval: 60m0s
+      interval: 1m0s
