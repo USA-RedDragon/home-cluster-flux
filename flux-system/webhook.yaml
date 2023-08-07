@@ -1,0 +1,43 @@
+---
+apiVersion: notification.toolkit.fluxcd.io/v1
+kind: Receiver
+metadata:
+  name: usa-reddragon
+  namespace: flux-system
+spec:
+  type: github
+  events:
+    - "ping"
+    - "push"
+  secretRef:
+    name: webhook-token
+  resources:
+    - kind: HelmRepository
+      name: usa-reddragon
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webhook-receiver
+  namespace: flux-system
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  rules:
+  - host: webhook.flux.mcswain.dev
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: webhook-receiver
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - webhook.flux.mcswain.dev
+    secretName: webhook-flux-mcswain-dev-tls
