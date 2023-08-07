@@ -28,6 +28,10 @@ spec:
       name: '*'
     - kind: HelmRepository
       name: '*'
+    - kind: HelmChart
+      name: '*'
+    - kind: HelmRelease
+      name: '*'
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Provider
