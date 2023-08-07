@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dmr-udp-input
+  namespace: dmrhub
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/instance: dmrhub
+  ports:
+    - name: udp-dmr
+      protocol: UDP
+      port: 62031
+      targetPort: 62031

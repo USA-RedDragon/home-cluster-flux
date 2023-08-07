@@ -1,0 +1,174 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/usa-reddragon/dmrhub
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v1.0.23"
+
+args: []
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+secrets: []
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom:
+- secretRef:
+    name: secrets
+# - configMapRef:
+#     name: app-config
+
+env:
+- name: CORS_HOSTS
+  value: "http://ki5vmf-server.local.mesh:3005,https://dmr.mcswain.dev"
+- name: PG_USER
+  value: dmr
+- name: PG_DATABASE
+  value: dmr
+- name: TRUSTED_PROXIES
+  value: "172.17.0.0/16"
+- name: PG_HOST
+  value: postgres-app.postgres.svc.cluster.local
+- name: REDIS_HOST
+  value: redis-app.redis.svc.cluster.local:6379
+- name: DEBUG
+  value: "1"
+# - name: OTLP_ENDPOINT
+#   value: 192.168.1.23:4317
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+# - name: SECRET_KEY
+#   valueFrom:
+#     secretKeyRef:
+#       name: app-secret-key
+#       key: SECRET_KEY
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 3005
+  - name: dmr-udp
+    port: 62031
+    protocol: UDP
+
+persistentVolumes: []
+# - name: data
+#   mountPath: /data
+#   subPath: test
+#   size: 5Gi
+#   persistentVolumeClaim:
+#     name: app-data
+#     storageClass: mayastor-nvmf
+# - name: config
+#   mountPath: /config
+#   configMap:
+#     name: app-configfile
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+    #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+  hosts:
+  - host: dmr.mcswain.dev
+    paths:
+    - port: 3005
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: dmr-mcswain-dev-tls
+    hosts:
+      - dmr.mcswain.dev
+
+probes:
+  liveness:
+    httpGet:
+      path: /api/v1/ping
+      port: http
+  readiness:
+    httpGet:
+      path: /api/v1/ping
+      port: http
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
