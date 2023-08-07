@@ -24,3 +24,10 @@ spec:
         name: metrics-server
       version: '>=3.11.0 <3.12.0'
       interval: 1m0s
+  values:
+    defaultArgs:
+    - --cert-dir=/tmp
+    - --kubelet-insecure-tls
+    - --kubelet-preferred-address-types=InternalIP
+    - --kubelet-use-node-status-port
+    - --metric-resolution=15s
