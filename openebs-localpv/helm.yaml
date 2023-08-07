@@ -1,0 +1,26 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: openebs-localpv
+  namespace: openebs-localpv
+spec:
+  interval: 1m0s
+  url: https://openebs.github.io/dynamic-localpv-provisioner
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: openebs-localpv
+  namespace: openebs-localpv
+spec:
+  interval: 1m0s
+  releaseName: openebs-localpv
+  chart:
+    spec:
+      chart: localpv-provisioner
+      sourceRef:
+        kind: HelmRepository
+        name: openebs-localpv
+      version: '>=3.4.0 <3.5.0'
+      interval: 1m0s
