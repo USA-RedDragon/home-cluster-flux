@@ -6,7 +6,7 @@ metadata:
   namespace: nginx
 spec:
   interval: 1m0s
-  url: https://kubernetes.github.io
+  url: https://kubernetes.github.io/ingress-nginx
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
