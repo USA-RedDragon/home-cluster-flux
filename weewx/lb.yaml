@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rsync-docker-rsync
+  namespace: weewx
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/instance: rsync-docker
+  ports:
+    - name: tcp-rsync
+      protocol: TCP
+      port: 873
+      targetPort: 873
