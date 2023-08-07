@@ -6,6 +6,7 @@ resources:
 - gotk-pvc.yaml
 - helm.yaml
 - webhook.yaml
+- notification.yaml
 patches:
   - patch: |
       # Enable drift detection feature
