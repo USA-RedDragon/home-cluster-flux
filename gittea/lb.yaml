@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: gitea-ssh
   namespace: gitea
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.231
 spec:
   type: LoadBalancer
   selector:
