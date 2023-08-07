@@ -24,3 +24,7 @@ spec:
         name: metallb
       version: '>=0.13.0 <0.14.0'
       interval: 1m0s
+  values:
+    speaker:
+      frr:
+        enabled: false
