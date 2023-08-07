@@ -7,6 +7,7 @@ resources:
 - helm.yaml
 - webhook.yaml
 - notification.yaml
+- secrets.yaml
 patches:
   - patch: |
       # Enable drift detection feature

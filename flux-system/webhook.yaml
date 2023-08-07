@@ -16,6 +16,8 @@ spec:
       name: usa-reddragon
     - kind: GitRepository
       name: flux-system
+    - kind: GitRepository
+      name: secrets
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
