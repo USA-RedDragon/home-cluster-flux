@@ -1,0 +1,76 @@
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Provider
+metadata:
+  name: telegram
+  namespace: flux-system
+spec:
+  type: telegram
+  address: https://api.telegram.org
+  channel: "@USA_RedDragon"
+  secretRef:
+    name: telegram-bot-token
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: notifications
+  namespace: flux-system
+spec:
+  summary: "Home Cluster"
+  providerRef:
+    name: telegram
+  eventSeverity: info
+  eventSources:
+    - kind: GitRepository
+      name: '*'
+    - kind: Kustomization
+      name: '*'
+    - kind: HelmRepository
+      name: '*'
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Provider
+metadata:
+  name: github-home-cluster-flux
+  namespace: flux-system
+spec:
+  type: github
+  address: https://github.com/USA-RedDragon/home-cluster-flux
+  secretRef:
+    name: github-api-token
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Provider
+metadata:
+  name: github-helm-charts
+  namespace: flux-system
+spec:
+  type: github
+  address: https://github.com/USA-RedDragon/helm-charts
+  secretRef:
+    name: github-api-token
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: github-status-home-cluster-flux
+  namespace: flux-system
+spec:
+  providerRef:
+    name: github-home-cluster-flux
+  eventSources:
+    - kind: Kustomization
+      name: flux-system
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: github-status-helm-charts
+  namespace: flux-system
+spec:
+  providerRef:
+    name: github-helm-charts
+  eventSources:
+    - kind: HelmRepository
+      name: usa-reddragon
