@@ -25,7 +25,8 @@ jobs:
           flux create source git flux-system \
           --url=${{ github.event.repository.html_url }} \
           --branch=${GITHUB_REF#refs/heads/} \
-          --ignore-paths="flux-system/"
+          --ignore-paths="flux-system/" \
+          --token ${GITHUB_TOKEN}
           flux create kustomization flux-system \
           --source=flux-system
       - name: Verify cluster reconciliation
