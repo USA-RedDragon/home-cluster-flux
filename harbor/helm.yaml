@@ -26,7 +26,21 @@ spec:
       interval: 1m0s
   values:
     persistence:
-      enabled: false
+      enabled: true
+      persistentVolumeClaim:
+        registry:
+          storageClass: mayastor-nvme
+          size: 40Gi
+        jobservice:
+          joblog:
+            storageClass: mayastor-nvme
+            size: 1Gi
+        redis:
+          storageClass: mayastor-nvme
+          size: 1Gi
+        trivy:
+          storageClass: mayastor-nvme
+          size: 1Gi
     externalURL: https://registry.mcswain.dev
     existingSecretAdminPassword: harbor
     existingSecretAdminPasswordKey: adminPassword
