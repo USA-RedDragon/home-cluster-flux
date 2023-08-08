@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: harbor
 resources:
   - ns.yaml
-  # - helm.yaml
+  - helm.yaml

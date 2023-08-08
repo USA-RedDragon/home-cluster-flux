@@ -1,0 +1,66 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: harbor
+  namespace: harbor
+spec:
+  interval: 1m0s
+  url: https://helm.goharbor.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: harbor
+  namespace: harbor
+spec:
+  interval: 1m0s
+  releaseName: harbor
+  chart:
+    spec:
+      chart: harbor
+      sourceRef:
+        kind: HelmRepository
+        name: harbor
+      version: '>=1.12.0 <1.13.0'
+      interval: 1m0s
+  values:
+    persistence:
+      enabled: false
+    externalURL: https://registry.mcswain.dev
+    existingSecretAdminPassword: harbor
+    existingSecretAdminPasswordKey: adminPassword
+    existingSecretSecretKey: harbor
+    core:
+      harbor:
+        domain: registry.mcswain.dev
+    notary:
+      harbor:
+        domain: notary.mcswain.dev
+    expose:
+      tls:
+        certSource: secret
+        secret:
+          secretName: registry-mcswain-dev-tls
+          notarySecretName: notary-mcswain-dev-tls
+      ingress:
+        annotations:
+          kubernetes.io/ingress.class: nginx
+          kubernetes.io/tls-acme: "true"
+          cert-manager.io/cluster-issuer: cloudflare
+          nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    ipFamily:
+      ipv6:
+        enabled: false
+    database:
+      type: external
+      external:
+        coreDatabase: harbor
+        notaryServerDatabase: harbor_notary_server
+        notarySignerDatabase: harbor_notary_signer
+        host: postgres-app.postgres.svc.cluster.local
+        port: 5432
+        username: harbor
+        existingSecretSecretKey: harbor
+    cache:
+      enabled: true
