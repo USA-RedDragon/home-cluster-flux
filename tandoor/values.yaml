@@ -48,6 +48,8 @@ configs:
         server {
           listen 80;
           server_name _;
+          access_log /dev/stdout;
+          error_log /dev/stderr;
 
           client_max_body_size 16M;
 
@@ -141,16 +143,6 @@ extraContainers:
       mountPath: /etc/nginx/nginx.conf
       subPath: nginx-config
       readOnly: true
-  livenessProbe:
-    httpGet:
-      path: /
-      port: 80
-      scheme: HTTP
-  readinessProbe:
-    httpGet:
-      path: /
-      port: 80
-      scheme: HTTP
 
 persistentVolumes:
 - name: staticfiles
