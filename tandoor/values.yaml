@@ -142,6 +142,7 @@ extraContainers:
     - mountPath: /static
       name: staticfiles
     - name: nginx-config
+      mountPath: /etc/nginx/nginx.conf
       subPath: nginx-config
       readOnly: true
 
