@@ -32,7 +32,7 @@ spec:
           storageClass: mayastor-nvme
           size: 40Gi
         jobservice:
-          joblog:
+          jobLog:
             storageClass: mayastor-nvme
             size: 1Gi
         redis:
