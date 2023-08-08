@@ -31,15 +31,14 @@ spec:
     existingSecretAdminPassword: harbor
     existingSecretAdminPasswordKey: adminPassword
     existingSecretSecretKey: harbor
-    core:
-      harbor:
-        domain: registry.mcswain.dev
     expose:
       tls:
         certSource: secret
         secret:
           secretName: registry-mcswain-dev-tls
       ingress:
+        hosts:
+          core: registry.mcswain.dev
         annotations:
           kubernetes.io/ingress.class: nginx
           kubernetes.io/tls-acme: "true"
