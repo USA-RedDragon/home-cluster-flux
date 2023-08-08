@@ -25,10 +25,9 @@ jobs:
           flux create source git flux-system \
           --url=${{ github.event.repository.html_url }} \
           --branch=${GITHUB_REF#refs/heads/} \
-          --ignore-paths="clusters/**/flux-system/"
+          --ignore-paths="flux-system/"
           flux create kustomization flux-system \
-          --source=flux-system \
-          --path=./clusters/staging
+          --source=flux-system
       - name: Verify cluster reconciliation
         run: |
           kubectl -n flux-system wait kustomization/infra-controllers --for=condition=ready --timeout=5m
