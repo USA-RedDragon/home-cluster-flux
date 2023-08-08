@@ -10,6 +10,18 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
+command:
+- /opt/recipes/venv/bin/gunicorn
+- -b
+- :8080
+- --access-logfile
+- "-"
+- --error-logfile
+- "-"
+- --log-level
+- INFO
+- recipes.wsgi
+
 args: []
 
 imagePullSecrets: []
@@ -130,7 +142,6 @@ extraContainers:
     - mountPath: /static
       name: staticfiles
     - name: nginx-config
-      mountPath: /etc/nginx/nginx.conf
       subPath: nginx-config
       readOnly: true
 
@@ -148,6 +159,7 @@ persistentVolumes:
     name: mediafiles
     storageClass: mayastor-nvme
 - name: nginx-config
+  mountPath: /etc/nginx/nginx.conf
   configMap:
     name: recipes-nginx-config
 # - name: config
