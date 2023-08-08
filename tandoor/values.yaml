@@ -132,10 +132,6 @@ extraContainers:
     - containerPort: 8080
       protocol: TCP
       name: gunicorn
-  resources:
-    requests:
-      cpu: 250m
-      memory: 64Mi
   volumeMounts:
     - mountPath: /media
       name: mediafiles
@@ -145,6 +141,16 @@ extraContainers:
       mountPath: /etc/nginx/nginx.conf
       subPath: nginx-config
       readOnly: true
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 80
+      scheme: HTTP
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 80
+      scheme: HTTP
 
 persistentVolumes:
 - name: staticfiles
