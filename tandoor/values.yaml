@@ -25,6 +25,30 @@ secrets: []
 #       strings
 
 configs:
+- name: recipes-nginx-config
+  data:
+    nginx-config: |-
+      events {
+        worker_connections 1024;
+      }
+      http {
+        include mime.types;
+        server {
+          listen 80;
+          server_name _;
+
+          client_max_body_size 16M;
+
+          # serve static files
+          location /static/ {
+            alias /static/;
+          }
+          # serve media files
+          location /media/ {
+            alias /media/;
+          }
+        }
+      }
 - name: app-config
   data:
     DB_ENGINE: django.db.backends.postgresql
@@ -33,7 +57,7 @@ configs:
     POSTGRES_DB: tandoor
     POSTGRES_USER: tandoor
     TIMEZONE: "America/Chicago"
-    GUNICORN_MEDIA: "1"
+    GUNICORN_MEDIA: "0"
     GUNICORN_WORKERS: "2"
     GUNICORN_THREADS: "2"
     EMAIL_HOST: email.mcswain.dev
@@ -85,6 +109,31 @@ service:
   - name: http
     port: 8080
 
+extraContainers:
+- name: nginx
+  image: nginx:latest-alpine
+  imagePullPolicy: IfNotPresent
+  ports:
+    - containerPort: 80
+      protocol: TCP
+      name: http
+    - containerPort: 8080
+      protocol: TCP
+      name: gunicorn
+  resources:
+    requests:
+      cpu: 250m
+      memory: 64Mi
+  volumeMounts:
+    - mountPath: /media
+      name: mediafiles
+    - mountPath: /static
+      name: staticfiles
+    - name: nginx-config
+      mountPath: /etc/nginx/nginx.conf
+      subPath: nginx-config
+      readOnly: true
+
 persistentVolumes:
 - name: staticfiles
   mountPath: /opt/recipes/staticfiles
@@ -98,6 +147,9 @@ persistentVolumes:
   persistentVolumeClaim:
     name: mediafiles
     storageClass: mayastor-nvme
+- name: nginx-config
+  configMap:
+    name: recipes-nginx-config
 # - name: config
 #   mountPath: /config
 #   configMap:

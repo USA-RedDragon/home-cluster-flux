@@ -18,3 +18,14 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
+  postRenderers:
+  - kustomize:
+      patchesJson6902:
+      - target:
+          version: v1
+          kind: Deployment
+          name: tandoor-app
+        patch:
+        # Replace hostPath /opt/cni/bin with /usr/lib/cni
+        - op: remove
+          path: /spec/template/spec/containers/0/ports
