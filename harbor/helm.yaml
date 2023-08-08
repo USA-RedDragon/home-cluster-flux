@@ -61,6 +61,6 @@ spec:
         host: postgres-app.postgres.svc.cluster.local
         port: 5432
         username: harbor
-        existingSecretSecretKey: harbor
+        existingSecret: harbor
     cache:
       enabled: true
