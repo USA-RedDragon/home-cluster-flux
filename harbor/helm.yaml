@@ -34,15 +34,11 @@ spec:
     core:
       harbor:
         domain: registry.mcswain.dev
-    notary:
-      harbor:
-        domain: notary.mcswain.dev
     expose:
       tls:
         certSource: secret
         secret:
           secretName: registry-mcswain-dev-tls
-          notarySecretName: notary-mcswain-dev-tls
       ingress:
         annotations:
           kubernetes.io/ingress.class: nginx
@@ -56,11 +52,11 @@ spec:
       type: external
       external:
         coreDatabase: harbor
-        notaryServerDatabase: harbor_notary_server
-        notarySignerDatabase: harbor_notary_signer
         host: postgres-app.postgres.svc.cluster.local
         port: 5432
         username: harbor
         existingSecret: harbor
     cache:
       enabled: true
+    notary:
+      enabled: false
