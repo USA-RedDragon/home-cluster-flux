@@ -147,14 +147,14 @@ ingress:
       - backups.mcswain.dev
 
 probes:
-  liveness:
-    httpGet:
-      path: /
-      port: 51515
-  readiness:
-    httpGet:
-      path: /
-      port: 51515
+  # liveness:
+  #   httpGet:
+  #     path: /
+  #     port: 51515
+  # readiness:
+  #   httpGet:
+  #     path: /
+  #     port: 51515
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
