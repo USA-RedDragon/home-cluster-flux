@@ -2,7 +2,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: k8s
+  name: mayastor
   namespace: mayastor
 spec:
   interval: 1m0s
