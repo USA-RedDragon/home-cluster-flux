@@ -8,6 +8,7 @@ resources:
 - webhook.yaml
 - notification.yaml
 - secrets.yaml
+- weave-gitops-dashboard.yaml
 patches:
   - patch: |
       # Enable drift detection feature
