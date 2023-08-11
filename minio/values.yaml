@@ -17,6 +17,8 @@ fullnameOverride: ""
 args:
   - server
   - /data
+  - --console-address
+  - ":9001"
 
 secrets: []
 # - name: app-creds
@@ -75,8 +77,10 @@ securityContext: {}
 service:
   type: ClusterIP
   ports:
-  - name: minio
+  - name: s3api
     port: 9000
+  - name: console
+    port: 9001
 
 persistentVolumes:
 - name: data
@@ -112,7 +116,7 @@ ingress:
   hosts:
   - host: minio.mcswain.dev
     paths:
-    - port: 9000
+    - port: 9001
       path: /
       pathType: Prefix
   tls:
