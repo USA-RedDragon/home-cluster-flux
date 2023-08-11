@@ -54,7 +54,7 @@ env:
     # TFE_CAPACITY_MEMORY: ""
     TFE_DATABASE_HOST: "postgres-app.postgres.svc.cluster.local"
     TFE_DATABASE_NAME: "tfe"
-    # TFE_DATABASE_PARAMETERS: ""
+    TFE_DATABASE_PARAMETERS: sslmode=disable
     TFE_DATABASE_USER: "tfe"
     # TFE_DISK_PATH: ""
     # TFE_RUN_PIPELINE_KUBERNETES_DEBUG_ENABLED: false
