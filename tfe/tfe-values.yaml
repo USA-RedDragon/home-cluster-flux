@@ -35,6 +35,11 @@ ingress:
     kubernetes.io/tls-acme: "true"
   hosts:
     - host: tfe.mcswain.dev
+      paths:
+      - portNumber: 443
+        serviceName: "terraform-enterprise"
+        path: /
+        pathType: Prefix
   tls:
     - hosts:
       - tfe.mcswain.dev
