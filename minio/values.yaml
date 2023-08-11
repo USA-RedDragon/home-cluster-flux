@@ -48,9 +48,9 @@ configs: []
 #       [test]
 #       value=1
 
-envFrom: []
-# - secretRef:
-#     name: app-creds
+envFrom:
+- secretRef:
+    name: minio-user
 # - configMapRef:
 #     name: app-config
 
