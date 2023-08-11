@@ -5,6 +5,7 @@ resources:
   - ns.yaml
   - helm.yaml
   - backup.yaml
+  - backup-cloud.yaml
 configMapGenerator:
   - name: chart-values
     files:

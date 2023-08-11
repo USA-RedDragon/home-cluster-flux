@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-cloud
+  namespace: postgres
+spec:
+  schedule: "@hourly"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: postgres:15.3
+            imagePullPolicy: IfNotPresent
+            envFrom:
+            - secretRef:
+                name: pgbackup
+            volumeMounts:
+            - name: backups
+              mountPath: /backups
+            command:
+            - /bin/sh
+            - -c
+            - pg_dumpall -h postgres.mcswain.cloud -U backup -c -O --quote-all-identifiers | gzip -9 > /backups/postgres-cloud-$(date +%s).sql.gz
+          restartPolicy: OnFailure
+          volumes:
+          - name: backups
+            nfs:
+              server: 192.168.1.135
+              path: /mnt/data/backups/Homelab/pgdump
