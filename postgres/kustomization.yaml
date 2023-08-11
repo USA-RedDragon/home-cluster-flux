@@ -4,6 +4,7 @@ namespace: postgres
 resources:
   - ns.yaml
   - helm.yaml
+  - backup.yaml
 configMapGenerator:
   - name: chart-values
     files:
