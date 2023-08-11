@@ -17,7 +17,7 @@ spec:
           service:
             name: minio-app
             port:
-              number: 9000
+              number: 443
         path: /
         pathType: Prefix
   tls:

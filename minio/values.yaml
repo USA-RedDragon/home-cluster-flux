@@ -18,7 +18,7 @@ args:
   - server
   - /data
   - --console-address
-  - ":9001"
+  - ":443"
 
 secrets: []
 # - name: app-creds
@@ -78,7 +78,7 @@ service:
   type: ClusterIP
   ports:
   - name: s3api
-    port: 9000
+    port: 443
   - name: console
     port: 9001
 
