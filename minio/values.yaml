@@ -18,7 +18,7 @@ args:
   - server
   - /data
   - --console-address
-  - ":443"
+  - ":9000"
 
 secrets: []
 # - name: app-creds
@@ -77,10 +77,8 @@ securityContext: {}
 service:
   type: ClusterIP
   ports:
-  - name: s3api
-    port: 443
-  - name: console
-    port: 9001
+  - name: minio
+    port: 9000
 
 persistentVolumes:
 - name: data
@@ -108,15 +106,13 @@ ingress:
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: cloudflare
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/auth-signin: https://auth.mcswain.dev/oauth2/start?rd=$scheme://$http_host$escaped_request_uri
-    nginx.ingress.kubernetes.io/auth-url: https://auth.mcswain.dev/oauth2/auth
     # nginx.ingress.kubernetes.io/configuration-snippet: |
     #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
     #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
   hosts:
   - host: minio.mcswain.dev
     paths:
-    - port: 9001
+    - port: 9000
       path: /
       pathType: Prefix
   tls:
