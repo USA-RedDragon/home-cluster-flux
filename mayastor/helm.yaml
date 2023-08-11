@@ -32,4 +32,4 @@ spec:
       enabled: false
     obs:
       callhome:
-        enabled: true
+        enabled: false
