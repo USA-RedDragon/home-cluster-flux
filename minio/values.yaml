@@ -18,6 +18,8 @@ args:
   - server
   - /data
   - --console-address
+  - ":443"
+  - --address
   - ":9000"
 
 secrets: []
@@ -77,7 +79,9 @@ securityContext: {}
 service:
   type: ClusterIP
   ports:
-  - name: minio
+  - name: console
+    port: 443
+  - name: s3
     port: 9000
 
 persistentVolumes:
@@ -112,7 +116,7 @@ ingress:
   hosts:
   - host: minio.mcswain.dev
     paths:
-    - port: 9000
+    - port: 443
       path: /
       pathType: Prefix
   tls:
