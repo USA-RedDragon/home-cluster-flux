@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  name: s3
+  namespace: minio
+spec:
+  rules:
+  - host: s3.mcswain.dev
+    http:
+      paths:
+      - backend:
+          service:
+            name: minio-app
+            port:
+              number: 9000
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - s3.mcswain.dev
+    secretName: s3-mcswain-dev-tls
