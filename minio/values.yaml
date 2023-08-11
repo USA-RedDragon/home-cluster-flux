@@ -1,0 +1,145 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: minio/minio
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: latest@sha256:6b8ba482948772c6e49edec1ee0860fb41baa10a274bff7a8fb385e45adbab32
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom: []
+# - secretRef:
+#     name: app-creds
+# - configMapRef:
+#     name: app-config
+
+env: {}
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  ports:
+  - name: minio
+    port: 9000
+
+persistentVolumes:
+- name: data
+  mountPath: /data
+  nfs:
+    path: /mnt/data/K8S/minio
+    server: 192.168.1.135
+# - name: config
+#   mountPath: /config
+#   configMap:
+#     name: app-configfile
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/auth-signin: https://auth.mcswain.dev/oauth2/start?rd=$scheme://$http_host$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-url: https://auth.mcswain.dev/oauth2/auth
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+    #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+  hosts:
+  - host: minio.mcswain.dev
+    paths:
+    - port: 9000
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: minio-mcswain-dev-tls
+    hosts:
+      - minio.mcswain.dev
+
+probes:
+  liveness:
+    tcpSocket:
+      port: 9000
+  readiness:
+    tcpSocket:
+      port: 9000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
