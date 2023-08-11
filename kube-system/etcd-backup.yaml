@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup
+  namespace: kube-system
+spec:
+  schedule: "@hourly"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: bitnami/etcd:3.5.6
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+            - name: backups
+              mountPath: /backups
+            - name: etcd
+              mountPath: /etc/kubernetes/pki/etcd
+              readOnly: true
+            env:
+            - name: ETCDCTL_API
+              value: "3"
+            - name: ETCD_AUTH
+              value: "--cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/server.crt --key /etc/kubernetes/pki/etcd/server.key"
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsUser: 0
+            command:
+            - /bin/sh
+            - -c
+            - |
+              back=$(date +%s) \
+              && etcdctl --endpoints='https://192.168.1.254:2379' $ETCD_AUTH snapshot save /tmp/etcd-alpha.kubernetes-$back.db \
+              && gzip -9 /tmp/etcd-alpha.kubernetes-$back.db \
+              && mv /tmp/etcd-alpha.kubernetes-$back.db.gz /backups/etcd-alpha.kubernetes-$back.db.gz \
+              && etcdctl --endpoints='https://192.168.1.253:2379' $ETCD_AUTH snapshot save /tmp/etcd-beta.kubernetes-$back.db \
+              && gzip -9 /tmp/etcd-beta.kubernetes-$back.db \
+              && mv /tmp/etcd-beta.kubernetes-$back.db.gz /backups/etcd-beta.kubernetes-$back.db.gz \
+              && etcdctl --endpoints='https://192.168.1.252:2379' $ETCD_AUTH snapshot save /tmp/etcd-gamma.kubernetes-$back.db \
+              && gzip -9 /tmp/etcd-gamma.kubernetes-$back.db \
+              && mv /tmp/etcd-gamma.kubernetes-$back.db.gz /backups/etcd-gamma.kubernetes-$back.db.gz
+          restartPolicy: OnFailure
+          volumes:
+          - name: backups
+            nfs:
+              server: 192.168.1.135
+              path: /mnt/data/backups/Homelab/etcd
+          - name: etcd
+            hostPath:
+              path: /etc/kubernetes/pki/etcd
+              type: Directory
