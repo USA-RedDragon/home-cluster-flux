@@ -24,6 +24,9 @@ spec:
               value: "3"
             - name: ETCD_AUTH_TOKEN
               value: jwt,priv-key=/etcd-token/jwt-token.pem,sign-method=RS256,ttl=10m
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsUser: 0
             command:
             - /bin/sh
             - -c
