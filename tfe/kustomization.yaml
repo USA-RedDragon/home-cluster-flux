@@ -5,7 +5,7 @@ resources:
   - ns.yaml
   - redis-helm.yaml
 configMapGenerator:
-  - name: chart-values-helm
+  - name: chart-values-redis
     files:
       - values.yaml=redis-values.yaml
 configurations:
