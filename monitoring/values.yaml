@@ -2999,8 +2999,7 @@ prometheus:
     query: {}
 
     ## If nil, select own namespace. Namespaces to be selected for PrometheusRules discovery.
-    ruleNamespaceSelector:
-      any: true
+    ruleNamespaceSelector: {}
     ## Example which selects PrometheusRules in namespaces with label "prometheus" set to "somelabel"
     # ruleNamespaceSelector:
     #   matchLabels:
@@ -3048,8 +3047,7 @@ prometheus:
 
     ## Namespaces to be selected for ServiceMonitor discovery.
     ##
-    serviceMonitorNamespaceSelector:
-      any: true
+    serviceMonitorNamespaceSelector: {}
     ## Example which selects ServiceMonitors in namespaces with label "prometheus" set to "somelabel"
     # serviceMonitorNamespaceSelector:
     #   matchLabels:
@@ -3071,8 +3069,7 @@ prometheus:
     #     prometheus: somelabel
 
     ## If nil, select own namespace. Namespaces to be selected for PodMonitor discovery.
-    podMonitorNamespaceSelector:
-      any: true
+    podMonitorNamespaceSelector: {}
     ## Example which selects PodMonitor in namespaces with label "prometheus" set to "somelabel"
     # podMonitorNamespaceSelector:
     #   matchLabels:
@@ -3094,8 +3091,7 @@ prometheus:
     #     prometheus: somelabel
 
     ## If nil, select own namespace. Namespaces to be selected for Probe discovery.
-    probeNamespaceSelector:
-      any: true
+    probeNamespaceSelector: {}
     ## Example which selects Probe in namespaces with label "prometheus" set to "somelabel"
     # probeNamespaceSelector:
     #   matchLabels:
@@ -3117,8 +3113,7 @@ prometheus:
     #     prometheus: somelabel
 
     ## If nil, select own namespace. Namespaces to be selected for scrapeConfig discovery.
-    scrapeConfigNamespaceSelector:
-      any: true
+    scrapeConfigNamespaceSelector: {}
     ## Example which selects scrapeConfig in namespaces with label "prometheus" set to "somelabel"
     # scrapeConfigsNamespaceSelector:
     #   matchLabels:
