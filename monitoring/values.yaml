@@ -3051,7 +3051,6 @@ prometheus:
       matchExpressions:
       - key: kubernetes.io/metadata.name
         operator: Exists
-        values:
 
     ## If true, a nil or {} value for prometheus.prometheusSpec.podMonitorSelector will cause the
     ## prometheus resource to be created with selectors based on values in the helm deployment,
@@ -3073,7 +3072,7 @@ prometheus:
       matchExpressions:
       - key: kubernetes.io/metadata.name
         operator: Exists
-        values:
+
     ## Example which selects PodMonitor in namespaces with label "prometheus" set to "somelabel"
     # podMonitorNamespaceSelector:
     #   matchLabels:
@@ -3099,7 +3098,7 @@ prometheus:
       matchExpressions:
       - key: kubernetes.io/metadata.name
         operator: Exists
-        values:
+
     ## Example which selects Probe in namespaces with label "prometheus" set to "somelabel"
     # probeNamespaceSelector:
     #   matchLabels:
@@ -3125,7 +3124,7 @@ prometheus:
       matchExpressions:
       - key: kubernetes.io/metadata.name
         operator: Exists
-        values:
+
     ## Example which selects scrapeConfig in namespaces with label "prometheus" set to "somelabel"
     # scrapeConfigsNamespaceSelector:
     #   matchLabels:
