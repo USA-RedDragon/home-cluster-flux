@@ -136,16 +136,9 @@ nodeSelector: {}
 dnsConfig: {}
 
 # Extra volumes for the Velero deployment. Optional.
-extraVolumes:
-- name: backups-nfs
-  nfs:
-    path: /mnt/data/backups/Homelab/velero
-    server: 192.168.1.135
-
+extraVolumes: []
 # Extra volumeMounts for the Velero deployment. Optional.
-extraVolumeMounts:
-- name: backups-nfs
-  mountPath: /nfs
+extraVolumeMounts: []
 
 # Extra K8s manifests to deploy
 extraObjects: []
@@ -500,16 +493,10 @@ nodeAgent:
   useScratchEmptyDir: true
 
   # Extra volumes for the node-agent daemonset. Optional.
-  extraVolumes:
-  - name: backups-nfs
-    nfs:
-      path: /mnt/data/backups/Homelab/velero
-      server: 192.168.1.135
+  extraVolumes: []
 
   # Extra volumeMounts for the node-agent daemonset. Optional.
-  extraVolumeMounts:
-  - name: backups-nfs
-    mountPath: /nfs
+  extraVolumeMounts: []
 
   # Key/value pairs to be used as environment variables for the node-agent daemonset. Optional.
   extraEnvVars: {}
