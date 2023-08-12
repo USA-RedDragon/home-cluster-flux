@@ -3057,7 +3057,7 @@ prometheus:
     ## prometheus resource to be created with selectors based on values in the helm deployment,
     ## which will also match the podmonitors created
     ##
-    podMonitorSelectorNilUsesHelmValues: true
+    podMonitorSelectorNilUsesHelmValues: false
 
     ## PodMonitors to be selected for target discovery.
     ## If {}, select all PodMonitors
@@ -3069,7 +3069,11 @@ prometheus:
     #     prometheus: somelabel
 
     ## If nil, select own namespace. Namespaces to be selected for PodMonitor discovery.
-    podMonitorNamespaceSelector: {}
+    podMonitorNamespaceSelector:
+      matchExpressions:
+      - key: kubernetes.io/metadata.name
+        operator: Exists
+        values:
     ## Example which selects PodMonitor in namespaces with label "prometheus" set to "somelabel"
     # podMonitorNamespaceSelector:
     #   matchLabels:
@@ -3079,7 +3083,7 @@ prometheus:
     ## prometheus resource to be created with selectors based on values in the helm deployment,
     ## which will also match the probes created
     ##
-    probeSelectorNilUsesHelmValues: true
+    probeSelectorNilUsesHelmValues: false
 
     ## Probes to be selected for target discovery.
     ## If {}, select all Probes
@@ -3091,7 +3095,11 @@ prometheus:
     #     prometheus: somelabel
 
     ## If nil, select own namespace. Namespaces to be selected for Probe discovery.
-    probeNamespaceSelector: {}
+    probeNamespaceSelector:
+      matchExpressions:
+      - key: kubernetes.io/metadata.name
+        operator: Exists
+        values:
     ## Example which selects Probe in namespaces with label "prometheus" set to "somelabel"
     # probeNamespaceSelector:
     #   matchLabels:
@@ -3101,7 +3109,7 @@ prometheus:
     ## prometheus resource to be created with selectors based on values in the helm deployment,
     ## which will also match the scrapeConfigs created
     ##
-    scrapeConfigSelectorNilUsesHelmValues: true
+    scrapeConfigSelectorNilUsesHelmValues: false
 
     ## scrapeConfigs to be selected for target discovery.
     ## If {}, select all scrapeConfigs
@@ -3113,7 +3121,11 @@ prometheus:
     #     prometheus: somelabel
 
     ## If nil, select own namespace. Namespaces to be selected for scrapeConfig discovery.
-    scrapeConfigNamespaceSelector: {}
+    scrapeConfigNamespaceSelector:
+      matchExpressions:
+      - key: kubernetes.io/metadata.name
+        operator: Exists
+        values:
     ## Example which selects scrapeConfig in namespaces with label "prometheus" set to "somelabel"
     # scrapeConfigsNamespaceSelector:
     #   matchLabels:
