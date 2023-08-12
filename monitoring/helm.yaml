@@ -24,4 +24,6 @@ spec:
         name: prometheus-community
       version: '>=48.0.0 <49.0.0'
       interval: 1m0s
-  values: {}
+  valuesFrom:
+    - kind: ConfigMap
+      name: chart-values
