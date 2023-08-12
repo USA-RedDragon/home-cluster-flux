@@ -530,21 +530,15 @@ nodeAgent:
 
 # Backup schedules to create.
 # Eg:
-# schedules:
-#   mybackup:
-#     disabled: false
-#     labels:
-#       myenv: foo
-#     annotations:
-#       myenv: foo
-#     schedule: "0 0 * * *"
-#     useOwnerReferencesInBackup: false
-#     template:
-#       ttl: "240h"
-#       storageLocation: default
-#       includedNamespaces:
-#       - foo
-schedules: {}
+schedules:
+  backup-all:
+    disabled: false
+    schedule: "0 0 * * *"
+    useOwnerReferencesInBackup: false
+    template:
+      ttl: "336h"
+      storageLocation: default
+      includedNamespaces: []
 
 # Velero ConfigMaps.
 # Eg:
