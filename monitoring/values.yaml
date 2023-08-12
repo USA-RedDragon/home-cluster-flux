@@ -1326,8 +1326,6 @@ kubeControllerManager:
 
   ## If your kube controller manager is not deployed as a pod, specify IPs it can be found on
   ##
-  endpoints: []
-
   ## If using kubeControllerManager.endpoints only the port and targetPort are used
   ##
   service:
