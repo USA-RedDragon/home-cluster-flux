@@ -1326,10 +1326,10 @@ kubeControllerManager:
 
   ## If your kube controller manager is not deployed as a pod, specify IPs it can be found on
   ##
-  endpoints: []
-  # - 10.141.4.22
-  # - 10.141.4.23
-  # - 10.141.4.24
+  endpoints:
+  - kube-controller-manager-alpha.kube-system.pod.cluster.local
+  - kube-controller-manager-beta.kube-system.pod.cluster.local
+  - kube-controller-manager-gamma.kube-system.pod.cluster.local
 
   ## If using kubeControllerManager.endpoints only the port and targetPort are used
   ##
