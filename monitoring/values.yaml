@@ -1326,10 +1326,7 @@ kubeControllerManager:
 
   ## If your kube controller manager is not deployed as a pod, specify IPs it can be found on
   ##
-  endpoints:
-  - kube-controller-manager-alpha.kube-system.pod.cluster.local
-  - kube-controller-manager-beta.kube-system.pod.cluster.local
-  - kube-controller-manager-gamma.kube-system.pod.cluster.local
+  endpoints: []
 
   ## If using kubeControllerManager.endpoints only the port and targetPort are used
   ##
@@ -1340,8 +1337,8 @@ kubeControllerManager:
     ##
     port: null
     targetPort: null
-    # selector:
-    #   component: kube-controller-manager
+    selector:
+      component: kube-controller-manager
 
   serviceMonitor:
     enabled: true
