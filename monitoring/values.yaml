@@ -686,7 +686,6 @@ alertmanager:
           resources:
             requests:
               storage: 50Gi
-          selector: {}
 
 
     ## The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name. string  false
@@ -3235,7 +3234,6 @@ prometheus:
           resources:
             requests:
               storage: 60Gi
-        selector: {}
 
     ## Using tmpfs volume
     ##
