@@ -57,6 +57,7 @@ env: []
 
 podAnnotations:
   app.kubernetes.io/name: rsync-docker
+  backup.velero.io/backup-volumes-excludes: data
 
 podSecurityContext: {}
   # fsGroup: 2000
