@@ -24,3 +24,6 @@ spec:
         name: openebs-localpv
       version: '>=3.4.0 <3.5.0'
       interval: 1m0s
+  values:
+    analytics:
+      enabled: false
