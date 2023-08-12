@@ -1,0 +1,29 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: nvdp
+  namespace: nvidia
+spec:
+  interval: 1m0s
+  url: https://nvidia.github.io/k8s-device-plugin
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: nvdp
+  namespace: nvidia
+spec:
+  interval: 1m0s
+  releaseName: nvidia
+  chart:
+    spec:
+      chart: nvidia-device-plugin
+      sourceRef:
+        kind: HelmRepository
+        name: nvdp
+      version: '>=0.14.0 <0.15.0'
+      interval: 1m0s
+  valuesFrom:
+    - kind: ConfigMap
+      name: chart-values
