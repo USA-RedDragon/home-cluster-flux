@@ -26,8 +26,7 @@ spec:
       interval: 1m0s
   values:
     installation:
-      metadata:
-        registry: quay.io
+      registry: quay.io
       cni:
         type: Calico
       calicoNetwork:
