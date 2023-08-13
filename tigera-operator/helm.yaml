@@ -15,7 +15,7 @@ metadata:
   namespace: tigera-operator
 spec:
   interval: 1m0s
-  releaseName: tigera-operator
+  releaseName: calico-tigera-operator
   chart:
     spec:
       chart: tigera-operator
