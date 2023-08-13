@@ -13,3 +13,11 @@ patches:
     target:
       kind: Service
       name: ses-email-service
+  - patch: |
+      # Request a specific IP
+      - op: add
+        path: /spec/template/spec/imagePullSecrets/-
+        value: registry-docker-hub
+    target:
+      kind: Deployment
+      name: ses-email-service
