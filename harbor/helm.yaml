@@ -25,6 +25,8 @@ spec:
       version: '>=1.12.0 <1.13.0'
       interval: 1m0s
   values:
+    imagePullSecrets:
+    - name: registry-docker-hub
     persistence:
       enabled: true
       persistentVolumeClaim:
