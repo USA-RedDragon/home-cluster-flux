@@ -58,6 +58,17 @@ spec:
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Provider
 metadata:
+  name: github-home-cluster-sensitive
+  namespace: flux-system
+spec:
+  type: github
+  address: https://github.com/USA-RedDragon/home-cluster-sensitive
+  secretRef:
+    name: github-api-token
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Provider
+metadata:
   name: github-helm-charts
   namespace: flux-system
 spec:
@@ -86,6 +97,18 @@ metadata:
 spec:
   providerRef:
     name: github-home-cluster-secrets
+  eventSources:
+    - kind: Kustomization
+      name: secrets
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: github-status-home-cluster-sensitive
+  namespace: flux-system
+spec:
+  providerRef:
+    name: github-home-cluster-sensitive
   eventSources:
     - kind: Kustomization
       name: secrets
