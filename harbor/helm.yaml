@@ -27,6 +27,9 @@ spec:
   values:
     imagePullSecrets:
     - name: registry-docker-hub
+    jobservice:
+      podAnnotations:
+        backup.velero.io/backup-volumes-excludes: job-logs
     persistence:
       enabled: true
       persistentVolumeClaim:
