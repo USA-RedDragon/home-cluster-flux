@@ -19,7 +19,10 @@ spec:
     - kind: GitRepository
       name: secrets
     - kind: GitRepository
+      name: sensitive
+    - kind: GitRepository
       name: ses-email-service
+      namespace: ses-email-service
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
