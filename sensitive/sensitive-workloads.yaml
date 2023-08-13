@@ -1,0 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: sensitive
+  namespace: flux-system
+spec:
+  interval: 60m0s
+  ref:
+    branch: main
+  secretRef:
+    name: secrets-auth
+  timeout: 60s
+  url: https://github.com/USA-RedDragon/home-cluster-sensitive
