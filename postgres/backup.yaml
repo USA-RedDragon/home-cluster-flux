@@ -8,6 +8,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          annotations:
+            backup.velero.io/backup-volumes-excludes: backups
         spec:
           imagePullSecrets:
           - name: registry-docker-hub
