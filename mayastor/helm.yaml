@@ -25,6 +25,13 @@ spec:
       version: '>=2.3.0 <2.4.0'
       interval: 1m0s
   values:
+    image:
+      pullPolicy: IfNotPresent
+    base:
+      imagePullSecrets:
+        enabled: true
+        secrets:
+        - name: regcred
     etcd:
       persistence:
         storageClass: openebs-hostpath
