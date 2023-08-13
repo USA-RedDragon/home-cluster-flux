@@ -9,6 +9,8 @@ spec:
     spec:
       template:
         spec:
+          imagePullSecrets:
+          - name: registry-docker-hub
           containers:
           - name: backup
             image: postgres:15.3
