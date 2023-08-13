@@ -26,11 +26,10 @@ spec:
       interval: 1m0s
   values:
     installation:
-    kubernetesProvider: AKS
-    cni:
-      type: Calico
-    calicoNetwork:
-      bgp: Disabled
-      ipPools:
-      - cidr: 172.17.0.0/16
-        encapsulation: VXLAN
+      cni:
+        type: Calico
+      calicoNetwork:
+        bgp: Disabled
+        ipPools:
+        - cidr: 172.17.0.0/16
+          encapsulation: VXLAN
