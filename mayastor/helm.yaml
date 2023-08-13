@@ -31,7 +31,7 @@ spec:
       imagePullSecrets:
         enabled: true
         secrets:
-        - name: regcred
+        - name: registry-docker-hub
     etcd:
       persistence:
         storageClass: openebs-hostpath

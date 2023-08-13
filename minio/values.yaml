@@ -10,7 +10,8 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest@sha256:6b8ba482948772c6e49edec1ee0860fb41baa10a274bff7a8fb385e45adbab32
 
-imagePullSecrets: []
+imagePullSecrets:
+- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 

@@ -195,7 +195,8 @@ global:
   ## Reference to one or more secrets to be used when pulling images
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ##
-  imagePullSecrets: []
+  imagePullSecrets:
+  - name: registry-docker-hub
   # - name: "image-pull-secret"
   # or
   # - "image-pull-secret"

@@ -12,7 +12,8 @@ image:
   # digest:
   pullPolicy: IfNotPresent
   # One or more secrets to be used when pulling images
-  imagePullSecrets: []
+  imagePullSecrets:
+  - registry-docker-hub
   # - registrySecretName
 
 nameOverride: ""

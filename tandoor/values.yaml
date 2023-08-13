@@ -24,7 +24,8 @@ command:
 
 args: []
 
-imagePullSecrets: []
+imagePullSecrets:
+- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 
