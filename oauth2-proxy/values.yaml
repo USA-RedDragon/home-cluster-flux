@@ -98,7 +98,7 @@ service:
   - name: oauth2-proxy
     port: 4180
 
-persistentVolumes:
+persistentVolumes: []
 # - name: data
 #   mountPath: /var/lib/postgresql/data
 #   subPath: pg
