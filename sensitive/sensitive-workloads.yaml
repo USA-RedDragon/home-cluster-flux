@@ -11,3 +11,20 @@ spec:
     name: secrets-auth
   timeout: 60s
   url: https://github.com/USA-RedDragon/home-cluster-sensitive
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: sensitive
+  namespace: flux-system
+spec:
+  interval: 60m0s
+  path: ./
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: sensitive
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg
