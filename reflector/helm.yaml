@@ -1,0 +1,29 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: emberstack
+  namespace: reflector
+spec:
+  interval: 1m0s
+  url: https://emberstack.github.io/helm-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: reflector
+  namespace: reflector
+spec:
+  interval: 1m0s
+  releaseName: reflector
+  chart:
+    spec:
+      chart: reflector
+      sourceRef:
+        kind: HelmRepository
+        name: emberstack
+      version: '>=7.0.0 <7.1.0'
+      interval: 1m0s
+  values:
+    imagePullSecrets:
+    - name: registry-docker-hub
