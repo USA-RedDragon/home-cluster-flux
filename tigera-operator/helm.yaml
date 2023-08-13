@@ -3,7 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
   name: projectcalico
-  namespace: calico
+  namespace: tigera-operator
 spec:
   interval: 1m0s
   url: https://docs.tigera.io/calico/charts
@@ -26,6 +26,8 @@ spec:
       interval: 1m0s
   values:
     installation:
+      metadata:
+        registry: quay.io
       cni:
         type: Calico
       calicoNetwork:
