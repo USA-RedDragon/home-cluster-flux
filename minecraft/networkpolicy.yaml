@@ -16,7 +16,7 @@ spec:
         cidr: 0.0.0.0/0
     ports:
     - protocol: TCP
-      port: 62031
+      port: 25565
   - from:
     - ipBlock:
         cidr: 0.0.0.0/0
