@@ -1,0 +1,18 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: dmrhub-dmr
+  namespace: dmrhub
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: dmrhub
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - protocol: UDP
+      port: 62031
