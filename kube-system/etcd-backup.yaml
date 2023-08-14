@@ -10,7 +10,7 @@ spec:
       template:
         metadata:
           annotations:
-            backup.velero.io/backup-volumes-excludes: backups, etcd
+            backup.velero.io/backup-volumes-excludes: backups,etcd
         spec:
           imagePullSecrets:
           - name: registry-docker-hub
