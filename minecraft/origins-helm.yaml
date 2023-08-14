@@ -1,11 +1,11 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: minecraft
+  name: origins
   namespace: minecraft
 spec:
   interval: 60m0s
-  releaseName: minecraft
+  releaseName: origins
   chart:
     spec:
       chart: app
