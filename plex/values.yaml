@@ -60,7 +60,7 @@ env:
 #       key: SPECIAL_KEY
 
 podAnnotations:
-  backup.velero.io/backup-volumes-excludes: tv, movies
+  backup.velero.io/backup-volumes-excludes: tv,movies
 
 podSecurityContext: {}
   # fsGroup: 2000
