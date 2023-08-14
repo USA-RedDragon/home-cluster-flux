@@ -4,6 +4,7 @@ namespace: minecraft
 resources:
   - ns.yaml
   - helm.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:

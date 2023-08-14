@@ -75,8 +75,10 @@ securityContext:
 service:
   type: LoadBalancer
   ports:
-  - name: http
+  - name: game
     port: 25565
+  - name: rcon
+    port: 25575
   annotations:
     metallb.universe.tf/loadBalancerIPs: 192.168.1.235
   externalTrafficPolicy: Local
