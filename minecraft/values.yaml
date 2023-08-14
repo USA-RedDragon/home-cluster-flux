@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/usa-reddragon/papermc
+  repository: ghcr.io/usa-reddragon/fabric
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest@sha256:e5e54ea67a0175d99b3d3debeadf2f363b0c01b78d47f1bd8bd36d6e881f8b43"
+  tag: "latest@sha256:03c9296758c5b98d603b46a2511f8001c0674ea094519805a5627a9f63232941"
 
 imagePullSecrets: []
 nameOverride: ""
