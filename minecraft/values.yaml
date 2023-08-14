@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/papermc
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest@sha256:19962c422b8e10522d38a1bb34268d411e924c757c9c1f9fba7f42e4eb2b1170"
+  tag: "latest@sha256:e5e54ea67a0175d99b3d3debeadf2f363b0c01b78d47f1bd8bd36d6e881f8b43"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -62,14 +62,14 @@ env:
 podAnnotations: {}
 
 podSecurityContext:
-  fsGroup: 1000
-
-securityContext:
   capabilities:
     drop:
     - ALL
+
+securityContext:
   runAsNonRoot: true
   runAsUser: 1000
+  fsGroup: 1000
   # readOnlyRootFilesystem: true
 
 service:
@@ -84,6 +84,7 @@ service:
 persistentVolumes:
 - name: data
   mountPath: /minecraft
+  subPath: data
   size: 20Gi
   persistentVolumeClaim:
     name: data
