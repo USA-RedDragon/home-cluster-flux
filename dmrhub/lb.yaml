@@ -14,3 +14,4 @@ spec:
       protocol: UDP
       port: 62031
       targetPort: 62031
+  externalTrafficPolicy: Local
