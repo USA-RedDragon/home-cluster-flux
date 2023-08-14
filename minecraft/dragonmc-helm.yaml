@@ -17,4 +17,4 @@ spec:
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
-      name: chart-values
+      name: dragonmc-chart-values
