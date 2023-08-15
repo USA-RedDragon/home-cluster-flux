@@ -8,7 +8,6 @@
         "fileMatch": ["\\.yaml$"]
     },
     "helm-values": {
-        "enabled": true,
-        "fileMatch": ["*values\\.yaml$"]
+        "enabled": true
     }
 }
