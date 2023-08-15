@@ -6,9 +6,9 @@ replicaCount: 1
 
 image:
   repository: vabene1111/recipes
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: "latest@sha256:825cbff35051cbe85e571d3f2303d4469233423c1e94e1ba10af75fa94092dce"
 
 command:
 - /opt/recipes/venv/bin/gunicorn
