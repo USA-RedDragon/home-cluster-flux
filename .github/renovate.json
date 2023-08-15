@@ -8,7 +8,8 @@
         "fileMatch": ["\\.ya?ml$"]
     },
     "helm-values": {
-        "enabled": true
+        "enabled": true,
+        "fileMatch": ["\\.ya?ml$"]
     },
     "kubernetes": {
         "enabled": true,
