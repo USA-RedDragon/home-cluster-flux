@@ -5,5 +5,8 @@
     ],
     "flux": {
         "fileMatch": ["\\.yaml$"]
+    },
+    "helm-values": {
+        "fileMatch": ["*values\\.yaml$"]
     }
 }
