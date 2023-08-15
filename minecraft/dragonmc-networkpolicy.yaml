@@ -23,6 +23,12 @@ spec:
     ports:
     - protocol: TCP
       port: 25575
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - protocol: TCP
+      port: 8004
   egress:
   - to:
     - ipBlock:
