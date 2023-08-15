@@ -79,6 +79,8 @@ service:
     port: 25565
   - name: rcon
     port: 25575
+  - name: dynmap
+    port: 8004
   annotations:
     metallb.universe.tf/loadBalancerIPs: 192.168.1.236
   externalTrafficPolicy: Local
@@ -105,7 +107,25 @@ persistentVolumes:
 #     secretName: app-keyfile
 
 ingress:
-  enabled: false
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+    #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+  hosts:
+  - host: dynmap.mc.mcswain.dev
+    paths:
+    - port: 8004
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: dynmap-mc-mcswain-dev-tls
+    hosts:
+      - dynmap.mc.mcswain.dev
 
 probes:
   liveness:
