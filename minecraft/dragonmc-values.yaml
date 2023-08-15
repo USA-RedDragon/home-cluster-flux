@@ -87,7 +87,7 @@ persistentVolumes:
 - name: data
   mountPath: /minecraft
   subPath: data
-  size: 120Gi
+  size: 200Gi
   persistentVolumeClaim:
     name: dragonmc
     storageClass: mayastor-nvme
