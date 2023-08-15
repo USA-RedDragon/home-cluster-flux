@@ -90,6 +90,11 @@ persistentVolumes:
   nfs:
     path: /mnt/media/Movies
     server: 192.168.1.135
+- name: anime
+  mountPath: /Anime
+  nfs:
+    path: /mnt/media/Anime
+    server: 192.168.1.135
 - name: config
   mountPath: /config
   subPath: config
