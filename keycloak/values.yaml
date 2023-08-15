@@ -57,8 +57,8 @@ env:
   value: "postgres"
 - name: KC_PROXY
   value: "passthrough"
-- name: KC_HOSTNAME
-  value: "keycloak.mcswain.dev"
+- name: KC_HOSTNAME_URL
+  value: "https://keycloak.mcswain.dev"
 - name: KC_DB_PASSWORD
   valueFrom:
     secretKeyRef:
