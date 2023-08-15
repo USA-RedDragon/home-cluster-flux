@@ -5,9 +5,13 @@
     ],
     "flux": {
         "enabled": true,
-        "fileMatch": ["\\.yaml$"]
+        "fileMatch": ["\\.ya?ml$"]
     },
     "helm-values": {
         "enabled": true
+    },
+    "kubernetes": {
+        "enabled": true,
+        "fileMatch": ["\\.ya?ml$"]
     }
 }
