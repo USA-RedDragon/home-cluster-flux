@@ -22,7 +22,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: velero
-      version: '>=4.4.0 <4.5.0'
+      version: '>=4.4.1 <4.5.0'
       interval: 1m0s
   valuesFrom:
     - kind: ConfigMap
