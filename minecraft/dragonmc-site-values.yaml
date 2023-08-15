@@ -116,11 +116,11 @@ probes:
   liveness:
     httpGet:
       path: /
-      port: 8080
+      port: 80
   readiness:
     httpGet:
       path: /
-      port: 8080
+      port: 80
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
