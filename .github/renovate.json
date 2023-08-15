@@ -4,9 +4,11 @@
         "local>USA-RedDragon/renovate-configs"
     ],
     "flux": {
+        "enabled": true,
         "fileMatch": ["\\.yaml$"]
     },
     "helm-values": {
+        "enabled": true,
         "fileMatch": ["*values\\.yaml$"]
     }
 }
