@@ -2349,7 +2349,7 @@ prometheusOperator:
     registry: quay.io
     repository: prometheus-operator/prometheus-operator
     # if not set appVersion field from Chart.yaml is used
-    tag: ""
+    tag: v0.67.1
     sha: ""
     pullPolicy: IfNotPresent
 
@@ -2376,7 +2376,7 @@ prometheusOperator:
       registry: quay.io
       repository: prometheus-operator/prometheus-config-reloader
       # if not set appVersion field from Chart.yaml is used
-      tag: ""
+      tag: v0.67.1
       sha: ""
 
     # add prometheus config reloader liveness and readiness probe. Default: false
