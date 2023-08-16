@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: lscr.io/linuxserver/plex
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "1.32.5@sha256:461a956b34d5ce1134071c9bfce73ac520caa6235fd744d1be367ab183e4a2b7"
 
