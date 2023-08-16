@@ -582,7 +582,7 @@ alertmanager:
     image:
       registry: quay.io
       repository: prometheus/alertmanager
-      tag: v0.25.0
+      tag: v0.25.0@sha256:db8303fa05341f5dc6b19b36a97325cd1b8307254ed9042a2c554af71f3c0284
       sha: ""
 
     ## If true then the user will be responsible to provide a secret with alertmanager configuration
@@ -2349,7 +2349,7 @@ prometheusOperator:
     registry: quay.io
     repository: prometheus-operator/prometheus-operator
     # if not set appVersion field from Chart.yaml is used
-    tag: v0.67.1
+    tag: v0.67.1@sha256:68b893dadba4f491f81897ae85ef14664c91efb40585e2736979b2a591530964
     sha: ""
     pullPolicy: IfNotPresent
 
@@ -2376,7 +2376,7 @@ prometheusOperator:
       registry: quay.io
       repository: prometheus-operator/prometheus-config-reloader
       # if not set appVersion field from Chart.yaml is used
-      tag: v0.67.1
+      tag: v0.67.1@sha256:0f196c644c6197d9a19962ad3dbaed17f71dd5f7f5708674ae9e5d9b13bcf21d
       sha: ""
 
     # add prometheus config reloader liveness and readiness probe. Default: false
@@ -2396,7 +2396,7 @@ prometheusOperator:
   thanosImage:
     registry: quay.io
     repository: thanos/thanos
-    tag: v0.31.0
+    tag: v0.31.0@sha256:c02f71e18dcecb69d4ce396ddbbe53829330146996baa09a41602152aa55742b
     sha: ""
 
   ## Set a Label Selector to filter watched prometheus and prometheusAgent
@@ -2911,7 +2911,7 @@ prometheus:
     image:
       registry: quay.io
       repository: prometheus/prometheus
-      tag: v2.46.0
+      tag: v2.46.0@sha256:29630076fd1d007729faec35ed9610053bad211ab5bd6c98cdfc7a7bdbdaaf4e
       sha: ""
 
     ## Tolerations for use with node taints
@@ -3834,7 +3834,7 @@ thanosRuler:
     image:
       registry: quay.io
       repository: thanos/thanos
-      tag: v0.31.0
+      tag: v0.31.0@sha256:c02f71e18dcecb69d4ce396ddbbe53829330146996baa09a41602152aa55742b
       sha: ""
 
     ## Namespaces to be selected for PrometheusRules discovery.
