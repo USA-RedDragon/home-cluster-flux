@@ -8,7 +8,7 @@ image:
   repository: redis
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "7.2.0@sha256:24f761803a213046a77945e08a84ee3cf9fd769c39906cdc8aebe1d5f74d9b1e"
+  tag: "7.2.0"
 
 imagePullSecrets:
 - name: registry-docker-hub
