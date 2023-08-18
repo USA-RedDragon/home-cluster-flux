@@ -1,0 +1,177 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/usa-reddragon/aredn-base
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "main@sha256:4648534ce4a6bf2d84c6eda9000c1498353dabd52672b363acda0bbfd14f037e"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+command:
+- /bin/sh
+- -c
+- |
+  sysctl -w net.ipv4.ip_forward=1 ; \
+  rsyslogd -n & ; \
+  cat /etc/resolv.conf > /tmp/resolv.conf.auto ; \
+  echo -e 'search local.mesh\nnameserver 127.0.0.1' > /etc/resolv.conf ; \
+  exec s6-svscan /etc/s6
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom: []
+# - secretRef:
+#     name: app-creds
+# - configMapRef:
+#     name: app-config
+
+env: {}
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations:
+  backup.velero.io/backup-volumes-excludes: server-wireguard-config,server-vtun-config,server-olsr-config
+
+podSecurityContext:
+  privileged: true
+  capabilities:
+    add:
+    - NET_ADMIN
+
+securityContext:
+  sysctls:
+  - name: net.ipv4.conf.all.src_valid_mark
+    value: "1"
+
+service:
+  type: ClusterIP
+  ports:
+  - name: wg
+    protocol: UDP
+    port: 51820
+
+persistentVolumes:
+- name: server-wireguard-config
+  mountPath: /etc/wireguard
+  secret:
+    secretName: server-wireguard-config
+- name: server-olsr-config
+  mountPath: /etc/olsrd
+  secret:
+    secretName: server-olsr-config
+- name: server-vtun-config
+  mountPath: /etc/vtundsrv.conf
+  subPath: vtundsrv.conf
+  secret:
+    secretName: server-vtun-config
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+ingress:
+  enabled: false
+
+probes: {}
+  # liveness:
+  #   httpGet:
+  #     path: /health
+  #     port: 81
+  # readiness:
+  #   httpGet:
+  #     path: /health
+  #     port: 81
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+
+initContainers:
+- image: ghcr.io/usa-reddragon/wireguard:latest@sha256:103545ceef06a47493ff85970d18576ac49d5d8cba451d801aa071ac7f1a4d3c
+  name: wireguard-init
+  securityContext:
+    privileged: true
+    capabilities:
+      add:
+      - NET_ADMIN
+  command:
+  - /bin/sh
+  - -c
+  - |
+    set -x && \
+    ip l del peers 2>/dev/null || true && \
+    wg-quick up /etc/wireguard/peers.conf && \
+    ip6tables -P INPUT DROP && \
+    ip6tables -P OUTPUT DROP && \
+    ip6tables -P FORWARD DROP && \
+    iptables -P INPUT DROP && \
+    iptables -P FORWARD DROP && \
+    iptables -A INPUT -i lo -j ACCEPT && \
+    iptables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
+    iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    iptables -A FORWARD -i peers -o eth0 -j DROP && \
+    iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    ip r add 18.189.227.206/32 via 169.254.1.1 dev eth0 && \
+    ip r add 172.17.0.0/16 via 169.254.1.1 dev eth0 && \
+    ip r add 172.18.0.0/16 via 169.254.1.1 dev eth0 && \
+    iptables -A POSTROUTING -o tun60 -j MASQUERADE -t nat
+  volumeMounts:
+  - mountPath: /etc/wireguard
+    name: server-wireguard-config
+  imagePullPolicy: IfNotPresent
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
