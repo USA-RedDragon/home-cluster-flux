@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/aredn-base
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:4648534ce4a6bf2d84c6eda9000c1498353dabd52672b363acda0bbfd14f037e"
+  tag: "main@sha256:87ea33e5b900c4b5355bd71a82a8827927c400fe2d01d77045beae752404a518 "
 
 imagePullSecrets: []
 nameOverride: ""
@@ -22,6 +22,7 @@ command:
   && rsyslogd -n & \
   cat /etc/resolv.conf > /tmp/resolv.conf.auto \
   && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
+  && echo -e "#!/bin/sh\nexec vtund -n -f /etc/vtundsrv.conf KI5VMF-KUBERNETES-172-31-180-56 18.189.227.206" > /etc/s6/vtund/run \
   && exec s6-svscan /etc/s6
 
 secrets: []
