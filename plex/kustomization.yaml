@@ -4,6 +4,9 @@ namespace: plex
 resources:
   - ns.yaml
   - helm.yaml
+  - anime.yaml
+  - movies.yaml
+  - tv.yaml
 configMapGenerator:
   - name: chart-values
     files:
