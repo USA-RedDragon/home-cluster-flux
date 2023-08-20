@@ -60,7 +60,7 @@ env:
 #       key: SPECIAL_KEY
 
 podAnnotations:
-  backup.velero.io/backup-volumes-excludes: tv,movies
+  backup.velero.io/backup-volumes-excludes: tv,movies,anime
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -82,19 +82,22 @@ service:
 persistentVolumes:
 - name: tv
   mountPath: /TV
-  nfs:
-    path: /mnt/media/TV
-    server: 192.168.1.135
+  size: 1Ti
+  persistentVolumeClaim:
+    name: media-tv
+    storageClass: media-tv
 - name: movies
   mountPath: /Movies
-  nfs:
-    path: /mnt/media/Movies
-    server: 192.168.1.135
+  size: 1Ti
+  persistentVolumeClaim:
+    name: media-movies
+    storageClass: media-movies
 - name: anime
   mountPath: /Anime
-  nfs:
-    path: /mnt/media/Anime
-    server: 192.168.1.135
+  size: 1Ti
+  persistentVolumeClaim:
+    name: media-anime
+    storageClass: media-anime
 - name: config
   mountPath: /config
   subPath: config
