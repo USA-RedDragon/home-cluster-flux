@@ -67,7 +67,7 @@ env: {}
 #       key: SPECIAL_KEY
 
 podAnnotations:
-  backup.velero.io/backup-volumes-excludes: server-wireguard-config,server-vtun-config,server-olsr-config
+  backup.velero.io/backup-volumes-excludes: server-vtun-config,server-olsr-config
 
 podSecurityContext:
   privileged: true
@@ -75,23 +75,12 @@ podSecurityContext:
     add:
     - NET_ADMIN
 
-securityContext:
-  sysctls:
-  - name: net.ipv4.conf.all.src_valid_mark
-    value: "1"
+securityContext: {}
 
 service:
   type: ClusterIP
-  ports:
-  - name: wg
-    protocol: UDP
-    port: 51820
 
 persistentVolumes:
-- name: server-wireguard-config
-  mountPath: /etc/wireguard
-  secret:
-    secretName: server-wireguard-config
 - name: server-olsr-config
   mountPath: /etc/olsrd
   secret:
@@ -129,39 +118,7 @@ resources: {}
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
 
-initContainers:
-- image: ghcr.io/usa-reddragon/wireguard:latest@sha256:103545ceef06a47493ff85970d18576ac49d5d8cba451d801aa071ac7f1a4d3c
-  name: wireguard-init
-  securityContext:
-    privileged: true
-    capabilities:
-      add:
-      - NET_ADMIN
-  command:
-  - /bin/sh
-  - -c
-  - |
-    set -x && \
-    ip l del peers 2>/dev/null || true && \
-    wg-quick up /etc/wireguard/peers.conf && \
-    ip6tables -P INPUT DROP && \
-    ip6tables -P OUTPUT DROP && \
-    ip6tables -P FORWARD DROP && \
-    iptables -P INPUT DROP && \
-    iptables -P FORWARD DROP && \
-    iptables -A INPUT -i lo -j ACCEPT && \
-    iptables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
-    iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
-    iptables -A FORWARD -i peers -o eth0 -j DROP && \
-    iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
-    ip r add 18.189.227.206/32 via 169.254.1.1 dev eth0 && \
-    ip r add 172.17.0.0/16 via 169.254.1.1 dev eth0 && \
-    ip r add 172.18.0.0/16 via 169.254.1.1 dev eth0 && \
-    iptables -A POSTROUTING -o tun60 -j MASQUERADE -t nat
-  volumeMounts:
-  - mountPath: /etc/wireguard
-    name: server-wireguard-config
-  imagePullPolicy: IfNotPresent
+initContainers: []
 
 nodeSelector: {}
 
