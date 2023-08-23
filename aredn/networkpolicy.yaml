@@ -14,7 +14,10 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
-          kubernetes.io/metadata.name: wireguard-tunnel
+          kubernetes.io/metadata.name: aredn
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: aredn-meshmap
     - ipBlock:
         cidr: 172.16.0.0/12
     - ipBlock:
@@ -27,7 +30,10 @@ spec:
   - to:
     - namespaceSelector:
         matchLabels:
-          kubernetes.io/metadata.name: wireguard-tunnel
+          kubernetes.io/metadata.name: aredn
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: aredn-meshmap
     - ipBlock:
         cidr: 18.189.227.206/32
     - ipBlock:
