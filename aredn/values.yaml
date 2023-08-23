@@ -151,6 +151,7 @@ initContainers:
     iptables -P INPUT DROP && \
     iptables -P FORWARD DROP && \
     iptables -A INPUT -i lo -j ACCEPT && \
+    iptables -A INPUT -i tun60 -j ACCEPT && \
     iptables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
     iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     iptables -A FORWARD -i lan -o eth0 -j DROP && \
