@@ -17,6 +17,9 @@ spec:
           kubernetes.io/metadata.name: wireguard-tunnel
   egress:
   - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: wireguard-tunnel
     - ipBlock:
         cidr: 18.189.227.206/32
     - ipBlock:
