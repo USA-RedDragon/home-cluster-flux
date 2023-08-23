@@ -174,7 +174,6 @@ extraContainers:
 - image: ghcr.io/usa-reddragon/wireguard:latest@sha256:103545ceef06a47493ff85970d18576ac49d5d8cba451d801aa071ac7f1a4d3c
   imagePullPolicy: IfNotPresent
   command:
-  - exec
   - /bin/sh
   - -c
   - exec sleep infinity
