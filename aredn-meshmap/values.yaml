@@ -56,7 +56,7 @@ env:
 - name: TIMEOUT
   value: "10000"
 - name: CONCURRENCY
-  value: "16"
+  value: "8"
 - name: STARTING_NODE
   value: "KI5VMF-CLOUD-TUNNEL-supernode"
 - name: APP_CONFIG
