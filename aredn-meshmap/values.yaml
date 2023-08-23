@@ -1,0 +1,185 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/usa-reddragon/meshmap
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "k8s@sha256:2097727e6d1f0b3661fe43928113d294fbbab88bbb8bb7e5bf39d2c43d4b501d"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+command: []
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom: []
+# - secretRef:
+#     name: app-creds
+# - configMapRef:
+#     name: app-config
+
+env:
+- name: RETRIES
+  value: "5"
+- name: TIMEOUT
+  value: "10000"
+- name: CONCURRENCY
+  value: "16"
+- name: STARTING_NODE
+  value: "KI5VMF-CLOUD-TUNNEL-supernode"
+- name: APP_CONFIG
+  value: '{"name":"Oklahoma AREDN","mapSettings":{"zoom":"10","mapCenter":{"node":"KP4DJT-HAP","lat":"35.4704","lon":"-97.5147"},"servers":[{"test":"https://c.tile.openstreetmap.org/10/162/395.png","url":"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]},"contactInfo":{"callsign":"KI5VMF","name":"Jacob McSwain","email":"aredn-mesh-map@mcswain.dev"},"nodesFilter":"[a-zA-z]+[0-9][a-zA-Z]+","offline":true}'
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations:
+  backup.velero.io/backup-volumes-excludes: wireguard-config
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  sysctls:
+  - name: net.ipv4.conf.all.src_valid_mark
+    value: "1"
+
+service:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+
+persistentVolumes:
+- name: mesh-data
+  mountPath: /usr/share/nginx/html/data
+  size: 1Gi
+  persistentVolumeClaim:
+    claimName: mesh-data
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+extraVolumes:
+- name: wireguard-config
+  secret:
+    secretName: meshmap-wireguard-config
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+    #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+  hosts:
+  - host: meshmap.aredn.mcswain.dev
+    paths:
+    - port: 80
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: meshmap-aredn-mcswain-dev-tls
+    hosts:
+      - meshmap.aredn.mcswain.dev
+
+probes: {}
+  # liveness:
+  #   httpGet:
+  #     path: /health
+  #     port: 81
+  # readiness:
+  #   httpGet:
+  #     path: /health
+  #     port: 81
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+
+initContainers:
+- image: ghcr.io/usa-reddragon/wireguard:latest@sha256:103545ceef06a47493ff85970d18576ac49d5d8cba451d801aa071ac7f1a4d3c
+  name: wireguard-init
+  command:
+  - /bin/sh
+  - -c
+  - |
+    wg-quick up /etc/wireguard/wg0.conf && \
+    iptables -P OUTPUT DROP && \
+    iptables -I OUTPUT 1 -d 169.254.1.1/32 -j ACCEPT && \
+    iptables -I OUTPUT 1 -d 172.27.1.0/24 -j ACCEPT && \
+    iptables -I OUTPUT 1 -d 172.17.0.0/16 -j ACCEPT && \
+    iptables -I OUTPUT 1 -d 172.18.0.0/16 -j ACCEPT && \
+    iptables -I OUTPUT 1 -d 10.0.0.0/8 -j ACCEPT && \
+    iptables -I OUTPUT 1 -o wg0 -j ACCEPT && \
+    ip r del default && \
+    ip r add default via 172.27.1.1 dev wg0 && \
+    ip r add 172.17.0.0/16 via 169.254.1.1 dev eth0 && \
+    ip r add 172.18.0.0/16 via 169.254.1.1 dev eth0
+  securityContext:
+    privileged: true
+    capabilities:
+      add:
+      - NET_ADMIN
+  volumeMounts:
+  - mountPath: /etc/wireguard
+    name: wireguard-config
+  imagePullPolicy: IfNotPresent
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
