@@ -89,7 +89,7 @@ persistentVolumes:
   mountPath: /usr/share/nginx/html/data
   size: 1Gi
   persistentVolumeClaim:
-    claimName: mesh-data
+    name: mesh-data
 #     items:
 #     - key: test.ini
 #       path: config.ini
