@@ -582,7 +582,7 @@ alertmanager:
     image:
       registry: quay.io
       repository: prometheus/alertmanager
-      tag: v0.25.0@sha256:db8303fa05341f5dc6b19b36a97325cd1b8307254ed9042a2c554af71f3c0284
+      tag: v0.26.0@sha256:b97390a5b2b52cf4dd66098a091ac0575d18fbf35acf2501fb0f180e3488ad15
       sha: ""
 
     ## If true then the user will be responsible to provide a secret with alertmanager configuration
