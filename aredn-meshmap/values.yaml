@@ -135,13 +135,14 @@ probes: {}
   #     path: /health
   #     port: 81
 
+# Why all the memory? Well we have a cron job that builds a large JSON file out of 2000+ network nodes.
 resources:
   limits:
     cpu: 100m
-    memory: 200Mi
+    memory: 300Mi
   requests:
     cpu: 50m
-    memory: 100Mi
+    memory: 200Mi
 
 initContainers:
 - image: ghcr.io/usa-reddragon/wireguard:latest@sha256:103545ceef06a47493ff85970d18576ac49d5d8cba451d801aa071ac7f1a4d3c
