@@ -29,6 +29,10 @@ spec:
       service:
         annotations:
           metallb.universe.tf/loadBalancerIPs: 192.168.1.232
+      resources:
+        requests:
+          cpu: 200m
+          memory: 350Mi
       metrics:
         enabled: true
         serviceMonitor:
