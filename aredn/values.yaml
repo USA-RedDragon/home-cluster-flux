@@ -159,7 +159,7 @@ initContainers:
     iptables -A FORWARD -i lan -o eth0 -j DROP && \
     iptables -A FORWARD -i lan -o tun60 -j ACCEPT && \
     iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
-    iptables -t nat -A POSTROUTING -o tun60 -j MASQUERADE
+    iptables -t nat -A POSTROUTING -o tun60 -j SNAT --to-source 10.54.25.4
   volumeMounts:
   - mountPath: /etc/wireguard
     name: server-wireguard-config
