@@ -126,10 +126,10 @@ probes: {}
 
 resources:
   limits:
-    cpu: 10m
+    cpu: 20m
     memory: 12Mi
   requests:
-    cpu: 1m
+    cpu: 10m
     memory: 6Mi
 
 initContainers:
