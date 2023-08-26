@@ -150,13 +150,11 @@ probes:
       path: /ping
       port: 4180
 
-resources: {}
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+resources:
+  limits:
+    memory: 50Mi
+  requests:
+    memory: 30Mi
 
 nodeSelector: {}
 
