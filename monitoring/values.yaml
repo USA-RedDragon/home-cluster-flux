@@ -3286,6 +3286,9 @@ prometheus:
       - targets: ["192.168.1.140:8080"]
         labels:
           _aredn_node: KI5VMF-MINI
+      - targets: ["kp4djt.zapto.org:84"]
+        labels:
+          _aredn_node: KP4DJT-hAP
     # - job_name: kube-etcd
     #   kubernetes_sd_configs:
     #     - role: node
