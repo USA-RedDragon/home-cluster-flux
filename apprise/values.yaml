@@ -8,7 +8,7 @@ image:
   repository: lscr.io/linuxserver/apprise-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.9.3@sha256:cf99d52e39b4649b512d47dba540f97d26e8544096983d711dd387dc26f79b68"
+  tag: "0.9.4@sha256:5e2c1ad40690e146877d004f426a132685305a536ad54235ce85dcc5ccb62a7c"
 
 imagePullSecrets: []
 nameOverride: ""
