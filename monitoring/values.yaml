@@ -582,8 +582,8 @@ alertmanager:
     image:
       registry: quay.io
       repository: prometheus/alertmanager
-      tag: v0.26.0@sha256:b97390a5b2b52cf4dd66098a091ac0575d18fbf35acf2501fb0f180e3488ad15
-      sha: ""
+      tag: v0.26.0
+      sha: "b97390a5b2b52cf4dd66098a091ac0575d18fbf35acf2501fb0f180e3488ad15"
 
     ## If true then the user will be responsible to provide a secret with alertmanager configuration
     ## So when true the config part will be ignored (including templateFiles) and the one in the secret will be used
@@ -2351,8 +2351,8 @@ prometheusOperator:
     registry: quay.io
     repository: prometheus-operator/prometheus-operator
     # if not set appVersion field from Chart.yaml is used
-    tag: v0.67.1@sha256:68b893dadba4f491f81897ae85ef14664c91efb40585e2736979b2a591530964
-    sha: ""
+    tag: v0.67.1
+    sha: "68b893dadba4f491f81897ae85ef14664c91efb40585e2736979b2a591530964"
     pullPolicy: IfNotPresent
 
   ## Prometheus image to use for prometheuses managed by the operator
@@ -2378,8 +2378,8 @@ prometheusOperator:
       registry: quay.io
       repository: prometheus-operator/prometheus-config-reloader
       # if not set appVersion field from Chart.yaml is used
-      tag: v0.67.1@sha256:0f196c644c6197d9a19962ad3dbaed17f71dd5f7f5708674ae9e5d9b13bcf21d
-      sha: ""
+      tag: v0.67.1
+      sha: "0f196c644c6197d9a19962ad3dbaed17f71dd5f7f5708674ae9e5d9b13bcf21d"
 
     # add prometheus config reloader liveness and readiness probe. Default: false
     enableProbe: false
@@ -2398,8 +2398,8 @@ prometheusOperator:
   thanosImage:
     registry: quay.io
     repository: thanos/thanos
-    tag: v0.32.0@sha256:fdd7440cfcfc9f85b6ccc0adb5bcc4dac8b152b7adde5f6b78ef72bf61389df3
-    sha: ""
+    tag: v0.32.0
+    sha: "fdd7440cfcfc9f85b6ccc0adb5bcc4dac8b152b7adde5f6b78ef72bf61389df3"
 
   ## Set a Label Selector to filter watched prometheus and prometheusAgent
   ##
@@ -2913,8 +2913,8 @@ prometheus:
     image:
       registry: quay.io
       repository: prometheus/prometheus
-      tag: v2.46.0@sha256:29630076fd1d007729faec35ed9610053bad211ab5bd6c98cdfc7a7bdbdaaf4e
-      sha: ""
+      tag: v2.46.0
+      sha: "29630076fd1d007729faec35ed9610053bad211ab5bd6c98cdfc7a7bdbdaaf4e"
 
     ## Tolerations for use with node taints
     ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
@@ -3846,8 +3846,8 @@ thanosRuler:
     image:
       registry: quay.io
       repository: thanos/thanos
-      tag: v0.32.0@sha256:fdd7440cfcfc9f85b6ccc0adb5bcc4dac8b152b7adde5f6b78ef72bf61389df3
-      sha: ""
+      tag: v0.32.0
+      sha: "fdd7440cfcfc9f85b6ccc0adb5bcc4dac8b152b7adde5f6b78ef72bf61389df3"
 
     ## Namespaces to be selected for PrometheusRules discovery.
     ## If nil, select own namespace. Namespaces to be selected for ServiceMonitor discovery.
