@@ -3285,7 +3285,7 @@ prometheus:
       static_configs:
       - targets: ["192.168.1.140:8080"]
         labels:
-          aredn-node: KI5VMF-MINI
+          _aredn_node: KI5VMF-MINI
     # - job_name: kube-etcd
     #   kubernetes_sd_configs:
     #     - role: node
