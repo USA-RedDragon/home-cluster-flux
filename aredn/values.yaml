@@ -18,7 +18,7 @@ command:
 - /bin/sh
 - -c
 - |
-  ip addr add 10.54.25.4/8 dev eth0 \
+  ip addr add 10.54.25.4/32 dev eth0 \
   && sysctl -w net.ipv4.ip_forward=1 \
   && rsyslogd -n & \
   cat /etc/resolv.conf > /tmp/resolv.conf.auto \
