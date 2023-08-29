@@ -27,3 +27,7 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
