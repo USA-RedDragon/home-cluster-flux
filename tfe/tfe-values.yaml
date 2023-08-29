@@ -1,0 +1,69 @@
+replicaCount: 1
+
+# Image pull secret to use for registry authentication.
+imagePullSecrets:
+- name: tfe-beta
+
+# Image sets the repo, name and tag of the Terraform Enterprise image to use.
+image:
+  tag: beta-1@sha256:93dae0d3242ba6f3b4a52b2fdd963a86e34972f9ac7a16b949f9d9c6f380b4f2
+  pullPolicy: IfNotPresent
+
+# Resource limits are not set by default, to give the user the ability to set specific resource limits.
+# If you do want to specify resource limits, uncomment the following lines and adjust them as necessary.
+resources:
+  requests:
+    memory: "2000Mi"
+    cpu: "2"
+#  limits:
+#    memory: ""
+#    cpu: ""
+
+# TLS for end-to-end encrypted transport
+tls:
+  certificateSecret: tfe-mcswain-dev-tls
+
+# Ingress allows ingress services to be created to allow external access
+# from Kubernetes to access Terraform Enterprise pods.
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    cert-manager.io/cluster-issuer: cloudflare
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: tfe.mcswain.dev
+      paths:
+      - portNumber: 443
+        serviceName: "terraform-enterprise"
+        path: /
+        pathType: Prefix
+  tls:
+    - hosts:
+      - tfe.mcswain.dev
+      secretName: tfe-mcswain-dev-tls
+
+# Injector service specific configurations
+service:
+  type: ClusterIP
+
+env:
+  secretRefs:
+    - name: tfe-secrets
+  variables:
+    TFE_OPERATIONAL_MODE: external
+    TFE_CAPACITY_CONCURRENCY: "1"
+    TFE_DATABASE_HOST: "postgres-app.postgres.svc.cluster.local"
+    TFE_DATABASE_NAME: "tfe"
+    TFE_DATABASE_PARAMETERS: sslmode=disable
+    TFE_DATABASE_USER: "tfe"
+    TFE_HOSTNAME: tfe.mcswain.dev
+    TFE_OBJECT_STORAGE_TYPE: "s3"
+    TFE_OBJECT_STORAGE_S3_ACCESS_KEY_ID: 828SkH2OIhvXnTAjekxD
+    TFE_OBJECT_STORAGE_S3_BUCKET: tfe
+    TFE_OBJECT_STORAGE_S3_ENDPOINT: https://s3.mcswain.dev
+    TFE_OBJECT_STORAGE_S3_REGION: us-east-1
+    TFE_REDIS_URL: redis-app.tfe.svc.cluster.local:6379
+
