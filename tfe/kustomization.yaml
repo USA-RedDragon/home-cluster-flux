@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: tfe
+resources:
+  - ns.yaml
+  - redis-helm.yaml
+  - hashicorp-helm.yaml
+configMapGenerator:
+  - name: chart-values-redis
+    files:
+      - values.yaml=redis-values.yaml
+  - name: chart-values-tfe
+    files:
+      - values.yaml=tfe-values.yaml
+configurations:
+  - kustomizeconfig.yaml
