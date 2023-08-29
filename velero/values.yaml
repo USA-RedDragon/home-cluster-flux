@@ -47,10 +47,10 @@ podLabels: {}
 resources:
   requests:
     cpu: 500m
-    memory: 128Mi
+    memory: 2Gi
   limits:
     cpu: 1000m
-    memory: 512Mi
+    memory: 4Gi
 
 # Configure the dnsPolicy of the Velero deployment
 # See: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
