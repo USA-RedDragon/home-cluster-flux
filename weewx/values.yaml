@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/rsync-docker
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:c0cf245d8522b6b3fa82824709d033f924d7b2fd96e50ec1c7eaa68c02ec6928"
+  tag: "main@sha256:e529fb814111665903b829c96a7bb6c936f1e2d80102cc82ffc3a7d17fbad195"
 
 imagePullSecrets: []
 nameOverride: ""
