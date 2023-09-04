@@ -49,8 +49,9 @@ envFrom: []
 # - configMapRef:
 #     name: app-config
 
-env: {}
-
+env:
+- name: INFLUXDB_HTTP_LOG_ENABLED
+  value: "false"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
@@ -118,13 +119,19 @@ ingress:
     hosts:
       - example.mcswain.dev
 
-probes: {}
+probes:
+  liveness:
+    tcpSocket:
+      port: 8086
+  readiness:
+    tcpSocket:
+      port: 8086
 
 resources:
   limits:
-    memory: 50Mi
+    memory: 300Mi
   requests:
-    memory: 30Mi
+    memory: 100Mi
 
 nodeSelector: {}
 
