@@ -76,14 +76,14 @@ service:
   - name: influxdb
     port: 8086
 
-persistentVolumes: []
-# - name: data
-#   mountPath: /var/lib/postgresql/data
-#   subPath: pg
-#   size: 10Gi
-#   persistentVolumeClaim:
-#     name: data
-#     storageClass: mayastor-nvme
+persistentVolumes:
+- name: data
+  mountPath: /var/lib/influxdb
+  subPath: data
+  size: 10Gi
+  persistentVolumeClaim:
+    name: data
+    storageClass: mayastor-nvme
 # - name: config
 #   mountPath: /config
 #   configMap:
@@ -118,13 +118,7 @@ ingress:
     hosts:
       - example.mcswain.dev
 
-probes:
-  liveness:
-    tcpSocket:
-      port: 8086
-  readiness:
-    tcpSocket:
-      port: 8086
+probes: {}
 
 resources:
   limits:
