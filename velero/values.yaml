@@ -6,7 +6,7 @@
 # enabling node-agent). Required.
 image:
   repository: velero/velero
-  tag: v1.11.1@sha256:720ca6c9c5fe4f2e50dbf2d0f3f0b718c7b5c9f9c6e58b21a0747cff3b9e6f79
+  tag: v1.11.1@sha256:fabf2d40f640019aed794f477013ec03f2a4b91e3f5aa80f9becdd8d040c5c6b
   # Digest value example: sha256:d238835e151cec91c6a811fe3a89a66d3231d9f64d09e5f3c49552672d271f38.
   # If used, it will take precedence over the image.tag.
   # digest:
