@@ -8,7 +8,7 @@ image:
   repository: quay.io/oauth2-proxy/oauth2-proxy
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v7.4.0@sha256:f81637250eb3b5d902fba3c4ade3d3b1e34cc7f2350bc30402f1e62adfdf17aa"
+  tag: "v7.5.0@sha256:528a5b25f0eddb010aa9029ee46d91a8b1de2998288e15afb2e201d74b70d15f"
 
 imagePullSecrets: []
 nameOverride: ""
