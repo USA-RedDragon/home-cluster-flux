@@ -8,7 +8,7 @@ image:
   repository: quay.io/keycloak/keycloak
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "22.0.1@sha256:ea5354a224b9766ac4f3879a31cb049b1d856b1585c43cb3d18117023f0bc87b"
+  tag: "22.0.2@sha256:e1c31b85183442792eaf27364ec57416355e7c12d8a632f26133b994ed312565"
 
 imagePullSecrets: []
 nameOverride: ""
