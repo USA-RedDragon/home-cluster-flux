@@ -90,6 +90,7 @@ persistentVolumes:
   size: 1Gi
   persistentVolumeClaim:
     name: mesh-data
+    storageClass: mayastor-nvme
 #     items:
 #     - key: test.ini
 #       path: config.ini
