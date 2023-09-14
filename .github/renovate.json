@@ -10,9 +10,5 @@
     "helm-values": {
         "enabled": true,
         "fileMatch": ["\\.ya?ml$"]
-    },
-    "kubernetes": {
-        "enabled": true,
-        "fileMatch": ["\\.ya?ml$"]
     }
 }
