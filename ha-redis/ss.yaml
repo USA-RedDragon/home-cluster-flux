@@ -108,7 +108,7 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /data
-        - name: redis-config
+        - name: config
           mountPath: /etc/redis/
       volumes:
       - name: data
