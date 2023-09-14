@@ -34,3 +34,22 @@ spec:
     name: sentinel
   selector:
     app: sentinel
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-app
+  namespace: ha-redis
+  labels:
+    app: redis
+    app.kubernetes.io/component: redis
+    app.kubernetes.io/instance: redis
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+  - port: 6379
+    targetPort: 6379
+    name: redis
+  selector:
+    app: redis
