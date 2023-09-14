@@ -4,6 +4,5 @@ namespace: ha-redis
 resources:
   - ns.yaml
   - cm.yaml
-  - secret.yaml
   - ss.yaml
   - svc.yaml

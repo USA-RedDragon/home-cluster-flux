@@ -5,7 +5,7 @@ metadata:
   namespace: ha-redis
 data:
   # Variable needed for sentinel init container
-  REDIS_NODES: "redis-0.ha-redis,redis-1.ha-redis,redis-2.ha-redis"
+  REDIS_NODES: "redis-0.redis,redis-1.redis,redis-2.redis"
   # Config used for all redis instances
   redis.conf: |
     bind 0.0.0.0
@@ -27,7 +27,7 @@ data:
     for i in ${REDIS_NODES//,/ }
     do
         echo "finding master at $i"
-        MASTER=$(redis-cli --no-auth-warning --raw -h $i -a ${REDIS_PASSWORD} info replication | awk '{print $1}' | grep master_host: | cut -d ":" -f2)
+        MASTER=$(redis-cli --no-auth-warning --raw -h $i info replication | awk '{print $1}' | grep master_host: | cut -d ":" -f2)
         
         if [ "${MASTER}" == "" ]; then
             echo "no master found"
@@ -45,9 +45,6 @@ data:
     sentinel down-after-milliseconds mymaster 1000
     sentinel failover-timeout mymaster 10000
     sentinel parallel-syncs mymaster 1
-    sentinel sentinel-pass ${REDIS_PASSWORD}
-    sentinel auth-pass mymaster ${REDIS_PASSWORD}
-    requirepass ${REDIS_PASSWORD}
     sentinel announce-ip ${HOSTNAME}.sentinel
     sentinel announce-port 5000
     " > /etc/redis/sentinel.conf
@@ -55,13 +52,11 @@ data:
   redis_init.sh: |
     #!/bin/bash
     cp /tmp/redis/redis.conf /etc/redis/redis.conf
-    echo "requirepass ${REDIS_PASSWORD}" >> /etc/redis/redis.conf
-    echo "masterauth ${REDIS_PASSWORD}" >> /etc/redis/redis.conf
     echo "replica-announce-ip ${HOSTNAME}.redis" >> /etc/redis/redis.conf
     echo "replica-announce-port 6379 " >> /etc/redis/redis.conf
     
     echo "finding master..."
-    if [ "$(timeout 5 redis-cli -h sentinel -p 5000 -a ${REDIS_PASSWORD} ping)" != "PONG" ]; then
+    if [ "$(timeout 5 redis-cli -h sentinel -p 5000 ping)" != "PONG" ]; then
       echo "sentinel not found, defaulting to redis-0"
       if [ ${HOSTNAME} == "redis-0" ]; then
         echo "this is redis-0, not updating config..."
@@ -73,7 +68,7 @@ data:
       fi
     else
       echo "sentinel found, finding master"
-      MASTER="$(redis-cli -h sentinel -p 5000 -a ${REDIS_PASSWORD} sentinel get-master-addr-by-name mymaster | grep -E '(^redis-*)|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})')"
+      MASTER="$(redis-cli -h sentinel -p 5000 sentinel get-master-addr-by-name mymaster | grep -E '(^redis-*)|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})')"
       if [ "${HOSTNAME}.redis" == ${MASTER} ]; then
         echo "this is master, not updating config..."
       else
