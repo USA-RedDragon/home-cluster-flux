@@ -865,6 +865,9 @@ grafana:
   enabled: true
   namespaceOverride: ""
 
+  deploymentStrategy:
+    type: Recreate
+
   persistence:
     enabled: true
     type: pvc
