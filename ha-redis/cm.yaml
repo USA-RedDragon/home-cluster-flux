@@ -13,8 +13,9 @@ data:
     supervised no
     loglevel notice
     logfile ""
-    save ""
     dir "/data"
+    save 60 1000
+    appendonly yes
 ---
 apiVersion: v1
 kind: ConfigMap

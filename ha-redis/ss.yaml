@@ -100,8 +100,6 @@ spec:
         - name: config
           mountPath: /etc/redis/
       volumes:
-      - name: data
-        emptyDir: {}
       - name: config
         emptyDir: {}
       - name: init-script
@@ -117,3 +115,12 @@ spec:
           items:
           - key: redis.conf
             path: redis.conf
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: mayastor-single-replica
