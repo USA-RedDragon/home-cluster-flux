@@ -25,11 +25,6 @@ spec:
               configMapKeyRef:
                 name: redis-config
                 key: REDIS_NODES
-          - name: REDIS_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: redis-secret
-                key: REDIS_PASSWORD
         command: [ "sh", "-c", "/scripts/sentinel_init.sh" ]
         volumeMounts:
         - name: config
@@ -83,12 +78,6 @@ spec:
       initContainers:
       - name: config
         image: redis:7.0
-        env:
-          - name: REDIS_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: redis-secret
-                key: REDIS_PASSWORD
         command: [ "sh", "-c", "/scripts/redis_init.sh" ]
         volumeMounts:
         - name: config
