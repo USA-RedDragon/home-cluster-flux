@@ -27,6 +27,8 @@ spec:
   values:
     imagePullSecrets:
     - name: registry-docker-hub
+    updateStrategy:
+      type: Recreate
     jobservice:
       podAnnotations:
         backup.velero.io/backup-volumes-excludes: job-logs
