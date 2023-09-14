@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: redis
+  name: redis-config
   namespace: ha-redis
 data:
   # Variable needed for sentinel init container
@@ -19,7 +19,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: redis
+  name: redis-startup
   namespace: ha-redis
 data:
   sentinel_init.sh: |
