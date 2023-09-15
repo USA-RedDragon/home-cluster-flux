@@ -18,7 +18,7 @@ spec:
       - name: registry-docker-hub
       initContainers:
       - name: config
-        image: redis:7.0
+        image: redis:7.2
         env:
           - name: REDIS_NODES
             valueFrom:
@@ -33,7 +33,7 @@ spec:
           mountPath: /scripts/
       containers:
       - name: sentinel
-        image: redis:7.0
+        image: redis:7.2
         command: ["redis-sentinel"]
         args: ["/etc/redis/sentinel.conf"]
         ports:
@@ -77,7 +77,7 @@ spec:
       - name: registry-docker-hub
       initContainers:
       - name: config
-        image: redis:7.0
+        image: redis:7.2
         command: [ "sh", "-c", "/scripts/redis_init.sh" ]
         volumeMounts:
         - name: config
@@ -88,7 +88,7 @@ spec:
           mountPath: /scripts/
       containers:
       - name: redis
-        image: redis:7.0
+        image: redis:7.2
         command: ["redis-server"]
         args: ["/etc/redis/redis.conf"]
         ports:
