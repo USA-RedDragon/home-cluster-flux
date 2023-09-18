@@ -143,7 +143,7 @@ extraContainers:
   resources:
     limits:
       cpu: 1400m
-      memory: 1Gi
+      memory: 1500Mi
     requests:
       cpu: 800m
       memory: 500Mi
@@ -153,19 +153,21 @@ probes:
     httpGet:
       path: /
       port: 5000
-    
+    timeoutSeconds: 60
+    failureThreshold: 3
   readiness:
     httpGet:
       path: /
       port: 5000
+    failureThreshold: 3
 
 resources:
   limits:
     cpu: 400m
-    memory: 256Mi
+    memory: 512Mi
   requests:
     cpu: 100m
-    memory: 128Mi
+    memory: 256Mi
 
 nodeSelector: {}
 
