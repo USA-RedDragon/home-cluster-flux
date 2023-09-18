@@ -74,6 +74,8 @@ service:
   ports:
   - name: http
     port: 5000
+  - name: browser
+    port: 7900
 
 persistentVolumes:
 - name: data
@@ -114,10 +116,18 @@ ingress:
     - port: 5000
       path: /
       pathType: Prefix
+  - host: browser.changedetection.mcswain.dev
+    paths:
+    - port: 7900
+      path: /
+      pathType: Prefix
   tls:
   - secretName: changedetection-mcswain-dev-tls
     hosts:
       - changedetection.mcswain.dev
+  - secretName: browser-changedetection-mcswain-dev-tls
+    hosts:
+      - browser.changedetection.mcswain.dev
 
 extraContainers:
 - image: selenium/standalone-chrome:latest@sha256:ae5c0198f5c7f0addf59dfab895e05cd2f7de04719c0ec557d609fe73c7d3567
