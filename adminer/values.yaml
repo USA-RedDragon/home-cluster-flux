@@ -15,9 +15,6 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
-args: []
-command: []
-
 secrets: []
 # - name: app-secret-key
 #   data:
@@ -42,7 +39,7 @@ configs: []
 #       [test]
 #       value=1
 
-envFrom:
+envFrom: []
 # - secretRef:
 #     name: app-creds
 # - configMapRef:
