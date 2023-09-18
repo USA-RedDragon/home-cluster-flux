@@ -48,8 +48,8 @@ envFrom: []
 #     name: app-config
 
 env:
-- name: WEBDRIVER_URL
-  value: "http://localhost:4444/wd/hub"
+- name: PLAYWRIGHT_DRIVER_URL
+  value: "ws://localhost:3000/?stealth=1&--disable-web-security=true"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
@@ -116,21 +116,13 @@ ingress:
     - port: 5000
       path: /
       pathType: Prefix
-  - host: browser.changedetection.mcswain.dev
-    paths:
-    - port: 7900
-      path: /
-      pathType: Prefix
   tls:
   - secretName: changedetection-mcswain-dev-tls
     hosts:
       - changedetection.mcswain.dev
-  - secretName: browser-changedetection-mcswain-dev-tls
-    hosts:
-      - browser.changedetection.mcswain.dev
 
 extraContainers:
-- image: selenium/standalone-chrome:latest@sha256:ae5c0198f5c7f0addf59dfab895e05cd2f7de04719c0ec557d609fe73c7d3567
+- image: browserless/chrome:latest@sha256:3cf3975a81fec3d1ff02094d1c979ec41939a870f3f87faf734d968919417fd7
   imagePullPolicy: IfNotPresent
   name: chrome
   resources: {}
