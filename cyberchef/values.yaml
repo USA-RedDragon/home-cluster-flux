@@ -1,0 +1,140 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: mpepping/cyberchef
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v10.5.2@sha256:2199784d0b820b94d3df749bc8f9092887886af10e4f15466dae1c29356ef2e5"
+
+imagePullSecrets:
+- name: registry-docker-hub
+nameOverride: ""
+fullnameOverride: ""
+
+secrets: []
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom: []
+# - secretRef:
+#     name: app-creds
+# - configMapRef:
+#     name: app-config
+
+env: []
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8000
+
+persistentVolumes: []
+# - name: config
+#   mountPath: /config
+#   configMap:
+#     name: app-configfile
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/auth-signin: https://auth.mcswain.dev/oauth2/start?rd=$scheme://$http_host$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-url: https://auth.mcswain.dev/oauth2/auth
+  hosts:
+  - host: cyberchef.mcswain.dev
+    paths:
+    - port: 8000
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: cyberchef-mcswain-dev-tls
+    hosts:
+      - cyberchef.mcswain.dev
+
+extraContainers: []
+
+probes:
+  liveness:
+    httpGet:
+      path: /
+      port: 8000
+  readiness:
+    httpGet:
+      path: /
+      port: 8000
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 256Mi
+  requests:
+    cpu: 10m
+    memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
