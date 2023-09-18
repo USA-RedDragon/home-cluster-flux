@@ -48,8 +48,12 @@ envFrom: []
 #     name: app-config
 
 env:
+- name: BASE_URL
+  value: "https://changedetection.mcswain.dev"
 - name: PLAYWRIGHT_DRIVER_URL
   value: "ws://localhost:3000/?stealth=1&--disable-web-security=true"
+- name: USE_X_SETTINGS
+  value: "true"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
