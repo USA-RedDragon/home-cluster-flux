@@ -75,6 +75,8 @@ env:
   value: healthchecks
 - name: DB_USER
   value: healthchecks
+- name: REGISTRATION_OPEN
+  value: "False"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
