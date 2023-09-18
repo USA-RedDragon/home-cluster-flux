@@ -121,7 +121,9 @@ probes:
       path: /
       port: 8080
 
-resources: {}
+resources:
+  limits:
+    hugepages-2Mi: 100Mi
 
 nodeSelector: {}
 
