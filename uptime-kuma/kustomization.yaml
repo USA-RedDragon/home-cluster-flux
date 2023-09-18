@@ -4,6 +4,8 @@ namespace: uptime-kuma
 resources:
   - ns.yaml
   - helm.yaml
+  - status-mcswain-dev.yaml
+  - status-mc-mcswain-dev.yaml
 configMapGenerator:
   - name: chart-values
     files:
