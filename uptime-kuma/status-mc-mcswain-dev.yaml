@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/app-root: /status/mc-mcswain-dev
+  name: status-mc-mcswain-dev
+  namespace: uptime-kuma
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: status.mc.mcswain.dev
+    http:
+      paths:
+      - backend:
+          service:
+            name: uptime-kuma-app
+            port:
+              number: 3001
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - status.mc.mcswain.dev
+    secretName: status-mc-mcswain-dev-tls
