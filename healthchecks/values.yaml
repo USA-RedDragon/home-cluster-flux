@@ -77,6 +77,8 @@ env:
   value: healthchecks
 - name: REGISTRATION_OPEN
   value: "False"
+- name: DEBUG
+  value: "False"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
@@ -156,10 +158,10 @@ probes:
 resources:
   limits:
     cpu: 100m
-    memory: 256Mi
+    memory: 350Mi
   requests:
     cpu: 10m
-    memory: 128Mi
+    memory: 256Mi
 
 nodeSelector: {}
 
