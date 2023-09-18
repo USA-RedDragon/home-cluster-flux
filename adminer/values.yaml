@@ -1,0 +1,139 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: adminer
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "4.8.1-standalone@sha256:5463cc7e5a3e4ad51aa0e98c419d04646fd9b3e14a1d960ab8b420b9ce9ecc80"
+
+imagePullSecrets:
+- name: registry-docker-hub
+nameOverride: ""
+fullnameOverride: ""
+
+args: []
+command: []
+
+secrets: []
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom:
+# - secretRef:
+#     name: app-creds
+# - configMapRef:
+#     name: app-config
+
+env:
+- name: ADMINER_DEFAULT_SERVER
+  value: postgres-app.postgres.svc.cluster.local
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+
+persistentVolumes: []
+# - name: config
+#   mountPath: /config
+#   configMap:
+#     name: app-configfile
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/auth-signin: https://auth.mcswain.dev/oauth2/start?rd=$scheme://$http_host$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-url: https://auth.mcswain.dev/oauth2/auth
+  hosts:
+  - host: adminer.mcswain.dev
+    paths:
+    - port: 8080
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: adminer-mcswain-dev-tls
+    hosts:
+      - adminer.mcswain.dev
+
+extraContainers: []
+
+probes:
+  liveness:
+    httpGet:
+      path: /
+      port: 8080
+  readiness:
+    httpGet:
+      path: /
+      port: 8080
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
