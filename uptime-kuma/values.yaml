@@ -124,7 +124,13 @@ probes:
       path: /
       port: 3001
 
-resources: {}
+resources:
+  limits:
+    cpu: 100m
+    memory: 256Mi
+  requests:
+    cpu: 30m
+    memory: 128Mi
 
 nodeSelector: {}
 
