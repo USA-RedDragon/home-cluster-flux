@@ -132,6 +132,14 @@ extraContainers:
   env:
   - name: DEFAULT_LAUNCH_ARGS
     value: "[\"--window-size=1920,1080\"]"
+  - name: SCREEN_WIDTH
+    value: "1920"
+  - name: SCREEN_HEIGHT
+    value: "1080"
+  - name: MAX_CONCURRENT_SESSIONS
+    value: "2"
+  - name: PREBOOT_CHROME
+    value: "true"
   resources:
     limits:
       cpu: 1400m
