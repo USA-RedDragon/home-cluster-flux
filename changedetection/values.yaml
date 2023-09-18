@@ -125,7 +125,16 @@ extraContainers:
 - image: browserless/chrome:latest@sha256:3cf3975a81fec3d1ff02094d1c979ec41939a870f3f87faf734d968919417fd7
   imagePullPolicy: IfNotPresent
   name: chrome
-  resources: {}
+  env:
+  - name: DEFAULT_LAUNCH_ARGS
+    value: "[\"--window-size=1920,1080\"]"
+  resources:
+    limits:
+      cpu: 1400m
+      memory: 1Gi
+    requests:
+      cpu: 800m
+      memory: 500Mi
 
 probes:
   liveness:
@@ -139,11 +148,11 @@ probes:
 
 resources:
   limits:
-    cpu: 1400m
-    memory: 1Gi
+    cpu: 100m
+    memory: 256Mi
   requests:
-    cpu: 800m
-    memory: 500Mi
+    cpu: 10m
+    memory: 128Mi
 
 nodeSelector: {}
 
