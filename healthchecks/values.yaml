@@ -39,9 +39,9 @@ configs: []
 #       [test]
 #       value=1
 
-envFrom: []
-# - secretRef:
-#     name: app-creds
+envFrom:
+- secretRef:
+    name: healthchecks
 # - configMapRef:
 #     name: app-config
 
