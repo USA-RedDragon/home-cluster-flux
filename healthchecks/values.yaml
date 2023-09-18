@@ -62,6 +62,8 @@ env:
 - name: EMAIL_PORT
   value: "465"
 - name: EMAIL_USE_TLS
+  value: "False"
+- name: EMAIL_USE_SSL
   value: "True"
 - name: SITE_ROOT
   value: https://healthchecks.mcswain.dev
