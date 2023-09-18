@@ -48,8 +48,6 @@ envFrom:
 env:
 - name: ADMINS
   value: "jacob@mcswain.dev"
-- name: ALLOWED_HOSTS
-  value: healthchecks.mcswain.dev
 - name: DEFAULT_FROM_EMAIL
   value: healthchecks@mcswain.dev
 - name: EMAIL_HOST
