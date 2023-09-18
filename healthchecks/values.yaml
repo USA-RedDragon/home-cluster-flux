@@ -15,6 +15,11 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
+command:
+- bash
+- -c
+- uwsgi -b 32768 /opt/healthchecks/docker/uwsgi.ini
+
 secrets: []
 # - name: app-secret-key
 #   data:
@@ -65,6 +70,8 @@ env:
 - name: DB_HOST
   value: postgres-app.postgres.svc.cluster.local
 - name: DB_NAME
+  value: healthchecks
+- name: DB_USER
   value: healthchecks
 # - name: SPECIAL_KEY
 #   valueFrom:
