@@ -8,7 +8,7 @@ image:
   repository: mpepping/cyberchef
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v10.5.2@sha256:2199784d0b820b94d3df749bc8f9092887886af10e4f15466dae1c29356ef2e5"
+  tag: "v10.5.2@sha256:51cbc1463da6a93a6884268e01759e860288226cf6e2613b3d97e054be82849a"
 
 imagePullSecrets:
 - name: registry-docker-hub
