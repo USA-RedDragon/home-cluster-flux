@@ -15,6 +15,11 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
+command:
+- /bin/sh
+- -c
+- cp /tmp/config/* /opt/adguardhome/conf/ && /opt/adguardhome/AdGuardHome --no-check-update -c /opt/adguardhome/conf/AdGuardHome.yaml -w /opt/adguardhome/work
+
 secrets: []
 # - name: app-secret-key
 #   data:
@@ -82,7 +87,7 @@ persistentVolumes:
     name: work
     storageClass: mayastor-nvme
 - name: conf
-  mountPath: /opt/adguardhome/conf
+  mountPath: /tmp/config
   secret:
     secretName: adguardhome
 
