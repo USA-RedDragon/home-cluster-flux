@@ -8,7 +8,7 @@ image:
   repository: siteinspector/siteinspector
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.2.0@sha256:40076326b7f8f68e6cfef74af0877fcf0469067ee90f25b08a062c4cfb9bb227"
+  tag: "1.2.0@sha256:836acf082e6fa9f0d1ab15a281556a1e266324e6f204a5de1d2adc4e6b5dd361"
 
 imagePullSecrets:
 - name: registry-docker-hub
