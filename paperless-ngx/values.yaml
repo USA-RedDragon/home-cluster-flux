@@ -1,0 +1,191 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/paperless-ngx/paperless-ngx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.17.4@sha256:b2f1ec7f2073fba8d11993b9477122b3589ac88b17aa05ff309dc73f337c64c6"
+
+imagePullSecrets:
+- name: registry-ghcr
+- name: registry-docker-hub
+nameOverride: ""
+fullnameOverride: ""
+
+args: []
+command: []
+
+secrets: []
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom:
+- secretRef:
+    name: paperless-ngx
+# - configMapRef:
+#     name: app-config
+
+env:
+- name: PAPERLESS_REDIS
+  value: redis://localhost:6379
+- name: PAPERLESS_DBHOST
+  value: postgres-app.postgres.svc.cluster.local
+- name: PAPERLESS_TIKA_ENABLED
+  value: '1'
+- name: PAPERLESS_USE_X_FORWARD_HOST
+  value: '1'
+- name: PAPERLESS_DBENGINE
+  value: postgres
+- name: PAPERLESS_URL
+  value: https://paperless.mcswain.dev
+- name: PAPERLESS_TIME_ZONE
+  value: America/Chicago
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations:
+  backup.velero.io/backup-volumes-excludes: consume,export,media
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8000
+
+persistentVolumes:
+- name: data
+  mountPath: /usr/src/paperless/data
+  size: 5Gi
+  persistentVolumeClaim:
+    name: data
+    storageClass: mayastor-nvme
+- name: consume
+  mountPath: /usr/src/paperless/consume
+  nfs:
+    path: /mnt/data/paperless/consume
+    server: 192.168.1.135
+- name: export
+  mountPath: /usr/src/paperless/export
+  nfs:
+    path: /mnt/data/paperless/export
+    server: 192.168.1.135
+- name: media
+  mountPath: /usr/src/paperless/media
+  nfs:
+    path: /mnt/data/paperless/media
+    server: 192.168.1.135
+
+# - name: config
+#   mountPath: /config
+#   configMap:
+#     name: app-configfile
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/auth-signin: https://auth.mcswain.dev/oauth2/start?rd=$scheme://$http_host$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-url: https://auth.mcswain.dev/oauth2/auth
+  hosts:
+  - host: paperless.mcswain.dev
+    paths:
+    - port: 8000
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: paperless-mcswain-dev-tls
+    hosts:
+      - paperless.mcswain.dev
+
+extraContainers:
+- image: redis:7.2.1-alpine
+  imagePullPolicy: IfNotPresent
+  name: redis
+  resources: {}
+- image: ghcr.io/paperless-ngx/tika:2.9.0-minimal@sha256:beb13811c72b9342b9931bf94414911ce9b8e6643e11da04648f06405fb7c1a5
+  imagePullPolicy: IfNotPresent
+  name: tika
+  resources: {}
+- image: gotenberg/gotenberg:7.9.1@sha256:8f18226026e6f9ca81738e8e3e7764caf2a822c3a41368d9feaf38ecf71f248f
+  imagePullPolicy: IfNotPresent
+  name: gotenberg
+  resources: {}
+  command:
+  - "gotenberg"
+  - "--chromium-disable-javascript=true"
+  - "--chromium-allow-list=file:///tmp/.*"
+
+probes:
+  liveness:
+    httpGet:
+      path: /
+      port: 8000
+  readiness:
+    httpGet:
+      path: /
+      port: 8000
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
