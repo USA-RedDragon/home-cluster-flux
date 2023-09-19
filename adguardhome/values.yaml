@@ -83,22 +83,8 @@ persistentVolumes:
     storageClass: mayastor-nvme
 - name: conf
   mountPath: /opt/adguardhome/conf
-  size: 1Gi
-  persistentVolumeClaim:
-    name: conf
-    storageClass: mayastor-nvme
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+  secret:
+    secretName: adguardhome
 
 ingress:
   enabled: true
