@@ -123,7 +123,13 @@ probes:
       path: /
       port: 3000
 
-resources: {}
+resources:
+  limits:
+    cpu: 100m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 400Mi
 
 nodeSelector: {}
 
