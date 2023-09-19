@@ -133,7 +133,13 @@ probes:
       path: /
       port: 808
 
-resources: {}
+resources:
+  limits:
+    cpu: 100m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
 
 nodeSelector: {}
 
