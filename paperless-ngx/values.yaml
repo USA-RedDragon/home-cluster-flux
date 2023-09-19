@@ -174,7 +174,13 @@ probes:
       path: /
       port: 8000
 
-resources: {}
+resources:
+  limits:
+    cpu: 200m
+    memory: 1536Mi
+  requests:
+    cpu: 100m
+    memory: 1024Mi
 
 nodeSelector: {}
 
