@@ -15,7 +15,7 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
-command:
+args:
 - server
 
 secrets: []
@@ -131,7 +131,7 @@ extraContainers:
 - image: ghcr.io/goauthentik/server:2023.8.3@sha256:ffa8559564c3d11c549d385ee231a4ce8dfa92abb37f50ce9df26105f023a077
   imagePullPolicy: IfNotPresent
   name: worker
-  command:
+  args:
   - worker
   envFrom:
   - configMapRef:
