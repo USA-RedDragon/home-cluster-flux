@@ -151,7 +151,7 @@ ingress:
       path: /
       pathType: Prefix
     - path: /outpost.goauthentik.io
-      pathType: Prefix
+      pathType: ImplementationSpecific
       backend:
         service:
           name: ak-outpost-authentik-embedded-outpost
