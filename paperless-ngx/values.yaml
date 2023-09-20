@@ -150,6 +150,13 @@ ingress:
     - port: 8000
       path: /
       pathType: Prefix
+    - path: /outpost.goauthentik.io
+      pathType: Prefix
+      backend:
+        service:
+          name: ak-outpost-authentik-embedded-outpost
+          port:
+            number: 9000
   tls:
   - secretName: paperless-mcswain-dev-tls
     hosts:
