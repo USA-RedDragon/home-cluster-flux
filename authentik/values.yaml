@@ -18,6 +18,8 @@ fullnameOverride: ""
 args:
 - server
 
+serviceAccountName: rbac-authentik-remote-cluster
+
 deploymentStrategy:
   rollingUpdate:
     maxUnavailable: 1

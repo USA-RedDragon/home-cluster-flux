@@ -1,0 +1,122 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rbac-authentik-remote-cluster
+  namespace: authentik
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: rbac-authentik-remote-cluster
+  namespace: authentik
+  annotations:
+    kubernetes.io/service-account.name: rbac-authentik-remote-cluster
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: rbac-authentik-remote-cluster-authentik
+rules:
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: rbac-authentik-remote-cluster-authentik
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: rbac-authentik-remote-cluster-authentik
+subjects:
+  - kind: ServiceAccount
+    name: rbac-authentik-remote-cluster
+    namespace: authentik
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: rbac-authentik-remote-cluster
+  namespace: authentik
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - services
+      - configmaps
+    verbs:
+      - get
+      - create
+      - delete
+      - list
+      - patch
+  - apiGroups:
+      - extensions
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - create
+      - delete
+      - list
+      - patch
+  - apiGroups:
+      - extensions
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - create
+      - delete
+      - list
+      - patch
+  - apiGroups:
+      - traefik.containo.us
+      - traefik.io
+    resources:
+      - middlewares
+    verbs:
+      - get
+      - create
+      - delete
+      - list
+      - patch
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - servicemonitors
+    verbs:
+      - get
+      - create
+      - delete
+      - list
+      - patch
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rbac-authentik-remote-cluster
+  namespace: authentik
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: rbac-authentik-remote-cluster
+subjects:
+  - kind: ServiceAccount
+    name: rbac-authentik-remote-cluster
+    namespace: authentik
