@@ -3,6 +3,3 @@ kind: Kustomization
 namespace: ha-redis
 resources:
   - ns.yaml
-  - cm.yaml
-  - ss.yaml
-  - svc.yaml
