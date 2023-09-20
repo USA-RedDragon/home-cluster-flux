@@ -1,0 +1,122 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: manuc66/node-hp-scan-to
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest@sha256:47f951779216b278cf0b25b0793dc43990aa9c197749550ea305e96f749bbe5b"
+
+imagePullSecrets:
+- name: registry-docker-hub
+nameOverride: ""
+fullnameOverride: ""
+
+secrets: []
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom: []
+# - secretRef:
+#     name: app-creds
+# - configMapRef:
+#     name: app-config
+
+env:
+- name: IP
+  value: 192.168.1.128
+- name: TZ
+  value: America/Chicago
+
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+
+persistentVolumes:
+- name: scan
+  mountPath: /scan
+  nfs:
+    path: /mnt/data/paperless/consume
+    server: 192.168.1.135
+# - name: config
+#   mountPath: /config
+#   configMap:
+#     name: app-configfile
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+ingress:
+  enabled: false
+
+extraContainers: []
+
+probes: {}
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 256Mi
+  requests:
+    cpu: 10m
+    memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
