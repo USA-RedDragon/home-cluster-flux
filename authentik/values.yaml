@@ -149,14 +149,14 @@ extraContainers:
 probes:
   liveness:
     httpGet:
-      path: /
+      path: /-/health/live/
       port: 9000
     failureThreshold: 5
     periodSeconds: 30
     timeoutSeconds: 10
   readiness:
     httpGet:
-      path: /
+      path: /-/health/ready/
       port: 9000
     failureThreshold: 5
     periodSeconds: 30
