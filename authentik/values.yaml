@@ -45,7 +45,7 @@ configs:
     AUTHENTIK_POSTGRESQL__NAME: authentik
     AUTHENTIK_EMAIL__HOST: email.mcswain.dev
     AUTHENTIK_EMAIL__PORT: '465'
-    AUTHENTIK_EMAIL__USER: authentik
+    AUTHENTIK_EMAIL__USERNAME: authentik
     AUTHENTIK_EMAIL__USE_TLS: "false"
     AUTHENTIK_EMAIL__USE_SSL: "true"
     AUTHENTIK_EMAIL__FROM: authentik@mcswain.dev
