@@ -3,7 +3,6 @@ kind: PodDisruptionBudget
 metadata:
   name: authentik
 spec:
-  maxUnavailable: 1
   minAvailable: 1
   selector:
     matchLabels:
