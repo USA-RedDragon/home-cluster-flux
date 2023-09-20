@@ -18,6 +18,11 @@ fullnameOverride: ""
 args:
 - server
 
+deploymentStrategy:
+  rollingUpdate:
+    maxUnavailable: 1
+  type: RollingUpdate
+
 secrets: []
 # - name: app-secret-key
 #   data:
