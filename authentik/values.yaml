@@ -127,39 +127,45 @@ ingress:
     hosts:
       - authentik.mcswain.dev
 
-# extraContainers:
-# - image: ghcr.io/goauthentik/server:2023.8.3@sha256:ffa8559564c3d11c549d385ee231a4ce8dfa92abb37f50ce9df26105f023a077
-#   imagePullPolicy: IfNotPresent
-#   name: worker
-#   args:
-#   - worker
-#   envFrom:
-#   - configMapRef:
-#       name: authentik-config
-#   - secretRef:
-#       name: authentik-secrets
-#   resources:
-#     limits:
-#       cpu: 100m
-#       memory: 256Mi
-#     requests:
-#       cpu: 10m
-#       memory: 128Mi
+extraContainers:
+- image: ghcr.io/goauthentik/server:2023.8.3@sha256:ffa8559564c3d11c549d385ee231a4ce8dfa92abb37f50ce9df26105f023a077
+  imagePullPolicy: IfNotPresent
+  name: worker
+  args:
+  - worker
+  envFrom:
+  - configMapRef:
+      name: authentik-config
+  - secretRef:
+      name: authentik-secrets
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 10m
+      memory: 128Mi
 
 probes:
   liveness:
     httpGet:
       path: /
       port: 9000
+    failureThreshold: 5
+    periodSeconds: 30
+    timeoutSeconds: 10
   readiness:
     httpGet:
       path: /
       port: 9000
+    failureThreshold: 5
+    periodSeconds: 30
+    timeoutSeconds: 10
 
 resources:
   limits:
-    cpu: 100m
-    memory: 256Mi
+    cpu: 300m
+    memory: 512Mi
   requests:
     cpu: 10m
     memory: 128Mi
