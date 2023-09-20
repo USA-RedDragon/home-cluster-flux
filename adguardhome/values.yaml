@@ -8,7 +8,7 @@ image:
   repository: adguard/adguardhome
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.107.38@sha256:fb4d95a462d05b0a3230ed1837fae7a1749ce830f9cc1ec8d3edd53e0edfbed8"
+  tag: "v0.107.38@sha256:43ec119419a91537de0698c9b762c38fc548541ae5a67573eff551fd346e0525"
 
 imagePullSecrets:
 - name: registry-docker-hub
