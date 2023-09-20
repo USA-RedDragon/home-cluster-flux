@@ -64,6 +64,8 @@ env:
   value: https://paperless.mcswain.dev
 - name: PAPERLESS_TIME_ZONE
   value: America/Chicago
+- name: PAPERLESS_CONSUMER_POLLING
+  value: '10'
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
