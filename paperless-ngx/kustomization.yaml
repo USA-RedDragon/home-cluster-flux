@@ -4,6 +4,7 @@ namespace: paperless-ngx
 resources:
   - ns.yaml
   - helm.yaml
+  - external-svc.yaml
 configMapGenerator:
   - name: chart-values
     files:
