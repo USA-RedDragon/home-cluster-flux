@@ -171,10 +171,16 @@ probes:
     httpGet:
       path: /
       port: 8000
+    failureThreshold: 5
+    periodSeconds: 30
+    timeoutSeconds: 10
   readiness:
     httpGet:
       path: /
       port: 8000
+    failureThreshold: 5
+    periodSeconds: 30
+    timeoutSeconds: 10
 
 resources:
   limits:
