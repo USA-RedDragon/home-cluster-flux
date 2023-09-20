@@ -122,8 +122,6 @@ ingress:
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: cloudflare
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/auth-signin: https://auth.mcswain.dev/oauth2/start?rd=$scheme://$http_host$escaped_request_uri
-    nginx.ingress.kubernetes.io/auth-url: https://auth.mcswain.dev/oauth2/auth
   hosts:
   - host: authentik.mcswain.dev
     paths:
