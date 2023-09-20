@@ -50,7 +50,8 @@ env:
   value: 192.168.1.128
 - name: TZ
   value: America/Chicago
-
+- name: PATTERN
+  value: '"scan"_dd.mm.yyyy_hh:MM:ss'
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
