@@ -11,6 +11,9 @@ spec:
   - Ingress
   ingress:
   - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: aredn-dmrhub
     - ipBlock:
         cidr: 0.0.0.0/0
     ports:
