@@ -47,7 +47,7 @@ envFrom:
 
 env:
 - name: CORS_HOSTS
-  value: "http://ki5vmf-server.local.mesh:3005,https://dmr.mcswain.dev"
+  value: "http://10.54.25.5,http://ki5vmf-dmrhub.local.mesh,https://dmr.mcswain.dev"
 - name: PG_USER
   value: dmr
 - name: PG_DATABASE
