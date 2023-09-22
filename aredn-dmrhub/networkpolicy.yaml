@@ -1,0 +1,24 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: aredn-dmrhub
+  namespace: aredn-dmrhub
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: aredn-dmrhub
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: dmrhub
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: dmrhub
+    - ipBlock:
+        cidr: 18.189.227.206/32
