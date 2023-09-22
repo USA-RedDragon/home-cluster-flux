@@ -48,7 +48,20 @@ configs:
       events {
         worker_connections 1024;
       }
+      stream {
+        upstream dmrhub {
+          server dmr-udp-input.dmrhub.svc.cluster.local:62031;
+        }
+
+        server {
+          listen 62031 udp;
+          proxy_pass dmrhub;
+        }
+      }
       http {
+        upstream dmrhub {
+          server dmrhub-app.dmrhub.svc.cluster.local:3005;
+        }
         include mime.types;
         server {
           listen 80;
@@ -59,8 +72,27 @@ configs:
           client_max_body_size 16M;
 
           location / {
-            root /usr/share/nginx/html;
-            index index.html index.htm;
+            proxy_pass http://dmrhub;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; 
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Port $server_port;
+          }
+
+          location /ws {
+            proxy_pass http://dmrhub;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "Upgrade";
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Port $server_port;
+            proxy_set_header Sec-WebSocket-Extensions $http_sec_websocket_extensions;
+            proxy_set_header Sec-WebSocket-Key $http_sec_websocket_key;
+            proxy_set_header Sec-WebSocket-Version $http_sec_websocket_version;
           }
         }
       }
@@ -105,6 +137,8 @@ configs:
           PlParam "interval" "30"
           PlParam "timeout" "300"
           PlParam "name" "KI5VMF-DMRHUB"
+          PlParam "service" "http://KI5VMF-DMRHUB.local.mesh:80/|tcp|DMRHub WebUI"
+          PlParam "service" "udp://KI5VMF-DMRHUB.local.mesh:62031/|tcp|DMR Data Port"
       }
 
       Interface "tun60"
