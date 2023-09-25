@@ -346,7 +346,7 @@ alertmanager:
       nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
       nginx.ingress.kubernetes.io/auth-signin: https://authentik.mcswain.dev/outpost.goauthentik.io/start?rd=$escaped_request_uri
       nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
-      nginx.ingress.kubernetes.io/auth-url: https://authentik.mcswain.dev/outpost.goauthentik.io/auth/nginx
+      nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
 
     labels: {}
 
@@ -922,7 +922,7 @@ grafana:
       nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
       nginx.ingress.kubernetes.io/auth-signin: https://authentik.mcswain.dev/outpost.goauthentik.io/start?rd=$escaped_request_uri
       nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
-      nginx.ingress.kubernetes.io/auth-url: https://authentik.mcswain.dev/outpost.goauthentik.io/auth/nginx
+      nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
 
     ## Labels to be added to the Ingress
     ##
@@ -2719,7 +2719,7 @@ prometheus:
       nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
       nginx.ingress.kubernetes.io/auth-signin: https://authentik.mcswain.dev/outpost.goauthentik.io/start?rd=$escaped_request_uri
       nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
-      nginx.ingress.kubernetes.io/auth-url: https://authentik.mcswain.dev/outpost.goauthentik.io/auth/nginx
+      nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
 
     labels: {}
 
