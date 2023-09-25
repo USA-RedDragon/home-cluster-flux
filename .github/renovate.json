@@ -10,5 +10,15 @@
     "helm-values": {
         "enabled": true,
         "fileMatch": ["\\.ya?ml$"]
-    }
+    },
+    "packageRules": [
+        {
+            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/papermc$"],
+            "automerge": false
+        },
+        {
+            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/fabric$"],
+            "automerge": false
+        }
+    ]
 }
