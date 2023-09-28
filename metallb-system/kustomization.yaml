@@ -4,5 +4,3 @@ namespace: metallb-system
 resources:
   - ns.yaml
   - helm.yaml
-  - pool.yaml
-  - l2.yaml
