@@ -6,12 +6,12 @@ metadata:
   name: flux-system
   namespace: flux-system
 spec:
-  interval: 60m0s
+  interval: 1m0s
   ref:
     branch: main
   secretRef:
     name: flux-system
-  url: ssh://git@github.com/USA-RedDragon/home-cluster-flux
+  url: https://github.com/USA-RedDragon/home-cluster-flux.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -19,13 +19,9 @@ metadata:
   name: flux-system
   namespace: flux-system
 spec:
-  interval: 60m0s
+  interval: 10m0s
   path: ./
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-gpg
