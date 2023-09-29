@@ -19,6 +19,8 @@ spec:
         cidr: 172.16.0.0/12
     - ipBlock:
         cidr: 172.17.0.0/12
+    - ipBlock:
+        cidr: 172.18.0.0/12
   egress:
   - to:
     - namespaceSelector:
@@ -32,3 +34,5 @@ spec:
         cidr: 172.16.0.0/12
     - ipBlock:
         cidr: 172.17.0.0/12
+    - ipBlock:
+        cidr: 172.18.0.0/12
