@@ -31,10 +31,10 @@ metadata:
   namespace: flux-system
   annotations:
     cert-manager.io/cluster-issuer: cloudflare
-    kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
+  ingressClassName: nginx
   rules:
   - host: webhook.flux.mcswain.dev
     http:

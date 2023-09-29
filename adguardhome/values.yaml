@@ -94,7 +94,6 @@ persistentVolumes:
 ingress:
   enabled: true
   annotations:
-    kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: cloudflare
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -102,6 +101,7 @@ ingress:
     nginx.ingress.kubernetes.io/auth-signin: https://authentik.mcswain.dev/outpost.goauthentik.io/start?rd=$escaped_request_uri
     nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
     nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
+  ingressClassName: nginx
   hosts:
   - host: adguard.mcswain.dev
     paths:
