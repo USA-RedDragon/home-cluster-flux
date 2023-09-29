@@ -11,7 +11,7 @@ spec:
     branch: main
   secretRef:
     name: flux-system
-  url: https://github.com/USA-RedDragon/home-cluster-flux.git
+  url: ssh://git@github.com/USA-RedDragon/home-cluster-flux
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
