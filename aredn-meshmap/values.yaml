@@ -158,11 +158,15 @@ initContainers:
     ip link del wg0 || true && \
     wg-quick up /etc/wireguard/wg0.conf && \
     iptables -P OUTPUT DROP && \
+    iptables -I OUTPUT 1 -d $GW/32 -j ACCEPT && \
+    iptables -I OUTPUT 1 -d 172.27.1.0/24 -j ACCEPT && \
     iptables -I OUTPUT 1 -d 172.17.0.0/16 -j ACCEPT && \
     iptables -I OUTPUT 1 -d 172.18.0.0/16 -j ACCEPT && \
     iptables -I OUTPUT 1 -d 10.0.0.0/8 -j ACCEPT && \
     iptables -I OUTPUT 1 -o wg0 -j ACCEPT && \
-    ip r add default via $GW dev wg0
+    ip r del default && \
+    ip r add default via 172.27.1.1 dev wg0 && \
+    ip r add 172.18.0.0/16 via $GW dev eth0
   securityContext:
     privileged: true
     capabilities:
