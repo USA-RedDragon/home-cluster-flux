@@ -153,6 +153,7 @@ initContainers:
   - -c
   - |
     sleep 10 && \
+    ip r && \
     wg-quick up /etc/wireguard/wg0.conf && \
     iptables -P OUTPUT DROP && \
     iptables -I OUTPUT 1 -d 172.17.0.0/16 -j ACCEPT && \
