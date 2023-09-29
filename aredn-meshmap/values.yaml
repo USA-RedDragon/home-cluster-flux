@@ -159,6 +159,7 @@ initContainers:
     wg-quick up /etc/wireguard/wg0.conf && \
     iptables -P OUTPUT DROP && \
     iptables -I OUTPUT 1 -d 172.17.0.0/16 -j ACCEPT && \
+    iptables -I OUTPUT 1 -d 172.18.0.0/16 -j ACCEPT && \
     iptables -I OUTPUT 1 -d 10.0.0.0/8 -j ACCEPT && \
     iptables -I OUTPUT 1 -o wg0 -j ACCEPT && \
     ip r add default via $GW dev wg0
