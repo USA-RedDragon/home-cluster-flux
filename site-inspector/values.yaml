@@ -128,10 +128,12 @@ probes:
     httpGet:
       path: /
       port: 808
+    initialDelaySeconds: 20
   readiness:
     httpGet:
       path: /
       port: 808
+    initialDelaySeconds: 20
 
 resources:
   limits:
