@@ -158,7 +158,6 @@ initContainers:
     iptables -I OUTPUT 1 -d 172.17.0.0/16 -j ACCEPT && \
     iptables -I OUTPUT 1 -d 10.0.0.0/8 -j ACCEPT && \
     iptables -I OUTPUT 1 -o wg0 -j ACCEPT && \
-    ip r del default && \
     ip r add default via 172.17.0.1 dev wg0
   securityContext:
     privileged: true
