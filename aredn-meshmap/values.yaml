@@ -82,7 +82,7 @@ service:
   type: ClusterIP
   ports:
   - name: http
-    port: 8081
+    port: 80
 
 persistentVolumes:
 - name: mesh-data
@@ -118,7 +118,7 @@ ingress:
   hosts:
   - host: meshmap.aredn.mcswain.dev
     paths:
-    - port: 8081
+    - port: 80
       path: /
       pathType: Prefix
   tls:
