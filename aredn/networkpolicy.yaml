@@ -35,7 +35,7 @@ spec:
         matchLabels:
           kubernetes.io/metadata.name: aredn-meshmap
     - ipBlock:
-        cidr: 18.189.227.206/32
+        cidr: 174.129.33.73/32
     - ipBlock:
         cidr: 10.0.0.0/8
     - ipBlock:
