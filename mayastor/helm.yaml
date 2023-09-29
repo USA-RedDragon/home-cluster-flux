@@ -34,7 +34,7 @@ spec:
         - name: registry-docker-hub
     etcd:
       persistence:
-        storageClass: openebs-hostpath
+        storageClass: openebs-jiva-csi-default
     loki-stack:
       enabled: false
     obs:
