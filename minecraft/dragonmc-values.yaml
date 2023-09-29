@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/papermc
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.20.1@sha256:46a6d598a2a6260b3795a073240915acb0f581f2e1ae4c29fa604deee87f74b2"
+  tag: "1.20.1@sha256:e89030da8acf93d703eb7683b3bc1d6297c8e9bc0bc405a4f16660b2767af28e"
 
 imagePullSecrets: []
 nameOverride: ""
