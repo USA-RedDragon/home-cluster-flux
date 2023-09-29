@@ -109,13 +109,13 @@ persistentVolumes:
 ingress:
   enabled: true
   annotations:
-    kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: cloudflare
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     # nginx.ingress.kubernetes.io/configuration-snippet: |
     #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
     #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+  ingressClassName: nginx
   hosts:
   - host: dynmap.mc.mcswain.dev
     paths:
