@@ -8,9 +8,9 @@ spec:
   ref:
     branch: main
   secretRef:
-    name: secrets-auth
+    name: sensitive-auth
   timeout: 60s
-  url: https://github.com/USA-RedDragon/home-cluster-sensitive
+  url: ssh://git@github.com/USA-RedDragon/home-cluster-sensitive.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
