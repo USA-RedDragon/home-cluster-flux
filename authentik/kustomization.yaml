@@ -4,6 +4,7 @@ namespace: authentik
 resources:
   - ns.yaml
   - pdb.yaml
+  - prom.yaml
   - rbac.yaml
   - helm.yaml
   - redis-helm.yaml
