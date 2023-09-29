@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: openebs-jiva-csi-iscsiadm
-  namespace: openebs
+  namespace: openebs-jiva
 data:
   iscsiadm: |
     #!/bin/sh
