@@ -2,28 +2,29 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: openebs-localpv
-  namespace: openebs-localpv
+  name: openebs-jiva
+  namespace: openebs-jiva
 spec:
   interval: 1m0s
-  url: https://openebs.github.io/dynamic-localpv-provisioner
+  url: https://openebs.github.io/jiva-operator
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: openebs-localpv
-  namespace: openebs-localpv
+  name: openebs-jiva
+  namespace: openebs-jiva
 spec:
   interval: 1m0s
-  releaseName: openebs-localpv
+  releaseName: openebs-jiva
   chart:
     spec:
-      chart: localpv-provisioner
+      chart: jiva
       sourceRef:
         kind: HelmRepository
-        name: openebs-localpv
+        name: openebs-jiva
       version: '>=3.4.1 <3.5.0'
       interval: 1m0s
   values:
-    analytics:
-      enabled: false
+    openebsLocalpv:
+      analytics:
+        enabled: false
