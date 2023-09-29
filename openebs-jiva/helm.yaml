@@ -28,3 +28,25 @@ spec:
     openebsLocalpv:
       analytics:
         enabled: false
+  postRenderers:
+  - kustomize:
+      # https://www.talos.dev/v1.5/kubernetes-guides/configuration/replicated-local-storage-with-openebs-jiva/
+      patchesJson6902:
+      - patch:
+        - op: add
+          path: /spec/template/spec/hostPID
+          value: true
+        target:
+          kind: DaemonSet
+          name: openebs-jiva-csi-node
+      - patch:
+          # Use iscsiadm in the correct namespace
+          - op: replace
+            path: '/data/iscsiadm'
+            value: |
+              #!/bin/sh
+              iscsid_pid=$(pgrep iscsid)
+              nsenter --mount="/proc/${iscsid_pid}/ns/mnt" --net="/proc/${iscsid_pid}/ns/net" -- /usr/local/sbin/iscsiadm "$@"
+        target:
+          kind: ConfigMap
+          name: openebs-jiva-csi-iscsiadm
