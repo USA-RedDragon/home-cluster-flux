@@ -145,6 +145,7 @@ initContainers:
   - -c
   - |
     set -x && \
+    sleep 10 && \
     ip l del lan 2>/dev/null || true && \
     wg-quick up /etc/wireguard/lan.conf && \
     ip6tables -P INPUT DROP && \
