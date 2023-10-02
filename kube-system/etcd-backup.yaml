@@ -54,5 +54,5 @@ spec:
               path: /mnt/data/backups/Homelab/etcd
           - name: etcd
             hostPath:
-              path: /system/secrets/etcd/
+              path: /system/secrets/etcd
               type: Directory
