@@ -4,4 +4,6 @@ namespace: kube-system
 resources:
   - metrics-server.yaml
   - etcd-backup.yaml
+  - etcd-backup-role.yaml
+  - etcd-backup-talos-serviceaccount.yaml
   - oidc.yaml
