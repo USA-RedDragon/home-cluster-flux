@@ -131,7 +131,7 @@ resources:
   limits:
     memory: 300Mi
   requests:
-    memory: 100Mi
+    memory: 256Mi
 
 nodeSelector: {}
 
