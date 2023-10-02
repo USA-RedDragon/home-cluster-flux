@@ -149,10 +149,10 @@ extraContainers:
   resources:
     limits:
       cpu: 300m
-      memory: 512Mi
+      memory: 1400Mi
     requests:
       cpu: 10m
-      memory: 128Mi
+      memory: 1Gi
 
 probes:
   liveness:
