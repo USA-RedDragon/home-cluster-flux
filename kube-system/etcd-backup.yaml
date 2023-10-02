@@ -16,7 +16,7 @@ spec:
           - name: registry-docker-hub
           containers:
           - name: backup
-            image: ghcr.io/siderolabs/talosctl:v1.5.3
+            image: alpine:3.18.4
             imagePullPolicy: IfNotPresent
             volumeMounts:
             - name: backups
@@ -31,7 +31,9 @@ spec:
             - /bin/sh
             - -c
             - |
-              back=$(date +%s) \
+              wget -O /usr/local/bin/talosctl https://github.com/siderolabs/talos/releases/download/v1.5.3/talosctl-linux-amd64 \
+              && chmod +x /usr/local/bin/talosctl \
+              && back=$(date +%s) \
               && talosctl -n 192.168.1.254 etcd snapshot /tmp/etcd-alpha.kubernetes-$back.db \
               && gzip -9 /tmp/etcd-alpha.kubernetes-$back.db \
               && mv /tmp/etcd-alpha.kubernetes-$back.db.gz /backups/etcd-alpha.kubernetes-$back.db.gz \
