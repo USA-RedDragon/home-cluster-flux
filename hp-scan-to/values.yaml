@@ -4,6 +4,8 @@
 
 replicaCount: 1
 
+hostname: paperless
+
 image:
   repository: manuc66/node-hp-scan-to
   pullPolicy: IfNotPresent
