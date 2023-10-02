@@ -19,3 +19,9 @@ spec:
       selector:
         dnsZones:
         - mcswain.dev
+        - jacob.network
+        - ki5vmf.radio
+        - mcswain.cloud
+        - mcswain.photography
+        - mcswain.wiki
+        - thisspacedoesnotexist.com
