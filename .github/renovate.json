@@ -11,6 +11,19 @@
         "enabled": true,
         "fileMatch": ["\\.ya?ml$"]
     },
+    "regexManagers": [
+        {
+            "fileMatch": [
+                "(^|/)kube-system\\/etcd-backup\\.yaml"
+            ],
+            "matchStrings": [
+                "github\\.com\\/siderolabs\\/talos\\/releases\\/download\\/(?<currentValue>v.*)\\/talosctl-linux-amd64"
+            ],
+            "depNameTemplate": "siderolabs/talos",
+            "datasourceTemplate": "github-releases",
+            "versioningTemplate": "semver"
+        }
+    ],
     "packageRules": [
         {
             "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/papermc$"],
