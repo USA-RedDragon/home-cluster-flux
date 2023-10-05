@@ -50,6 +50,28 @@ env:
   value: 'false'
 - name: WEBSOCKET_ENABLED
   value: 'true'
+- name: DOMAIN
+  value: https://bitwarden.mcswain.dev
+- name: PUSH_ENABLED
+  value: 'true'
+- name: SMTP_SECURITY
+  value: starttls
+- name: SMTP_HOST
+  value: email.mcswain.dev
+- name: SMTP_PORT
+  value: '465'
+- name: SMTP_USERNAME
+  value: vaultwarden
+- name: SIGNUPS_VERIFY
+  value: 'true'
+- name: PASSWORD_ITERATIONS
+  value: '350000'
+- name: SMTP_FROM
+  value: bitwarden@mcswain.dev
+- name: SMTP_FROM_NAME
+  value: Bitwarden
+- name: REQUIRE_DEVICE_EMAIL
+  value: 'false'
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
