@@ -55,7 +55,7 @@ env:
 - name: PUSH_ENABLED
   value: 'true'
 - name: SMTP_SECURITY
-  value: starttls
+  value: force_tls
 - name: SMTP_HOST
   value: email.mcswain.dev
 - name: SMTP_PORT
