@@ -39,13 +39,17 @@ configs: []
 #       [test]
 #       value=1
 
-envFrom: []
-# - secretRef:
-#     name: app-creds
+envFrom:
+- secretRef:
+    name: vaultwarden-creds
 # - configMapRef:
 #     name: app-config
 
-env: []
+env:
+- name: SIGNUPS_ALLOWED
+  value: 'false'
+- name: WEBSOCKET_ENABLED
+  value: 'true'
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
@@ -71,7 +75,7 @@ service:
   - name: http
     port: 80
   - name: websockets
-    port: 3011
+    port: 3012
 
 persistentVolumes:
 - name: data
@@ -109,6 +113,9 @@ ingress:
     - port: 80
       path: /
       pathType: Prefix
+    - port: 3012
+      path: /notifications/hub
+      pathType: Exact
   tls:
   - secretName: bitwarden-mcswain-dev-tls
     hosts:
