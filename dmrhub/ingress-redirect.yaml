@@ -1,0 +1,106 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains; preload";
+    nginx.ingress.kubernetes.io/permanent-redirect: https://dmrhub.net
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  name: dmrhub-app-redirect
+  namespace: dmrhub
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: dmr.mcswain.dev
+    http:
+      paths:
+      - backend:
+          service:
+            name: dmrhub-app
+            port:
+              number: 3005
+        path: /
+        pathType: Prefix
+  - host: dmrhub.app
+    http:
+      paths:
+      - backend:
+          service:
+            name: dmrhub-app
+            port:
+              number: 3005
+        path: /
+        pathType: Prefix
+  - host: dmrhub.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: dmrhub-app
+            port:
+              number: 3005
+        path: /
+        pathType: Prefix
+  - host: dmrhub.org
+    http:
+      paths:
+      - backend:
+          service:
+            name: dmrhub-app
+            port:
+              number: 3005
+        path: /
+        pathType: Prefix
+  - host: www.dmrhub.app
+    http:
+      paths:
+      - backend:
+          service:
+            name: dmrhub-app
+            port:
+              number: 3005
+        path: /
+        pathType: Prefix
+  - host: www.dmrhub.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: dmrhub-app
+            port:
+              number: 3005
+        path: /
+        pathType: Prefix
+  - host: www.dmrhub.net
+    http:
+      paths:
+      - backend:
+          service:
+            name: dmrhub-app
+            port:
+              number: 3005
+        path: /
+        pathType: Prefix
+  - host: www.dmrhub.org
+    http:
+      paths:
+      - backend:
+          service:
+            name: dmrhub-app
+            port:
+              number: 3005
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - dmr.mcswain.dev
+    - dmrhub.cloud
+    - dmrhub.app
+    - dmrhub.org
+    - www.dmrhub.cloud
+    - www.dmrhub.app
+    - www.dmrhub.org
+    - www.dmrhub.net
+    secretName: dmrhub-net-redirect-tls
