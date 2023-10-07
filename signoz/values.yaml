@@ -1,0 +1,187 @@
+global:
+  storageClass: mayastor-nvme
+  imageRegistry: docker.io
+  imagePullSecrets:
+  - name: registry-docker-hub
+  cloud: other
+
+clickhouse:
+  # -- Clickhouse password
+  password: 27ff0399-0d3a-4bd8-919d-17c2181e6fb9
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+  #   limits:
+  #     cpu: 2000m
+  #     memory: 4Gi
+
+  persistence:
+    enabled: true
+    size: 20Gi
+
+  settings:
+    prometheus/endpoint: /metrics
+    prometheus/port: 9363
+    prometheus/metrics: true
+    prometheus/events: true
+    prometheus/asynchronous_metrics: true
+
+queryService:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 100Mi
+    # limits:
+    #   cpu: 750m
+    #   memory: 1000Mi
+
+  persistence:
+    enabled: true
+    size: 1Gi
+
+
+frontend:
+  ingress:
+    enabled: false
+    className: ""
+    # -- Annotations to Frontend Ingress
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+      # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # -- Frontend Ingress Host names with their path details
+    hosts:
+      - host: frontend.domain.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            port: 3301
+    # -- Frontend Ingress TLS
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - frontend.domain.com
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 100Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 200Mi
+
+alertmanager:
+  ingress:
+    # -- Enable ingress for Alertmanager
+    enabled: false
+    # -- Ingress Class Name to be used to identify ingress controllers
+    className: ""
+    # -- Annotations to Alertmanager Ingress
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+      # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # -- Alertmanager Ingress Host names with their path details
+    hosts:
+      - host: alertmanager.domain.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            port: 9093
+    # -- Alertmanager Ingress TLS
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - alertmanager.domain.com
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 100Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 200Mi
+
+  persistence:
+    enabled: true
+    size: 100Mi
+
+otelCollector:
+  ingress:
+    # -- Enable ingress for OtelCollector
+    enabled: false
+    # -- Ingress Class Name to be used to identify ingress controllers
+    className: ""
+    # -- Annotations to OtelCollector Ingress
+    annotations: {}
+      # cert-manager.io/cluster-issuer: letsencrypt-prod
+      # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      # nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    # -- OtelCollector Ingress Host names with their path details
+    hosts:
+      - host: otelcollector.domain.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            port: 4318
+    # -- OtelCollector Ingress TLS
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - otelcollector.domain.com
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    # limits:
+    #   cpu: "1"
+    #   memory: 2Gi
+
+# Default values for OtelCollectorMetrics
+otelCollectorMetrics:
+  ports:
+    metrics:
+      enabled: true
+
+  ingress:
+    # -- Enable ingress for OtelCollectorMetrics
+    enabled: false
+    # -- Ingress Class Name to be used to identify ingress controllers
+    className: ""
+    # -- Annotations to OtelCollectorMetrics Ingress
+    annotations: {}
+      # cert-manager.io/cluster-issuer: letsencrypt-prod
+      # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      # nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    # -- OtelCollectorMetrics Ingress Host names with their path details
+    hosts:
+      - host: otelcollector-metrics.domain.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            port: 13133
+    # -- OtelCollectorMetrics Ingress TLS
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - otelcollector-metrics.domain.com
+
+  # -- Configure resource requests and limits. Update according to your own use
+  # case as these values might not be suitable for your workload.
+  # Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  #
+  # @default -- See `values.yaml` for defaults
+  resources:
+    requests:
+      cpu: 100m
+      memory: 100Mi
+    # limits:
+    #   cpu: "1"
+    #   memory: 2Gi
