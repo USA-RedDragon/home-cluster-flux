@@ -151,6 +151,26 @@ ingress:
     - port: 3005
       path: /
       pathType: Prefix
+  - host: www.dmrhub.app
+    paths:
+    - port: 3005
+      path: /
+      pathType: Prefix
+  - host: www.dmrhub.cloud
+    paths:
+    - port: 3005
+      path: /
+      pathType: Prefix
+  - host: www.dmrhub.net
+    paths:
+    - port: 3005
+      path: /
+      pathType: Prefix
+  - host: www.dmrhub.org
+    paths:
+    - port: 3005
+      path: /
+      pathType: Prefix
   tls:
   - secretName: dmr-mcswain-dev-tls
     hosts:
@@ -159,6 +179,10 @@ ingress:
       - dmrhub.app
       - dmrhub.org
       - dmrhub.net
+      - www.dmrhub.cloud
+      - www.dmrhub.app
+      - www.dmrhub.org
+      - www.dmrhub.net
 
 probes:
   liveness:
