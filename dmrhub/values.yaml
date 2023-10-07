@@ -126,63 +126,15 @@ ingress:
       more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains; preload";
   ingressClassName: nginx
   hosts:
-  - host: dmr.mcswain.dev
-    paths:
-    - port: 3005
-      path: /
-      pathType: Prefix
-  - host: dmrhub.app
-    paths:
-    - port: 3005
-      path: /
-      pathType: Prefix
-  - host: dmrhub.cloud
-    paths:
-    - port: 3005
-      path: /
-      pathType: Prefix
   - host: dmrhub.net
     paths:
     - port: 3005
       path: /
       pathType: Prefix
-  - host: dmrhub.org
-    paths:
-    - port: 3005
-      path: /
-      pathType: Prefix
-  - host: www.dmrhub.app
-    paths:
-    - port: 3005
-      path: /
-      pathType: Prefix
-  - host: www.dmrhub.cloud
-    paths:
-    - port: 3005
-      path: /
-      pathType: Prefix
-  - host: www.dmrhub.net
-    paths:
-    - port: 3005
-      path: /
-      pathType: Prefix
-  - host: www.dmrhub.org
-    paths:
-    - port: 3005
-      path: /
-      pathType: Prefix
   tls:
-  - secretName: dmr-mcswain-dev-tls
+  - secretName: dmrhub-net-tls
     hosts:
-      - dmr.mcswain.dev
-      - dmrhub.cloud
-      - dmrhub.app
-      - dmrhub.org
       - dmrhub.net
-      - www.dmrhub.cloud
-      - www.dmrhub.app
-      - www.dmrhub.org
-      - www.dmrhub.net
 
 probes:
   liveness:
