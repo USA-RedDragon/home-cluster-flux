@@ -53,9 +53,18 @@ configs:
           server dmr-udp-input.dmrhub.svc.cluster.local:62031;
         }
 
+        upstream openbridge {
+          server dmr-udp-input.dmrhub.svc.cluster.local:62032;
+        }
+
         server {
           listen 62031 udp;
           proxy_pass dmrhub;
+        }
+
+        server {
+          listen 62032 udp;
+          proxy_pass openbridge;
         }
       }
       http {
@@ -139,6 +148,7 @@ configs:
           PlParam "name" "KI5VMF-DMRHUB"
           PlParam "service" "http://KI5VMF-DMRHUB.local.mesh:80/|tcp|DMRHub WebUI"
           PlParam "service" "udp://KI5VMF-DMRHUB.local.mesh:62031/|tcp|DMR Data Port"
+          PlParam "service" "udp://KI5VMF-DMRHUB.local.mesh:62032/|tcp|DMR OpenBridge Port"
       }
 
       Interface "tun60"
