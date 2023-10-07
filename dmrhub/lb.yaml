@@ -14,4 +14,8 @@ spec:
       protocol: UDP
       port: 62031
       targetPort: 62031
+    - name: udp-openbridge
+      protocol: UDP
+      port: 62032
+      targetPort: 62032
   externalTrafficPolicy: Local

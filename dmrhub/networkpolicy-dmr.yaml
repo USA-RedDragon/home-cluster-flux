@@ -19,3 +19,5 @@ spec:
     ports:
     - protocol: UDP
       port: 62031
+    - protocol: UDP
+      port: 62032
