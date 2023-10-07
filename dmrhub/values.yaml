@@ -67,7 +67,7 @@ env:
 - name: OTLP_ENDPOINT
   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
 - name: OPENBRIDGE_PORT
-  value: "62032"
+  value: "62035"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
@@ -101,7 +101,7 @@ service:
     port: 62031
     protocol: UDP
   - name: openbridge-udp
-    port: 62032
+    port: 62035
     protocol: UDP
 
 persistentVolumes: []
