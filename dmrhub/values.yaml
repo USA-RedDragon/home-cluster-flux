@@ -47,7 +47,7 @@ envFrom:
 
 env:
 - name: CORS_HOSTS
-  value: "http://10.54.25.5,http://ki5vmf-dmrhub.local.mesh,https://dmr.mcswain.dev"
+  value: "http://10.54.25.5,http://ki5vmf-dmrhub.local.mesh,https://dmr.mcswain.dev,https://dmrhub.app,https://dmrhub.cloud,https://dmrhub.net,https://dmrhub.org"
 - name: PG_USER
   value: dmr
 - name: PG_DATABASE
@@ -132,10 +132,34 @@ ingress:
     - port: 3005
       path: /
       pathType: Prefix
+  - host: dmrhub.app
+    paths:
+    - port: 3005
+      path: /
+      pathType: Prefix
+  - host: dmrhub.cloud
+    paths:
+    - port: 3005
+      path: /
+      pathType: Prefix
+  - host: dmrhub.net
+    paths:
+    - port: 3005
+      path: /
+      pathType: Prefix
+  - host: dmrhub.org
+    paths:
+    - port: 3005
+      path: /
+      pathType: Prefix
   tls:
   - secretName: dmr-mcswain-dev-tls
     hosts:
       - dmr.mcswain.dev
+      - dmrhub.cloud
+      - dmrhub.app
+      - dmrhub.org
+      - dmrhub.net
 
 probes:
   liveness:
