@@ -2,7 +2,7 @@ global:
   storageClass: mayastor-nvme
   imageRegistry: docker.io
   imagePullSecrets:
-  - name: registry-docker-hub
+  - registry-docker-hub
   cloud: other
 
 clickhouse:
