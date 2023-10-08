@@ -8,6 +8,7 @@ resources:
   - networkpolicy-dmr.yaml
   - networkpolicy-http.yaml
   - ingress-redirect.yaml
+  - prom.yaml
 configMapGenerator:
   - name: chart-values
     files:

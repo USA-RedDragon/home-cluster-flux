@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/dmrhub
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.39"
+  tag: "v1.0.40"
 
 args: []
 imagePullSecrets: []
@@ -68,6 +68,8 @@ env:
   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
 - name: OPENBRIDGE_PORT
   value: "62035"
+- name: METRICS_PORT
+  value: "9001"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
@@ -97,6 +99,8 @@ service:
   ports:
   - name: http
     port: 3005
+  - name: metrics
+    port: 9001
   - name: dmr-udp
     port: 62031
     protocol: UDP
