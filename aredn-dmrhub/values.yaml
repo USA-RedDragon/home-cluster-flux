@@ -147,8 +147,8 @@ configs:
           PlParam "timeout" "300"
           PlParam "name" "KI5VMF-DMRHUB"
           PlParam "service" "http://KI5VMF-DMRHUB.local.mesh:80/|tcp|DMRHub WebUI"
-          PlParam "service" "udp://KI5VMF-DMRHUB.local.mesh:62031/|tcp|DMR Data Port"
-          PlParam "service" "udp://KI5VMF-DMRHUB.local.mesh:62035/|tcp|DMR OpenBridge Port"
+          PlParam "service" "udp://KI5VMF-DMRHUB.local.mesh:0/|tcp|DMR Data Port 62031"
+          PlParam "service" "udp://KI5VMF-DMRHUB.local.mesh:0/|tcp|DMR OpenBridge Port 62035"
       }
 
       Interface "tun60"
