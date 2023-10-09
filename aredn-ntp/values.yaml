@@ -1,0 +1,192 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/usa-reddragon/aredn-base
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "main@sha256:6911904b46a8f7aeda3b3a987a8625c914325c20c2781109ce86cdd18c44bfef"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+command:
+- /bin/sh
+- -c
+- |
+  ip addr add 10.54.25.6/32 dev eth0 \
+  && sysctl -w net.ipv4.ip_forward=1 \
+  && rsyslogd -n & \
+  cat /etc/resolv.conf > /tmp/resolv.conf.auto \
+  && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
+  && echo -e "#!/bin/sh\nexec vtund -n -f /etc/vtundsrv.conf KI5VMF-NTP-172-31-180-72 174.129.33.73" > /etc/s6/vtund/run \
+  && exec s6-svscan /etc/s6
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs:
+- name: olsrd-config
+  data:
+    olsrd.conf: |
+      DebugLevel 0
+      AllowNoInt yes
+      IpVersion 4
+      MainIp 10.54.25.6
+      LinkQualityAlgorithm "etx_ffeth"
+
+      LoadPlugin "olsrd_arprefresh.so.0.1"
+      {
+      }
+
+      LoadPlugin "olsrd_txtinfo.so.1.1"
+      {
+          PlParam "accept" "0.0.0.0"
+      }
+
+      LoadPlugin "olsrd_jsoninfo.so.1.1"
+      {
+          PlParam "accept" "0.0.0.0"
+      }
+
+      LoadPlugin "olsrd_dot_draw.so.0.3"
+      {
+          PlParam "accept" "0.0.0.0"
+          PlParam "port" "2004"
+      }
+
+      LoadPlugin "olsrd_watchdog.so.0.1"
+      {
+          PlParam "file" "/tmp/olsrd.watchdog"
+          PlParam "interval" "5"
+      }
+
+      LoadPlugin "olsrd_nameservice.so.0.4"
+      {
+          PlParam "sighup-pid-file" "/var/run/dnsmasq/dnsmasq.pid"
+          PlParam "interval" "30"
+          PlParam "timeout" "300"
+          PlParam "name" "KI5VMF-NTP"
+          PlParam "service" "udp://KI5VMF-NTP.local.mesh:123/|udp|NTP Server"
+      }
+
+      Interface "tun60"
+      {
+          Ip4Broadcast 255.255.255.255
+          Mode "ether"
+      }
+
+      Interface "eth0"
+      {
+          Mode "ether"
+      }
+
+envFrom: []
+# - secretRef:
+#     name: app-creds
+# - configMapRef:
+#     name: app-config
+
+env: {}
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations:
+  backup.velero.io/backup-volumes-excludes: server-vtun-config,olsrd-config,nginx-config
+
+podSecurityContext:
+  privileged: true
+  capabilities:
+    add:
+    - NET_ADMIN
+
+service:
+  type: ClusterIP
+  ports:
+  - name: ntp
+    port: 123
+    protocol: UDP
+
+persistentVolumes:
+- name: olsrd-config
+  mountPath: /etc/olsrd
+  configMap:
+    name: olsrd-config
+- name: server-vtun-config
+  mountPath: /etc/vtundsrv.conf
+  subPath: vtundsrv.conf
+  secret:
+    secretName: server-vtun-config
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+extraContainers:
+- name: ntp
+  image: cturra/ntp@sha256:44b5e5ddf383aab09450190a3689488781bc029cd4c6881b4a76dba577492787
+  imagePullPolicy: IfNotPresent
+  ports:
+    - containerPort: 123
+      protocol: UDP
+      name: ntp
+
+ingress:
+  enabled: false
+
+probes: {}
+  # liveness:
+  #   httpGet:
+  #     path: /health
+  #     port: 81
+  # readiness:
+  #   httpGet:
+  #     path: /health
+  #     port: 81
+
+resources:
+  limits:
+    cpu: 20m
+    memory: 12Mi
+  requests:
+    cpu: 10m
+    memory: 6Mi
+
+initContainers: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file

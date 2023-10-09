@@ -3,3 +3,11 @@ kind: Kustomization
 namespace: aredn-ntp
 resources:
   - ns.yaml
+  - helm.yaml
+  - networkpolicy.yaml
+configMapGenerator:
+  - name: chart-values
+    files:
+      - values.yaml=values.yaml
+configurations:
+  - kustomizeconfig.yaml
