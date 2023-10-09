@@ -83,7 +83,7 @@ configs:
           PlParam "interval" "30"
           PlParam "timeout" "300"
           PlParam "name" "KI5VMF-NTP"
-          PlParam "service" "udp://KI5VMF-NTP.local.mesh:123/|udp|NTP Server"
+          PlParam "service" "http://KI5VMF-NTP.local.mesh:0/|udp|NTP Server"
       }
 
       Interface "tun60"
