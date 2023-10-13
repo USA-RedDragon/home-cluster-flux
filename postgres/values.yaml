@@ -8,7 +8,7 @@ image:
   repository: postgres
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "16.0@sha256:1f15664bb5e0286cf5c68a26b4fdae13e3905ae632821c355b043adee2254509"
+  tag: "16.0@sha256:b46651665b72cf3b05b84a6f09579ec5a1e6835037c3d5d6a7f6305033f12eb2"
 
 imagePullSecrets:
 - name: registry-docker-hub
