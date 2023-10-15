@@ -57,7 +57,7 @@ env: []
 
 podAnnotations:
   app.kubernetes.io/name: rsync-docker
-  backup.velero.io/backup-volumes-excludes: data2
+  backup.velero.io/backup-volumes-excludes: data
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -77,12 +77,12 @@ service:
     port: 80
 
 persistentVolumes:
-- name: data2
+- name: data
   mountPath: /usr/share/nginx
   subPath: html
   size: 1Gi
   persistentVolumeClaim:
-    name: data2
+    name: data
     storageClass: mayastor-nvme
 # - name: config
 #   mountPath: /config
