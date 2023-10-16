@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/meshmap
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "k8s@sha256:5a89b5acd9cf0353c33f5e84c2ecc9a64b49776852a3195c81a6579dc9ff3892"
+  tag: "k8s@sha256:0463f8cc91b977ddce2920a83c8df5a6b0534cca12b31570599604d18e06a44b"
 
 imagePullSecrets: []
 nameOverride: ""
