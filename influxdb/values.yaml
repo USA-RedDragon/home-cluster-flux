@@ -8,7 +8,7 @@ image:
   repository: influxdb
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.7.1-alpine@sha256:7b89691514a7ddc6bdd327821f7985adb176311d4278cead5d81fec17582d016"
+  tag: "2.7.1-alpine@sha256:c96cd67e9171a9f4055f77d5be1826060ee976065775fa747efb76855a9a054c"
 
 imagePullSecrets:
 - name: registry-docker-hub
