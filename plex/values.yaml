@@ -8,7 +8,7 @@ image:
   repository: lscr.io/linuxserver/plex
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.32.6@sha256:d125d36cc26129936e429b4c9d0964a729a9a9d21ee5f9a03ac73dd6b7137981"
+  tag: "1.32.6@sha256:7e4610132bbb268a70e778908c5e070a0485a08d0106436cfdd2967d2a15e8ee"
 
 imagePullSecrets: []
 nameOverride: ""
