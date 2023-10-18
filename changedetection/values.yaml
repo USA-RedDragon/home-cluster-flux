@@ -128,7 +128,7 @@ ingress:
       - changedetection.mcswain.dev
 
 extraContainers:
-- image: browserless/chrome:latest@sha256:b22440f456e1ecc37282288e4b4bfac1dcc51c394e4f83ddcaf0feb4019c9156
+- image: browserless/chrome:latest@sha256:44c50a31b7f2a4890c43e23337f8af5f67e5b726eba51870cc39e50dac34692e
   imagePullPolicy: IfNotPresent
   name: chrome
   env:
