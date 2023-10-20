@@ -118,7 +118,7 @@ ingress:
       - inspector.mcswain.dev
 
 extraContainers:
-- image: redis:7.2.1-alpine
+- image: redis:7.2.2-alpine
   imagePullPolicy: IfNotPresent
   name: redis
   resources: {}
