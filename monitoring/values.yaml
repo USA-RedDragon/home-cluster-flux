@@ -3286,7 +3286,7 @@ prometheus:
     ## port to 2379 and allow etcd scraping provided it is running on all Kubernetes master nodes
     ##
     additionalScrapeConfigs:
-    - job_name: "prometheus"
+    - job_name: "aredn"
       metrics_path: /cgi-bin/metrics
       static_configs:
       - targets: ["192.168.1.140:8080"]
@@ -3295,6 +3295,18 @@ prometheus:
       - targets: ["kp4djt.zapto.org:84"]
         labels:
           _aredn_node: KP4DJT-hAP
+    - job_name: "node_exporter_aredn"
+      metrics_path: /metrics
+      static_configs:
+      - targets: ["aredn-cloud-node.mcswain.cloud:9100"]
+        labels:
+          _aredn_node: KI5VMF-CLOUD-TUNNEL
+      - targets: ["aredn-cloud-node.mcswain.cloud:9001"]
+        labels:
+          _aredn_node: KI5VMF-CLOUD-TUNNEL
+      - targets: ["aredn-cloud-node.mcswain.cloud:9002"]
+        labels:
+          _aredn_node: KI5VMF-CLOUD-TUNNEL-supernode
     # - job_name: kube-etcd
     #   kubernetes_sd_configs:
     #     - role: node
