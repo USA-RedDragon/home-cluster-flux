@@ -1,0 +1,32 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: rdio-scanner
+  namespace: rdio-scanner
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: rdio-scanner
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: nginx
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: uptime-kuma
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: nginx
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
