@@ -84,7 +84,7 @@ service:
 
 persistentVolumes:
 - name: sdr-recordings
-  mountPath: /recordings
+  mountPath: /mnt/sdr-recordings
   nfs:
     path: /mnt/smr-scratch-noenc/sdr-recordings
     server: 192.168.1.135
