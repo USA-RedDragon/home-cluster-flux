@@ -1,0 +1,20 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: rdio-scanner
+  namespace: rdio-scanner
+spec:
+  interval: 60m0s
+  releaseName: rdio-scanner
+  chart:
+    spec:
+      chart: app
+      sourceRef:
+        kind: HelmRepository
+        name: usa-reddragon
+        namespace: flux-system
+      version: '>=0.1.28 <1.0.0'
+      interval: 60m0s
+  valuesFrom:
+    - kind: ConfigMap
+      name: chart-values
