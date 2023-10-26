@@ -1,0 +1,38 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: aredn-scanner
+  namespace: aredn-scanner
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: aredn-scanner
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: rdio-scanner
+    - ipBlock:
+        cidr: 172.16.0.0/16
+    - ipBlock:
+        cidr: 172.17.0.0/16
+    - ipBlock:
+        cidr: 172.18.0.0/16
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: rdio-scanner
+    - ipBlock:
+        cidr: 174.129.33.73/32
+    - ipBlock:
+        cidr: 10.0.0.0/8
+    - ipBlock:
+        cidr: 172.16.0.0/16
+    - ipBlock:
+        cidr: 172.17.0.0/16
+    - ipBlock:
+        cidr: 172.18.0.0/16
