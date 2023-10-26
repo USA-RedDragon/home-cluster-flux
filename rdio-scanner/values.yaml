@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/rdio-scanner
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:52a24cb023f2324ee89320cae99f837bfef1f1738fa83038d06b01115ec22a60"
+  tag: "v7.0.0"
 
 args: []
 
