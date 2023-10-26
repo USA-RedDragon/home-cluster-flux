@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: chuot/rdio-scanner
+  repository: ghcr.io/usa-reddragon/rdio-scanner
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest@sha256:7a34dda5949ff44a1b7c0f5a1b4bb445f606000d1309d29272bf28d5f566afb3"
+  tag: "main@sha256:52a24cb023f2324ee89320cae99f837bfef1f1738fa83038d06b01115ec22a60"
 
 args: []
 
