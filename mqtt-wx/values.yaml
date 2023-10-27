@@ -10,8 +10,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "v1.0.0"
 
-imagePullSecrets:
-- registry-ghcr
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -86,15 +85,7 @@ securityContext: {}
 service:
   type: ClusterIP
 
-persistentVolumes:
-- name: config
-  mountPath: /etc/rtl_433/
-  readOnly: true
-  secret:
-    secretName: config
-    items:
-    - key: service.conf
-      path: service.conf
+persistentVolumes: []
 # - name: data
 #   mountPath: /var/lib/postgresql/data
 #   subPath: pg
@@ -120,7 +111,6 @@ resources:
   limits:
     cpu: 10m
     memory: 128Mi
-    squat.ai/rtl-sdr: 1
   requests:
     cpu: 1m
     memory: 64Mi
