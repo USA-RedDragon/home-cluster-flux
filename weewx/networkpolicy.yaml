@@ -6,7 +6,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/instance: rsync-docker
+      app.kubernetes.io/instance: weewx
   policyTypes:
   - Ingress
   - Egress
@@ -16,7 +16,7 @@ spec:
         matchLabels:
           kubernetes.io/metadata.name: nginx
     - ipBlock:
-        cidr: 192.168.1.39/32
+        cidr: 192.168.1.19/32
     - namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: uptime-kuma

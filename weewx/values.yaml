@@ -5,14 +5,23 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/usa-reddragon/rsync-docker
+  repository: ghcr.io/usa-reddragon/weewx-docker
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:f6a1739cd5d17c5c8c898bdaec7efacb30e3d3d9cb947bc1402ffdd0d9a41e47"
+  tag: "main@sha256:f5d19c7d181b5ce0aa5c32df475d93ca7da72e6fd318d9041c75a4e6a8ba86a5"
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+command:
+- sh
+- -c
+- |
+  mv /config/weewx.conf /etc/weewx/weewx.conf && \
+  chmod weewx:weewx /etc/weewx/weewx.conf && \
+  nginx -c /home/weewx/nginx.conf && \
+  weewxd --config=/config/weewx.conf --debug
 
 secrets: []
 # - name: app-creds
@@ -56,30 +65,30 @@ env: []
 #       key: SPECIAL_KEY
 
 podAnnotations:
-  app.kubernetes.io/name: rsync-docker
-  backup.velero.io/backup-volumes-excludes: data
+  app.kubernetes.io/name: weewx-docker
+  backup.velero.io/backup-volumes-excludes: data,config
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  fsGroup: 1000
 
-securityContext: {}
+securityContext:
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+  runAsNonRoot: true
+  runAsUser: 1000
 
 service:
   type: ClusterIP
   ports:
   - name: http
-    port: 80
+    port: 3000
 
 persistentVolumes:
 - name: data
-  mountPath: /usr/share/nginx
-  subPath: html
+  mountPath: /var/www/html/weewx
+  subPath: weewx
   size: 1Gi
   persistentVolumeClaim:
     name: data
@@ -91,11 +100,11 @@ persistentVolumes:
 #     items:
 #     - key: test.ini
 #       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+- name: config
+  mountPath: /config
+  readOnly: true
+  secret:
+    secretName: weewx-config
 
 ingress:
   enabled: true
@@ -110,7 +119,7 @@ ingress:
   hosts:
   - host: wx.mcswain.dev
     paths:
-    - port: 80
+    - port: 3000
       path: /
       pathType: Prefix
   tls:
@@ -121,12 +130,12 @@ ingress:
 probes:
   liveness:
     httpGet:
-      path: /health
-      port: 81
+      path: /
+      port: 3000
   readiness:
     httpGet:
-      path: /health
-      port: 81
+      path: /
+      port: 3000
 
 resources:
   limits:
