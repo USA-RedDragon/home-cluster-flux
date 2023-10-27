@@ -3,3 +3,10 @@ kind: Kustomization
 namespace: rtl-433
 resources:
   - ns.yaml
+  - helm.yaml
+configMapGenerator:
+  - name: chart-values
+    files:
+      - values.yaml=values.yaml
+configurations:
+  - kustomizeconfig.yaml

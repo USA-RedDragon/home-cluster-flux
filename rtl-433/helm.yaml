@@ -1,0 +1,20 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: rtl-433
+  namespace: rtl-433
+spec:
+  interval: 60m0s
+  releaseName: rtl-433
+  chart:
+    spec:
+      chart: app
+      sourceRef:
+        kind: HelmRepository
+        name: usa-reddragon
+        namespace: flux-system
+      version: '>=0.1.28 <1.0.0'
+      interval: 60m0s
+  valuesFrom:
+    - kind: ConfigMap
+      name: chart-values
