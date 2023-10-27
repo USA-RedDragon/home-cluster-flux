@@ -33,6 +33,11 @@ spec:
               - usb:
                 - vendor: "1df7"
                   product: "3000"
+          - name: rtl-sdr
+            groups:
+              - usb:
+                - vendor: "0bda"
+                  product: "2838"
     serviceMonitor:
       main:
         enabled: true
