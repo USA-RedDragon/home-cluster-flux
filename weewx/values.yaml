@@ -57,7 +57,9 @@ envFrom: []
 # - configMapRef:
 #     name: app-config
 
-env: []
+env:
+- name: TZ
+  value: America/Chicago
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
