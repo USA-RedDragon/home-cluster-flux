@@ -17,6 +17,14 @@ fullnameOverride: ""
 args:
 - -c
 - /etc/rtl_433/service.conf
+- -R
+- "153"
+- -R
+- "20"
+- -M
+- level
+- -M
+- time
 
 secrets: []
 # - name: app-creds
