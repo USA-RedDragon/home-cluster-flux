@@ -1,0 +1,38 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: device-plugin
+  namespace: device-plugin
+spec:
+  interval: 1m0s
+  url: https://charts.gabe565.com
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: device-plugin
+  namespace: device-plugin
+spec:
+  interval: 1m0s
+  releaseName: device-plugin
+  chart:
+    spec:
+      chart: generic-device-plugin
+      sourceRef:
+        kind: HelmRepository
+        name: device-plugin
+      version: '>=0.1.3 <1.0.0'
+      interval: 1m0s
+  values:
+    config:
+      data: |
+        devices:
+          - name: sdrplay
+            groups:
+              - usb:
+                - vendor: "1df7"
+                  product: "3000"
+    serviceMonitor:
+      main:
+        enabled: true
