@@ -37,13 +37,13 @@ spec:
             - -c
             - |
               back=$(date +%s) \
-              && etcdctl --endpoints='http://mayastor-etcd-0.mayastor-etcd-headless.mayastor.svc.cluster.local:2380' snapshot save /tmp/etcd-0.mayastor-$back.db \
+              && etcdctl --command-timeout=5m --dial-timeout=5s --endpoints='http://mayastor-etcd-0.mayastor-etcd-headless.mayastor.svc.cluster.local:2380' snapshot save /tmp/etcd-0.mayastor-$back.db \
               && gzip -9 /tmp/etcd-0.mayastor-$back.db \
               && mv /tmp/etcd-0.mayastor-$back.db.gz /backups/etcd-0.mayastor-$back.db.gz \
-              && etcdctl --endpoints='http://mayastor-etcd-1.mayastor-etcd-headless.mayastor.svc.cluster.local:2380' snapshot save /tmp/etcd-1.mayastor-$back.db \
+              ; etcdctl --command-timeout=5m --dial-timeout=5s --endpoints='http://mayastor-etcd-1.mayastor-etcd-headless.mayastor.svc.cluster.local:2380' snapshot save /tmp/etcd-1.mayastor-$back.db \
               && gzip -9 /tmp/etcd-1.mayastor-$back.db \
               && mv /tmp/etcd-1.mayastor-$back.db.gz /backups/etcd-1.mayastor-$back.db.gz \
-              && etcdctl --endpoints='http://mayastor-etcd-2.mayastor-etcd-headless.mayastor.svc.cluster.local:2380' snapshot save /tmp/etcd-2.mayastor-$back.db \
+              ; etcdctl --command-timeout=5m --dial-timeout=5s --endpoints='http://mayastor-etcd-2.mayastor-etcd-headless.mayastor.svc.cluster.local:2380' snapshot save /tmp/etcd-2.mayastor-$back.db \
               && gzip -9 /tmp/etcd-2.mayastor-$back.db \
               && mv /tmp/etcd-2.mayastor-$back.db.gz /backups/etcd-2.mayastor-$back.db.gz
           restartPolicy: OnFailure
