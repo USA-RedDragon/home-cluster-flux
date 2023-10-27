@@ -2,4 +2,4 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: rtl_433
+  name: rtl-433
