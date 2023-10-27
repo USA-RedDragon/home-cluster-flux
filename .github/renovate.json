@@ -32,6 +32,13 @@
         {
             "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/fabric$"],
             "automerge": false
+        },
+        {
+            "matchUpdateTypes": [
+                "major"
+            ],
+            "automerge": true,
+            "matchPackagePatterns": ["kube-prometheus-stack"]
         }
     ]
 }
