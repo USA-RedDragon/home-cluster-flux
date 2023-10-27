@@ -22,7 +22,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: signoz
-      version: '>=0.28.4 <0.28.5'
+      version: '>=0.28.5 <0.28.6'
       interval: 1m0s
   valuesFrom:
     - kind: ConfigMap
