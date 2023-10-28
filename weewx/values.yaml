@@ -140,10 +140,16 @@ probes:
     httpGet:
       path: /
       port: 3000
+    initialDelaySeconds: 10
+    failureThreshold: 30
+    timeoutSeconds: 5
   readiness:
     httpGet:
       path: /
       port: 3000
+    initialDelaySeconds: 10
+    failureThreshold: 30
+    timeoutSeconds: 5
 
 resources:
   limits:
