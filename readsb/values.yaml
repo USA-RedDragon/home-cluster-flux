@@ -69,8 +69,6 @@ env:
   value: "true"
 - name: READSB_NET_ENABLE
   value: "true"
-- name: DISABLE_PERFORMANCE_GRAPHS
-  value: "true"
 - name: ENABLE_PROMETHEUS
   value: "true"
 - name: READSB_RTLSDR_PPM
