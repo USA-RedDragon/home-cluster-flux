@@ -73,6 +73,8 @@ env:
   value: "true"
 - name: READSB_RTLSDR_PPM
   value: "0"
+- name: AUTOGAIN_MAX_GAIN_VALUE
+  value: '40'
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
