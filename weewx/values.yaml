@@ -51,6 +51,8 @@ envFrom: []
 env:
 - name: TZ
   value: America/Chicago
+- name: CONFIG_OVERRIDE
+  value: "/config/weewx.conf"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
