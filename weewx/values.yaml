@@ -91,14 +91,14 @@ persistentVolumes:
   subPath: weewx
   size: 1Gi
   persistentVolumeClaim:
-    name: data
+    name: html
     storageClass: mayastor-nvme
 - name: data
   mountPath: /var/lib/weewx
   subPath: weewx
   size: 10Gi
   persistentVolumeClaim:
-    name: actual-data
+    name: data
     storageClass: mayastor-nvme
 # - name: config
 #   mountPath: /config
