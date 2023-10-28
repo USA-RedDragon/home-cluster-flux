@@ -14,9 +14,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-command:
-- /scripts/estimate_rtlsdr_ppm.sh
-
 secrets: []
 # - name: app-creds
 #   data:
@@ -78,6 +75,8 @@ env:
   value: "true"
 - name: ENABLE_PROMETHEUS
   value: "true"
+- name: READSB_RTLSDR_PPM
+  value: "0"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
