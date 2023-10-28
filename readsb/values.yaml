@@ -1,0 +1,130 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v4.0.3"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom:
+- secretRef:
+    name: location
+# - configMapRef:
+#     name: app-config
+
+env:
+- name: TZ
+  value: America/Chicago
+- name: READSB_DCFILTER
+  value: "true"
+- name: READSB_DEVICE_TYPE
+  value: rtlsdr
+- name: READSB_FIX
+  value: "true"
+- name: READSB_GAIN
+  value: autogain
+- name: READSB_MODEAC
+  value: "true"
+- name: READSB_RTLSDR_ENABLE_AGC
+  value: "true"
+- name: READSB_RX_LOCATION_ACCURACY
+  value: "2"
+- name: READSB_STATS_RANGE
+  value: "true"
+- name: READSB_NET_ENABLE
+  value: "true"
+- name: DISABLE_WEBAPP
+  value: "true"
+- name: DISABLE_PERFORMANCE_GRAPHS
+  value: "true"
+- name: ENABLE_PROMETHEUS
+  value: "true"
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 999
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 999
+  # runAsGroup: 999
+  # fsGroup: 999
+
+service:
+  type: ClusterIP
+
+persistentVolumes: []
+
+ingress:
+  enabled: false
+
+probes: {}
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 300Mi
+    squat.ai/rtl-sdr: 1
+  requests:
+    cpu: 100m
+    memory: 200Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
