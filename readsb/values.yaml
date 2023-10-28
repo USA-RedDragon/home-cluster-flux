@@ -14,6 +14,9 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+command:
+- /scripts/estimate_rtlsdr_ppm.sh
+
 secrets: []
 # - name: app-creds
 #   data:
@@ -81,7 +84,8 @@ env:
 #       name: app-otherenv
 #       key: SPECIAL_KEY
 
-podAnnotations: {}
+podAnnotations:
+  backup.velero.io/backup-volumes-excludes: autogain
 
 podSecurityContext: {}
   # fsGroup: 999
@@ -99,7 +103,14 @@ securityContext:
 service:
   type: ClusterIP
 
-persistentVolumes: []
+persistentVolumes:
+- name: autogain
+  mountPath: /run/autogain
+  subPath: autogain
+  size: 1Gi
+  persistentVolumeClaim:
+    name: autogain
+    storageClass: mayastor-nvme
 
 ingress:
   enabled: false
