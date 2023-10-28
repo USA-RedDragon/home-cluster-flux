@@ -1,0 +1,125 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/usa-reddragon/sdrtrunk-docker
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "main@sha256:cadafdf6ea4d2e8dd6b9d99f052faafbabd133d4bfc28d050b5609e4e432d02b"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+command: []
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom: []
+# - secretRef:
+#     name: app-creds
+# - configMapRef:
+#     name: app-config
+
+env:
+- name: TZ
+  value: America/Chicago
+- name: RDIO_SCANNER_URL
+  valueFrom:
+    configMapKeyRef:
+      name: config
+      key: RDIO_SCANNER_URL
+- name: RDIO_SCANNER_APIKEY
+  valueFrom:
+    configMapKeyRef:
+      name: config
+      key: RDIO_SCANNER_APIKEY
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 999
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 999
+  runAsGroup: 999
+  fsGroup: 999
+
+service:
+  type: ClusterIP
+
+persistentVolumes: []
+# - name: config
+#   mountPath: /config
+#   configMap:
+#     name: app-configfile
+#     items:
+#     - key: test.ini
+#       path: config.ini
+
+ingress:
+  enabled: false
+
+probes: {}
+
+resources:
+  limits:
+    cpu: 400m
+    memory: 100Mi
+    squat.ai/sdrplay: 1
+  requests:
+    cpu: 300m
+    memory: 75Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
