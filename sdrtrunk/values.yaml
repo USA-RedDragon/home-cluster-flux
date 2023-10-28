@@ -44,25 +44,15 @@ configs: []
 #       [test]
 #       value=1
 
-envFrom: []
-# - secretRef:
-#     name: app-creds
+envFrom:
+- secretRef:
+    name: config
 # - configMapRef:
 #     name: app-config
 
 env:
 - name: TZ
   value: America/Chicago
-- name: RDIO_SCANNER_URL
-  valueFrom:
-    configMapKeyRef:
-      name: config
-      key: RDIO_SCANNER_URL
-- name: RDIO_SCANNER_APIKEY
-  valueFrom:
-    configMapKeyRef:
-      name: config
-      key: RDIO_SCANNER_APIKEY
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
