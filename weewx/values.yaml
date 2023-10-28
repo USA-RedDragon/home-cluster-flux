@@ -14,12 +14,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-command:
-- sh
-- -c
-- |
-  nginx -c /home/weewx/nginx.conf && weewxd --config=/config/weewx.conf
-
 secrets: []
 # - name: app-creds
 #   data:
