@@ -18,8 +18,6 @@ command:
 - sh
 - -c
 - |
-  mv /config/weewx.conf /etc/weewx/weewx.conf && \
-  chmod weewx:weewx /etc/weewx/weewx.conf && \
   nginx -c /home/weewx/nginx.conf && \
   weewxd --config=/config/weewx.conf --debug
 
