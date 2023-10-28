@@ -69,8 +69,6 @@ env:
   value: "true"
 - name: READSB_NET_ENABLE
   value: "true"
-- name: DISABLE_WEBAPP
-  value: "true"
 - name: DISABLE_PERFORMANCE_GRAPHS
   value: "true"
 - name: ENABLE_PROMETHEUS
@@ -101,6 +99,11 @@ securityContext:
 
 service:
   type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+  - name: prometheus
+    port: 9273
 
 persistentVolumes:
 - name: autogain
@@ -112,7 +115,26 @@ persistentVolumes:
     storageClass: mayastor-nvme
 
 ingress:
-  enabled: false
+  enabled: true
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
+    nginx.ingress.kubernetes.io/auth-signin: https://authentik.mcswain.dev/outpost.goauthentik.io/start?rd=$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
+    nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
+  ingressClassName: nginx
+  hosts:
+  - host: readsb.mcswain.dev
+    paths:
+    - port: 8080
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: readsb-mcswain-dev-tls
+    hosts:
+      - readsb.mcswain.dev
 
 probes: {}
 
