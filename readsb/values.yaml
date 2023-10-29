@@ -63,6 +63,8 @@ env:
   value: "true"
 - name: READSB_RTLSDR_ENABLE_AGC
   value: "true"
+- name: AUTOGAIN_INITIAL_MSGS_ACCEPTED
+  value: "1000"
 - name: READSB_RX_LOCATION_ACCURACY
   value: "2"
 - name: READSB_STATS_RANGE
@@ -74,7 +76,9 @@ env:
 - name: READSB_RTLSDR_PPM
   value: "0"
 - name: AUTOGAIN_MAX_GAIN_VALUE
-  value: '40'
+  value: '36'
+- name: READSB_AGGRESSIVE
+  value: "true"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
