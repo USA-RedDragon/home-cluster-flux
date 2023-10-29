@@ -81,6 +81,8 @@ env:
   value: "true"
 - name: AUTOGAIN_SERVICE_PERIOD
   value: '60'
+- name: AUTOGAIN_INITIAL_PERIOD
+  value: '1800'
 #- name: READSB_RTLSDR_ENABLE_AGC
 #  value: "true"
 # - name: SPECIAL_KEY
