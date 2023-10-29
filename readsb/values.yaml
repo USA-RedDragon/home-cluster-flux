@@ -75,6 +75,8 @@ env:
   value: "0"
 - name: READSB_AGGRESSIVE
   value: "true"
+- name: READSB_STATS_EVERY
+  value: '5'
 #- name: READSB_RTLSDR_ENABLE_AGC
 #  value: "true"
 # - name: SPECIAL_KEY
