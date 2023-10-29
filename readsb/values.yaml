@@ -58,7 +58,7 @@ env:
 - name: READSB_FIX
   value: "true"
 - name: READSB_GAIN
-  value: autogain
+  value: '36'
 - name: READSB_MODEAC
   value: "true"
 - name: READSB_RTLSDR_ENABLE_AGC
