@@ -58,11 +58,9 @@ env:
 - name: READSB_FIX
   value: "true"
 - name: READSB_GAIN
-  value: "autogain"
+  value: "42.0"
 - name: READSB_MODEAC
   value: "true"
-- name: AUTOGAIN_INITIAL_MSGS_ACCEPTED
-  value: "1000"
 - name: READSB_RX_LOCATION_ACCURACY
   value: "2"
 - name: READSB_STATS_RANGE
@@ -73,16 +71,8 @@ env:
   value: "true"
 - name: READSB_RTLSDR_PPM
   value: "0"
-- name: AUTOGAIN_MAX_GAIN_VALUE
-  value: '42.0'
-- name: AUTOGAIN_MIN_GAIN_VALUE
-  value: "19.0"
 - name: READSB_AGGRESSIVE
   value: "true"
-- name: AUTOGAIN_SERVICE_PERIOD
-  value: '60'
-- name: AUTOGAIN_INITIAL_PERIOD
-  value: '1800'
 #- name: READSB_RTLSDR_ENABLE_AGC
 #  value: "true"
 # - name: SPECIAL_KEY
@@ -115,13 +105,6 @@ service:
     port: 9273
 
 persistentVolumes:
-- name: autogain
-  mountPath: /run/autogain
-  subPath: autogain
-  size: 1Gi
-  persistentVolumeClaim:
-    name: autogain
-    storageClass: mayastor-nvme
 - name: collectd
   mountPath: /run/collectd
   subPath: collectd
