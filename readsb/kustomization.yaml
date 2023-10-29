@@ -4,6 +4,7 @@ namespace: readsb
 resources:
   - ns.yaml
   - helm.yaml
+  - prom.yaml
 configMapGenerator:
   - name: chart-values
     files:
