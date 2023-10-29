@@ -58,7 +58,7 @@ env:
 - name: READSB_FIX
   value: "true"
 - name: READSB_GAIN
-  value: '20'
+  value: "autogain"
 - name: READSB_MODEAC
   value: "true"
 - name: AUTOGAIN_INITIAL_MSGS_ACCEPTED
@@ -76,7 +76,7 @@ env:
 - name: AUTOGAIN_MAX_GAIN_VALUE
   value: '36'
 - name: AUTOGAIN_MIN_GAIN_VALUE
-  value: 20'
+  value: "20"
 - name: READSB_AGGRESSIVE
   value: "true"
 - name: AUTOGAIN_SERVICE_PERIOD
@@ -89,8 +89,7 @@ env:
 #       name: app-otherenv
 #       key: SPECIAL_KEY
 
-podAnnotations:
-  backup.velero.io/backup-volumes-excludes: autogain
+podAnnotations: {}
 
 podSecurityContext: {}
   # fsGroup: 999
@@ -120,6 +119,13 @@ persistentVolumes:
   size: 1Gi
   persistentVolumeClaim:
     name: autogain
+    storageClass: mayastor-nvme
+- name: collectd
+  mountPath: /run/collectd
+  subPath: collectd
+  size: 1Gi
+  persistentVolumeClaim:
+    name: collectd
     storageClass: mayastor-nvme
 
 ingress:
