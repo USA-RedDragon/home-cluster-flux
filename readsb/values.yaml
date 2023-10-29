@@ -74,9 +74,9 @@ env:
 - name: READSB_RTLSDR_PPM
   value: "0"
 - name: AUTOGAIN_MAX_GAIN_VALUE
-  value: '36'
+  value: '42.0'
 - name: AUTOGAIN_MIN_GAIN_VALUE
-  value: "20"
+  value: "19.0"
 - name: READSB_AGGRESSIVE
   value: "true"
 - name: AUTOGAIN_SERVICE_PERIOD
