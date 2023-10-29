@@ -58,10 +58,8 @@ env:
 - name: READSB_FIX
   value: "true"
 - name: READSB_GAIN
-  value: '36'
+  value: '20'
 - name: READSB_MODEAC
-  value: "true"
-- name: READSB_RTLSDR_ENABLE_AGC
   value: "true"
 - name: AUTOGAIN_INITIAL_MSGS_ACCEPTED
   value: "1000"
@@ -78,11 +76,13 @@ env:
 - name: AUTOGAIN_MAX_GAIN_VALUE
   value: '36'
 - name: AUTOGAIN_MIN_GAIN_VALUE
-  value: '8'
+  value: 20'
 - name: READSB_AGGRESSIVE
   value: "true"
 - name: AUTOGAIN_SERVICE_PERIOD
   value: '60'
+#- name: READSB_RTLSDR_ENABLE_AGC
+#  value: "true"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
