@@ -59,6 +59,8 @@ env:
   value: "true"
 - name: READSB_GAIN
   value: "42.0"
+- name: READSB_RRD_STEP
+  value: "3"
 - name: READSB_MODEAC
   value: "true"
 - name: READSB_RX_LOCATION_ACCURACY
