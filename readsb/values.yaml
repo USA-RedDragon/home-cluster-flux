@@ -106,7 +106,7 @@ service:
   ports:
   - name: http
     port: 8080
-  - name: prometheus
+  - name: metrics
     port: 9273
 
 persistentVolumes:
