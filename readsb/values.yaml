@@ -79,6 +79,8 @@ env:
   value: '36'
 - name: READSB_AGGRESSIVE
   value: "true"
+- name: AUTOGAIN_SERVICE_PERIOD
+  value: '60'
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
