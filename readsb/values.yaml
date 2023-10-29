@@ -77,6 +77,8 @@ env:
   value: "0"
 - name: AUTOGAIN_MAX_GAIN_VALUE
   value: '36'
+- name: AUTOGAIN_MIN_GAIN_VALUE
+  value: '8'
 - name: READSB_AGGRESSIVE
   value: "true"
 - name: AUTOGAIN_SERVICE_PERIOD
@@ -157,7 +159,15 @@ nodeSelector: {}
 
 tolerations: []
 
-affinity: {}
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - talos-qkh-4as
 
 lifecycle: {}
   # postStart:
