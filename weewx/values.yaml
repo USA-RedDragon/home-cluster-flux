@@ -13,7 +13,7 @@ image:
 command:
 - sh
 - -c
-- ln -s /usr/share/zoneinfo/$TZ /etc/localtime && exec /bin/s6-svscan /etc/s6
+- ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && exec /bin/s6-svscan /etc/s6
 
 imagePullSecrets: []
 nameOverride: ""
