@@ -55,10 +55,6 @@ env:
   value: readsb-app.readsb.svc.cluster.local
 - name: BEASTPORT
   value: "30005"
-- name: ALLOW_MLAT
-  value: "no"
-- name: MLAT_RESULTS
-  value: "no"
 - name: FEEDER_ID
   valueFrom:
     secretKeyRef:
