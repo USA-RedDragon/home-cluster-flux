@@ -89,7 +89,7 @@ ingress:
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: cloudflare
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /skyaware$1$2
+    nginx.ingress.kubernetes.io/app-root: /skyaware
   ingressClassName: nginx
   hosts:
   - host: flights.mcswain.dev
