@@ -59,12 +59,11 @@ env:
   value: "no"
 - name: MLAT_RESULTS
   value: "no"
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
+- name: FEEDER_ID
+  valueFrom:
+    secretKeyRef:
+      name: feeder
+      key: FEEDER_ID
 podAnnotations: {}
 
 podSecurityContext: {}
