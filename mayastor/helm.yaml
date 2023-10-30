@@ -40,3 +40,8 @@ spec:
     obs:
       callhome:
         enabled: false
+    io_engine:
+      cpuCount: "1"
+      resources:
+        requests:
+          cpu: "1"
