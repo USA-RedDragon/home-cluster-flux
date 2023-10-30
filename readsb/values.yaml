@@ -58,7 +58,7 @@ env:
 - name: READSB_FIX
   value: "true"
 - name: READSB_GAIN
-  value: "49.0"
+  value: "49.6"
 - name: READSB_RRD_STEP
   value: "3"
 - name: READSB_MODEAC
@@ -72,7 +72,7 @@ env:
 - name: ENABLE_PROMETHEUS
   value: "true"
 - name: READSB_RTLSDR_PPM
-  value: "0"
+  value: "-3"
 - name: READSB_AGGRESSIVE
   value: "true"
 #- name: READSB_RTLSDR_ENABLE_AGC
