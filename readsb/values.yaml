@@ -105,6 +105,8 @@ service:
     port: 8080
   - name: metrics
     port: 9273
+  - name: beast
+    port: 30005
 
 persistentVolumes:
 - name: collectd
