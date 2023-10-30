@@ -62,6 +62,10 @@ configs:
           client_max_body_size 16M;
 
           location / {
+            return 301 https://$host/skyaware;
+          }
+
+          location /skyaware {
             proxy_pass http://app;
             proxy_set_header Host $host;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; 
@@ -127,7 +131,7 @@ configs:
           PlParam "interval" "30"
           PlParam "timeout" "300"
           PlParam "name" "KI5VMF-ADSB-SKYAWARE"
-          PlParam "service" "http://KI5VMF-ADSB-SKYAWARE.local.mesh:80/|tcp|SkyAware ADS-B"
+          PlParam "service" "http://KI5VMF-ADSB-SKYAWARE.local.mesh:80/skyaware/|tcp|SkyAware ADS-B"
       }
 
       Interface "tun60"
