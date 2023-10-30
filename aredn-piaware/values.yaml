@@ -62,7 +62,7 @@ configs:
           client_max_body_size 16M;
 
           location / {
-            return 301 https://$host/skyaware;
+            return 301 http://$host/skyaware;
           }
 
           location /skyaware {
