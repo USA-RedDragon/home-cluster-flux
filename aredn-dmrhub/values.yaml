@@ -104,6 +104,16 @@ configs:
             proxy_set_header Sec-WebSocket-Version $http_sec_websocket_version;
           }
         }
+        server {
+          listen 8080;
+          server_name _;
+          access_log /dev/stdout;
+          error_log /dev/stderr;
+
+          location / {
+            return 301 http://$host$request_uri;
+          }
+        }
       }
 - name: olsrd-config
   data:
