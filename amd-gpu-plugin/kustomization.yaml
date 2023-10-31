@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: amd-gpu-plugin
 resources:
   - ns.yaml
+  - ds.yaml
