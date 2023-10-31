@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/rdio-scanner
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v7.2.2"
+  tag: "v7.2.3"
 
 args: []
 
@@ -54,7 +54,8 @@ envFrom:
 env:
 - name: TZ
   value: America/Chicago
-
+- name: METRICS_PORT
+  value: '9108'
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
@@ -77,6 +78,8 @@ service:
   ports:
   - name: http
     port: 3000
+  - name: metrics
+    port: 9108
 
 persistentVolumes: []
 # - name: config
