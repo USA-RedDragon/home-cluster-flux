@@ -81,14 +81,7 @@ service:
   - name: http
     port: 3000
 
-persistentVolumes:
-- name: data
-  mountPath: /app/data
-  subPath: data
-  size: 20Gi
-  persistentVolumeClaim:
-    name: data
-    storageClass: mayastor-nvme
+persistentVolumes: []
 # - name: config
 #   mountPath: /config
 #   configMap:
