@@ -8,7 +8,7 @@ image:
   repository: archivebox/archivebox
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.7.0@sha256:86a03b3690c9ff293a28e6f7c7f1b199e6dab4541ee587d03b4c9e39fd0ea208"
+  tag: "0.7.0@sha256:0de31375a206e2d1304c9bcc0a8f4d5b967badb470b0f2baf122bd6070924864"
 
 args: []
 
