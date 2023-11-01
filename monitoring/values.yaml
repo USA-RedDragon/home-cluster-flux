@@ -3311,6 +3311,19 @@ prometheus:
           namespace: aredn-cloud-tunnel
           pod: KI5VMF-CLOUD-TUNNEL-supernode
           _aredn_node: KI5VMF-CLOUD-TUNNEL-supernode
+      - targets: ["dallas.aredn.mcswain.cloud:9100"]
+        labels:
+          _aredn_node: KI5VMF-CLOUD-TUNNEL
+      - targets: ["dallas.aredn.mcswain.cloud:9001"]
+        labels:
+          namespace: aredn-cloud-tunnel
+          pod: KI5VMF-DALLAS-GCP
+          _aredn_node: KI5VMF-DALLAS-GCP
+      - targets: ["dallas.aredn.mcswain.cloud:9002"]
+        labels:
+          namespace: aredn-cloud-tunnel
+          pod: KI5VMF-DALLAS-GCP-supernode
+          _aredn_node: KI5VMF-DALLAS-GCP-supernode
     # - job_name: kube-etcd
     #   kubernetes_sd_configs:
     #     - role: node
