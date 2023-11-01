@@ -106,7 +106,6 @@ resources:
   limits:
     cpu: 150m
     memory: 150Mi
-    amd.com/gpu: 1
   requests:
     cpu: 100m
     memory: 100Mi
