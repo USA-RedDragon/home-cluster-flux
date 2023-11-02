@@ -60,6 +60,8 @@ env:
   value: "19.7"
 - name: ENABLE_PROMETHEUS
   value: "true"
+- name: DUMP978_JSON_STDOUT
+  value: "true"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
