@@ -55,6 +55,12 @@ env:
   value: readsb-app.readsb.svc.cluster.local
 - name: BEASTPORT
   value: "30005"
+- name: UAT_RECEIVER_TYPE
+  value: relay
+- name: UAT_RECEIVER_HOST
+  value: dump978-app.dump978.svc.cluster.local
+- name: UAT_RECEIVER_PORT
+  value: '30978'
 - name: FEEDER_ID
   valueFrom:
     secretKeyRef:
