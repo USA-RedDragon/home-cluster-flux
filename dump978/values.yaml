@@ -57,7 +57,7 @@ env:
 - name: DUMP978_DEVICE_TYPE
   value: rtlsdr
 - name: DUMP978_SDR_GAIN
-  value: "19.7"
+  value: "autogain"
 - name: ENABLE_PROMETHEUS
   value: "true"
 - name: DUMP978_JSON_STDOUT
@@ -96,7 +96,14 @@ service:
   - name: metrics
     port: 9273
 
-persistentVolumes: []
+persistentVolumes:
+- name: autogain
+  mountPath: /var/globe_history
+  subPath: autogain
+  size: 1Gi
+  persistentVolumeClaim:
+    name: autogain
+    storageClass: mayastor-nvme
 
 ingress:
   enabled: true
