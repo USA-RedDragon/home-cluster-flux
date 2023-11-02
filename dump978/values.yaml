@@ -89,6 +89,8 @@ service:
   ports:
   - name: http
     port: 80
+  - name: uat
+    port: 30978
   - name: metrics
     port: 9273
 
