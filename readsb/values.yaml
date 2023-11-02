@@ -14,6 +14,9 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+# command:
+# - /scripts/estimate_rtlsdr_ppm.sh
+
 secrets: []
 # - name: app-creds
 #   data:
@@ -74,8 +77,6 @@ env:
 - name: READSB_RTLSDR_PPM
   value: "-3"
 - name: READSB_AGGRESSIVE
-  value: "true"
-- name: READSB_RTLSDR_ENABLE_AGC
   value: "true"
 # - name: SPECIAL_KEY
 #   valueFrom:
