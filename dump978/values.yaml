@@ -57,7 +57,7 @@ env:
 - name: DUMP978_DEVICE_TYPE
   value: rtlsdr
 - name: DUMP978_SDR_GAIN
-  value: "16.6"
+  value: "19.7"
 - name: ENABLE_PROMETHEUS
   value: "true"
 - name: DUMP978_JSON_STDOUT
