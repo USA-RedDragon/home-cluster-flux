@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 2
+replicaCount: 1
 
 image:
   repository: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf
@@ -14,8 +14,8 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-command:
-- /scripts/estimate_rtlsdr_ppm.sh
+# command:
+# - /scripts/estimate_rtlsdr_ppm.sh
 
 secrets: []
 # - name: app-creds
@@ -162,7 +162,6 @@ affinity:
           operator: In
           values:
           - talos-qkh-4as
-          - talos-11n-w73
 
 lifecycle: {}
   # postStart:
