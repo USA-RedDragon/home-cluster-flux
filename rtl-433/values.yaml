@@ -136,7 +136,7 @@ affinity:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - talos-11n-w73
+          - talos-bir-xzi
 
 lifecycle: {}
   # postStart:
