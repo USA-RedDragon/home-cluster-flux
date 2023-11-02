@@ -57,7 +57,7 @@ env:
 - name: DUMP978_DEVICE_TYPE
   value: rtlsdr
 - name: DUMP978_SDR_GAIN
-  value: "32.8"
+  value: "19.7"
 - name: ENABLE_PROMETHEUS
   value: "true"
 # - name: SPECIAL_KEY
@@ -72,6 +72,9 @@ podSecurityContext: {}
   # fsGroup: 999
 
 securityContext:
+  sysctls:
+  - name: "net.ipv4.ip_unprivileged_port_start"
+    value: "0"
   # capabilities:
   #   drop:
   #   - ALL
