@@ -57,7 +57,7 @@ env:
 - name: DUMP978_DEVICE_TYPE
   value: rtlsdr
 - name: DUMP978_SDR_GAIN
-  value: "autogain"
+  value: "7.7"
 - name: ENABLE_PROMETHEUS
   value: "true"
 # - name: SPECIAL_KEY
