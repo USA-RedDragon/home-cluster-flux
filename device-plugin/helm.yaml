@@ -25,6 +25,8 @@ spec:
       version: '>=0.1.3 <1.0.0'
       interval: 1m0s
   values:
+    image:
+      repository: ghcr.io/usa-reddragon/generic-device-plugin
     config:
       data: |
         devices:
@@ -33,11 +35,24 @@ spec:
               - usb:
                 - vendor: "1df7"
                   product: "3000"
-          - name: rtl-sdr
+          - name: rtl-sdr-433
             groups:
               - usb:
                 - vendor: "0bda"
                   product: "2838"
+                  serial: "00000433"
+          - name: rtl-sdr-ads-b
+            groups:
+              - usb:
+                - vendor: "0bda"
+                  product: "2838"
+                  serial: "00001090"
+          - name: rtl-sdr-uat
+            groups:
+              - usb:
+                - vendor: "0bda"
+                  product: "2838"
+                  serial: "00000978"
     serviceMonitor:
       main:
         enabled: true

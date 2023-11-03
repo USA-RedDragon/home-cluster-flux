@@ -119,7 +119,7 @@ resources:
   limits:
     cpu: 10m
     memory: 128Mi
-    squat.ai/rtl-sdr: 1
+    squat.ai/rtl-sdr-433: 1
   requests:
     cpu: 1m
     memory: 64Mi
@@ -128,15 +128,7 @@ nodeSelector: {}
 
 tolerations: []
 
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - talos-bir-xzi
+affinity: {}
 
 lifecycle: {}
   # postStart:
