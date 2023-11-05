@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/sdrtrunk-docker
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:cbd0d4f479f9de28f4442b6f8063c00c415fd9a0b5d26d2e1a140c492dc98973"
+  tag: "main@sha256:7eca1689542212772161d6d34511440ca28b1e1f51eef812620efcc2bca1535e"
 
 imagePullSecrets: []
 nameOverride: ""
