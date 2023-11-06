@@ -27,7 +27,7 @@ spec:
   values:
     image:
       repository: ghcr.io/usa-reddragon/generic-device-plugin
-      tag: latest
+      tag: latest@sha256:289fe7c3e204e2f3a07facb47aaaf3c91f8a3b95a103e4b9e348d84ccd91a152
     config:
       data: |
         devices:
