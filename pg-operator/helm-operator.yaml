@@ -21,8 +21,8 @@ spec:
     configGeneral:
       min_instances: 2
       max_instances: 3
-    configUsers:
-      # enable_password_rotation: true
+    # configUsers:
+    #   # enable_password_rotation: true
     configMajorVersionUpgrade:
       major_version_upgrade_mode: manual
     configKubernetes:
