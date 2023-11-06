@@ -26,8 +26,8 @@ spec:
       interval: 1m0s
   values:
     image:
-      repository: ghcr.io/usa-reddragon/generic-device-plugin
-      tag: latest@sha256:289fe7c3e204e2f3a07facb47aaaf3c91f8a3b95a103e4b9e348d84ccd91a152
+      repository: ghcr.io/squat/generic-device-plugin
+      tag: latest@sha256:8c7fed2bb5a5c4e90011202f75b68bdfe57a18d59688146480cf380b5af0e2a6
     config:
       data: |
         devices:
