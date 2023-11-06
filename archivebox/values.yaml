@@ -131,10 +131,12 @@ probes:
     httpGet:
       path: /health/
       port: 8000
+    initialDelaySeconds: 60
   readiness:
     httpGet:
       path: /health/
       port: 8000
+    initialDelaySeconds: 60
 
 resources:
   limits:
