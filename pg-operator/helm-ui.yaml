@@ -21,6 +21,7 @@ spec:
     envs:
       operatorApiUrl: "http://pg-operator-postgres-operator.pg-operator.svc.cluster.local:8080"
       targetNamespace: "pg-operator"
+      teams: []
     ingress:
       enabled: true
       annotations:
