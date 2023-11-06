@@ -1,0 +1,45 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: pg-operator
+  namespace: pg-operator
+spec:
+  interval: 1m0s
+  releaseName: pg-operator
+  chart:
+    spec:
+      chart: pg-operator
+      sourceRef:
+        kind: HelmRepository
+        name: postgres-operator-charts
+      version: '>=1.10.1 <2.0.0'
+      interval: 1m0s
+  values:
+    imagePullSecrets:
+      - name: registry-docker-hub
+    configGeneral:
+      min_instances: 2
+      max_instances: 3
+    configUsers:
+      # enable_password_rotation: true
+    configMajorVersionUpgrade:
+      major_version_upgrade_mode: manual
+    configKubernetes:
+      enable_cross_namespace_secret: true
+      enable_pod_antiaffinity: true
+      enable_readiness_probe: true
+      # infrastructure_roles_secret_name: postgresql-infrastructure-roles
+      storage_resize_mode: off
+    configLoadBalancer:
+      db_hosted_zone: db.mcswain.dev
+      # toggles service type load balancer pointing to the master pod of the cluster
+      enable_master_load_balancer: false
+      # toggles service type load balancer pointing to the master pooler pod of the cluster
+      enable_master_pooler_load_balancer: false
+      # toggles service type load balancer pointing to the replica pod of the cluster
+      enable_replica_load_balancer: false
+      # toggles service type load balancer pointing to the replica pooler pod of the cluster
+      enable_replica_pooler_load_balancer: false
+      # define external traffic policy for the load balancer
+      external_traffic_policy: "Local"
