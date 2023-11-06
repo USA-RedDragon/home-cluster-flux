@@ -1,0 +1,17 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: pgo
+  namespace: pgo
+spec:
+  interval: 60m0s
+  releaseName: pgo
+  chart:
+    spec:
+      chart: pgo
+      sourceRef:
+        kind: HelmRepository
+        name: usa-reddragon
+        namespace: flux-system
+      version: '>=5.4.3 <6.0.0'
+      interval: 60m0s
