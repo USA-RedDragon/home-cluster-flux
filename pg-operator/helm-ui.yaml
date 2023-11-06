@@ -35,9 +35,7 @@ spec:
       hosts:
         - host: postgres.mcswain.dev
           paths:
-            - port: 80
-              path: /
-              pathType: Prefix
+            - /
       tls:
         - secretName: postgres-mcswain-dev-tls
           hosts:
