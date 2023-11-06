@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: pg-operator
 resources:
   - ns.yaml
+  - crds.yaml
   - helmrepo.yaml
   - helm-operator.yaml
   - helm-ui.yaml
