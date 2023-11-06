@@ -7,3 +7,12 @@ metadata:
 spec:
   interval: 1m0s
   url: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: postgres-operator-ui-charts
+  namespace: pg-operator
+spec:
+  interval: 1m0s
+  url: https://opensource.zalando.com/postgres-operator/charts/postgres-operator-ui

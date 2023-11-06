@@ -12,7 +12,7 @@ spec:
       chart: postgres-operator-ui
       sourceRef:
         kind: HelmRepository
-        name: postgres-operator-charts
+        name: postgres-operator-ui-charts
       version: '>=1.10.1 <2.0.0'
       interval: 1m0s
   values:
