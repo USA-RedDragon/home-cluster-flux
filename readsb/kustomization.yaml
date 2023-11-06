@@ -3,3 +3,11 @@ kind: Kustomization
 namespace: readsb
 resources:
   - ns.yaml
+  - helm.yaml
+  - prom.yaml
+configMapGenerator:
+  - name: chart-values
+    files:
+      - values.yaml=values.yaml
+configurations:
+  - kustomizeconfig.yaml
