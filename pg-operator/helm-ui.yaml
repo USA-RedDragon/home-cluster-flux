@@ -9,7 +9,7 @@ spec:
   releaseName: pg-operator-ui
   chart:
     spec:
-      chart: pg-operator-ui
+      chart: postgres-operator-ui
       sourceRef:
         kind: HelmRepository
         name: postgres-operator-charts
