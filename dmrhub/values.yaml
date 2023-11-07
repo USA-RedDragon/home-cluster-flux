@@ -48,8 +48,6 @@ envFrom:
 env:
 - name: CORS_HOSTS
   value: "http://10.54.25.5,http://ki5vmf-dmrhub.local.mesh,https://dmr.mcswain.dev,https://dmrhub.app,https://dmrhub.cloud,https://dmrhub.net,https://dmrhub.org,https://dmrhub.network,https://www.dmrhub.app,https://www.dmrhub.cloud,https://www.dmrhub.net,https://www.dmrhub.org,https://www.dmrhub.network,http://localhost:5173"
-- name: PG_USER
-  value: dmr
 - name: PG_DATABASE
   value: dmr
 - name: TRUSTED_PROXIES
@@ -70,16 +68,16 @@ env:
   value: "62035"
 - name: METRICS_PORT
   value: "9001"
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-# - name: SECRET_KEY
-#   valueFrom:
-#     secretKeyRef:
-#       name: app-secret-key
-#       key: SECRET_KEY
+- name: PG_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: dmrhub.dmr.cluster.credentials.postgresql.acid.zalan.do
+      key: password
+- name: PG_USER
+  valueFrom:
+    secretKeyRef:
+      name: dmrhub.dmr.cluster.credentials.postgresql.acid.zalan.do
+      key: username
 
 podAnnotations: {}
 
