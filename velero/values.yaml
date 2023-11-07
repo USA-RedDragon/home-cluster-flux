@@ -340,7 +340,7 @@ configuration:
   # comments below.
   # --------------------
   # `velero server` default: restic
-  uploaderType:
+  uploaderType: kopia
   # `velero server` default: 1m
   backupSyncPeriod:
   # `velero server` default: 4h
