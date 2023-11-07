@@ -87,7 +87,9 @@ spec:
     name: github-home-cluster-flux
   eventSources:
     - kind: Kustomization
-      name: flux-system
+      name: '*'
+    - kind: HelmRelease
+      name: '*'
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Alert
@@ -111,7 +113,9 @@ spec:
     name: github-home-cluster-sensitive
   eventSources:
     - kind: Kustomization
-      name: secrets
+      name: '*'
+    - kind: HelmRelease
+      name: '*'
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Alert
@@ -122,5 +126,9 @@ spec:
   providerRef:
     name: github-helm-charts
   eventSources:
+    - kind: Kustomization
+      name: '*'
+    - kind: HelmRelease
+      name: '*'
     - kind: HelmRepository
-      name: usa-reddragon
+      name: '*'
