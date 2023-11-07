@@ -35,21 +35,12 @@ spec:
       enable_pod_antiaffinity: true
       enable_readiness_probe: true
       pod_environment_secret: postgresql-pod-environment
-      # infrastructure_roles_secret_name: postgresql-infrastructure-roles
       storage_resize_mode: off
       ignored_annotations:
       - metallb.universe.tf/ip-allocated-from-pool
     configLoadBalancer:
       db_hosted_zone: db.mcswain.dev
-      # toggles service type load balancer pointing to the master pod of the cluster
       enable_master_load_balancer: true
-      # toggles service type load balancer pointing to the master pooler pod of the cluster
-      enable_master_pooler_load_balancer: true
-      # toggles service type load balancer pointing to the replica pod of the cluster
-      enable_replica_load_balancer: true
-      # toggles service type load balancer pointing to the replica pooler pod of the cluster
-      enable_replica_pooler_load_balancer: true
-      # define external traffic policy for the load balancer
       external_traffic_policy: "Local"
     configLogicalBackup:
       logical_backup_provider: "s3"
@@ -69,8 +60,5 @@ spec:
       logical_backup_schedule: "00 * * * *"
     configAwsOrGcp:
       aws_region:
-    configTeamsApi:
-      enable_postgres_team_crd: false
-      enable_teams_api: false
     configPatroni:
       enable_patroni_failsafe_mode: true
