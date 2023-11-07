@@ -72,6 +72,18 @@ env:
   value: Bitwarden
 - name: REQUIRE_DEVICE_EMAIL
   value: 'false'
+- name: DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: vaultwarden.vaultwarden.cluster.credentials.postgresql.acid.zalan.do
+      key: password
+- name: DB_USER
+  valueFrom:
+    secretKeyRef:
+      name: vaultwarden.vaultwarden.cluster.credentials.postgresql.acid.zalan.do
+      key: username
+- name: DATABASE_URL
+  value: postgresql://${DB_USER}:${DB_PASSWORD}@cluster.postgres.svc.cluster.local/vaultwarden
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
