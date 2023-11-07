@@ -19,7 +19,10 @@ args: []
 command:
   - bash
   - -c
-  - "rake db:migrate && foreman start"
+  - |
+    export DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@cluster.postgres.svc.cluster.local:5432/siteinspector" && \
+    rake db:migrate && \
+    foreman start
 
 secrets: []
 # - name: app-secret-key
@@ -60,6 +63,16 @@ env:
   value: "808"
 - name: SIDEKIQ_CONCURRENCY
   value: "5"
+- name: DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: site-inspector.siteinspector.cluster.credentials.postgresql.acid.zalan.do
+      key: password
+- name: DB_USER
+  valueFrom:
+    secretKeyRef:
+      name: site-inspector.siteinspector.cluster.credentials.postgresql.acid.zalan.do
+      key: username
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
