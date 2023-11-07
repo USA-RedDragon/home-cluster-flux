@@ -61,7 +61,7 @@ env:
 - name: READSB_FIX
   value: "true"
 - name: READSB_GAIN
-  value: "19.7"
+  value: "16.6"
 - name: READSB_RRD_STEP
   value: "3"
 - name: READSB_MODEAC
