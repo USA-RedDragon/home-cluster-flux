@@ -15,6 +15,13 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
+command:
+- /bin/sh
+- -c
+- |
+  export DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@cluster.postgres.svc.cluster.local/vaultwarden?sslmode=require" && \
+  exec /start.sh
+
 secrets: []
 # - name: app-secret-key
 #   data:
@@ -82,8 +89,6 @@ env:
     secretKeyRef:
       name: vaultwarden.vaultwarden.cluster.credentials.postgresql.acid.zalan.do
       key: username
-- name: DATABASE_URL
-  value: postgresql://${DB_USER}:${DB_PASSWORD}@cluster.postgres.svc.cluster.local/vaultwarden
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
