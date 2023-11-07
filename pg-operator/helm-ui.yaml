@@ -23,7 +23,8 @@ spec:
       operatorApiUrl: "http://pg-operator-postgres-operator.pg-operator.svc.cluster.local:8080"
       resourcesVisible: "True"
       targetNamespace: "pg-operator"
-      teams: []
+      teams:
+      - acid
     extraEnvs:
       - name: WALE_S3_ENDPOINT
         value: "https://s3.mcswain.dev"
