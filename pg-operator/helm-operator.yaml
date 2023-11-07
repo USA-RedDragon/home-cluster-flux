@@ -37,6 +37,8 @@ spec:
       pod_environment_secret: postgresql-pod-environment
       # infrastructure_roles_secret_name: postgresql-infrastructure-roles
       storage_resize_mode: off
+      ignored_annotations:
+      - metallb.universe.tf/ip-allocated-from-pool
     configLoadBalancer:
       db_hosted_zone: db.mcswain.dev
       # toggles service type load balancer pointing to the master pod of the cluster
