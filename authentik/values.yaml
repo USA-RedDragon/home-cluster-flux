@@ -40,7 +40,7 @@ configs:
 - name: authentik-config
   data:
     AUTHENTIK_REDIS__HOST: redis-app.authentik.svc.cluster.local
-    AUTHENTIK_POSTGRESQL__HOST: postgres-app.postgres.svc.cluster.local
+    AUTHENTIK_POSTGRESQL__HOST: 'cluster.postgres.svc.cluster.local'
     AUTHENTIK_POSTGRESQL__USER: authentik
     AUTHENTIK_POSTGRESQL__NAME: authentik
     AUTHENTIK_EMAIL__HOST: email.mcswain.dev
