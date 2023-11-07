@@ -66,7 +66,7 @@ spec:
       # S3 retention time for stored backups for example "2 week" or "7 days"
       logical_backup_s3_retention_time: "2 week"
       # backup schedule in the cron format
-      logical_backup_schedule: "00 * * * *"
+      logical_backup_schedule: "00/30 * * * *"
     configAwsOrGcp:
       aws_region:
       wal_s3_bucket: "pg-operator-wal"
