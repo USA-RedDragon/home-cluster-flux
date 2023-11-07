@@ -53,7 +53,7 @@ env:
 - name: PAPERLESS_REDIS
   value: redis://localhost:6379
 - name: PAPERLESS_DBHOST
-  value: postgres-app.postgres.svc.cluster.local
+  value: cluster.postgres.svc.cluster.local
 - name: PAPERLESS_TIKA_ENABLED
   value: '1'
 - name: PAPERLESS_USE_X_FORWARD_HOST
@@ -70,6 +70,16 @@ env:
   value: '1'
 - name: PAPERLESS_HTTP_REMOTE_USER_HEADER_NAME
   value: 'HTTP_X_AUTHENTIK_USERNAME'
+- name: PAPERLESS_DBPASS
+  valueFrom:
+    secretKeyRef:
+      name: paperless-ngx.paperless.cluster.credentials.postgresql.acid.zalan.do
+      key: password
+- name: PAPERLESS_DBUSER
+  valueFrom:
+    secretKeyRef:
+      name: paperless-ngx.paperless.cluster.credentials.postgresql.acid.zalan.do
+      key: username
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
