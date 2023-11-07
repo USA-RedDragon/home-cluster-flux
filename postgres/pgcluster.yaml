@@ -1,0 +1,48 @@
+apiVersion: acid.zalan.do/v1
+kind: postgresql
+metadata:
+  name: cluster
+  namespace: postgres
+spec:
+  teamId: ""
+  postgresql:
+    version: "15"
+  numberOfInstances: 3
+  enableMasterLoadBalancer: true
+  enableConnectionPooler: false
+  enableReplicaConnectionPooler: false
+  enableMasterPoolerLoadBalancer: false
+  enableLogicalBackup: true
+  volume:
+    size: 10Gi
+    storageClass: openebs-hostpath
+  users:
+    authentik.authentik: []
+    dmrhub.dmr: []
+    gitea.gitea: []
+    healthchecks.healthchecks: []
+    paperless-ngx.paperless: []
+    rdio-scanner.rdioscanner: []
+    site-inspector.siteinspector: []
+    tandoor.tandoor: []
+    vaultwarden.vaultwarden: []
+  databases:
+    authentik: authentik.authentik
+    dmr: dmrhub.dmr
+    gitea: gitea.gitea
+    healthchecks: healthchecks.healthchecks
+    paperless: paperless-ngx.paperless
+    rdioscanner: rdio-scanner.rdioscanner
+    siteinspector: site-inspector.siteinspector
+    tandoor: tandoor.tandoor
+    vaultwarden: vaultwarden.vaultwarden
+  allowedSourceRanges:
+    - 192.168.1.1/24
+  resources:
+    requests:
+      cpu: 150m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+      hugepages-2Mi: 512Mi
