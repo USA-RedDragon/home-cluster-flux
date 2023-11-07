@@ -41,7 +41,6 @@ configs:
   data:
     AUTHENTIK_REDIS__HOST: redis-app.authentik.svc.cluster.local
     AUTHENTIK_POSTGRESQL__HOST: 'cluster.postgres.svc.cluster.local'
-    AUTHENTIK_POSTGRESQL__USER: authentik
     AUTHENTIK_POSTGRESQL__NAME: authentik
     AUTHENTIK_EMAIL__HOST: email.mcswain.dev
     AUTHENTIK_EMAIL__PORT: '465'
@@ -67,12 +66,17 @@ envFrom:
 - configMapRef:
     name: authentik-config
 
-env: []
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
+env:
+- name: AUTHENTIK_POSTGRESQL__PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: authentik.authentik.cluster.credentials.postgresql.acid.zalan.do
+      key: password
+- name: AUTHENTIK_POSTGRESQL__USER
+  valueFrom:
+    secretKeyRef:
+      name: authentik.authentik.cluster.credentials.postgresql.acid.zalan.do
+      key: username
 
 podAnnotations: {}
 
