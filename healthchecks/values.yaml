@@ -70,15 +70,23 @@ env:
 - name: DB
   value: postgres
 - name: DB_HOST
-  value: postgres-app.postgres.svc.cluster.local
+  value: cluster.postgres.svc.cluster.local
 - name: DB_NAME
-  value: healthchecks
-- name: DB_USER
   value: healthchecks
 - name: REGISTRATION_OPEN
   value: "False"
 - name: DEBUG
   value: "False"
+- name: DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: healthchecks.healthchecks.cluster.credentials.postgresql.acid.zalan.do
+      key: password
+- name: DB_USER
+  valueFrom:
+    secretKeyRef:
+      name: healthchecks.healthchecks.cluster.credentials.postgresql.acid.zalan.do
+      key: username
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
