@@ -279,7 +279,7 @@ configuration:
     # provider is the name for the backup storage location provider.
     provider: aws
     # bucket is the name of the bucket to store backups in. Required.
-    bucket: velero
+    bucket: velero-new
     # caCert defines a base64 encoded CA bundle to use when verifying TLS connections to the provider. Optional.
     caCert:
     # prefix is the directory under which all Velero data should be stored within the bucket. Optional.
