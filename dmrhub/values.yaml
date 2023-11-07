@@ -53,7 +53,7 @@ env:
 - name: TRUSTED_PROXIES
   value: "172.17.0.0/16"
 - name: PG_HOST
-  value: postgres-app.postgres.svc.cluster.local
+  value: cluster.postgres.svc.cluster.local
 - name: REDIS_HOST
   value: redis-app.redis.svc.cluster.local:6379
 - name: DEBUG
