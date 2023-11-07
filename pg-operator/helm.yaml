@@ -69,5 +69,7 @@ spec:
       logical_backup_schedule: "00 * * * *"
     configAwsOrGcp:
       aws_region:
+      wal_s3_bucket: "pg-operator-wal"
+      log_s3_bucket: "pg-operator-logs"
     configPatroni:
       enable_patroni_failsafe_mode: true
