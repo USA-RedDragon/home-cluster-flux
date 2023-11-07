@@ -19,9 +19,28 @@ spec:
     imagePullSecrets:
       - name: registry-docker-hub
     envs:
+      appUrl: "https://postgres.mcswain.dev"
       operatorApiUrl: "http://pg-operator-postgres-operator.pg-operator.svc.cluster.local:8080"
+      resourcesVisible: "True"
       targetNamespace: "pg-operator"
       teams: []
+    extraEnvs:
+      - name: WALE_S3_ENDPOINT
+        value: "https://s3.mcswain.dev"
+      - name: AWS_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: postgresql-ui-environment
+            key: AWS_ACCESS_KEY_ID
+      - name: AWS_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: postgresql-ui-environment
+            key: AWS_SECRET_ACCESS_KEY
+      - name: AWS_ENDPOINT
+        value: "https://s3.mcswain.dev"
+      - name: SPILO_S3_BACKUP_BUCKET
+        value: "pg-operator-backups"
     ingress:
       enabled: true
       annotations:
