@@ -95,11 +95,10 @@ probes: {}
 
 resources:
   limits:
-    cpu: 4
     memory: 1Gi
     squat.ai/sdrplay: 1
   requests:
-    cpu: 4
+    cpu: 2
     memory: 750Mi
 
 nodeSelector: {}
