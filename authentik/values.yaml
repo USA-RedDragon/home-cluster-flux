@@ -145,6 +145,17 @@ extraContainers:
   name: worker
   args:
   - worker
+  env:
+  - name: AUTHENTIK_POSTGRESQL__PASSWORD
+    valueFrom:
+      secretKeyRef:
+        key: password
+        name: authentik.authentik.cluster.credentials.postgresql.acid.zalan.do
+  - name: AUTHENTIK_POSTGRESQL__USER
+    valueFrom:
+      secretKeyRef:
+        key: username
+        name: authentik.authentik.cluster.credentials.postgresql.acid.zalan.do
   envFrom:
   - configMapRef:
       name: authentik-config
