@@ -59,6 +59,7 @@ spec:
       logical_backup_s3_endpoint: "https://s3.mcswain.dev"
       logical_backup_s3_retention_time: "2 week"
       logical_backup_schedule: "00/30 * * * *"
+      logical_backup_s3_sse: ""
     configAwsOrGcp:
       aws_region:
       wal_s3_bucket: "pg-operator-wal"
