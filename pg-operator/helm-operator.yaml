@@ -16,6 +16,10 @@ spec:
       version: '>=1.10.1 <2.0.0'
       interval: 1m0s
   values:
+    image:
+      registry: ghcr.io
+      repository: usa-reddragon/postgres-operator
+      tag: v1.10.2
     imagePullSecrets:
       - name: registry-docker-hub
     configGeneral:
