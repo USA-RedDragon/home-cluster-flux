@@ -49,7 +49,7 @@ envFrom: []
 
 env:
 - name: ADMINER_DEFAULT_SERVER
-  value: postgres-app.postgres.svc.cluster.local
+  value: cluster.postgres.svc.cluster.local
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
