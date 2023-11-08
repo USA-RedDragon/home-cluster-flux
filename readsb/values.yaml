@@ -64,6 +64,8 @@ env:
   value: "16.6"
 - name: READSB_RRD_STEP
   value: "3"
+- name: READSB_RTLSDR_DEVICE
+  value: "00001090"
 - name: READSB_MODEAC
   value: "true"
 - name: READSB_RX_LOCATION_ACCURACY
