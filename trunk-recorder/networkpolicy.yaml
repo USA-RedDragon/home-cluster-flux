@@ -10,14 +10,13 @@ spec:
   policyTypes:
   - Ingress
   - Egress
-  ingress: []
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: metrics
   egress:
   - to:
-    - ipBlock:
-        cidr: 0.0.0.0/0
-        except:
-        - 10.0.0.0/8
-        - 172.16.0.0/16
-        - 172.17.0.0/16
-        - 172.18.0.0/16
-        - 192.168.0.0/16
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: rdio-scanner
