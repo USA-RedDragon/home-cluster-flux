@@ -79,7 +79,7 @@ persistentVolumes:
 - name: config
   mountPath: /app
   secret:
-    name: config
+    secretName: config
     items:
     - key: config.json
       path: config.json
