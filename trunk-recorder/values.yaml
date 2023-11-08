@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/trunk-recorder
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest@sha256:81d9a8d34d84ae4e32c15964dacd6e9760b430ac0e4a4d78ea414ed511807d27"
+  tag: "main@sha256:f39ab551e6514299975511e42aea4b8431b28de4b587dbbd5a824008a6a898c8"
 
 imagePullSecrets: []
 nameOverride: ""
