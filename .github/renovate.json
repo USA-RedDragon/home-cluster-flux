@@ -26,6 +26,13 @@
     ],
     "packageRules": [
         {
+            "matchUpdateTypes": [
+                "digest",
+                "pinDigest"
+            ],
+            "automerge": false
+        },
+        {
             "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/papermc$"],
             "automerge": false
         },
