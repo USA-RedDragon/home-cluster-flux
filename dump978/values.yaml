@@ -58,6 +58,8 @@ env:
   value: rtlsdr
 - name: DUMP978_SDR_GAIN
   value: "15.7"
+- name: DUMP978_RTLSDR_DEVICE
+  value: "00000978"
 - name: ENABLE_PROMETHEUS
   value: "true"
 # - name: SPECIAL_KEY
