@@ -83,7 +83,7 @@ env:
 - name: AUTOGAIN_INITIAL_MSGS_ACCEPTED
   value: "100000"
 - name: AUTOGAIN_MAX_GAIN_VALUE
-  value: "33.8"
+  value: "28.0"
 - name: AUTOGAIN_SERVICE_PERIOD
   value: "60"
 # - name: SPECIAL_KEY
