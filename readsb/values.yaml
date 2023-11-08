@@ -163,11 +163,11 @@ probes: {}
 
 resources:
   limits:
-    cpu: 150m
+    cpu: 250m
     memory: 150Mi
     squat.ai/rtl-sdr-ads-b: 1
   requests:
-    cpu: 100m
+    cpu: 250m
     memory: 100Mi
 
 nodeSelector: {}
