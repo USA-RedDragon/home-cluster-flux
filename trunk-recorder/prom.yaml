@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: trunk-recorder
+  labels:
+    app.kubernetes.io/instance: trunk-recorder
+    app.kubernetes.io/name: app
+spec:
+  endpoints:
+    - port: metrics
+      scrapeTimeout: 3s
+      interval: 10s
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: trunk-recorder
+      app.kubernetes.io/name: app

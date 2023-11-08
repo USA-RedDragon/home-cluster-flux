@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/usa-reddragon/trunk-recorder
+  repository: ghcr.io/usa-reddragon/trunk-recorder-prometheus:main
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:f39ab551e6514299975511e42aea4b8431b28de4b587dbbd5a824008a6a898c8"
+  tag: "main@sha256:6541297cc27e5cb17832891c26886289d375fb0f3caeac44bdabde0e89d25a03"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -74,6 +74,9 @@ securityContext:
 
 service:
   type: ClusterIP
+  ports:
+  - name: metrics
+    port: 9842
 
 persistentVolumes:
 - name: config
