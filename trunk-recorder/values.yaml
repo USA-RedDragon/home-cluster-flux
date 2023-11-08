@@ -75,14 +75,14 @@ securityContext:
 service:
   type: ClusterIP
 
-persistentVolumes: []
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
+persistentVolumes:
+- name: config
+  mountPath: /app
+  secret:
+    name: config
+    items:
+    - key: config.json
+      path: config.json
 
 ingress:
   enabled: false
