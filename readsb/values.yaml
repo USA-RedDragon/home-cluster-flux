@@ -61,7 +61,7 @@ env:
 - name: READSB_FIX
   value: "true"
 - name: READSB_GAIN
-  value: "16.6"
+  value: "autogain"
 - name: READSB_RRD_STEP
   value: "3"
 - name: READSB_RTLSDR_DEVICE
