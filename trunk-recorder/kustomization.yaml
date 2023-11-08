@@ -5,6 +5,7 @@ resources:
   - ns.yaml
   - helm.yaml
   - networkpolicy.yaml
+  - prom.yaml
 configMapGenerator:
   - name: chart-values
     files:
