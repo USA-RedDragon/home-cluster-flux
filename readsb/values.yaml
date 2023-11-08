@@ -81,7 +81,7 @@ env:
 - name: READSB_AGGRESSIVE
   value: "true"
 - name: AUTOGAIN_MAX_GAIN_VALUE
-  value: "29.7"
+  value: "25.4"
 - name: READSB_MAX_RANGE
   value: "500"
 - name: READSB_GRAPH_ALL_LARGE
