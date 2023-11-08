@@ -5,13 +5,12 @@
 replicaCount: 1
 
 image:
-  repository: robotastic/trunk-recorder
+  repository: ghcr.io/usa-reddragon/trunk-recorder
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "4.6.0"
+  tag: "latest@sha256:81d9a8d34d84ae4e32c15964dacd6e9760b430ac0e4a4d78ea414ed511807d27"
 
-imagePullSecrets:
-- name: registry-docker-hub
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
