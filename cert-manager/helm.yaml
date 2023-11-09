@@ -45,10 +45,10 @@ spec:
       resources:
         requests:
           cpu: 10m
-          memory: 75Mi
+          memory: 100Mi
         limits:
           cpu: 30m
-          memory: 100Mi
+          memory: 150Mi
     extraArgs:
     - --dns01-recursive-nameservers-only
     - --dns01-recursive-nameservers=1.1.1.1:53,8.8.8.8:53
