@@ -3,10 +3,15 @@ kind: Kustomization
 namespace: minecraft
 resources:
   - ns.yaml
+  - origins-helm.yaml
+  - origins-networkpolicy.yaml
   - dragonmc-site-helm.yaml
 configMapGenerator:
   - name: dragonmc-site-chart-values
     files:
       - values.yaml=dragonmc-site-values.yaml
+  - name: origins-chart-values
+    files:
+      - values.yaml=origins-values.yaml
 configurations:
   - kustomizeconfig.yaml
