@@ -62,8 +62,8 @@ env:
   value: "Official DMRHub"
 - name: ALLOW_SCRAPING
   value: "1"
-- name: OTLP_ENDPOINT
-  value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
+# - name: OTLP_ENDPOINT
+#   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
 - name: OPENBRIDGE_PORT
   value: "62035"
 - name: METRICS_PORT
