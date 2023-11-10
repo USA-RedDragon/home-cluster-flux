@@ -8,7 +8,7 @@ image:
   repository: dgtlmoon/changedetection.io
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.45.5@sha256:97b498022973b03876ca1daa950d76a6a3f185fbe371d2cc8a2a0645267f81f7"
+  tag: "0.45.7@sha256:52b797318e127df59b48c97d88be5d6f4dd6c1bd9d2c1126bcd1897b38e99db2"
 
 imagePullSecrets:
 - name: registry-docker-hub
