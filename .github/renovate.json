@@ -38,7 +38,8 @@
         },
         {
             "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/fabric$"],
-            "automerge": false
+            "automerge": false,
+            "allowedVersions": "<=1.19.2"
         },
         {
             "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/weewx-docker$"],
