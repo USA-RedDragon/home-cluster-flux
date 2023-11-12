@@ -86,6 +86,8 @@ persistentVolumes:
     items:
     - key: config.json
       path: config.json
+    - key: talkgroups.csv
+      path: talkgroups.csv
 
 ingress:
   enabled: false
