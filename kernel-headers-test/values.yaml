@@ -1,0 +1,102 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ubuntu
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "22.04"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom: []
+# - configMapRef:
+#     name: app-config
+
+env: []
+
+podAnnotations: {}
+  backup.velero.io/backup-volumes-excludes: headers
+
+podSecurityContext: {}
+  # fsGroup: 999
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 999
+  # runAsGroup: 999
+  # fsGroup: 999
+
+service:
+  type: ClusterIP
+
+persistentVolumes:
+- name: headers
+  mountPath: /headers
+  size: 1Gi
+  persistentVolumeClaim:
+    name: headers
+    storageClass: mayastor-nvme
+
+ingress:
+  enabled: false
+
+probes: {}
+
+resources:
+  limits:
+    memory: 500Mi
+  requests:
+    cpu: 1
+    memory: 250Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
