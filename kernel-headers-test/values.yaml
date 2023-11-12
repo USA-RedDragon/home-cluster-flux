@@ -48,7 +48,7 @@ envFrom: []
 
 env: []
 
-podAnnotations: {}
+podAnnotations:
   backup.velero.io/backup-volumes-excludes: headers
 
 podSecurityContext: {}
