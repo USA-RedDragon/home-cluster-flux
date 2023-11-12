@@ -14,6 +14,11 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+command:
+- /bin/bash
+- -c
+- sleep infinity
+
 secrets: []
 # - name: app-creds
 #   data:
