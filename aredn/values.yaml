@@ -23,7 +23,7 @@ command:
   && rsyslogd -n & \
   cat /etc/resolv.conf > /tmp/resolv.conf.auto \
   && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
-  && echo -e "#!/bin/sh\nexec vtund -n -f /etc/vtundsrv.conf KI5VMF-KUBERNETES-172-31-180-56 107.221.160.74" > /etc/s6/vtund/run \
+  && echo -e "#!/bin/sh\nexec vtund -n -f /etc/vtundsrv.conf KI5VMF-KUBERNETES-172-31-180-56 oklahoma.aredn.mcswain.cloud" > /etc/s6/vtund/run \
   && exec s6-svscan /etc/s6
 
 secrets: []
