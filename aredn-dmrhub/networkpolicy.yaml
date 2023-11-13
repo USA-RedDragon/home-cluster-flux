@@ -27,7 +27,7 @@ spec:
         matchLabels:
           kubernetes.io/metadata.name: dmrhub
     - ipBlock:
-        cidr: 174.129.33.73/32
+        cidr: 107.221.160.74/32
     - ipBlock:
         cidr: 10.0.0.0/8
     - ipBlock:
