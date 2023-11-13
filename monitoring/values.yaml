@@ -3301,6 +3301,9 @@ prometheus:
       - targets: ["aredn-cloud-node.mcswain.cloud:9100"]
         labels:
           _aredn_node: KI5VMF-CLOUD-TUNNEL
+      - targets: ["kp4djt.zapto.org:6962"]
+        labels:
+          _aredn_node: oklahoma
       - targets: ["aredn-cloud-node.mcswain.cloud:9001"]
         labels:
           namespace: aredn-cloud-tunnel
