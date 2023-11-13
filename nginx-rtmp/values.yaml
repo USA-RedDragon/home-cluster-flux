@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/nginx-rtmp-docker
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:0d7d14c7b67a727168050d79c4e795031e5b16efd9127758142f29d83d236625"
+  tag: "main@sha256:d9bdfc7630459282c5d958b6b44600cb90cd4d155c615ff73b4f9b015135ec9c"
 
 imagePullSecrets: []
 nameOverride: ""
