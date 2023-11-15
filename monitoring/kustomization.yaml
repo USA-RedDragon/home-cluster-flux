@@ -11,5 +11,8 @@ configMapGenerator:
   - name: querier-chart-values
     files:
       - values.yaml=querier-values.yaml
+  - name: compactor-chart-values
+    files:
+      - values.yaml=compactor-values.yaml
 configurations:
   - kustomizeconfig.yaml
