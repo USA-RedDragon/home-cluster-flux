@@ -39,6 +39,7 @@ spec:
     siteinspector: site-inspector.siteinspector
     tandoor: tandoor.tandoor
     vaultwarden: vaultwarden.vaultwarden
+    monitoring: monitoring.monitoring
   allowedSourceRanges:
     - 192.168.1.1/24
   resources:
