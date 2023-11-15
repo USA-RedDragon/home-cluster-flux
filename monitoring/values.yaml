@@ -3409,9 +3409,9 @@ prometheus:
     ##
     thanos:
       objectStorageConfig:
-        key: config.yaml
-        name: minio-thanos
-        optional: false
+        existingSecret:
+          key: config.yaml
+          name: minio-thanos
       # secretProviderClass:
       #   provider: gcp
       #   parameters:
