@@ -18,4 +18,4 @@ config:
     passwordSecret:
       name: monitoring.monitoring.cluster.credentials.postgresql.acid.zalan.do
       key: password
-    sslmode: enable
+    sslmode: require
