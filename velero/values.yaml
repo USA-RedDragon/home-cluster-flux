@@ -166,8 +166,8 @@ extraObjects: []
 # Settings for Velero's prometheus metrics. Enabled by default.
 metrics:
   enabled: true
-  scrapeInterval: 15s
-  scrapeTimeout: 10s
+  scrapeInterval: 5s
+  scrapeTimeout: 3s
 
   # service metdata if metrics are enabled
   service:
