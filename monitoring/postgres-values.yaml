@@ -12,6 +12,7 @@ config:
   datasource:
     # Specify one of both datasource or datasourceSecret
     host: cluster.postgres.svc.cluster.local
+    database: authentik
     userSecret:
       name: monitoring.monitoring.cluster.credentials.postgresql.acid.zalan.do
       key: username
