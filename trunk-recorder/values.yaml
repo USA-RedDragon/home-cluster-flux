@@ -99,7 +99,7 @@ resources:
     memory: 300Mi
     squat.ai/sdrplay: 1
   requests:
-    cpu: 2
+    cpu: 1500m
     memory: 250Mi
 
 nodeSelector: {}
