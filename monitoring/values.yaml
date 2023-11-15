@@ -2508,7 +2508,7 @@ prometheus:
   # Needs thanosService to be enabled as well
   thanosServiceMonitor:
     enabled: true
-    interval: "60s"
+    interval: "15s"
 
     ## Additional labels
     ##
