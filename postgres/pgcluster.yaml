@@ -26,6 +26,9 @@ spec:
     site-inspector.siteinspector: []
     tandoor.tandoor: []
     vaultwarden.vaultwarden: []
+    monitoring.monitoring:
+    - superuser
+    - createdb
   databases:
     authentik: authentik.authentik
     dmr: dmrhub.dmr
