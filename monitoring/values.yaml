@@ -2508,7 +2508,7 @@ prometheus:
   # Needs thanosService to be enabled as well
   thanosServiceMonitor:
     enabled: true
-    interval: "15s"
+    interval: "5s"
 
     ## Additional labels
     ##
@@ -2873,7 +2873,7 @@ prometheus:
     ## Defaults to 30s.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/release-0.44/pkg/prometheus/promcfg.go#L180-L183
     ##
-    scrapeInterval: "15s"
+    scrapeInterval: "5s"
 
     ## Number of seconds to wait for target to respond before erroring
     ##
