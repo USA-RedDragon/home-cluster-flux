@@ -8,5 +8,8 @@ configMapGenerator:
   - name: chart-values
     files:
       - values.yaml=values.yaml
+  - name: querier-chart-values
+    files:
+      - values.yaml=querier-values.yaml
 configurations:
   - kustomizeconfig.yaml
