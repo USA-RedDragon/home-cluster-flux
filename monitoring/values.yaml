@@ -2507,8 +2507,8 @@ prometheus:
   # ServiceMonitor to scrape Sidecar metrics
   # Needs thanosService to be enabled as well
   thanosServiceMonitor:
-    enabled: false
-    interval: ""
+    enabled: true
+    interval: "60s"
 
     ## Additional labels
     ##
@@ -3407,7 +3407,11 @@ prometheus:
     ## This is experimental and may change significantly without backward compatibility in any release.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#thanosspec
     ##
-    thanos: {}
+    thanos:
+      objectStorageConfig:
+        key: config.yaml
+        name: minio-thanos
+        optional: false
       # secretProviderClass:
       #   provider: gcp
       #   parameters:
