@@ -8,7 +8,7 @@ image:
   repository: louislam/uptime-kuma
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.23.5-alpine@sha256:6d637a2f9697661271aa5f930b0604a81f87effbb6ca0e33e6e36ca72655b5d2"
+  tag: "1.23.6-alpine@sha256:a98047bb1e8f45ad31da21d401de7bc35f878e3b72ad7b27309800d4a6d036c4"
 
 imagePullSecrets:
 - name: registry-docker-hub
