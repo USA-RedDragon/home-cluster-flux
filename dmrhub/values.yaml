@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/dmrhub
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.43"
+  tag: "v1.0.44"
 
 args: []
 imagePullSecrets: []
@@ -79,7 +79,7 @@ env:
       name: dmrhub.dmr.cluster.credentials.postgresql.acid.zalan.do
       key: username
 - name: FEATURE_FLAGS
-  value: openbridge
+  value: ""
 
 podAnnotations: {}
 
