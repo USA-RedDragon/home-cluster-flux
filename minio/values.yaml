@@ -8,7 +8,7 @@ image:
   repository: minio/minio
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: latest@sha256:183b074f5429a9c48c285e4079140078a85b8a2e0d685fe0842eca2dc4bbc8be
+  tag: latest@sha256:7b40c61317c661d5d87428a287cd3f9c588ad4177b3ae50107be040359837485
 
 imagePullSecrets:
 - name: registry-docker-hub
