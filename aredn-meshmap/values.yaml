@@ -146,7 +146,7 @@ resources:
     memory: 200Mi
 
 initContainers:
-- image: ghcr.io/usa-reddragon/wireguard:latest@sha256:8351c3f90459ee87ad8a57f5811313ec80c43005d730ed84a84a95ae0daa1cef
+- image: ghcr.io/usa-reddragon/wireguard:latest@sha256:c30b1245ebb2b36727cdba09385eccd589e66be1902f3bcde5ba5f591c7caf50
   name: wireguard-init
   command:
   - /bin/sh
@@ -178,7 +178,7 @@ initContainers:
   imagePullPolicy: IfNotPresent
 
 extraContainers:
-- image: ghcr.io/usa-reddragon/wireguard:latest@sha256:8351c3f90459ee87ad8a57f5811313ec80c43005d730ed84a84a95ae0daa1cef
+- image: ghcr.io/usa-reddragon/wireguard:latest@sha256:c30b1245ebb2b36727cdba09385eccd589e66be1902f3bcde5ba5f591c7caf50
   imagePullPolicy: IfNotPresent
   command:
   - /bin/sh
