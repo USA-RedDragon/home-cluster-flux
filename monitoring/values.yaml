@@ -866,6 +866,8 @@ grafana:
   enabled: true
   namespaceOverride: ""
 
+  envFromSecret: grafana-oauth
+
   deploymentStrategy:
     type: Recreate
 
