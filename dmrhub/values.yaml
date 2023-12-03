@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/dmrhub
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.46"
+  tag: "v1.0.48"
 
 args: []
 imagePullSecrets: []
@@ -80,6 +80,22 @@ env:
       key: username
 - name: FEATURE_FLAGS
   value: ""
+- name: SMTP_HOST
+  value: email.mcswain.dev
+- name: SMTP_PORT
+  value: "465"
+- name: SMTP_USERNAME
+  value: dmrhub
+- name: SMTP_FROM
+  value: dmrhub@mcswain.dev
+- name: SMTP_AUTH_METHOD
+  value: "PLAIN"
+- name: ADMIN_EMAIL
+  value: jacob@mcswain.dev
+- name: ENABLE_EMAIL
+  value: "1"
+- name: CANONICAL_HOST
+  value: https://dmrhub.net
 
 podAnnotations: {}
 
