@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/dmrhub
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.48"
+  tag: "v1.0.49"
 
 args: []
 imagePullSecrets: []
@@ -57,7 +57,7 @@ env:
 - name: REDIS_HOST
   value: redis-app.redis.svc.cluster.local:6379
 - name: DEBUG
-  value: "1"
+  value: ""
 - name: NETWORK_NAME
   value: "Official DMRHub"
 - name: ALLOW_SCRAPING
