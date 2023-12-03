@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/dmrhub
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.49"
+  tag: "v1.0.50"
 
 args: []
 imagePullSecrets: []
@@ -179,8 +179,10 @@ probes:
 
 resources:
   limits:
+    cpu: 300m
     memory: 1Gi
   requests:
+    cpu: 250m
     memory: 300Mi
 
 nodeSelector: {}
