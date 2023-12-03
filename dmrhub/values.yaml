@@ -96,6 +96,8 @@ env:
   value: "1"
 - name: CANONICAL_HOST
   value: https://dmrhub.net
+- name: SMTP_IMPLICIT_TLS
+  value: "1"
 
 podAnnotations: {}
 
