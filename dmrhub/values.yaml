@@ -133,7 +133,7 @@ persistentVolumes:
   size: 1Gi
   persistentVolumeClaim:
     name: dmrdb
-    storageClass: mayastor-nvmf
+    storageClass: mayastor-nvme
 # - name: config
 #   mountPath: /config
 #   configMap:
