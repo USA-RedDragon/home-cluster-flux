@@ -868,6 +868,22 @@ grafana:
 
   envFromSecret: grafana-oauth
 
+  grafana.ini:
+    paths:
+      data: /var/lib/grafana/
+      logs: /var/log/grafana
+      plugins: /var/lib/grafana/plugins
+      provisioning: /etc/grafana/provisioning
+    analytics:
+      check_for_updates: true
+    log:
+      mode: console
+    grafana_net:
+      url: https://grafana.net
+    server:
+      domain: grafana.mcswain.dev
+      root_url: https://grafana.mcswain.dev
+
   deploymentStrategy:
     type: Recreate
 
