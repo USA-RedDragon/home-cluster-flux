@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/dmrhub
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.50"
+  tag: "v1.0.51"
 
 args: []
 imagePullSecrets: []
@@ -126,14 +126,14 @@ service:
     port: 62035
     protocol: UDP
 
-persistentVolumes: []
-# - name: data
-#   mountPath: /data
-#   subPath: test
-#   size: 5Gi
-#   persistentVolumeClaim:
-#     name: app-data
-#     storageClass: mayastor-nvmf
+persistentVolumes:
+- name: dmrdb
+  mountPath: /dmrdb
+  subPath: dmrdb
+  size: 1Gi
+  persistentVolumeClaim:
+    name: dmrdb
+    storageClass: mayastor-nvmf
 # - name: config
 #   mountPath: /config
 #   configMap:
