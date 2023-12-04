@@ -41,7 +41,7 @@ spec:
       callhome:
         enabled: false
     io_engine:
-      cpuCount: "1"
+      coreList: [1, 3]
       resources:
         requests:
-          cpu: "1"
+          cpu: "2"
