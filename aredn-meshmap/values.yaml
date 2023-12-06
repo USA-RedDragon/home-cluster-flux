@@ -139,10 +139,9 @@ probes: {}
 # Why all the memory? Well we have a cron job that builds a large JSON file out of 2000+ network nodes.
 resources:
   limits:
-    cpu: 100m
     memory: 300Mi
   requests:
-    cpu: 50m
+    cpu: 100m
     memory: 200Mi
 
 initContainers:
