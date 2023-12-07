@@ -16,7 +16,7 @@ spec:
           - name: registry-docker-hub
           containers:
           - name: backup
-            image: bitnami/etcd:3.5.10
+            image: bitnami/etcd:3.5.11
             imagePullPolicy: IfNotPresent
             volumeMounts:
             - name: backups
