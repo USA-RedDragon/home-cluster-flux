@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/weewx-docker
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:7f688d8b8e946a8b79d855bea8274da4817beaaffd44b77d06c749a20806377b"
+  tag: "main@sha256:504be0b407dd13bbbe1323c029c8397d89e274fdd3fc380ffbf168f3d5295006"
 
 command:
 - sh
