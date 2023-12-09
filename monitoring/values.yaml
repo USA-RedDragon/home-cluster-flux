@@ -2933,7 +2933,7 @@ prometheus:
     image:
       registry: quay.io
       repository: prometheus/prometheus
-      tag: v2.48.0
+      tag: v2.48.1
       sha: "29630076fd1d007729faec35ed9610053bad211ab5bd6c98cdfc7a7bdbdaaf4e"
 
     ## Tolerations for use with node taints
