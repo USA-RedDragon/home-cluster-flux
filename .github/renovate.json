@@ -3,6 +3,7 @@
     "extends": [
         "local>USA-RedDragon/renovate-configs"
     ],
+    "rebaseWhen": "auto",
     "flux": {
         "enabled": true,
         "fileMatch": ["\\.ya?ml$"]
