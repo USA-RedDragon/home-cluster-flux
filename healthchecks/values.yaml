@@ -8,7 +8,7 @@ image:
   repository: healthchecks/healthchecks
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v3.0@sha256:4bed533c46e4018057d1091a49dc28419069f522540d1841c0e47a861b532a2d"
+  tag: "v3.1@sha256:d7ab87d1e05bbc9dfa8fe0d0c609f030b16ad0160a5ad791481627506a2cde32"
 
 imagePullSecrets:
 - name: registry-docker-hub
