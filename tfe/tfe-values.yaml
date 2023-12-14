@@ -57,6 +57,7 @@ env:
     TFE_CAPACITY_CONCURRENCY: "1"
     TFE_DATABASE_HOST: "cluster.postgres.svc.cluster.local"
     TFE_DATABASE_NAME: "tfe"
+    TFE_DATABASE_PARAMETERS: sslmode=require
     TFE_DATABASE_USER: "tfe.tfe"
     TFE_HOSTNAME: tfe.mcswain.dev
     TFE_OBJECT_STORAGE_TYPE: "s3"
@@ -64,5 +65,5 @@ env:
     TFE_OBJECT_STORAGE_S3_BUCKET: tfe
     TFE_OBJECT_STORAGE_S3_ENDPOINT: https://s3.mcswain.dev
     TFE_OBJECT_STORAGE_S3_REGION: us-east-1
-    TFE_REDIS_URL: redis-app.tfe.svc.cluster.local:6379
+    TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
 
