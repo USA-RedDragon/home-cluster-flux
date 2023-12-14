@@ -55,13 +55,13 @@ env:
   variables:
     TFE_OPERATIONAL_MODE: external
     TFE_CAPACITY_CONCURRENCY: "1"
-    TFE_DATABASE_HOST: "postgres-app.postgres.svc.cluster.local"
+    TFE_DATABASE_HOST: "cluster.postgres.svc.cluster.local"
     TFE_DATABASE_NAME: "tfe"
     TFE_DATABASE_PARAMETERS: sslmode=disable
-    TFE_DATABASE_USER: "tfe"
+    TFE_DATABASE_USER: "tfe.tfe"
     TFE_HOSTNAME: tfe.mcswain.dev
     TFE_OBJECT_STORAGE_TYPE: "s3"
-    TFE_OBJECT_STORAGE_S3_ACCESS_KEY_ID: 828SkH2OIhvXnTAjekxD
+    TFE_OBJECT_STORAGE_S3_ACCESS_KEY_ID: LgUhs4wSxp2eVT7AtJvN
     TFE_OBJECT_STORAGE_S3_BUCKET: tfe
     TFE_OBJECT_STORAGE_S3_ENDPOINT: https://s3.mcswain.dev
     TFE_OBJECT_STORAGE_S3_REGION: us-east-1
