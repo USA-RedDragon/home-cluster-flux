@@ -2,11 +2,11 @@ replicaCount: 1
 
 # Image pull secret to use for registry authentication.
 imagePullSecrets:
-- name: tfe-beta
+- name: tfe
 
 # Image sets the repo, name and tag of the Terraform Enterprise image to use.
 image:
-  tag: beta-1@sha256:93dae0d3242ba6f3b4a52b2fdd963a86e34972f9ac7a16b949f9d9c6f380b4f2
+  tag: v202310-1
   pullPolicy: IfNotPresent
 
 # Resource limits are not set by default, to give the user the ability to set specific resource limits.
