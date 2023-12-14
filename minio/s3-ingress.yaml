@@ -5,7 +5,7 @@ metadata:
     cert-manager.io/cluster-issuer: cloudflare
     kubernetes.io/tls-acme: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
   name: s3
   namespace: minio
 spec:
