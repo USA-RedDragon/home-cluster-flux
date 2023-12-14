@@ -57,7 +57,6 @@ env:
     TFE_CAPACITY_CONCURRENCY: "1"
     TFE_DATABASE_HOST: "cluster.postgres.svc.cluster.local"
     TFE_DATABASE_NAME: "tfe"
-    TFE_DATABASE_PARAMETERS: sslmode=disable
     TFE_DATABASE_USER: "tfe.tfe"
     TFE_HOSTNAME: tfe.mcswain.dev
     TFE_OBJECT_STORAGE_TYPE: "s3"
