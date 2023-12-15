@@ -11,7 +11,7 @@ spec:
   secretRef:
     name: telegram-bot-token
 ---
-apiVersion: notification.toolkit.fluxcd.io/v1beta2
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
   name: notifications
@@ -77,7 +77,7 @@ spec:
   secretRef:
     name: github-api-token
 ---
-apiVersion: notification.toolkit.fluxcd.io/v1beta2
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
   name: github-status-home-cluster-flux
@@ -91,7 +91,7 @@ spec:
     - kind: HelmRelease
       name: '*'
 ---
-apiVersion: notification.toolkit.fluxcd.io/v1beta2
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
   name: github-status-home-cluster-secrets
@@ -103,7 +103,7 @@ spec:
     - kind: Kustomization
       name: secrets
 ---
-apiVersion: notification.toolkit.fluxcd.io/v1beta2
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
   name: github-status-home-cluster-sensitive
@@ -117,7 +117,7 @@ spec:
     - kind: HelmRelease
       name: '*'
 ---
-apiVersion: notification.toolkit.fluxcd.io/v1beta2
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
   name: github-status-helm-charts
