@@ -29,7 +29,6 @@ spec:
     monitoring.monitoring:
     - superuser
     - createdb
-    tfe.tfe: []
   databases:
     authentik: authentik.authentik
     dmr: dmrhub.dmr
@@ -41,7 +40,6 @@ spec:
     tandoor: tandoor.tandoor
     vaultwarden: vaultwarden.vaultwarden
     monitoring: monitoring.monitoring
-    tfe: tfe.tfe
   allowedSourceRanges:
     - 192.168.1.1/24
     - 172.17.3.0/24
