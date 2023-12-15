@@ -6,7 +6,7 @@ imagePullSecrets:
 
 # Image sets the repo, name and tag of the Terraform Enterprise image to use.
 image:
-  tag: v202309-1
+  tag: v202312-1
   pullPolicy: IfNotPresent
 
 # Resource limits are not set by default, to give the user the ability to set specific resource limits.
@@ -67,4 +67,4 @@ env:
     TFE_OBJECT_STORAGE_S3_ENDPOINT: https://s3.mcswain.dev
     TFE_OBJECT_STORAGE_S3_REGION: us-east-1
     TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
-    TFE_RUN_PIPELINE_IMAGE: docker.io/hashicorp/tfc-agent:1.14.1
+    TFE_RUN_PIPELINE_IMAGE: docker.io/hashicorp/tfc-agent:1.12.0
