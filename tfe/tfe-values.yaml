@@ -67,4 +67,4 @@ env:
     TFE_OBJECT_STORAGE_S3_ENDPOINT: https://s3.mcswain.dev
     TFE_OBJECT_STORAGE_S3_REGION: us-east-1
     TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
-    TFE_RUN_PIPELINE_IMAGE: docker.io/hashicorp/tfc-agent:1.12.0
+    TFE_RUN_PIPELINE_IMAGE: docker.io/hashicorp/tfc-agent:1.14.1
