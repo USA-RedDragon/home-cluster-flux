@@ -8,7 +8,7 @@ image:
   repository: adminer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "4.8.1-standalone@sha256:4071546a6867ad014d195109e1f6769b9e2ecd46a6535294c4061f41d2b7fb74"
+  tag: "4.8.1-standalone@sha256:6c67673feeb79c1708ab15a8fbc527b88f591aac900ba0f060937f5dc116ce12"
 
 imagePullSecrets:
 - name: registry-docker-hub
