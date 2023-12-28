@@ -27,7 +27,7 @@ metadata:
   name: sentinel-tunnel
   namespace: ha-redis
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: sentinel-tunnel
@@ -37,7 +37,7 @@ spec:
         app: sentinel-tunnel
     spec:
       containers:
-      - image: ghcr.io/usa-reddragon/sentinel_tunnel:v0.0.2
+      - image: ghcr.io/usa-reddragon/sentinel_tunnel:v0.0.3
         imagePullPolicy: IfNotPresent
         livenessProbe:
           tcpSocket:
