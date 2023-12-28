@@ -55,7 +55,7 @@ env:
 - name: PG_HOST
   value: cluster.postgres.svc.cluster.local
 - name: REDIS_HOST
-  value: redis-app.redis.svc.cluster.local:6379
+  value: sentinel-tunnel.ha-redis.svc.cluster.local:6379
 - name: DEBUG
   value: ""
 - name: NETWORK_NAME
