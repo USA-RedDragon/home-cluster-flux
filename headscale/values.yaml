@@ -65,6 +65,8 @@ service:
     port: 80
   - name: metrics
     port: 9090
+  - name: grpc
+    port: 50443
 
 persistentVolumes:
 - name: config
