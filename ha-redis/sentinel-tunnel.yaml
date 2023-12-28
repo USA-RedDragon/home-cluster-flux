@@ -52,11 +52,11 @@ spec:
             port: tunnel
         resources:
           limits:
-            cpu: 80m
-            memory: 100Mi
+            cpu: 30m
+            memory: 30Mi
           requests:
-            cpu: 80m
-            memory: 64Mi
+            cpu: 10m
+            memory: 10Mi
         volumeMounts:
         - mountPath: /config.json
           name: config
