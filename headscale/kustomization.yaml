@@ -5,7 +5,7 @@ resources:
   - ns.yaml
   - helm.yaml
   - prom.yaml
-  - lb.yaml
+#  - lb.yaml
 configMapGenerator:
   - name: chart-values
     files:
