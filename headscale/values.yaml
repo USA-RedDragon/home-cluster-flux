@@ -16,8 +16,9 @@ nameOverride: ""
 fullnameOverride: ""
 
 command:
-- headscale
-- serve
+- sh
+- -c
+- mkdir -p /etc/headscale-writable && headscale serve
 
 secrets: []
 # - name: app-secret-key
