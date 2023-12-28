@@ -105,12 +105,12 @@ extraContainers: []
 probes:
   liveness:
     httpGet:
-      path: /
-      port: 9090
+      path: /health
+      port: 8080
   readiness:
     httpGet:
-      path: /
-      port: 9090
+      path: /health
+      port: 8080
 
 resources:
   limits:
