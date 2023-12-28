@@ -89,7 +89,7 @@ ingress:
   - host: headscale.mcswain.dev
     paths:
     - port: 8080
-      path: /web
+      path: /
       pathType: Prefix
   tls:
   - secretName: headscale-mcswain-dev-tls
