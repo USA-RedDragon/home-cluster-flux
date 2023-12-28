@@ -31,17 +31,6 @@ secrets: []
 #       strings
 
 configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
 
 envFrom: []
 # - configMapRef:
@@ -75,11 +64,11 @@ service:
   - name: metrics
     port: 9090
 
-persistentVolumes: []
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
+persistentVolumes:
+- name: config
+  mountPath: /etc/headscale
+  secret:
+    secretName: headscale
 #     items:
 #     - key: test.ini
 #       path: config.ini
