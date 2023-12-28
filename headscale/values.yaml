@@ -61,6 +61,8 @@ service:
   ports:
   - name: http
     port: 8080
+  - name: web
+    port: 80
   - name: metrics
     port: 9090
 
@@ -91,12 +93,22 @@ ingress:
     - port: 8080
       path: /
       pathType: Prefix
+    - port: 80
+      path: /web
+      pathType: Prefix
   tls:
   - secretName: headscale-mcswain-dev-tls
     hosts:
       - headscale.mcswain.dev
 
-extraContainers: []
+extraContainers:
+- name: headscale-ui
+  image: ghcr.io/gurucomputing/headscale-ui:latest@sha256:aebd8481153aefc288322c13830b2faa06e90765ca09a377f2ba891ea8205eb2
+  imagePullPolicy: IfNotPresent
+  ports:
+    - containerPort: 80
+      protocol: TCP
+      name: http
 
 probes:
   liveness:
