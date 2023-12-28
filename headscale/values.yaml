@@ -106,11 +106,11 @@ probes:
   liveness:
     httpGet:
       path: /
-      port: 8080
+      port: 9090
   readiness:
     httpGet:
       path: /
-      port: 8080
+      port: 9090
 
 resources:
   limits:
