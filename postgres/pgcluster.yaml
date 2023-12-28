@@ -20,6 +20,7 @@ spec:
     authentik.authentik: []
     dmrhub.dmr: []
     gitea.gitea: []
+    headscale.headscale: []
     healthchecks.healthchecks: []
     paperless-ngx.paperless: []
     rdio-scanner.rdioscanner: []
@@ -34,6 +35,7 @@ spec:
     authentik: authentik.authentik
     dmr: dmrhub.dmr
     gitea: gitea.gitea
+    headscale: headscale.headscale
     healthchecks: healthchecks.healthchecks
     paperless: paperless-ngx.paperless
     rdioscanner: rdio-scanner.rdioscanner
