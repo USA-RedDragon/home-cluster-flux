@@ -7,13 +7,13 @@ data:
   # Variable needed for sentinel init container
   config.json: |
     {
-      "Sentinels_addresses_list":[
+      "SentinelsAddressesList":[
         "sentinel.ha-redis.svc.cluster.local:5000"
       ],
       "Databases":[
         {
           "Name": "mymaster",
-          "Local_port": "6379"
+          "LocalPort": "6379"
         }
       ]
     }
@@ -37,7 +37,7 @@ spec:
         app: sentinel-tunnel
     spec:
       containers:
-      - image: ghcr.io/usa-reddragon/sentinel_tunnel:v0.0.3
+      - image: ghcr.io/usa-reddragon/sentinel_tunnel:v0.0.4
         imagePullPolicy: IfNotPresent
         livenessProbe:
           tcpSocket:
