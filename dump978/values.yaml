@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/sdr-enthusiasts/docker-dump978
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "telegraf@sha256:2696319fa96af618c44bc27abedfbe6a6ace4a2731b8dd056b79fef75f49c7b3"
+  tag: "telegraf@sha256:abfb2b780807a2d28529b852d9667d703687fe67bd4558fd0fe7bba76d0a1e74"
 
 imagePullSecrets: []
 nameOverride: ""
