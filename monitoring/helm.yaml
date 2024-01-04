@@ -22,7 +22,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
-      version: '>=55.5.1 <56.0.0'
+      version: '>=55.5.2 <56.0.0'
       interval: 1m0s
   valuesFrom:
     - kind: ConfigMap
