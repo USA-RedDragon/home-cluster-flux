@@ -80,7 +80,7 @@ service:
   - name: rcon
     port: 25575
   annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.1.235,fdeb:abba:237c::235/128
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.235,fdeb:abba:237c::235
   externalTrafficPolicy: Local
 
 persistentVolumes:
