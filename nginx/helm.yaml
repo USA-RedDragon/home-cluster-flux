@@ -34,7 +34,7 @@ spec:
       allowSnippetAnnotations: true
       service:
         annotations:
-          metallb.universe.tf/loadBalancerIPs: 192.168.1.232
+          metallb.universe.tf/loadBalancerIPs: 192.168.1.232,fdeb:abba:237c::232/128
         externalTrafficPolicy: Local
       resources:
         requests:
