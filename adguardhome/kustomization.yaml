@@ -3,8 +3,6 @@ kind: Kustomization
 namespace: adguardhome
 resources:
   - ns.yaml
-  - helm.yaml
-  - lb.yaml
 configMapGenerator:
   - name: chart-values
     files:
