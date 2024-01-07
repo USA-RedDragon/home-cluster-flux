@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/paperless-ngx/paperless-ngx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.3.0@sha256:f1daa36829cdbe61347798a87981832eb79e0b06f89939b7e850433db9764447"
+  tag: "2.3.1@sha256:d8c722200249b1414fd28518332be910555ddb456d79b006dd3d12fa9395cf5f"
 
 imagePullSecrets:
 - name: registry-ghcr
