@@ -1,0 +1,49 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  interval: 1m0s
+  url: https://charts.longhorn.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  chart:
+    spec:
+      chart: longhorn
+      sourceRef:
+        kind: HelmRepository
+        namespace: longhorn-system
+        name: longhorn
+      version: 1.5.3
+  interval: 60m0s
+  values:
+    persistence:
+      defaultClassReplicaCount: 2
+    defaultSettings:
+      priorityClass: system-cluster-critical
+      logLevel: Warn
+    longhornManager:
+      priorityClass: system-cluster-critical
+    longhornDriver:
+      priorityClass: system-cluster-critical
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      host: longhorn.mcswain.dev
+      tls: true
+      tlsSecret: longhorn-mcswain-dev
+      annotations:
+        kubernetes.io/tls-acme: "true"
+        cert-manager.io/cluster-issuer: cloudflare
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
+        nginx.ingress.kubernetes.io/auth-signin: https://authentik.mcswain.dev/outpost.goauthentik.io/start?rd=$escaped_request_uri
+        nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
+        nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
