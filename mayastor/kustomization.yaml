@@ -3,5 +3,3 @@ kind: Kustomization
 namespace: mayastor
 resources:
   - ns.yaml
-  - helm.yaml
-  - backup.yaml
