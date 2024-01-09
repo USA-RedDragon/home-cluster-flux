@@ -92,7 +92,7 @@ persistentVolumes: []
 #   size: 10Gi
 #   persistentVolumeClaim:
 #     name: data
-#     storageClass: mayastor-nvme
+#     storageClass: longhorn-nvme
 # - name: config
 #   mountPath: /config
 #   configMap:

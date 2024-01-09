@@ -94,14 +94,14 @@ persistentVolumes:
   size: 1Gi
   persistentVolumeClaim:
     name: html
-    storageClass: mayastor-nvme
+    storageClass: longhorn-ssd
 - name: data
   mountPath: /var/lib/weewx
   subPath: weewx
   size: 10Gi
   persistentVolumeClaim:
     name: data
-    storageClass: mayastor-nvme
+    storageClass: longhorn-nvme
 # - name: config
 #   mountPath: /config
 #   configMap:

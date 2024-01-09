@@ -42,12 +42,12 @@ spec:
       persistence:
         data:
           enabled: true
-          storageClass: mayastor-nvme
+          storageClass: longhorn-ssd
           accessMode: ReadWriteOnce
           size: 512M
         media:
           enabled: true
-          storageClass: mayastor-single-replica
+          storageClass: longhorn-nvme
           accessMode: ReadWriteOnce
           size: 8Gi
 

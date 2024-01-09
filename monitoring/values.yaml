@@ -683,11 +683,11 @@ alertmanager:
     storage:
       volumeClaimTemplate:
         spec:
-          storageClassName: mayastor-nvme
+          storageClassName: longhorn-ssd
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: 150Gi
+              storage: 6Gi
 
 
     ## The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name. string  false
@@ -890,7 +890,7 @@ grafana:
   persistence:
     enabled: true
     type: pvc
-    storageClassName: mayastor-nvme
+    storageClassName: longhorn-ssd
     accessModes:
     - ReadWriteOnce
     size: 4Gi
@@ -3270,11 +3270,11 @@ prometheus:
     storageSpec:
       volumeClaimTemplate:
         spec:
-          storageClassName: mayastor-nvme
+          storageClassName: longhorn-nvme
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: 60Gi
+              storage: 150Gi
 
     ## Using tmpfs volume
     ##
