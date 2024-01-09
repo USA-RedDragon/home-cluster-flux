@@ -21,8 +21,8 @@ spec:
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
-        namespace: flux-system
-        name: gabe565
+        namespace: obico
+        name: obico
   interval: 1h
   driftDetection:
     mode: enabled
