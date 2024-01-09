@@ -1,0 +1,73 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: obico
+  namespace: obico
+spec:
+  interval: 1m0s
+  url: https://charts.gabe565.com
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: obico
+  namespace: obico
+spec:
+  chart:
+    spec:
+      chart: obico
+      version: 0.2.8
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        namespace: flux-system
+        name: gabe565
+  interval: 1h
+  driftDetection:
+    mode: enabled
+  values:
+    server:
+      env:
+        EMAIL_HOST: email.mcswain.dev
+        EMAIL_HOST_USER: obico
+        DEFAULT_FROM_EMAIL: obico@mcswain.dev
+        EMAIL_PORT: '465'
+        EMAIL_USE_TLS: 'False'
+        EMAIL_USE_SSL: 'True'
+      envFrom:
+        - secretRef:
+            name: obico
+
+      persistence:
+        data:
+          enabled: true
+          storageClass: mayastor-nvme
+          accessMode: ReadWriteOnce
+          size: 512M
+        media:
+          enabled: true
+          storageClass: mayastor-single-replica
+          accessMode: ReadWriteMany
+          size: 8Gi
+
+      ingress:
+        main:
+          enabled: true
+          annotations:
+            nginx.ingress.kubernetes.io/proxy-body-size: 64m
+            kubernetes.io/tls-acme: "true"
+            cert-manager.io/cluster-issuer: cloudflare
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
+            nginx.ingress.kubernetes.io/auth-signin: https://authentik.mcswain.dev/outpost.goauthentik.io/start?rd=$escaped_request_uri
+            nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
+            nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
+          hosts:
+            - host: obico.mcswain.dev
+              paths:
+                - path: /
+          tls:
+            - secretName: obico-mcswain-dev
+              hosts:
+                - obico.mcswain.dev
