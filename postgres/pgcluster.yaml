@@ -15,7 +15,7 @@ spec:
   enableLogicalBackup: true
   volume:
     size: 10Gi
-    storageClass: openebs-hostpath
+    storageClass: longhorn-nvme
   users:
     authentik.authentik: []
     dmrhub.dmr: []
