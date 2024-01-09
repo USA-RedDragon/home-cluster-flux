@@ -21,7 +21,7 @@ spec:
         kind: HelmRepository
         namespace: longhorn-system
         name: longhorn
-      version: 0.2.8
+      version: 1.5.3
   interval: 60m0s
   values:
     persistence:
