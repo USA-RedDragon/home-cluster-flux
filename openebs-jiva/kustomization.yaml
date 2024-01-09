@@ -3,4 +3,3 @@ kind: Kustomization
 namespace: openebs-jiva
 resources:
   - ns.yaml
-  - helm.yaml
