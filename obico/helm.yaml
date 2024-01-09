@@ -48,7 +48,7 @@ spec:
         media:
           enabled: true
           storageClass: mayastor-single-replica
-          accessMode: ReadWriteMany
+          accessMode: ReadWriteOnce
           size: 8Gi
 
       ingress:
