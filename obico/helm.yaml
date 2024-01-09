@@ -60,7 +60,7 @@ spec:
             kubernetes.io/tls-acme: "true"
             cert-manager.io/cluster-issuer: cloudflare
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
-            nginx.org/server-snippets: |-
+            nginx.ingress.kubernetes.io/server-snippet: |-
               location /admin {
                   deny all;
               }
