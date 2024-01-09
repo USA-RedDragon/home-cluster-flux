@@ -15,7 +15,9 @@ spec:
   interval: 60m0s
   values:
     persistence:
+      defaultClass: false
       defaultClassReplicaCount: 2
+      defaultDataLocality: best-effort
     defaultSettings:
       priorityClass: system-cluster-critical
       logLevel: Warn
