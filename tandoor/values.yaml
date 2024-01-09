@@ -161,13 +161,13 @@ persistentVolumes:
   size: 5Gi
   persistentVolumeClaim:
     name: staticfiles
-    storageClass: mayastor-nvme
+    storageClass: longhorn-nvme
 - name: mediafiles
   mountPath: /opt/recipes/mediafiles
   size: 5Gi
   persistentVolumeClaim:
     name: mediafiles
-    storageClass: mayastor-nvme
+    storageClass: longhorn-ssd
 - name: nginx-config
   mountPath: /etc/nginx/nginx.conf
   configMap:

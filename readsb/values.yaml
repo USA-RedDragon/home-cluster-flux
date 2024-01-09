@@ -126,14 +126,14 @@ persistentVolumes:
   size: 1Gi
   persistentVolumeClaim:
     name: collectd
-    storageClass: mayastor-nvme
+    storageClass: longhorn-ssd
 - name: autogain
   mountPath: /run/autogain
   subPath: autogain
   size: 1Gi
   persistentVolumeClaim:
     name: autogain
-    storageClass: mayastor-nvme
+    storageClass: longhorn-ssd
 
 ingress:
   enabled: true

@@ -90,7 +90,7 @@ persistentVolumes:
   size: 20Gi
   persistentVolumeClaim:
     name: origins
-    storageClass: mayastor-nvme
+    storageClass: longhorn-nvme
 # - name: config
 #   mountPath: /config
 #   configMap:

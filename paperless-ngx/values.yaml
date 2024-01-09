@@ -112,7 +112,7 @@ persistentVolumes:
   size: 5Gi
   persistentVolumeClaim:
     name: data
-    storageClass: mayastor-nvme
+    storageClass: longhorn-ssd
 - name: consume
   mountPath: /usr/src/paperless/consume
   nfs:

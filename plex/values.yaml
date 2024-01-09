@@ -104,7 +104,7 @@ persistentVolumes:
   size: 50Gi
   persistentVolumeClaim:
     name: config
-    storageClass: mayastor-nvme
+    storageClass: longhorn-ssd
 # - name: config
 #   mountPath: /config
 #   configMap:

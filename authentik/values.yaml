@@ -107,7 +107,7 @@ persistentVolumes: []
 #   size: 1Gi
 #   persistentVolumeClaim:
 #     name: media
-#     storageClass: mayastor-nvme
+#     storageClass: longhorn-nvme
 # - name: config
 #   mountPath: /config
 #   configMap:
