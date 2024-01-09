@@ -6,3 +6,4 @@ resources:
   - helm.yaml
   - prom.yaml
   - trim-job.yaml
+  - storageclass.yaml
