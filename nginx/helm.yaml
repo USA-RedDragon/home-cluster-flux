@@ -34,12 +34,13 @@ spec:
       allowSnippetAnnotations: true
       service:
         annotations:
-          metallb.universe.tf/loadBalancerIPs: 192.168.1.232,fdeb:abba:237c::e8
+          metallb.universe.tf/loadBalancerIPs: 192.168.1.232
+          #,fdeb:abba:237c::e8
         externalTrafficPolicy: Local
-        ipFamilyPolicy: PreferDualStack
-        ipFamilies:
-          - IPv4
-          - IPv6
+        # ipFamilyPolicy: PreferDualStack
+        # ipFamilies:
+        #   - IPv4
+        #   - IPv6
       resources:
         requests:
           cpu: 250m
