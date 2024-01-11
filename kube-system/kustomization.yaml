@@ -7,3 +7,4 @@ resources:
   - etcd-backup-role.yaml
   - etcd-backup-talos-serviceaccount.yaml
   - oidc.yaml
+  - snapshot-controller.yaml
