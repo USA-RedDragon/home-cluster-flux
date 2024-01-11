@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: velero
 resources:
   - ns.yaml
+  - helm.yaml
 configMapGenerator:
   - name: chart-values
     files:
