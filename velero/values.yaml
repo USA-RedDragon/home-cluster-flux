@@ -19,6 +19,12 @@ initContainers:
     volumeMounts:
       - mountPath: /target
         name: plugins
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.8.2
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
 
 # Settings for Velero's prometheus metrics. Enabled by default.
 metrics:
@@ -71,15 +77,6 @@ configuration:
   volumeSnapshotLocation:
     # name is the name of the volume snapshot location where snapshots are being taken. Required.
   - name: default
-    # provider is the name for the volume snapshot provider.
-    provider:
-    credential:
-      # name of the secret used by this volumeSnapshotLocation.
-      name:
-      # name of key that contains the secret data to be used.
-      key:
-    config:
-      region: us-east-1
 
 # Whether to create backupstoragelocation crd, if false => do not create a default backup location
 backupsEnabled: true
