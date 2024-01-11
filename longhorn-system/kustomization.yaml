@@ -7,4 +7,3 @@ resources:
   - prom.yaml
   - trim-job.yaml
   - storageclass.yaml
-  - volumesnapshotclass.yaml
