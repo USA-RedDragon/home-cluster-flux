@@ -54,7 +54,7 @@ configuration:
   backupStorageLocation:
   - name: default
     provider: aws
-    bucket: velero
+    bucket: velero-new
     default: true
     credential:
       # name of the secret used by this backupStorageLocation.
