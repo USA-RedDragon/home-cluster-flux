@@ -7,9 +7,6 @@ nameOverride: ""
 fullnameOverride: ""
 
 renovate:
-  # Additional env vars
-  extraEnvVars: []
-
   # You must accept the Mend Terms of Service to use the image.
   # Please read https://www.mend.io/terms-of-service/
   # Set this value to 'y' to consent.
@@ -20,10 +17,6 @@ renovate:
 
   # API endpoint, include trailing slash. Examples: https://api.github.com/, https://gitlab.com/api/v4/
   mendRnvEndpoint: https://api.github.com/
-
-  # Optional: Provide a path to persist the SQLite database (eg. '/db/renovate-ce.sqlite', where 'db' is defined as a volume)
-  # If you set cachePersistence.enabled to true, the default value for this setting will persist the SQLite database automatically
-  mendRnvSqliteFilePath: '/tmp/renovate/renovate-ce.sqlite'
 
   # Optional: Set to 'true' to enable Admin APIs. Defaults to 'false'.
   mendRnvAdminApiEnabled:
