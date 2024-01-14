@@ -135,7 +135,13 @@ ingress:
       hosts:
         - renovate.mcswain.dev
 
-resources: {}
+resources:
+  requests:
+    cpu: '3'
+    memory: 512Mi
+  limits:
+    cpu: '4'
+    memory: 768Mi
 
 annotations: {}
 
