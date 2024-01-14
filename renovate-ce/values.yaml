@@ -148,7 +148,8 @@ tolerations: []
 
 affinity: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  fsGroup: 1000
 
 # This allows renovate to finish running for a repo and then gracefully exit
 terminationGracePeriodSeconds: 60
