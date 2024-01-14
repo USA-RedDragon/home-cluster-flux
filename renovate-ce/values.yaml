@@ -33,10 +33,10 @@ renovate:
   existingSecret: renovate-secrets
 
   # Optional, defaults to '0 * * * *' (hourly)
-  mendRnvCronJobScheduler:
+  mendRnvCronJobScheduler: '*/5 * * * *'
 
   # Optional, defaults to '0 0,4,8,12,16,20 * * *' (every 4 hours)
-  mendRnvCronAppSync:
+  mendRnvCronAppSync: '*/15 * * * *'
 
   # Optional, a string of a comma separated values. (e.g. `org1/*, org2/test*, org2/test*`). Same behavior as Renovate cli 'autodiscoverFilter' feature
   # Warning: The Renovate CLI 'autodiscover' configuration option is disabled.
