@@ -13,49 +13,20 @@ renovate:
   # You must accept the Mend Terms of Service to use the image.
   # Please read https://www.mend.io/terms-of-service/
   # Set this value to 'y' to consent.
-  mendRnvAcceptTos:
-
-  # Set this to the key you received by email.
-  # You can request a license key by submitting the form at https://www.mend.io/renovate-community/.
-  # Please allow up to 24 hours to receive your license key by email.
-  mendRnvLicenseKey:
+  mendRnvAcceptTos: 'y'
 
   # Which platform Mend Renovate will connect to. For example "github" or "gitlab"
-  mendRnvPlatform:
+  mendRnvPlatform: github
 
   # API endpoint, include trailing slash. Examples: https://api.github.com/, https://gitlab.com/api/v4/
-  mendRnvEndpoint:
-
-  # Personal Access Token for bot account (GitLab only)
-  mendRnvGitlabPat:
-
-  # The GitHub App ID provided when you provisioned the Mend Renovate app. Force string format by quoting value.
-  mendRnvGithubAppId:
-
-  # A string representation of the private key provided by GitHub Enterprise when you provisioned Mend Renovate
-  mendRnvGithubAppKey:
+  mendRnvEndpoint: https://api.github.com/
 
   # Optional: Provide a path to persist the SQLite database (eg. '/db/renovate-ce.sqlite', where 'db' is defined as a volume)
   # If you set cachePersistence.enabled to true, the default value for this setting will persist the SQLite database automatically
   mendRnvSqliteFilePath: '/tmp/renovate/renovate-ce.sqlite'
 
-  # Optional: Set User Agent Mend Renovate-ce will use to query the registries, Defaults to 'mend-renovate'
-  mendRnvUserAgent:
-
   # Optional: Set to 'true' to enable Admin APIs. Defaults to 'false'.
   mendRnvAdminApiEnabled:
-
-  # Required if Admin APIs are enabled.
-  mendRnvServerApiSecret:
-
-  # Optional, defaults to 'renovate'
-  mendRnvWebhookSecret:
-
-  # Personal Access Token for github.com (used for retrieving changelogs)
-  githubComToken:
-
-  # PIP index url to get packages from. Will be mounted as a secret
-  pipIndexUrl:
 
   # Existing secret with secret values with the following keys:
   #   mendRnvLicenseKey:
@@ -66,7 +37,7 @@ renovate:
   #   mendRnvServerApiSecret:
   #   githubComToken:
   #   pipIndexUrl:
-  existingSecret:
+  existingSecret: renovate-secrets
 
   # Optional, defaults to '0 * * * *' (hourly)
   mendRnvCronJobScheduler:
@@ -77,7 +48,7 @@ renovate:
   # Optional, a string of a comma separated values. (e.g. `org1/*, org2/test*, org2/test*`). Same behavior as Renovate cli 'autodiscoverFilter' feature
   # Warning: The Renovate CLI 'autodiscover' configuration option is disabled.
   # Repository filtering should solely rely on server-side filtering using 'mendRnvAutoDiscoverFilter'.
-  mendRnvAutoDiscoverFilter:
+  mendRnvAutoDiscoverFilter: 'USA-RedDragon/*'
 
   # Optional. Accepted values: 'enabled', 'discovered', and 'disabled'. Defaults to 'discovered'.
   mendRnvEnqueueJobsOnStartup:
@@ -152,21 +123,23 @@ service:
     # cloud.google.com/load-balancer-type: "Internal"
 
 ingress:
-  enabled: false
+  enabled: true
 
   # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
   # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
   # ingressClassName: nginx
 
   annotations:
-    {}
-    # kubernetes.io/tls-acme: "true"
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  ingressClassName: nginx
   hosts:
-    - mend-renovate.local
-  tls: []
-  #  - secretName: mend-renovate-tls
-  #    hosts:
-  #      - mend-renovate.local
+    - renovate.mcswain.dev
+  tls:
+    - secretName: renovate-mcswain-dev-tls
+      hosts:
+        - renovate.mcswain.dev
 
 resources: {}
 
