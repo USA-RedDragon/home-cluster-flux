@@ -73,6 +73,7 @@ renovate:
     module.exports = {
       // Enter self-hosted configuration options here.
       // https://docs.renovatebot.com/self-hosted-configuration/
+      autodiscover: true,
     }
 
   # Npmrc file. Will be mounted as a secret
