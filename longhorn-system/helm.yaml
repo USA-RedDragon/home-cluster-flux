@@ -11,14 +11,9 @@ spec:
         kind: HelmRepository
         namespace: flux-system
         name: usa-reddragon
-      version: 1.6.0-dev-20240109
+      version: 1.6.0-rc1
   interval: 60m0s
   values:
-    image:
-      longhorn:
-        manager:
-          repository: ghcr.io/usa-reddragon/longhorn-manager
-          tag: v1.6.0-dev-20240110
     persistence:
       defaultClass: false
       defaultClassReplicaCount: 2
