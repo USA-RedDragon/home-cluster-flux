@@ -3,11 +3,10 @@ kind: Kustomization
 namespace: renovate-ce
 resources:
   - ns.yaml
-#   - helm.yaml
-# configMapGenerator:
-#   - name: chart-values
-#     files:
-#       - values.yaml=values.yaml
-# configurations:
-#   - kustomizeconfig.yaml
-
+  - helm.yaml
+configMapGenerator:
+  - name: chart-values
+    files:
+      - values.yaml=values.yaml
+configurations:
+  - kustomizeconfig.yaml
