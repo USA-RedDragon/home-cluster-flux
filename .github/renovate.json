@@ -59,6 +59,14 @@
             "automerge": true
         },
         {
+            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/mc-mcswain-dev$"],
+            "matchUpdateTypes": [
+                "digest",
+                "pinDigest"
+            ],
+            "automerge": true
+        },
+        {
             "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/meshmap$"],
             "matchUpdateTypes": [
                 "digest",
