@@ -67,6 +67,7 @@ renovate:
       // Enter self-hosted configuration options here.
       // https://docs.renovatebot.com/self-hosted-configuration/
       autodiscover: true,
+      cacheHardTtlMinutes: 5,
     }
 
   # Npmrc file. Will be mounted as a secret
