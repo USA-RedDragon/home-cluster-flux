@@ -15,6 +15,7 @@ spec:
         matchLabels:
           kubernetes.io/metadata.name: nginx
   egress:
+  - to:
     - ipBlock:
         cidr: 0.0.0.0/0
         except:
