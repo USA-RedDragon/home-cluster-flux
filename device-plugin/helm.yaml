@@ -54,6 +54,12 @@ spec:
                 - vendor: "0bda"
                   product: "2838"
                   serial: "00000978"
+          - name: printer-webcam
+            groups:
+              - usb:
+                - vendor: "0525"
+                  product: "a4b1"
+                  serial: "AW09SSA98E98002829"
     serviceMonitor:
       main:
         enabled: true
