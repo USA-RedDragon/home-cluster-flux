@@ -141,7 +141,7 @@ resources:
     memory: 55Mi
     squat.ai/printer-webcam: 1
   requests:
-    cpu: 500m
+    cpu: 700m
     memory: 45Mi
 
 nodeSelector: {}
