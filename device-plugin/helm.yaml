@@ -59,7 +59,6 @@ spec:
               - usb:
                 - vendor: "0525"
                   product: "a4b1"
-                  serial: "AW09SSA98E98002829"
     serviceMonitor:
       main:
         enabled: true
