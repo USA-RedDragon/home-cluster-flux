@@ -11,7 +11,7 @@ image:
   tag: "4.4-alpine"
 
 imagePullSecrets:
-- registry-docker-hub
+- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 
