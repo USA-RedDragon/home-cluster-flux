@@ -1,0 +1,182 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: jrottenberg/ffmpeg
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "4.4-alpine"
+
+imagePullSecrets:
+- registry-docker-hub
+nameOverride: ""
+fullnameOverride: ""
+
+args:
+- -err_detect
+- ignore_err
+- -y
+- -thread_queue_size
+- 512
+- -re
+- -r
+- 60
+- -f
+- video4linux2
+- -framerate
+- 60
+- -video_size
+- 1920x1080
+- -input_format
+- mjpeg
+- -i
+- /dev/video0
+- -f
+- lavfi
+- -i
+- anullsrc=r=44100:cl=stereo
+- -dn
+- -sn
+- -map
+- 0:0
+- -codec:v
+- libx264
+- -preset:v
+- ultrafast
+- -b:v
+- 12288k
+- -maxrate:v
+- 12288k
+- -bufsize:v
+- 12288k
+- -r
+- 60
+- -sc_threshold
+- 0
+- -pix_fmt
+- yuv420p
+- -g
+- 120
+- -keyint_min
+- 120
+- -fps_mode
+- auto
+- -tune:v
+- zerolatency
+- -map
+- 1:0
+- -filter:a
+- aresample=osr=44100:ochl=stereo
+- -codec:a
+- aac
+- -b:a
+- 64k
+- -shortest
+- -f
+- flv
+- rtmp://rtmp.nginx-rtmp.svc.cluster.local/hls/printer
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom: []
+# - secretRef:
+#     name: app-creds
+# - configMapRef:
+#     name: app-config
+
+env: []
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+
+persistentVolumes: []
+# - name: data
+#   mountPath: /var/lib/postgresql/data
+#   subPath: pg
+#   size: 10Gi
+#   persistentVolumeClaim:
+#     name: data
+#     storageClass: longhorn-nvme
+# - name: config
+#   mountPath: /config
+#   configMap:
+#     name: app-configfile
+#     items:
+#     - key: test.ini
+#       path: config.ini
+
+
+ingress:
+  enabled: false
+
+probes: {}
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 40Mi
+    squat.ai/printer-webcam: 1
+  requests:
+    cpu: 100m
+    memory: 30Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
