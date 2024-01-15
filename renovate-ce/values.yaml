@@ -78,6 +78,7 @@ renovate:
         ]
       },
       onboardingConfigFileName: ".github/renovate.json",
+      onboardingRebaseCheckbox: true,
     }
 
   # Npmrc file. Will be mounted as a secret
