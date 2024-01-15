@@ -5,13 +5,12 @@
 replicaCount: 1
 
 image:
-  repository: jrottenberg/ffmpeg
+  repository: lscr.io/linuxserver/ffmpeg
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "4.4-alpine"
+  tag: "version-6.1-cli"
 
-imagePullSecrets:
-- name: registry-docker-hub
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
