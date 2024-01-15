@@ -68,6 +68,13 @@ renovate:
       // https://docs.renovatebot.com/self-hosted-configuration/
       autodiscover: true,
       cacheHardTtlMinutes: 5,
+      onboardingConfig: {
+        "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+        "extends": [
+          "local>USA-RedDragon/renovate-configs"
+        ]
+      },
+      onboardingConfigFileName: ".github/renovate.json",
     }
 
   # Npmrc file. Will be mounted as a secret
