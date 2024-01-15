@@ -56,9 +56,8 @@ spec:
                   serial: "00000978"
           - name: printer-webcam
             groups:
-              - usb:
-                - vendor: "0525"
-                  product: "a4b1"
+              - paths:
+                - path: /dev/video0
     serviceMonitor:
       main:
         enabled: true
