@@ -7,6 +7,9 @@ nameOverride: ""
 fullnameOverride: ""
 
 renovate:
+  extraEnvVars:
+  - name: RENOVATE_PAGINATE_ALL
+    value: 'true'
   # You must accept the Mend Terms of Service to use the image.
   # Please read https://www.mend.io/terms-of-service/
   # Set this value to 'y' to consent.
