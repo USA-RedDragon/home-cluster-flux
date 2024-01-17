@@ -10,6 +10,8 @@ renovate:
   extraEnvVars:
   - name: RENOVATE_PAGINATE_ALL
     value: 'true'
+  - name: RENOVATE_PERSIST_REPO_DATA
+    value: 'true'
   - name: RENOVATE_ONBOARDING_CONFIG
     value: "{\n  \"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\",\n  \"extends\": [\n    \"local>USA-RedDragon/renovate-configs\"\n  ]\n}"
   # You must accept the Mend Terms of Service to use the image.
