@@ -26,7 +26,7 @@ renovate:
   mendRnvEndpoint: https://api.github.com/
 
   # Optional: Set to 'true' to enable Admin APIs. Defaults to 'false'.
-  mendRnvAdminApiEnabled:
+  mendRnvAdminApiEnabled: 'true'
 
   # Existing secret with secret values with the following keys:
   #   mendRnvLicenseKey:
