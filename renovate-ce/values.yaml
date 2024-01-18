@@ -147,10 +147,10 @@ ingress:
 
 resources:
   requests:
-    cpu: '3'
+    cpu: '2'
     memory: 3Gi
   limits:
-    cpu: '4'
+    cpu: '3'
     memory: 4Gi
 
 annotations: {}
