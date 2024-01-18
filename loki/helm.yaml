@@ -1,0 +1,69 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: grafana
+  namespace: loki
+spec:
+  interval: 1m0s
+  url: https://grafana.github.io/helm-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: loki
+spec:
+  interval: 1m0s
+  releaseName: loki
+  chart:
+    spec:
+      chart: loki
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+      version: '5.41.7'
+      interval: 1m0s
+  valuesFrom:
+    - kind: Secret
+      name: loki-s3
+      valuesKey: values.yaml
+  values:
+    imagePullSecrets:
+      - name: registry-docker-hub
+    image:
+      registry: docker.io
+      repository: grafana/loki
+      tag: 2.8.7
+      digest: sha256:1abddaeef1ecf167283a7ed811e20ecf15329c6e80416900665853bc487f1310
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      annotations:
+        kubernetes.io/tls-acme: "true"
+        cert-manager.io/cluster-issuer: cloudflare
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
+        nginx.ingress.kubernetes.io/auth-signin: https://authentik.mcswain.dev/outpost.goauthentik.io/start?rd=$escaped_request_uri
+        nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
+        nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
+      hosts:
+        - loki.mcswain.dev
+      tls:
+        - secretName: loki-mcswain-dev-tls
+          hosts:
+            - loki.mcswain.dev
+    networkPolicy:
+      enabled: false
+    loki:
+      storage:
+        bucketNames:
+          chunks: loki-chunks
+          ruler: loki-ruler
+          admin: loki-admin
+        type: s3
+        s3:
+          endpoint: https://s3.mcswain.dev
+          region: us-east-1
+          s3ForcePathStyle: true
+          insecure: false
