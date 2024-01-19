@@ -8,6 +8,24 @@ fullnameOverride: ""
 
 renovate:
   extraEnvVars:
+  - name: MEND_RNV_DATA_HANDLER_TYPE
+    value: "postgresql"
+  - name: PGDATABASE
+    value: "renovate"
+  - name: PGHOST
+    value: cluster.postgres.svc.cluster.local
+  - name: PGPORT
+    value: "5432"
+  - name: PGUSER
+    valueFrom:
+      secretKeyRef:
+        name: renovate-ce.renovate.cluster.credentials.postgresql.acid.zalan.do
+        key: username
+  - name: PGPASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: renovate-ce.renovate.cluster.credentials.postgresql.acid.zalan.do
+        key: password
   - name: RENOVATE_PAGINATE_ALL
     value: 'true'
   - name: RENOVATE_PERSIST_REPO_DATA
