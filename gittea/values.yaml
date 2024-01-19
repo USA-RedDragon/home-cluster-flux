@@ -45,8 +45,25 @@ envFrom: []
 # - configMapRef:
 #     name: app-config
 
-env: []
-# - name: SPECIAL_KEY
+env:
+- name: GITEA__GIT_0x2E_TIMEOUT__MIGRATE
+  value: "1200"
+- name: GITEA__GIT_0x2E_TIMEOUT__MIRROR
+  value: "1200"
+- name: GITEA__GIT_0x2E_TIMEOUT__PULL
+  value: "1200"
+- name: GITEA__GIT_0x2E_TIMEOUT__CLONE
+  value: "1200"
+- name: GITEA__GIT_0x2E_TIMEOUT__DEFAULT
+  value: "1200"
+- name: GITEA__GIT_0x2E_TIMEOUT__GC
+  value: "1200"
+- name: GITEA__METRICS__ENABLED
+  value: "true"
+- name: GITEA__METRICS__ENABLED_ISSUE_BY_LABEL
+  value: "true"
+- name: GITEA__METRICS__ENABLED_ISSUE_BY_REPOSITORY
+  value: "true"
 #   valueFrom:
 #     configMapKeyRef:
 #       name: app-otherenv
