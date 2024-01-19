@@ -125,9 +125,9 @@ probes:
 
 resources:
   limits:
-    memory: 400Mi
+    memory: 1Gi
   requests:
-    memory: 300Mi
+    memory: 800Mi
 
 nodeSelector: {}
 
