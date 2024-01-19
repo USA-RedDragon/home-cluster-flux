@@ -16,6 +16,8 @@ renovate:
     value: cluster.postgres.svc.cluster.local
   - name: PGPORT
     value: "5432"
+  - name: PGSSLMODE
+    value: require
   - name: PGUSER
     valueFrom:
       secretKeyRef:
