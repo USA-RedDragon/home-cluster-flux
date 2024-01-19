@@ -17,7 +17,7 @@ renovate:
   - name: PGPORT
     value: "5432"
   - name: PGSSLMODE
-    value: require
+    value: no-verify
   - name: PGUSER
     valueFrom:
       secretKeyRef:
