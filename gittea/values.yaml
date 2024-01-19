@@ -98,9 +98,10 @@ ingress:
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: cloudflare
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    # nginx.ingress.kubernetes.io/configuration-snippet: |
-    #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-    #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+    # 5-minute timeouts
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
   ingressClassName: nginx
   hosts:
   - host: git.mcswain.dev
