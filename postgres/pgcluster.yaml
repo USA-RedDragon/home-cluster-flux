@@ -30,7 +30,7 @@ spec:
     monitoring.monitoring:
     - superuser
     - createdb
-    renovate.renovate-ce: []
+    renovate-ce.renovate: []
     tfe.tfe: []
   databases:
     authentik: authentik.authentik
@@ -40,7 +40,7 @@ spec:
     healthchecks: healthchecks.healthchecks
     paperless: paperless-ngx.paperless
     rdioscanner: rdio-scanner.rdioscanner
-    renovate: renovate.renovate-ce
+    renovate: renovate-ce.renovate
     siteinspector: site-inspector.siteinspector
     tandoor: tandoor.tandoor
     vaultwarden: vaultwarden.vaultwarden
