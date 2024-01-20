@@ -51,7 +51,7 @@
             "automerge": true
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/weewx-docker$"],
+            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/aredn-base$"],
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"
