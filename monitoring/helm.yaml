@@ -88,7 +88,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
-      version: '>=2.5.0 <3.0.0'
+      version: '>=2.6.0 <3.0.0'
       interval: 1m0s
   valuesFrom:
     - kind: ConfigMap
