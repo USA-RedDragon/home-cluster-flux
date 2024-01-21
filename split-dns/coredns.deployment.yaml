@@ -38,6 +38,14 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
         name: coredns
+        env:
+        - name: ETCD_USERNAME
+          value: root
+        - name: ETCD_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: etcd-root-password
+              name: etcd
         ports:
         - containerPort: 53
           name: dns
