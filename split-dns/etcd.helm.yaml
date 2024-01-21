@@ -1,0 +1,50 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: bitnami
+  namespace: split-dns
+spec:
+  interval: 1m0s
+  url: https://charts.bitnami.com/bitnami
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: etcd
+  namespace: split-dns
+spec:
+  interval: 1m0s
+  releaseName: etcd
+  chart:
+    spec:
+      chart: etcd
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami
+      version: '9.10.0'
+      interval: 1m0s
+  values:
+    image:
+      registry: docker.io
+      repository: bitnami/etcd
+      tag: 3.5.11-debian-11-r3
+      pullSecrets:
+        - name: registry-docker-hub
+    replicaCount: 3
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+    persistence:
+      storageClass: longhorn-nvme
+      size: 3Gi
+    metrics:
+      enabled: true
+      podMonitor:
+        enabled: true
+      prometheusRule:
+        enabled: true
