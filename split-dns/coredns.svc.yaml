@@ -3,9 +3,9 @@ kind: Service
 metadata:
   name: coredns
   namespace: split-dns
-  annotations: {}
-    # metallb.universe.tf/loadBalancerIPs: 192.168.1.234
-    #,fdeb:abba:237c::ea
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.237
+    #,fdeb:abba:237c::ed
 spec:
   type: LoadBalancer
   selector:
