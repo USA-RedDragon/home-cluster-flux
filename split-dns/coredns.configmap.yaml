@@ -16,6 +16,7 @@ data:
             stubzones
             path /skydns
             endpoint http://etcd:2379
+            credentials {$ETCD_USERNAME} {$ETCD_PASSWORD}
         }
 
         forward . /etc/resolv.conf
