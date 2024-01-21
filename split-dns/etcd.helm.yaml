@@ -36,8 +36,13 @@ spec:
       token:
         enabled: false
       rbac:
-        existingSecret: etcd
-        existingSecretPasswordKey: etcd-root-password
+        enabled: false
+      peer:
+        secureTransport: true
+        useAutoTLS: true
+      client:
+        secureTransport: true
+        enableAuthentication: true
     networkPolicy:
       enabled: true
     resources:
