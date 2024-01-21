@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: lscr.io/linuxserver/plex
+  repository: ghcr.io/onedr0p/plex
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.32.8@sha256:acd1773f92e5725a47684b8362acb1fd7222565d74fccf83d30d18f30e8c3e10"
+  tag: "1.32.8.7639-fb6452ebf"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -105,6 +105,9 @@ persistentVolumes:
   persistentVolumeClaim:
     name: config
     storageClass: longhorn-ssd
+- name: transcode
+  mountPath: /transcode
+  emptyDir: {}
 # - name: config
 #   mountPath: /config
 #   configMap:
