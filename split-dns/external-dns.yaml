@@ -39,6 +39,7 @@ metadata:
   name: external-dns
   namespace: split-dns
 spec:
+  replicas: 3
   strategy:
     type: Recreate
   selector:
@@ -62,8 +63,8 @@ spec:
           value: http://etcd-0.etcd-headless.split-dns:2379,http://etcd-1.etcd-headless.split-dns:2379,http://etcd-2.etcd-headless.split-dns:2379
         resources:
           limits:
-            cpu: 200m
-            memory: 100Mi
-          requests:
-            cpu: 100m
+            cpu: 50m
             memory: 50Mi
+          requests:
+            cpu: 30m
+            memory: 30Mi
