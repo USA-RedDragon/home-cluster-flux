@@ -8,3 +8,4 @@ resources:
   - coredns.configmap.yaml
   - coredns.prom.yaml
   - coredns.networkpolicy.yaml
+  - coredns.svc.yaml
