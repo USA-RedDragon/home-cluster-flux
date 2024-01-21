@@ -62,16 +62,13 @@ env:
 podAnnotations:
   backup.velero.io/backup-volumes-excludes: tv,movies,anime
 
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 568
+  fsGroup: 568
+
 podSecurityContext: {}
   # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 service:
   type: ClusterIP
