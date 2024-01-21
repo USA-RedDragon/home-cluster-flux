@@ -36,13 +36,14 @@ spec:
       token:
         enabled: false
       rbac:
-        enabled: false
+        create: false
       peer:
         secureTransport: true
         useAutoTLS: true
       client:
         secureTransport: true
         enableAuthentication: true
+        existingSecret: etcd-client-secret
     networkPolicy:
       enabled: true
     resources:
