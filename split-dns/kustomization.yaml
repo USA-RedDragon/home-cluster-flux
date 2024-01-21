@@ -4,3 +4,4 @@ namespace: split-dns
 resources:
   - ns.yaml
   - etcd.helm.yaml
+  - coredns.deployment.yaml
