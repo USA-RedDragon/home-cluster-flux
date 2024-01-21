@@ -10,3 +10,4 @@ resources:
   - coredns.networkpolicy.yaml
   - coredns.svc.yaml
   - external-dns.yaml
+  - pki.etcd.yaml

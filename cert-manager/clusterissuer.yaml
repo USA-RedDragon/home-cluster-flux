@@ -30,3 +30,10 @@ spec:
         - dmrhub.org
         - dmrhub.net
         - dmrhub.network
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}

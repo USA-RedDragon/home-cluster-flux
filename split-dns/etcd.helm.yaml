@@ -42,8 +42,7 @@ spec:
         useAutoTLS: true
       client:
         secureTransport: true
-        enableAuthentication: true
-        existingSecret: etcd-client-secret
+        useAutoTLS: true
     networkPolicy:
       enabled: true
     resources:
