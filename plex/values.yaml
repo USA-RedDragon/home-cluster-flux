@@ -160,8 +160,10 @@ resources:
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   requests:
     cpu: 4
-    memory: 8Gi
+    memory: 4Gi
   limits:
+    cpu: 6
+    memory: 4Gi
     nvidia.com/gpu: 1
 
 nodeSelector: {}
