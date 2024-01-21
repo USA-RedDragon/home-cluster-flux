@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: coredns
+  labels:
+    app: coredns
+spec:
+  endpoints:
+    - port: metrics
+      scrapeTimeout: 3s
+      interval: 10s
+  selector:
+    matchLabels:
+      app: coredns

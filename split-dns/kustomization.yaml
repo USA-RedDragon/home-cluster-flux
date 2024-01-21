@@ -6,3 +6,5 @@ resources:
   - etcd.helm.yaml
   - coredns.deployment.yaml
   - coredns.configmap.yaml
+  - coredns.prom.yaml
+  - coredns.networkpolicy.yaml

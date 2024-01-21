@@ -32,6 +32,11 @@ spec:
       pullSecrets:
         - name: registry-docker-hub
     replicaCount: 3
+    auth:
+      token:
+        enabled: false
+    networkPolicy:
+      enabled: true
     resources:
       requests:
         cpu: 100m
