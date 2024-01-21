@@ -60,6 +60,13 @@ spec:
         env:
         - name: ETCD_URLS
           value: http://etcd:2379
+        - name: ETCD_USERNAME
+          value: root
+        - name: ETCD_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: etcd-root-password
+              name: etcd
         resources:
           limits:
             cpu: 200m
