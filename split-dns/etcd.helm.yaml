@@ -37,12 +37,7 @@ spec:
         enabled: false
       rbac:
         create: false
-      peer:
-        secureTransport: true
-        useAutoTLS: true
-      client:
-        secureTransport: true
-        useAutoTLS: true
+        allowNoneAuthentication: true
     networkPolicy:
       enabled: true
     resources:

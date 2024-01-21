@@ -15,8 +15,7 @@ data:
         etcd {
             stubzones
             path /skydns
-            endpoint http://etcd:2379
-            credentials {$ETCD_USERNAME} {$ETCD_PASSWORD}
+            endpoint http://etcd-0.etcd-headless.split-dns:2379 http://etcd-1.etcd-headless.split-dns:2379 http://etcd-2.etcd-headless.split-dns:2379
         }
 
         forward . /etc/resolv.conf

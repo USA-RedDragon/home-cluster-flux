@@ -59,7 +59,7 @@ spec:
         - --log-level=debug # debug only
         env:
         - name: ETCD_URLS
-          value: http://etcd:2379
+          value: http://etcd-0.etcd-headless.split-dns:2379,http://etcd-1.etcd-headless.split-dns:2379,http://etcd-2.etcd-headless.split-dns:2379
         resources:
           limits:
             cpu: 200m
