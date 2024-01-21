@@ -12,6 +12,12 @@ data:
         }
         prometheus :9153
 
+        etcd {
+            stubzones
+            path /skydns
+            endpoint http://etcd:2379
+        }
+
         forward . /etc/resolv.conf
         loop
         reload
