@@ -51,6 +51,8 @@ envFrom: []
 env:
 - name: NVIDIA_VISIBLE_DEVICES
   value: all
+- name: NVIDIA_DRIVER_CAPABILITIES
+  value: all
 - name: VERSION
   value: docker
 # - name: SPECIAL_KEY
