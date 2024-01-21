@@ -5,3 +5,4 @@ resources:
   - ns.yaml
   - etcd.helm.yaml
   - coredns.deployment.yaml
+  - coredns.configmap.yaml
