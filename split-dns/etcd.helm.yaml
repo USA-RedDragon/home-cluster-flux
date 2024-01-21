@@ -35,6 +35,9 @@ spec:
     auth:
       token:
         enabled: false
+      rbac:
+        existingSecret: etcd
+        existingSecretPasswordKey: etcd-root-password
     networkPolicy:
       enabled: true
     resources:
