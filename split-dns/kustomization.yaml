@@ -9,3 +9,4 @@ resources:
   - coredns.prom.yaml
   - coredns.networkpolicy.yaml
   - coredns.svc.yaml
+  - external-dns.yaml
