@@ -4,3 +4,4 @@ namespace: loki
 resources:
   - ns.yaml
   - helm.yaml
+  - promtail.helm.yaml
