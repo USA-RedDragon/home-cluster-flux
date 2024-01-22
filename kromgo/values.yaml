@@ -78,11 +78,11 @@ configs:
           suffix: "MiB/s"
 
         - name: Disk Capacity
-          query: sum(longhorn_node_storage_capacity_bytes{})/1024/1024/1024/1024
+          query: round(sum(longhorn_node_storage_capacity_bytes{})/1024/1024/1024/1024, 0.1)
           suffix: "TiB"
 
         - name: Disk Reserved
-          query: sum(longhorn_node_storage_reservation_bytes{})/1024/1024/1024/1024
+          query: round(sum(longhorn_node_storage_reservation_bytes{})/1024/1024/1024/1024, 0.1)
           suffix: "TiB"
 
         - name: Disk Usage
