@@ -1,21 +1,13 @@
 # home-cluster-flux
 
-## Metadata
-
 ![Node Count](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.mcswain.dev%2Fquery%3Fformat%3Dendpoint%26metric%3DNodes)&nbsp;
 ![Pod Count](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.mcswain.dev%2Fquery%3Fformat%3Dendpoint%26metric%3DPods)&nbsp;
-
-## CPU
 
 ![Total CPUs](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.mcswain.dev%2Fquery%3Fformat%3Dendpoint%26metric%3DTotal%2520CPUs)&nbsp;
 ![CPU Usage](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.mcswain.dev%2Fquery%3Fformat%3Dendpoint%26metric%3DCPU)&nbsp;
 
-## Memory
-
 ![Total Memory](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.mcswain.dev%2Fquery%3Fformat%3Dendpoint%26metric%3DTotal%2520Memory)&nbsp;
 ![Memory Usage](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.mcswain.dev%2Fquery%3Fformat%3Dendpoint%26metric%3DMemory)&nbsp;
-
-## Disk
 
 ![Disk Capacity](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.mcswain.dev%2Fquery%3Fformat%3Dendpoint%26metric%3DDisk%2520Capacity)&nbsp;
 ![Disk Reserved](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.mcswain.dev%2Fquery%3Fformat%3Dendpoint%26metric%3DDisk%2520Reserved)&nbsp;
