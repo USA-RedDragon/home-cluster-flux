@@ -1,0 +1,142 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/kashalls/kromgo
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0.2.4"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs:
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+- name: config
+  data:
+    config.yaml: |
+      metrics:
+        - name: cluster_node_count
+          query: count(count by(node) (kube_node_status_condition{condition="Ready"}))
+
+        - name: cluster_pod_count
+          query: sum(kube_pod_status_phase{phase="Running"})
+
+        - name: cluster_cpu_usage
+          query: round(avg(instance:node_cpu_utilisation:rate5m) * 100, 0.1)
+          suffix: "%"
+          colors:
+            - { color: "green", min: 0, max: 55 }
+            - { color: "orange", min: 56, max: 75 }
+            - { color: "red", min: 76, max: 9999 }
+
+        - name: cluster_memory_usage
+          query: round(sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / sum(node_memory_MemTotal_bytes) * 100, 0.1)
+          suffix: "%"
+          colors:
+            - { color: green, min: 0, max: 55 }
+            - { color: orange, min: 56, max: 75 }
+            - { color: red, min: 76, max: 9999 }
+
+envFrom: []
+# - configMapRef:
+#     name: app-config
+
+env:
+- name: PROMETHEUS_URL
+  value: http://prometheus-stack-kube-prom-prometheus.monitoring.svc.cluster.local:9090
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 999
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 999
+  # runAsGroup: 999
+  # fsGroup: 999
+
+service:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+
+persistentVolumes:
+- name: config
+  mountPath: /kromgo/config.yaml
+  subPath: config.yaml
+  configMap:
+    name: config
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  ingressClassName: nginx
+  hosts:
+  - host: kromgo.mcswain.dev
+    paths:
+    - port: 8080
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: kromgo-mcswain-dev-tls
+    hosts:
+    - kromgo.mcswain.dev
+
+probes: {}
+
+resources:
+  limits:
+    cpu: 30m
+    memory: 100Mi
+  requests:
+    cpu: 20m
+    memory: 50Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
+
