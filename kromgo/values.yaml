@@ -47,12 +47,15 @@ configs:
           query: sum(kube_pod_status_phase{phase="Running"})
 
         - name: CPU
-          query: round(avg(instance:node_cpu_utilisation:rate5m) * 100, 0.1)
+          query: round(sum(avg(instance:node_cpu_utilisation:rate5m)*100), 0.1)
           suffix: "%"
           colors:
-            - { color: "green", min: 0, max: 55 }
-            - { color: "orange", min: 56, max: 75 }
-            - { color: "red", min: 76, max: 9999 }
+            - { color: "green", min: 0, max: 20 }
+            - { color: "orange", min: 21, max: 30 }
+            - { color: "red", min: 31, max: 9999 }
+
+        - name: Total CPUs
+          query: sum(instance:node_num_cpu:sum{})
 
         - name: Memory
           query: round(sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / sum(node_memory_MemTotal_bytes) * 100, 0.1)
@@ -61,6 +64,34 @@ configs:
             - { color: green, min: 0, max: 55 }
             - { color: orange, min: 56, max: 75 }
             - { color: red, min: 76, max: 9999 }
+
+        - name: Total Memory
+          query: round(sum(node_memory_MemTotal_bytes)/1024/1024/1024, 0.1)
+          suffix: "GiB"
+
+        - name: Disk Latency
+          query: avg(longhorn_volume_write_latency{})
+          suffix: "ms"
+
+        - name: Disk Throughput
+          query: avg(longhorn_volume_write_throughput{} + longhorn_volume_read_throughput{})/1024/1024
+          suffix: "MiB/s"
+
+        - name: Disk Capacity
+          query: sum(longhorn_node_storage_capacity_bytes{})/1024/1024/1024/1024
+          suffix: "TiB"
+
+        - name: Disk Reserved
+          query: sum(longhorn_node_storage_reservation_bytes{})/1024/1024/1024/1024
+          suffix: "TiB"
+
+        - name: Disk Usage
+          query: round((sum(longhorn_node_storage_reservation_bytes{} + longhorn_node_storage_usage_bytes) / sum(longhorn_node_storage_capacity_bytes))*100, 0.1)
+          colors:
+            - { color: green, min: 0, max: 55 }
+            - { color: orange, min: 56, max: 75 }
+            - { color: red, min: 76, max: 9999 }
+          suffix: "%"
 
 envFrom: []
 # - configMapRef:
