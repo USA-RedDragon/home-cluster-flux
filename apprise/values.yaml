@@ -76,7 +76,10 @@ service:
   - name: apprise
     port: 8000
 
-persistentVolumes: []
+persistentVolumes:
+- name: config
+  mountPath: /config
+  emptyDir: {}
 # - name: data
 #   mountPath: /var/lib/postgresql/data
 #   subPath: pg
