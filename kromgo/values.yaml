@@ -70,11 +70,11 @@ configs:
           suffix: "GiB"
 
         - name: Disk Latency
-          query: round(avg(longhorn_volume_write_latency{}), 0.1)
+          query: round(((avg(longhorn_volume_write_latency{})+avg(longhorn_volume_read_latency{}))/2)/1000000, 0.1)
           suffix: "ms"
 
         - name: Disk Throughput
-          query: round(avg(longhorn_volume_write_throughput{} + longhorn_volume_read_throughput{})/1024/1024, 0.1)
+          query: round(((avg(longhorn_volume_write_throughput{})+avg(longhorn_volume_read_throughput{}))/2)/1024/1024, 0.1)
           suffix: "MiB/s"
 
         - name: Disk Capacity
