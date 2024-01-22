@@ -40,13 +40,13 @@ configs:
   data:
     config.yaml: |
       metrics:
-        - name: cluster_node_count
+        - name: Nodes
           query: count(count by(node) (kube_node_status_condition{condition="Ready"}))
 
-        - name: cluster_pod_count
+        - name: Pods
           query: sum(kube_pod_status_phase{phase="Running"})
 
-        - name: cluster_cpu_usage
+        - name: CPU
           query: round(avg(instance:node_cpu_utilisation:rate5m) * 100, 0.1)
           suffix: "%"
           colors:
@@ -54,7 +54,7 @@ configs:
             - { color: "orange", min: 56, max: 75 }
             - { color: "red", min: 76, max: 9999 }
 
-        - name: cluster_memory_usage
+        - name: Memory
           query: round(sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / sum(node_memory_MemTotal_bytes) * 100, 0.1)
           suffix: "%"
           colors:
