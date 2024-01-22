@@ -5,12 +5,13 @@
 replicaCount: 1
 
 image:
-  repository: lscr.io/linuxserver/apprise-api
+  repository: caronc/apprise
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "0.9.7"
 
-imagePullSecrets: []
+imagePullSecrets:
+- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 
