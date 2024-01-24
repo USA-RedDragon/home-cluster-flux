@@ -6,8 +6,11 @@ resources:
   - helm.yaml
   - lb.yaml
 configMapGenerator:
-  - name: chart-values
+  - name: chart-values-mjpeg
     files:
-      - values.yaml=values.yaml
+      - values.yaml=values-mjpeg.yaml
+  - name: chart-values-real
+    files:
+      - values.yaml=values-real.yaml
 configurations:
   - kustomizeconfig.yaml
