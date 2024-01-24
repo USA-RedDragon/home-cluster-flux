@@ -18,7 +18,7 @@ spec:
   releaseName: intel-device-plugin
   chart:
     spec:
-      chart: device-plugin-operator
+      chart: intel-device-plugins-operator
       sourceRef:
         kind: HelmRepository
         name: intel
