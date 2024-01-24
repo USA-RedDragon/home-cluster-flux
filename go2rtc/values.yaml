@@ -172,7 +172,7 @@ resources:
   limits:
     cpu: '1'
     memory: 55Mi
-    # squat.ai/printer-webcam: 1
+    squat.ai/printer-webcam: 1
   requests:
     cpu: 700m
     memory: 45Mi
