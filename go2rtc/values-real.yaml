@@ -41,7 +41,8 @@ configs:
         listen: ":1984"
 
       streams:
-        webcam-mp4: ffmpeg:rtsp://go2rtc-app.go2rtc.svc.cluster.local:8554/webcam#video=h264#hardware
+        mjpeg: http://go2rtc-app.go2rtc.svc.cluster.local:1984/api/stream.mjpeg?src=webcam
+        webcam-mp4: ffmpeg:mjpeg#video=h264#hardware
 
 # - name: app-otherenv
 #   data:
@@ -67,7 +68,8 @@ env: []
 
 podAnnotations: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  privileged: true
 
 securityContext: {}
   # capabilities:
