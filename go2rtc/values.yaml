@@ -83,7 +83,8 @@ configs:
         listen: ":1984"
 
       streams:
-        ffmpeg: ffmpeg:device?video=/dev/video0&input_format=mjpeg&video_size=1920x1080
+        webcam: ffmpeg:device?video=/dev/video0&input_format=mjpeg&video_size=1920x1080
+        webcam-mp4: ffmpeg:webcam#video=h264
 
 # - name: app-otherenv
 #   data:
