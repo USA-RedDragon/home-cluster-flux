@@ -3,9 +3,9 @@ kind: Service
 metadata:
   name: go2rtc
   namespace: go2rtc
-  annotations: {}
-    # metallb.universe.tf/loadBalancerIPs: 192.168.1.234
-    #,fdeb:abba:237c::ea
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.240
+    #,fdeb:abba:237c::f0
 spec:
   type: LoadBalancer
   selector:
