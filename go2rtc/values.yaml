@@ -8,7 +8,7 @@ image:
   repository: alexxit/go2rtc
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.8.5"
+  tag: "1.8.5-hardware"
 
 imagePullSecrets:
 - name: registry-docker-hub
@@ -174,11 +174,11 @@ probes: {}
 
 resources:
   limits:
-    cpu: '2'
+    cpu: '4'
     memory: 200Mi
     squat.ai/printer-webcam: 1
   requests:
-    cpu: '2'
+    cpu: '4'
     memory: 100Mi
 
 nodeSelector: {}
