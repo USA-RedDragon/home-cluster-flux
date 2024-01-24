@@ -4,6 +4,7 @@ namespace: go2rtc
 resources:
   - ns.yaml
   - helm.yaml
+  - lb.yaml
 configMapGenerator:
   - name: chart-values
     files:
