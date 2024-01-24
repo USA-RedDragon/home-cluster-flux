@@ -82,6 +82,10 @@ service:
   ports:
   - name: http
     port: 1984
+  - name: rtsp
+    port: 8554
+  - name: webrtc
+    port: 8555
 
 persistentVolumes:
 - name: config
