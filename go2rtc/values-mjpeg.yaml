@@ -8,54 +8,12 @@ image:
   repository: alexxit/go2rtc
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.8.5-hardware"
+  tag: "1.8.5"
 
 imagePullSecrets:
 - name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
-
-# args:
-# - -err_detect
-# - ignore_err
-# - -y
-# - -re
-# - -r
-# - '30'
-# - -f
-# - video4linux2
-# - -framerate
-# - '30'
-# - -video_size
-# - 1920x1080
-# - -input_format
-# - mjpeg
-# - -i
-# - /dev/video0
-# - -f
-# - lavfi
-# - -dn
-# - -sn
-# - -codec:v
-# - libx264
-# - -preset:v
-# - ultrafast
-# - -b:v
-# - 12288k
-# - -maxrate:v
-# - 12288k
-# - -bufsize:v
-# - 12288k
-# - -pix_fmt
-# - yuv420p
-# - -fps_mode
-# - auto
-# - -tune:v
-# - zerolatency
-# - -shortest
-# - -f
-# - flv
-# - rtmp://rtmp.nginx-rtmp.svc.cluster.local/hls/printer
 
 secrets: []
 # - name: app-creds
@@ -73,7 +31,7 @@ secrets: []
 #       strings
 
 configs:
-- name: config
+- name: config-mjpeg
   data:
     go2rtc.yaml: |
       log:
@@ -84,7 +42,6 @@ configs:
 
       streams:
         webcam: ffmpeg:device?video=/dev/video0&input_format=mjpeg&video_size=1920x1080
-        webcam-mp4: ffmpeg:webcam#video=h264#hardware=vaapi
 
 # - name: app-otherenv
 #   data:
@@ -110,8 +67,7 @@ env: []
 
 podAnnotations: {}
 
-podSecurityContext:
-  privileged: true
+podSecurityContext: {}
 
 securityContext: {}
   # capabilities:
@@ -131,7 +87,7 @@ persistentVolumes:
 - name: config
   mountPath: /config
   configMap:
-    name: config
+    name: config-mjpeg
 # - name: data
 #   mountPath: /var/lib/postgresql/data
 #   subPath: pg
@@ -160,26 +116,25 @@ ingress:
     nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
   ingressClassName: nginx
   hosts:
-  - host: go2rtc.mcswain.dev
+  - host: mjpeg.go2rtc.mcswain.dev
     paths:
     - port: 1984
       path: /
       pathType: Prefix
   tls:
-  - secretName: go2rtc-mcswain-dev-tls
+  - secretName: mjpeg-go2rtc-mcswain-dev-tls
     hosts:
-      - go2rtc.mcswain.dev
+      - mjpeg.go2rtc.mcswain.dev
 
 probes: {}
 
 resources:
   limits:
-    cpu: '2'
+    cpu: 300m
     memory: 300Mi
     squat.ai/printer-webcam: "1"
-    gpu.intel.com/i915: "1"
   requests:
-    cpu: '2'
+    cpu: 100m
     memory: 200Mi
 
 nodeSelector: {}

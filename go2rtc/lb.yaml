@@ -9,7 +9,7 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app.kubernetes.io/instance: go2rtc
+    app.kubernetes.io/instance: go2rtc-real
   ports:
     - name: go2rtc
       protocol: TCP
