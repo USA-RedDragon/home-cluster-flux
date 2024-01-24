@@ -8,5 +8,8 @@ configMapGenerator:
   - name: chart-values
     files:
       - values.yaml=values.yaml
+  - name: chart-values-gpu
+    files:
+      - values.yaml=values-gpu.yaml
 configurations:
   - kustomizeconfig.yaml
