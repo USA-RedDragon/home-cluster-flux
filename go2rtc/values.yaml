@@ -80,7 +80,10 @@ configs:
         level: "debug"
 
       api:
-        listen: ":1984" 
+        listen: ":1984"
+
+      streams:
+        ffmpeg: ffmpeg:device?video=/dev/video0&input_format=mjpeg&video_size=1920x1080
 
 # - name: app-otherenv
 #   data:
