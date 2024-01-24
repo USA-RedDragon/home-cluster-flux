@@ -40,8 +40,8 @@ configs:
       api:
         listen: ":1984"
 
-      # streams:
-      #   webcam-mp4: ffmpeg:webcam#video=h264#hardware=vaapi
+      streams:
+        webcam-mp4: ffmpeg:rtsp://go2rtc-app.go2rtc.svc.cluster.local:8554/webcam#video=h264#hardware
 
 # - name: app-otherenv
 #   data:
@@ -82,6 +82,10 @@ service:
   ports:
   - name: http
     port: 1984
+  - name: rtsp
+    port: 8554
+  - name: webrtc
+    port: 8555
 
 persistentVolumes:
 - name: config
