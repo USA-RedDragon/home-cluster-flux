@@ -176,7 +176,8 @@ resources:
   limits:
     cpu: '2'
     memory: 300Mi
-    squat.ai/printer-webcam: 1
+    squat.ai/printer-webcam: "1"
+    gpu.intel.com/i915: "1"
   requests:
     cpu: '2'
     memory: 200Mi
