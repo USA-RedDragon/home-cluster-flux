@@ -84,7 +84,7 @@ configs:
 
       streams:
         webcam: ffmpeg:device?video=/dev/video0&input_format=mjpeg&video_size=1920x1080
-        webcam-mp4: ffmpeg:webcam#video=h264
+        webcam-mp4: ffmpeg:webcam#video=h264#hardware=vaapi
 
 # - name: app-otherenv
 #   data:
@@ -110,8 +110,8 @@ env: []
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  privileged: true
 
 securityContext: {}
   # capabilities:
@@ -174,12 +174,12 @@ probes: {}
 
 resources:
   limits:
-    cpu: '4'
-    memory: 200Mi
+    cpu: '2'
+    memory: 300Mi
     squat.ai/printer-webcam: 1
   requests:
-    cpu: '4'
-    memory: 100Mi
+    cpu: '2'
+    memory: 200Mi
 
 nodeSelector: {}
 
