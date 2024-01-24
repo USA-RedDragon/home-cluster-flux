@@ -6,7 +6,7 @@ metadata:
   namespace: intel-device-plugin
 spec:
   interval: 1m0s
-  url: https://github.com/intel/helm-charts
+  url: https://intel.github.io/helm-charts/
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
