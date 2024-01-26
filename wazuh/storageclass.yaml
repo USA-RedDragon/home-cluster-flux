@@ -1,0 +1,8 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: wazuh-storage
+
+# list storage classes with: "kubectl get sc" and look for the column "Provisioner"
+provisioner: driver.longhorn.io # Longhorn
+# provisioner: pd.csi.storage.gke.io # GKE

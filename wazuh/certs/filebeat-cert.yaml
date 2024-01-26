@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-filebeat-cert
+spec:
+  commonName: wazuh-filebeat
+  secretName: wazuh-filebeat-cert
+  subject:
+    organizations:
+      - Wazuh
+    localities:
+      - Kubernetes
+    countries:
+      - US
+  privateKey:
+    algorithm: RSA
+    size: 2048
+    encoding: PKCS8
+  issuerRef:
+    name: wazuh-selfsigned-ca
+    group: cert-manager.io
