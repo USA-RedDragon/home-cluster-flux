@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wazuh-api-cred
+  namespace: wazuh
+stringData:
+  username: wazuh-wui
+  password: "MyS3cr37P450r.*-"

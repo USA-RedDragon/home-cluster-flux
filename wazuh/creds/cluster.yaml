@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wazuh-cluster-key
+  namespace: wazuh
+stringData:
+  key: 123a45bc67def891gh23i45jk67l8mn9
