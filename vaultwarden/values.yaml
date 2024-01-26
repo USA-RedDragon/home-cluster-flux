@@ -54,7 +54,7 @@ envFrom:
 
 env:
 - name: SIGNUPS_ALLOWED
-  value: 'true'
+  value: 'false'
 - name: WEBSOCKET_ENABLED
   value: 'true'
 - name: DOMAIN
