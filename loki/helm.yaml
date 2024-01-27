@@ -22,7 +22,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: grafana
-      version: '5.41.8'
+      version: '5.42.0'
       interval: 1m0s
   valuesFrom:
     - kind: Secret
