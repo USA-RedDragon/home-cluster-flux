@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/goauthentik/server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2023.10.6@sha256:daf374cf25f194ea9f0bf7cd129f62c398c1bd9dd9c618eb82af0298fcdece13"
+  tag: "2023.10.7@sha256:10ca1cc0a8313946bc168173c3d37fd38190d04a2019c5583444c67e71a4696a"
 
 imagePullSecrets:
 - name: registry-ghcr
@@ -140,7 +140,7 @@ ingress:
       - authentik.mcswain.dev
 
 extraContainers:
-- image: ghcr.io/goauthentik/server:2023.10.6@sha256:daf374cf25f194ea9f0bf7cd129f62c398c1bd9dd9c618eb82af0298fcdece13
+- image: ghcr.io/goauthentik/server:2023.10.7@sha256:10ca1cc0a8313946bc168173c3d37fd38190d04a2019c5583444c67e71a4696a
   imagePullPolicy: IfNotPresent
   name: worker
   args:
