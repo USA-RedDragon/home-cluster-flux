@@ -22,7 +22,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: bitnami
-      version: '9.10.3'
+      version: '9.10.4'
       interval: 1m0s
   values:
     image:
