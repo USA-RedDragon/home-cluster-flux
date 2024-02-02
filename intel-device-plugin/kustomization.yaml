@@ -10,6 +10,6 @@ configMapGenerator:
       - values.yaml=values.yaml
   - name: chart-values-gpu
     files:
-      - values.yaml=values-gpu.yaml
+      - values.yaml=gpu-values.yaml
 configurations:
   - kustomizeconfig.yaml
