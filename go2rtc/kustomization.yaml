@@ -8,9 +8,9 @@ resources:
 configMapGenerator:
   - name: chart-values-mjpeg
     files:
-      - values.yaml=values-mjpeg.yaml
+      - values.yaml=mjpeg-values.yaml
   - name: chart-values-real
     files:
-      - values.yaml=values-real.yaml
+      - values.yaml=real-values.yaml
 configurations:
   - kustomizeconfig.yaml
