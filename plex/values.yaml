@@ -49,10 +49,10 @@ envFrom: []
 #     name: app-config
 
 env:
-#- name: NVIDIA_VISIBLE_DEVICES
-#  value: all
-#- name: NVIDIA_DRIVER_CAPABILITIES
-#  value: all
+- name: NVIDIA_VISIBLE_DEVICES
+  value: all
+- name: NVIDIA_DRIVER_CAPABILITIES
+  value: all
 - name: VERSION
   value: docker
 # - name: SPECIAL_KEY
@@ -166,7 +166,7 @@ resources:
   limits:
     cpu: 6
     memory: 4Gi
-    #nvidia.com/gpu: 1
+    nvidia.com/gpu: 1
 
 nodeSelector: {}
 
