@@ -28,7 +28,7 @@ spec:
     image:
       registry: docker.io
       repository: bitnami/etcd
-      tag: 3.5.11-debian-11-r3
+      tag: 3.5.12-debian-11-r3
       pullSecrets:
         - name: registry-docker-hub
     replicaCount: 3
