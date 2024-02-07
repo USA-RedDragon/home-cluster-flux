@@ -8,7 +8,7 @@ image:
   repository: quay.io/minio/minio
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: RELEASE.2024-02-04T22-36-13Z
+  tag: RELEASE.2024-02-06T21-36-22Z
 
 imagePullSecrets:
 - name: registry-docker-hub
