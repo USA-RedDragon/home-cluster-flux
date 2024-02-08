@@ -155,7 +155,7 @@ resources:
 
 extraContainers:
 - name: gitea-mirror
-  image: ghcr.io/usa-reddragon/gitea-mirror:v1.0.2
+  image: ghcr.io/usa-reddragon/gitea-mirror:v1.0.3
   imagePullPolicy: IfNotPresent
   args:
   - "--config=/config/config.yaml"
