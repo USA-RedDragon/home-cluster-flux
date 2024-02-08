@@ -96,6 +96,10 @@ persistentVolumes:
   nfs:
     path: /mnt/data/git
     server: 192.168.1.135
+- name: gitea-mirror-config
+  mountPath: /do-not-use
+  secret:
+    secretName: gitea-mirror-config
 # - name: config
 #   mountPath: /config
 #   configMap:
@@ -148,6 +152,19 @@ resources:
   requests:
     memory: 3Gi
     cpu: 2
+
+extraContainers:
+- name: gitea-mirror
+  image: ghcr.io/usa-reddragon/gitea-mirror:v1.0.2
+  imagePullPolicy: IfNotPresent
+  args:
+  - "--config=/config/config.yaml"
+  volumeMounts:
+    - mountPath: /data
+      name: data
+    - name: gitea-mirror-config
+      mountPath: /config
+      readOnly: true
 
 nodeSelector: {}
 
