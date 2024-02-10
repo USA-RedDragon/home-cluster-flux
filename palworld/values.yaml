@@ -137,7 +137,7 @@ server:
       password: ""
     community:
       # -- (bool) Enables/disables the visibility of this server on Steam community servers list.
-      enable: false
+      enable: true
       # -- (string) If not provided, a random password will be generated and stored on the secret.
       password: ""
       # -- (string) If not provided, a random server name will be generated with the "palworld_" prefix.
@@ -147,10 +147,10 @@ server:
     timezone: "America/Chicago"
     # -- (string) You can manually specify the global IP address of the network on which the server running.
     # If not specified, it will be detected automatically. If it does not work well, try manual configuration.
-    public_ip: ""
+    public_ip: "palworld.mcswain.dev"
     # -- (string) You can manually specify the port number of the network on which the server running.
     # If not specified, it will be detected automatically. If it does not work well, try manual configuration.
-    public_port: ""
+    public_port: "8211"
     # -- (string) Your server description to be shown in game
     server_description: "USA-RedDragon's Palworld Server"
     # -- (string) Update/Install the server when the container starts.
