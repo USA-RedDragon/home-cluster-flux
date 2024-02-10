@@ -2,9 +2,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: palworld
-  annotations: {}
-    # metallb.universe.tf/loadBalancerIPs: 192.168.1.234
-    #,fdeb:abba:237c::ea
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.241
+    #,fdeb:abba:237c::f1
 spec:
   type: LoadBalancer
   selector:
