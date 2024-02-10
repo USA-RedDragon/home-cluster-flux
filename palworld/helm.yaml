@@ -1,0 +1,33 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: palworld
+spec:
+  interval: 1m0s
+  url: https://github.com/thijsvanloef/palworld-server-docker
+  ref:
+    branch: main
+  ignore: |
+    # exclude all
+    /*
+    # include charts directory
+    !/charts/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: palworld
+spec:
+  chart:
+    spec:
+      chart: palworld
+      sourceRef:
+        kind: GitRepository
+        namespace: palworld
+        name: palworld
+      version: 0.1.0
+  interval: 60m0s
+  valuesFrom:
+    - kind: ConfigMap
+      name: chart-values
