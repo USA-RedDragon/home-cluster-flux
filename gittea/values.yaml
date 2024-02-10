@@ -64,6 +64,20 @@ env:
   value: "true"
 - name: GITEA__METRICS__ENABLED_ISSUE_BY_REPOSITORY
   value: "true"
+- name: GITEA__SERVICE__REQUIRE_SIGNIN_VIEW
+  value: "false"
+- name: GITEA__SERVICE__DISABLE_REGISTRATION
+  value: "true"
+- name: GITEA__OTHER__SHOW_FOOTER_TEMPLATE_LOAD_TIME
+  value: "false"
+- name: GITEA__INDEXER__REPO_INDEXER_ENABLED
+  value: "true"
+- name: GITEA__SERVER__DOMAIN
+  value: git.mcswain.dev
+- name: GITEA__SERVER__ROOT_URL
+  value: https://git.mcswain.dev
+- name: GITEA__SERVER__SSH_DOMAIN
+  value: git.mcswain.dev
 #   valueFrom:
 #     configMapKeyRef:
 #       name: app-otherenv
