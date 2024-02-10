@@ -221,6 +221,6 @@ server:
       EXIST_PLAYER_AFTER_LOGOUT: "False"
       ENABLE_DEFENSE_OTHER_GUILD_PLAYER: "False"
       COOP_PLAYER_MAX_NUM: "4"
-      REGION: "NA"
+      REGION: "USA"
       USEAUTH: "True"
       BAN_LIST_URL: "https://api.palworldgame.com/api/banlist.txt"
