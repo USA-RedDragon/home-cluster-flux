@@ -14,4 +14,8 @@ spec:
       protocol: UDP
       port: 8211
       targetPort: 8211
+    - name: query
+      protocol: UDP
+      port: 27015
+      targetPort: 27015
   externalTrafficPolicy: Local
