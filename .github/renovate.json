@@ -99,6 +99,14 @@
             "automerge": true
         },
         {
+            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/mqtt-wx$"],
+            "matchUpdateTypes": [
+                "digest",
+                "pinDigest"
+            ],
+            "automerge": true
+        },
+        {
             "matchUpdateTypes": [
                 "major"
             ],
