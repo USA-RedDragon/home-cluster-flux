@@ -17,7 +17,6 @@ spec:
       chart: mend-renovate-ce
       sourceRef:
         kind: HelmRepository
-        namespace: renovate-ce
         name: renovate-ce-ee
       version: 6.7.0
   interval: 60m0s
