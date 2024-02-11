@@ -6,5 +6,4 @@ metadata:
   namespace: flux-system
 spec:
   interval: 60m
-  type: oci
-  url: oci://ghcr.io/usa-reddragon/helm-charts
+  url: https://charts.mcswain.dev
