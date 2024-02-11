@@ -30,4 +30,4 @@ spec:
     - --kubelet-insecure-tls
     - --kubelet-preferred-address-types=InternalIP
     - --kubelet-use-node-status-port
-    - --metric-resolution=10s
+    - --metric-resolution=11s
