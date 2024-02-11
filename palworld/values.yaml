@@ -32,13 +32,11 @@ server:
   # @notationType -- bigValue
   image:
     # -- Repository of the image, without the tag.
-    repository: thijsvanloef/palworld-server-docker
+    repository: ghcr.io/usa-reddragon/palworld-server-docker
     # -- The tag of the image.
-    tag: v0.24.2
+    tag: v0.24.4
     # -- Define the pull policy for the server image.
     imagePullPolicy: IfNotPresent
-    imagePullSecrets:
-    - name: registry-docker-hub
 
   # -- (dict) Change the ports to be mapped to the pod.
   # If you change those, make sure to change the service.ports and server.config accordingly.
