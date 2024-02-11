@@ -222,3 +222,7 @@ server:
       REGION: "USA"
       USEAUTH: "True"
       BAN_LIST_URL: "https://api.palworldgame.com/api/banlist.txt"
+      AUTO_UPDATE_ENABLED: "True"
+      AUTO_REBOOT_ENABLED: "True"
+      AUTO_REBOOT_WARN_MINUTES: "30"
+      AUTO_REBOOT_CRON_EXPRESSION: "0 4 * * *"
