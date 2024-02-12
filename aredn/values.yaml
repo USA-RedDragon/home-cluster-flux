@@ -23,7 +23,7 @@ command:
   && rsyslogd -n & \
   cat /etc/resolv.conf > /tmp/resolv.conf.auto \
   && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
-  && echo -e "#!/bin/sh\nexec vtund -n -f /etc/vtundsrv.conf KI5VMF-KUBERNETES-172-31-180-56 oklahoma.aredn.mcswain.cloud" > /etc/s6/vtund/run \
+  && rm -f /etc/s6/vtund \
   && exec s6-svscan /etc/s6
 
 secrets: []
@@ -68,7 +68,7 @@ env: {}
 #       key: SPECIAL_KEY
 
 podAnnotations:
-  backup.velero.io/backup-volumes-excludes: server-vtun-config,server-olsr-config,server-wireguard-config
+  backup.velero.io/backup-volumes-excludes: server-olsr-config,server-wireguard-config
 
 podSecurityContext:
   privileged: true
@@ -93,11 +93,6 @@ persistentVolumes:
   mountPath: /etc/olsrd
   secret:
     secretName: server-olsr-config
-- name: server-vtun-config
-  mountPath: /etc/vtundsrv.conf
-  subPath: vtundsrv.conf
-  secret:
-    secretName: server-vtun-config
 - name: server-wireguard-config
   mountPath: /etc/wireguard
   secret:
@@ -148,20 +143,22 @@ initContainers:
     sleep 10 && \
     ip l del lan 2>/dev/null || true && \
     wg-quick up /etc/wireguard/lan.conf && \
+    ip l del tunnel 2>/dev/null || true && \
+    wg-quick up /etc/wireguard/tunnel.conf && \
     ip6tables -P INPUT DROP && \
     ip6tables -P OUTPUT DROP && \
     ip6tables -P FORWARD DROP && \
     iptables -P INPUT DROP && \
     iptables -P FORWARD DROP && \
     iptables -A INPUT -i lo -j ACCEPT && \
-    iptables -A INPUT -i tun60 -j ACCEPT && \
+    iptables -A INPUT -i tunnel -j ACCEPT && \
     iptables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
     iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     iptables -A FORWARD -i lan -o eth0 -j DROP && \
-    iptables -A FORWARD -i lan -o tun60 -j ACCEPT && \
+    iptables -A FORWARD -i lan -o tunnel -j ACCEPT && \
     iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
-    iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o tun60 -j SNAT --to-source 10.54.25.4 && \
-    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tun60 -j MASQUERADE
+    iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o tunnel -j SNAT --to-source 10.54.25.4 && \
+    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE
   volumeMounts:
   - mountPath: /etc/wireguard
     name: server-wireguard-config
