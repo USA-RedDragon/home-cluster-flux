@@ -119,7 +119,10 @@
             "versioning": "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z$"
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/palworld-server-docker$"],
+            "matchPackagePatterns": [
+                "^ghcr.io\\/usa-reddragon\\/palworld-server-docker$",
+                "^palworld$"
+            ],
             "schedule": ["after 4:00am, before 7:00am"]
         }
     ]
