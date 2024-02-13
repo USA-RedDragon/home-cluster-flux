@@ -16,7 +16,7 @@ spec:
           - name: registry-docker-hub
           containers:
           - name: backup
-            image: postgres:16.1
+            image: postgres:16.2
             imagePullPolicy: IfNotPresent
             envFrom:
             - secretRef:
