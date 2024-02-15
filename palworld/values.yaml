@@ -34,7 +34,7 @@ server:
     # -- Repository of the image, without the tag.
     repository: ghcr.io/usa-reddragon/palworld-server-docker
     # -- The tag of the image.
-    tag: v0.24.7
+    tag: v0.25.2
     # -- Define the pull policy for the server image.
     imagePullPolicy: IfNotPresent
 
