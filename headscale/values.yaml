@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: headscale/headscale
+  repository: ghcr.io/juanfont/headscale
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.23.0"
+  tag: "0.23.0-alpha3"
 
 imagePullSecrets:
 - name: registry-docker-hub
