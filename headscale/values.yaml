@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/juanfont/headscale
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.23.0-alpha4"
+  tag: "0.22.3"
 
 imagePullSecrets:
 - name: registry-docker-hub
