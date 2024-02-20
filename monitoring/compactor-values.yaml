@@ -8,7 +8,7 @@ image:
   repository: quay.io/thanos/thanos
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v0.34.0
+  tag: v0.34.1
 
 imagePullSecrets:
 - name: registry-quay
