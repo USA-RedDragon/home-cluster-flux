@@ -43,7 +43,7 @@ server:
 
     daily_reboot:
       enable: true
-      time: "0 4 * * *"
+      time: "0 10 * * *"
 
     env:
       DAYTIME_SPEEDRATE: "1.000000"
