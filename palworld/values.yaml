@@ -41,7 +41,7 @@ server:
     multithreading: true
 
     rcon:
-      enable: true
+      enable: false
       externalPassword:
         name: palworld-passwords
         key: rconPassword
