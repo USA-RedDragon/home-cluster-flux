@@ -24,14 +24,14 @@ server:
 
     rcon:
       enable: true
-      externalPassword: {}
-        # secret: palworld-passwords
-        # key: rconPassword
+      externalPassword:
+        secret: palworld-passwords
+        key: rconPassword
     community:
       enable: true
-      externalPassword: {}
-        # secret: palworld-passwords
-        # key: communityPassword
+      externalPassword:
+        secret: palworld-passwords
+        key: communityPassword
 
     server_name: "Dragon_Palworld_Server"
     timezone: "America/Chicago"
