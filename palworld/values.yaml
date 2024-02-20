@@ -62,6 +62,7 @@ server:
     daily_reboot:
       enable: true
       time: "0 10 * * *"
+      countdown_seconds: '300'
 
     env:
       DAYTIME_SPEEDRATE: "1.000000"
