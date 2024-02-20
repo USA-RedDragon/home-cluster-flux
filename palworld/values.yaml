@@ -22,14 +22,16 @@ server:
         - sh
         - -c
         - pgrep PalServer-Linux > /dev/null || exit 1
-      initialDelaySeconds: 30
+      initialDelaySeconds: 10
+      failureThreshold: 5
     readiness:
       exec:
         command:
         - sh
         - -c
         - rcon-cli Info | grep -q "Welcome to Pal Server"
-      initialDelaySeconds: 30
+      initialDelaySeconds: 20
+      failureThreshold: 5
 
   config:
     puid: 1000
