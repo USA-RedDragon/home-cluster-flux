@@ -15,6 +15,22 @@ server:
     repository: ghcr.io/usa-reddragon/palworld-server-docker
     tag: v0.25.2
 
+  probes:
+    liveness:
+      exec:
+        command:
+        - sh
+        - -c
+        - pgrep PalServer-Linux > /dev/null || exit 1
+      initialDelaySeconds: 30
+    readiness:
+      exec:
+        command:
+        - sh
+        - -c
+        - rcon-cli Info | grep -q "Welcome to Pal Server"
+      initialDelaySeconds: 60
+
   config:
     puid: 1000
     pgid: 1000
