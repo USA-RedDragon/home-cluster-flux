@@ -29,7 +29,7 @@ server:
         - sh
         - -c
         - rcon-cli Info | grep -q "Welcome to Pal Server"
-      initialDelaySeconds: 60
+      initialDelaySeconds: 30
 
   config:
     puid: 1000
