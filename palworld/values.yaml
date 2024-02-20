@@ -11,10 +11,10 @@ server:
   # -- (dict) Resources limits for the container.
   resources:
     limits:
-      cpu: 4
+      cpu: 2
       memory: "12Gi"
     requests:
-      cpu: 4
+      cpu: 2
       memory: "8Gi"
   # -- (dict) Define some parameters for the storage volume
   storage:
@@ -224,6 +224,6 @@ server:
       BAN_LIST_URL: "https://api.palworldgame.com/api/banlist.txt"
       AUTO_UPDATE_ENABLED: "true"
       DISABLE_GENERATE_SETTINGS: "false"
-      BACKUP_CRON_EXPRESSION: '*/5 0 0 0 0
+      BACKUP_CRON_EXPRESSION: '*/5 0 0 0 0'
       DELETE_OLD_BACKUPS: "true"
       OLD_BACKUP_DAYS: '7'
