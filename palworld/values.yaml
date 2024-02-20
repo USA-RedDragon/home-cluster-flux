@@ -138,7 +138,7 @@ server:
       enable: true
       # -- (string) If not provided, a random password will be generated and stored on the secret.
       password: ""
-      # -- (string) If not provided, a random server name will be generated with the "palworld_" prefix.
+    # -- (string) If not provided, a random server name will be generated with the "palworld_" prefix.
     server_name: "Dragon Palworld Server"
     # -- (string) The timezone used for time stamping backup server. Use the IANA TZ format with Area/Location
     # See the [list of TZ database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#Time_Zone_abbreviations)
@@ -224,3 +224,6 @@ server:
       BAN_LIST_URL: "https://api.palworldgame.com/api/banlist.txt"
       AUTO_UPDATE_ENABLED: "true"
       DISABLE_GENERATE_SETTINGS: "false"
+      BACKUP_CRON_EXPRESSION: '*/5 0 0 0 0
+      DELETE_OLD_BACKUPS: "true"
+      OLD_BACKUP_DAYS: '7'
