@@ -224,6 +224,6 @@ server:
       BAN_LIST_URL: "https://api.palworldgame.com/api/banlist.txt"
       AUTO_UPDATE_ENABLED: "true"
       DISABLE_GENERATE_SETTINGS: "false"
-      BACKUP_CRON_EXPRESSION: '*/5 0 0 0 0'
+      BACKUP_CRON_EXPRESSION: '*/5 * * * *'
       DELETE_OLD_BACKUPS: "true"
       OLD_BACKUP_DAYS: '7'
