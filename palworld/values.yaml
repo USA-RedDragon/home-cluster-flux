@@ -33,6 +33,13 @@ server:
       initialDelaySeconds: 20
       failureThreshold: 5
 
+  lifecycle:
+    preStop:
+      exec:
+        command:
+          - bash
+          - /usr/local/bin/backup
+
   config:
     puid: 1000
     pgid: 1000
