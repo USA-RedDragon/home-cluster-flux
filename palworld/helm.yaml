@@ -20,7 +20,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: palworld
-      version: 0.26.12
+      version: 0.26.13
   interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
