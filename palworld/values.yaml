@@ -133,11 +133,23 @@ server:
       port: 25575
       # -- (string) If not provided, a random password will be generated and stored on the secret.
       password: ""
+      # -- (dict) If provided, the password will be pulled from the secret.
+      externalPassword: {}
+        # -- (string) The name of the secret containing the password.
+        # secret: ""
+        # -- (string) The key in the secret containing the password.
+        # key: ""
     community:
       # -- (bool) Enables/disables the visibility of this server on Steam community servers list.
       enable: true
       # -- (string) If not provided, a random password will be generated and stored on the secret.
       password: ""
+      # -- (dict) If provided, the password will be pulled from the secret.
+      externalPassword: {}
+        # -- (string) The name of the secret containing the password.
+        # secret: ""
+        # -- (string) The key in the secret containing the password.
+        # key: ""
     # -- (string) If not provided, a random server name will be generated with the "palworld_" prefix.
     server_name: "Dragon Palworld Server"
     # -- (string) The timezone used for time stamping backup server. Use the IANA TZ format with Area/Location
