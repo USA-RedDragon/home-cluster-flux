@@ -33,6 +33,7 @@ server:
       initialDelaySeconds: 20
       failureThreshold: 5
 
+  terminationGracePeriodSeconds: 30
   lifecycle:
     preStop:
       exec:
