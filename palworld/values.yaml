@@ -8,8 +8,14 @@ server:
       memory: "8Gi"
 
   storage:
-    size: 12Gi
-    storageClassName: "longhorn-nvme"
+    main:
+      size: 12Gi
+      storageClassName: "longhorn-nvme"
+
+    backups:
+      nfs:
+        server: 192.168.1.135
+        path: /mnt/data/backups/palworld
 
   image:
     repository: ghcr.io/usa-reddragon/palworld-server-docker
