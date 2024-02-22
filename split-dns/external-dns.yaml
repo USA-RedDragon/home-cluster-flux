@@ -39,7 +39,7 @@ metadata:
   name: external-dns
   namespace: split-dns
 spec:
-  replicas: 3
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -64,7 +64,7 @@ spec:
         resources:
           limits:
             cpu: 50m
-            memory: 100Mi
+            memory: 200Mi
           requests:
             cpu: 30m
-            memory: 30Mi
+            memory: 100Mi
