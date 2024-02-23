@@ -19,7 +19,7 @@ server:
 
   image:
     repository: ghcr.io/usa-reddragon/palworld-server-docker
-    tag: v0.25.4
+    tag: v0.25.5
 
   probes:
     liveness:
@@ -136,4 +136,3 @@ server:
       BACKUP_CRON_EXPRESSION: '*/5 * * * *'
       DELETE_OLD_BACKUPS: "true"
       OLD_BACKUP_DAYS: '7'
-      SKIP_CHOWN: "true"
