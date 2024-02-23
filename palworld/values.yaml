@@ -28,7 +28,7 @@ server:
         - sh
         - -c
         - pgrep PalServer-Linux > /dev/null || exit 1
-      initialDelaySeconds: 10
+      initialDelaySeconds: 20
       failureThreshold: 5
     readiness:
       exec:
