@@ -28,7 +28,7 @@ server:
         - sh
         - -c
         - pgrep PalServer-Linux > /dev/null || exit 1
-      initialDelaySeconds: 60
+      initialDelaySeconds: 20
       failureThreshold: 5
     readiness:
       exec:
@@ -36,7 +36,7 @@ server:
         - sh
         - -c
         - rcon-cli Info | grep -q "Welcome to Pal Server"
-      initialDelaySeconds: 60
+      initialDelaySeconds: 20
       failureThreshold: 5
 
   terminationGracePeriodSeconds: 30
