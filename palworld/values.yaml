@@ -19,7 +19,7 @@ server:
 
   image:
     repository: ghcr.io/usa-reddragon/palworld-server-docker
-    tag: v0.25.3
+    tag: v0.25.4
 
   probes:
     liveness:
