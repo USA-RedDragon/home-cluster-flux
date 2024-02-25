@@ -105,7 +105,7 @@ ingress:
 
 extraContainers:
 - name: headscale-ui
-  image: ghcr.io/gurucomputing/headscale-ui:latest@sha256:aebd8481153aefc288322c13830b2faa06e90765ca09a377f2ba891ea8205eb2
+  image: ghcr.io/gurucomputing/headscale-ui:latest@sha256:4c618a7b6e8b32f5ef6af3c7e6936c63e8568ad9ae8d190dafb2551a64ff40a2
   imagePullPolicy: IfNotPresent
   ports:
     - containerPort: 80
