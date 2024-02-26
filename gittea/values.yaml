@@ -78,6 +78,8 @@ env:
   value: https://git.mcswain.dev
 - name: GITEA__SERVER__SSH_DOMAIN
   value: git.mcswain.dev
+- name: GITEA__MIGRATIONS__ALLOWED_DOMAINS
+  value: "github.com,*.github.com,gitlab.com,*.gitlab.com,bitbucket.org,*.bitbucket.org"
 #   valueFrom:
 #     configMapKeyRef:
 #       name: app-otherenv
