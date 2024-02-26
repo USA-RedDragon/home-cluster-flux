@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/aredn-base
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:34d6f8eea1d06b5ab369174089366f306b998e0eb69ddff1ab45adeed67bfafb"
+  tag: "main@sha256:463ea30ab76a7fb6ff8921266ba687de8784754821bef7c9c03a3564eed541e3"
 
 imagePullSecrets: []
 nameOverride: ""
