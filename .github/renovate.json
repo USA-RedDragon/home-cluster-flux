@@ -43,7 +43,7 @@
             "allowedVersions": "<=1.19.2"
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/weewx-docker$"],
+            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/weewx$"],
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"
@@ -83,7 +83,7 @@
             "automerge": true
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/nginx-rtmp-docker$"],
+            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/nginx-rtmp$"],
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"

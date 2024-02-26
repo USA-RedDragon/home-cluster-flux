@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/usa-reddragon/weewx-docker
+  repository: ghcr.io/usa-reddragon/weewx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:275a703de016f630c6974e4c479047ddb76e64333215d1940142df762b69cf7e"
+  tag: "main@sha256:0e3c972e3ff04ec65e112ccbb768d7e819975f9bdac33971f2ed8c75a7d761c7"
 
 command:
 - sh
@@ -65,7 +65,7 @@ env:
 #       key: SPECIAL_KEY
 
 podAnnotations:
-  app.kubernetes.io/name: weewx-docker
+  app.kubernetes.io/name: weewx
   backup.velero.io/backup-volumes-excludes: html,config
 
 podSecurityContext:
