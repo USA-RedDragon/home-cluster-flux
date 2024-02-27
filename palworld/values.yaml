@@ -18,7 +18,7 @@ server:
 
   image:
     repository: ghcr.io/usa-reddragon/palworld-server
-    tag: main@sha256:008defe665a7b2a843c904135c1c4a3a4e44bc15587d352c57f550a22e378c11
+    tag: main@sha256:dd003550e16b0dfac479c72a307d54f280e2600713c8a17943500739e8f9294f
 
   terminationGracePeriodSeconds: 30
   lifecycle:
