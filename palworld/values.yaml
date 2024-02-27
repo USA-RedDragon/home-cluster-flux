@@ -9,7 +9,6 @@ server:
 
   storage:
     main:
-      size: 12Gi
       storageClassName: "longhorn-nvme"
 
     backups:
@@ -20,21 +19,6 @@ server:
   image:
     repository: ghcr.io/usa-reddragon/palworld-server-docker
     tag: main@sha256:3d0a7e2b174137254bb3103ee23d10ef2d0eadb3d81a5687e796c2cace869628
-
-  probes:
-    liveness:
-      exec:
-        command:
-        - sh
-        - -c
-        - pgrep PalServer-Linux > /dev/null || exit 1
-    readiness:
-      exec:
-        command:
-        - sh
-        - -c
-        - rcon-cli Info | grep -q "Welcome to Pal Server"
-      initialDelaySeconds: 10
 
   terminationGracePeriodSeconds: 30
   lifecycle:
@@ -64,8 +48,6 @@ server:
     public_ip: "palworld.mcswain.dev"
     public_port: "8211"
     server_description: "USA-RedDragon's Palworld Server"
-
-    update_on_boot: true
 
     daily_reboot:
       enable: true
@@ -125,7 +107,6 @@ server:
       REGION: "USA"
       USEAUTH: "true"
       BAN_LIST_URL: "https://api.palworldgame.com/api/banlist.txt"
-      AUTO_UPDATE_ENABLED: "true"
       DISABLE_GENERATE_SETTINGS: "false"
       BACKUP_CRON_EXPRESSION: '*/5 * * * *'
       DELETE_OLD_BACKUPS: "true"
