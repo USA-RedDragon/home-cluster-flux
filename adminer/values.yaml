@@ -47,9 +47,7 @@ envFrom: []
 # - configMapRef:
 #     name: app-config
 
-env:
-- name: ADMINER_DEFAULT_SERVER
-  value: cluster.postgres.svc.cluster.local
+env: []
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:

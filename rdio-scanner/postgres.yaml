@@ -1,0 +1,21 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgresql
+  namespace: rdio-scanner
+spec:
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.1-12
+  enableSuperuserAccess: true
+  bootstrap:
+    initdb:
+      database: rdio
+      owner: rdio
+  storage:
+    size: 4Gi
+  resources:
+    requests:
+      memory: 60Mi
+      cpu: 20m
+  smartShutdownTimeout: 30
+  stopDelay: 300

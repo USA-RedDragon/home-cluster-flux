@@ -9,6 +9,7 @@ resources:
   - networkpolicy-http.yaml
   - ingress-redirect.yaml
   - prom.yaml
+  - postgres.yaml
 configMapGenerator:
   - name: chart-values
     files:

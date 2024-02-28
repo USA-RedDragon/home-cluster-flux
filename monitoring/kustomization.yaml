@@ -17,8 +17,5 @@ configMapGenerator:
   - name: pushgateway-chart-values
     files:
       - values.yaml=pushgateway-values.yaml
-  - name: postgres-chart-values
-    files:
-      - values.yaml=postgres-values.yaml
 configurations:
   - kustomizeconfig.yaml
