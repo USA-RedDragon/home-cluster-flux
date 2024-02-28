@@ -13,6 +13,8 @@ spec:
       owner: rdio
   storage:
     size: 4Gi
+  monitoring:
+    enablePodMonitor: true
   resources:
     requests:
       memory: 60Mi

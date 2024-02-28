@@ -13,6 +13,8 @@ spec:
       owner: tandoor
   storage:
     size: 4Gi
+  monitoring:
+    enablePodMonitor: true
   resources:
     requests:
       memory: 60Mi
