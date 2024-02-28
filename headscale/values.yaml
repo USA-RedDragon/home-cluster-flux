@@ -88,7 +88,7 @@ service:
   - name: http
     port: 8080
   - name: web
-    port: 80
+    port: 8081
   - name: metrics
     port: 9090
   - name: grpc
@@ -121,7 +121,7 @@ ingress:
     - port: 8080
       path: /
       pathType: Prefix
-    - port: 80
+    - port: 8081
       path: /web
       pathType: Prefix
   tls:
@@ -134,10 +134,12 @@ extraContainers:
   image: ghcr.io/gurucomputing/headscale-ui:2024.02.24-beta1
   imagePullPolicy: IfNotPresent
   ports:
-    - containerPort: 80
+    - containerPort: 8081
       protocol: TCP
       name: http
   env:
+    - name: HTTP_PORT
+      value: "8081"
     - name: HTTPS_PORT
       value: "8443"
 
