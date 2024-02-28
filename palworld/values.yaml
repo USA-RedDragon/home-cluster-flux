@@ -17,28 +17,15 @@ server:
         path: /mnt/data/backups/palworld
 
   image:
-    repository: ghcr.io/usa-reddragon/palworld-server
-    tag: main@sha256:dd003550e16b0dfac479c72a307d54f280e2600713c8a17943500739e8f9294f
-
-  terminationGracePeriodSeconds: 30
-  lifecycle:
-    preStop:
-      exec:
-        command:
-          - bash
-          - /usr/local/bin/backup
+    repository: ghcr.io/usa-reddragon/palworld-server-docker
+    tag: main@sha256:d6e0eb07851118fdb0acb9f4891b214d6e8957e1cd2448b425e07961c503bbdb
 
   config:
-    max_players: 16
-    multithreading: true
-
     rcon:
-      enable: true
       externalPassword:
         name: palworld-passwords
         key: rconPassword
     community:
-      enable: true
       externalPassword:
         name: palworld-passwords
         key: communityPassword
@@ -52,7 +39,6 @@ server:
     daily_reboot:
       enable: true
       time: "0 10 * * *"
-      countdown_seconds: '300'
 
     env:
       DAYTIME_SPEEDRATE: "1.000000"
