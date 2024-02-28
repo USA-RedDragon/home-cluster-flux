@@ -11,6 +11,8 @@ spec:
     initdb:
       database: vaultwarden
       owner: vaultwarden
+  monitoring:
+    enablePodMonitor: true
   storage:
     size: 4Gi
   resources:
