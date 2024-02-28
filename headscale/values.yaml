@@ -131,12 +131,15 @@ ingress:
 
 extraContainers:
 - name: headscale-ui
-  image: ghcr.io/gurucomputing/headscale-ui:latest@sha256:4c618a7b6e8b32f5ef6af3c7e6936c63e8568ad9ae8d190dafb2551a64ff40a2
+  image: ghcr.io/gurucomputing/headscale-ui:2024.02.24-beta1
   imagePullPolicy: IfNotPresent
   ports:
     - containerPort: 80
       protocol: TCP
       name: http
+  env:
+    - name: HTTPS_PORT
+      value: "8443"
 
 probes:
   liveness:
