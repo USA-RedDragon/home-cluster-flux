@@ -42,6 +42,14 @@ spec:
       enabled: false
     networkPolicy:
       enabled: false
+    write:
+      persistence:
+        size: 30Gi
+        storageClass: longhorn-ssd
+    backend:
+      persistence:
+        size: 30Gi
+        storageClass: longhorn-ssd
     loki:
       auth_enabled: false
       storage:
