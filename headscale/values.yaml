@@ -36,7 +36,33 @@ envFrom: []
 # - configMapRef:
 #     name: app-config
 
-env: []
+env:
+- name: HEADSCALE_DB_TYPE
+  value: postgres
+- name: HEADSCALE_DB_HOST
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: host
+- name: HEADSCALE_DB_PORT
+  value: "5432"
+- name: HEADSCALE_DB_SSL
+  value: "true"
+- name: HEADSCALE_DB_NAME
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: dbname
+- name: HEADSCALE_DB_USER
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: username
+- name: HEADSCALE_DB_PASS
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: password
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
