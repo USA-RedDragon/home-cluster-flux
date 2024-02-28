@@ -49,11 +49,17 @@ env:
 - name: CORS_HOSTS
   value: "http://10.54.25.5,http://ki5vmf-dmrhub.local.mesh,https://dmr.mcswain.dev,https://dmrhub.app,https://dmrhub.cloud,https://dmrhub.net,https://dmrhub.org,https://dmrhub.network,https://www.dmrhub.app,https://www.dmrhub.cloud,https://www.dmrhub.net,https://www.dmrhub.org,https://www.dmrhub.network,http://localhost:5173"
 - name: PG_DATABASE
-  value: dmr
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: dbname
 - name: TRUSTED_PROXIES
   value: "172.17.0.0/16"
 - name: PG_HOST
-  value: cluster.postgres.svc.cluster.local
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: host
 - name: REDIS_HOST
   value: sentinel-tunnel.ha-redis.svc.cluster.local:6379
 - name: DEBUG
@@ -71,12 +77,12 @@ env:
 - name: PG_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: dmrhub.dmr.cluster.credentials.postgresql.acid.zalan.do
+      name: postgresql-app
       key: password
 - name: PG_USER
   valueFrom:
     secretKeyRef:
-      name: dmrhub.dmr.cluster.credentials.postgresql.acid.zalan.do
+      name: postgresql-app
       key: username
 - name: FEATURE_FLAGS
   value: ""
