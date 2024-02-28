@@ -40,8 +40,6 @@ configs:
 - name: authentik-config
   data:
     AUTHENTIK_REDIS__HOST: redis-app.authentik.svc.cluster.local
-    AUTHENTIK_POSTGRESQL__HOST: 'cluster.postgres.svc.cluster.local'
-    AUTHENTIK_POSTGRESQL__NAME: authentik
     AUTHENTIK_EMAIL__HOST: email.mcswain.dev
     AUTHENTIK_EMAIL__PORT: '465'
     AUTHENTIK_EMAIL__USERNAME: authentik
@@ -70,13 +68,23 @@ env:
 - name: AUTHENTIK_POSTGRESQL__PASSWORD
   valueFrom:
     secretKeyRef:
-      name: authentik.authentik.cluster.credentials.postgresql.acid.zalan.do
+      name: postgresql-app
       key: password
 - name: AUTHENTIK_POSTGRESQL__USER
   valueFrom:
     secretKeyRef:
-      name: authentik.authentik.cluster.credentials.postgresql.acid.zalan.do
+      name: postgresql-app
       key: username
+- name: AUTHENTIK_POSTGRESQL__HOST
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: host
+- name: AUTHENTIK_POSTGRESQL__NAME
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: dbname
 
 podAnnotations: {}
 
@@ -149,13 +157,23 @@ extraContainers:
   - name: AUTHENTIK_POSTGRESQL__PASSWORD
     valueFrom:
       secretKeyRef:
+        name: postgresql-app
         key: password
-        name: authentik.authentik.cluster.credentials.postgresql.acid.zalan.do
   - name: AUTHENTIK_POSTGRESQL__USER
     valueFrom:
       secretKeyRef:
+        name: postgresql-app
         key: username
-        name: authentik.authentik.cluster.credentials.postgresql.acid.zalan.do
+  - name: AUTHENTIK_POSTGRESQL__HOST
+    valueFrom:
+      secretKeyRef:
+        name: postgresql-app
+        key: host
+  - name: AUTHENTIK_POSTGRESQL__NAME
+    valueFrom:
+      secretKeyRef:
+        name: postgresql-app
+        key: dbname
   envFrom:
   - configMapRef:
       name: authentik-config
