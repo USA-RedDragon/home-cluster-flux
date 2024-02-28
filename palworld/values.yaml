@@ -17,7 +17,7 @@ server:
         path: /mnt/data/backups/palworld
 
   image:
-    repository: ghcr.io/usa-reddragon/palworld-server-docker
+    repository: ghcr.io/usa-reddragon/palworld-server
     tag: main@sha256:d6e0eb07851118fdb0acb9f4891b214d6e8957e1cd2448b425e07961c503bbdb
 
   config:
