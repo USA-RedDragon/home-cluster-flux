@@ -15,13 +15,6 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
-command:
-- /bin/sh
-- -c
-- |
-  export DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@cluster.postgres.svc.cluster.local/vaultwarden?sslmode=require" && \
-  exec /start.sh
-
 secrets: []
 # - name: app-secret-key
 #   data:
@@ -79,16 +72,11 @@ env:
   value: Bitwarden
 - name: REQUIRE_DEVICE_EMAIL
   value: 'false'
-- name: DB_PASSWORD
+- name: DATABASE_URL
   valueFrom:
     secretKeyRef:
-      name: vaultwarden.vaultwarden.cluster.credentials.postgresql.acid.zalan.do
-      key: password
-- name: DB_USER
-  valueFrom:
-    secretKeyRef:
-      name: vaultwarden.vaultwarden.cluster.credentials.postgresql.acid.zalan.do
-      key: username
+      name: postgresql-app
+      key: uri
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
