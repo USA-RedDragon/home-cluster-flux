@@ -67,9 +67,7 @@ configs:
 - name: app-config
   data:
     DB_ENGINE: django.db.backends.postgresql
-    POSTGRES_HOST: cluster.postgres.svc.cluster.local
     POSTGRES_PORT: "5432"
-    POSTGRES_DB: tandoor
     TIMEZONE: "America/Chicago"
     GUNICORN_MEDIA: "0"
     GUNICORN_WORKERS: "2"
@@ -101,13 +99,23 @@ env:
 - name: POSTGRES_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: tandoor.tandoor.cluster.credentials.postgresql.acid.zalan.do
+      name: postgresql-app
       key: password
 - name: POSTGRES_USER
   valueFrom:
     secretKeyRef:
-      name: tandoor.tandoor.cluster.credentials.postgresql.acid.zalan.do
+      name: postgresql-app
       key: username
+- name: POSTGRES_HOST
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: host
+- name: POSTGRES_DB
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: dbname
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
