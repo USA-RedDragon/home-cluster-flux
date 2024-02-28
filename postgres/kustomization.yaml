@@ -3,5 +3,4 @@ kind: Kustomization
 namespace: postgres
 resources:
   - ns.yaml
-  - pgcluster.yaml
   - backup-cloud.yaml
