@@ -55,24 +55,30 @@ env:
 - name: METRICS_PORT
   value: '9108'
 - name: DB_HOST
-  value: cluster.postgres.svc.cluster.local
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: host
 - name: DB_TYPE
   value: postgresql
 - name: DB_PORT
   value: "5432"
 - name: DB_NAME
-  value: rdioscanner
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: dbname
 - name: DB_SSLMODE
   value: "require"
 - name: DB_PASS
   valueFrom:
     secretKeyRef:
-      name: rdio-scanner.rdioscanner.cluster.credentials.postgresql.acid.zalan.do
+      name: postgresql-app
       key: password
 - name: DB_USER
   valueFrom:
     secretKeyRef:
-      name: rdio-scanner.rdioscanner.cluster.credentials.postgresql.acid.zalan.do
+      name: postgresql-app
       key: username
 # - name: SPECIAL_KEY
 #   valueFrom:
