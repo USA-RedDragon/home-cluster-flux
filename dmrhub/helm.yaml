@@ -5,6 +5,8 @@ metadata:
   namespace: dmrhub
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: dmrhub
   chart:
     spec:

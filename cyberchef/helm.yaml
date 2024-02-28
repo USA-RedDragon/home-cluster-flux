@@ -5,6 +5,8 @@ metadata:
   namespace: cyberchef
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: cyberchef
   chart:
     spec:

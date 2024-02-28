@@ -23,6 +23,8 @@ spec:
         name: longhorn
       version: 1.6.0
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   values:
     persistence:
       defaultClass: false

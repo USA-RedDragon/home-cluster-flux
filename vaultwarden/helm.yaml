@@ -5,6 +5,8 @@ metadata:
   namespace: vaultwarden
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: vaultwarden
   chart:
     spec:

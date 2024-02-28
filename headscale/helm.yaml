@@ -6,6 +6,8 @@ metadata:
 spec:
   interval: 60m0s
   releaseName: headscale
+  driftDetection:
+    mode: enabled
   chart:
     spec:
       chart: app

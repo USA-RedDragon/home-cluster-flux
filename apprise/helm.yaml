@@ -5,6 +5,8 @@ metadata:
   namespace: apprise
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: apprise
   chart:
     spec:

@@ -5,6 +5,8 @@ metadata:
   namespace: paperless-ngx
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: paperless-ngx
   chart:
     spec:

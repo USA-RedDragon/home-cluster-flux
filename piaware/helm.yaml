@@ -5,6 +5,8 @@ metadata:
   namespace: piaware
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: piaware
   chart:
     spec:

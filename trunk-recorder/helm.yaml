@@ -5,6 +5,8 @@ metadata:
   namespace: trunk-recorder
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: trunk-recorder
   chart:
     spec:

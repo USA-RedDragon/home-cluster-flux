@@ -5,6 +5,8 @@ metadata:
   namespace: readsb
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: readsb
   chart:
     spec:
