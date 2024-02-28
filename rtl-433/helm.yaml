@@ -5,6 +5,8 @@ metadata:
   namespace: rtl-433
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: rtl-433
   chart:
     spec:

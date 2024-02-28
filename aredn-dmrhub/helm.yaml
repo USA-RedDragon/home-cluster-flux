@@ -5,6 +5,8 @@ metadata:
   namespace: aredn-dmrhub
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: aredn-dmrhub
   chart:
     spec:

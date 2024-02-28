@@ -26,6 +26,8 @@ metadata:
   namespace: go2rtc
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: go2rtc-real
   chart:
     spec:

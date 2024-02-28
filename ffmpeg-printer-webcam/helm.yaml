@@ -5,6 +5,8 @@ metadata:
   namespace: ffmpeg-printer-webcam 
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: ffmpeg-printer-webcam 
   chart:
     spec:

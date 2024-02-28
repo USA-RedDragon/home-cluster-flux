@@ -5,6 +5,8 @@ metadata:
   namespace: influxdb
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: influxdb
   chart:
     spec:

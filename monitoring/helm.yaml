@@ -15,6 +15,8 @@ metadata:
   namespace: monitoring
 spec:
   interval: 1m0s
+  driftDetection:
+    mode: enabled
   releaseName: prometheus-stack
   chart:
     spec:
@@ -39,6 +41,8 @@ metadata:
   namespace: monitoring
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: thanos-querier
   chart:
     spec:
@@ -60,6 +64,8 @@ metadata:
   namespace: monitoring
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: thanos-compactor
   chart:
     spec:
@@ -81,6 +87,8 @@ metadata:
   namespace: monitoring
 spec:
   interval: 1m0s
+  driftDetection:
+    mode: enabled
   releaseName: pushgateway
   chart:
     spec:
@@ -101,6 +109,8 @@ metadata:
   namespace: monitoring
 spec:
   interval: 1m0s
+  driftDetection:
+    mode: enabled
   releaseName: postgres-exporter
   chart:
     spec:

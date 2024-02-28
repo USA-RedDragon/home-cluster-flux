@@ -5,6 +5,8 @@ metadata:
   namespace: dump978
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: dump978
   chart:
     spec:

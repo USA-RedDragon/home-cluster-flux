@@ -13,6 +13,8 @@ spec:
         namespace: flux-system
       version: 1.0.7
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   valuesFrom:
     - kind: ConfigMap
       name: chart-values

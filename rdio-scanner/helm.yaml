@@ -5,6 +5,8 @@ metadata:
   namespace: rdio-scanner
 spec:
   interval: 60m0s
+  driftDetection:
+    mode: enabled
   releaseName: rdio-scanner
   chart:
     spec:
