@@ -8,6 +8,7 @@ resources:
   - rbac.yaml
   - helm.yaml
   - redis-helm.yaml
+  - postgres.yaml
 configMapGenerator:
   - name: chart-values
     files:
