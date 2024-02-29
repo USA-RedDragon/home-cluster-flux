@@ -36,7 +36,7 @@ spec:
     image:
       registry: docker.io
       repository: grafana/loki
-      tag: 2.9.4
+      tag: 2.9.5
       digest: sha256:1abddaeef1ecf167283a7ed811e20ecf15329c6e80416900665853bc487f1310
     ingress:
       enabled: false
