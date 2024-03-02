@@ -290,7 +290,7 @@ alertmanager:
     receivers:
     - name: 'null'
     - name: 'metrics-actioner-webhook'
-      webhookConfigs:
+      webhook_configs:
       - url: 'http://metrics-actioner-app.monitoring.svc.cluster.local:8080/api/v1/webhooks/alertmanager'
     templates:
     - '/etc/alertmanager/config/*.tmpl'
