@@ -55,6 +55,8 @@ env:
   value: "true"
 - name: HTTP__METRICS__ENABLED
   value: "true"
+- name: HTTP__METRICS__IPV4_HOST
+  value: "0.0.0.0"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
