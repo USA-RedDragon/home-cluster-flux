@@ -49,7 +49,7 @@ envFrom: []
 #     name: app-config
 
 env:
-- name: HTTP__PPROF_ENABLED
+- name: HTTP__PPROF__ENABLED
   value: "true"
 - name: HTTP__TRUSTED_PROXIES
   value: ""
