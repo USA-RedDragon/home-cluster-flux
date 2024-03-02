@@ -4,6 +4,8 @@ namespace: monitoring
 resources:
   - ns.yaml
   - helm.yaml
+  - metrics-actioner-helm.yaml
+  - metrics-actioner-metrics.yaml
 configMapGenerator:
   - name: chart-values
     files:
@@ -17,5 +19,8 @@ configMapGenerator:
   - name: pushgateway-chart-values
     files:
       - values.yaml=pushgateway-values.yaml
+  - name: metrics-actioner-chart-values
+    files:
+      - values.yaml=metrics-actioner-values.yaml
 configurations:
   - kustomizeconfig.yaml
