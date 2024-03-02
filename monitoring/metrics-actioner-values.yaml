@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/metrics-actioner
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.2"
+  tag: "v0.0.3"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -49,14 +49,12 @@ envFrom: []
 #     name: app-config
 
 env:
-- name: HTTP__PPROF__ENABLED
-  value: "true"
 - name: HTTP__TRUSTED_PROXIES
   value: ""
-- name: METRICS__ENABLED
+- name: HTTP__PPROF__ENABLED
   value: "true"
-- name: METRICS__HOST_IPV4
-  value: "0.0.0.0"
+- name: HTTP__METRICS__ENABLED
+  value: "true"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
