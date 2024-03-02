@@ -55,6 +55,8 @@ env:
   value: ""
 - name: METRICS__ENABLED
   value: "true"
+- name: METRICS__HOST_IPV4
+  value: "0.0.0.0"
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
