@@ -287,11 +287,20 @@ alertmanager:
         matchers:
           # pass all alerts
           - alertname != ""
+      - receiver: 'telegram'
+        matchers:
+          # pass all alerts
+          - alertname != ""
     receivers:
     - name: 'null'
     - name: 'metrics-actioner-webhook'
       webhook_configs:
       - url: 'http://metrics-actioner-app.monitoring.svc.cluster.local:8080/api/v1/webhooks/alertmanager'
+    - name: 'telegram'
+      telegram_configs:
+      - chat_id: 202588723
+        bot_token_file: /etc/alertmanager/secrets/alertmanager-telegram-bot-token/token
+
     templates:
     - '/etc/alertmanager/config/*.tmpl'
 
@@ -603,7 +612,8 @@ alertmanager:
     ## Secrets is a list of Secrets in the same namespace as the Alertmanager object, which shall be mounted into the
     ## Alertmanager Pods. The Secrets are mounted into /etc/alertmanager/secrets/.
     ##
-    secrets: []
+    secrets:
+    - alertmanager-telegram-bot-token
 
     ## ConfigMaps is a list of ConfigMaps in the same namespace as the Alertmanager object, which shall be mounted into the Alertmanager Pods.
     ## The ConfigMaps are mounted into /etc/alertmanager/configmaps/.
