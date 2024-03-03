@@ -11,32 +11,6 @@ spec:
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: prometheus-stack
-  namespace: monitoring
-spec:
-  interval: 1m0s
-  driftDetection:
-    mode: enabled
-  releaseName: prometheus-stack
-  chart:
-    spec:
-      chart: kube-prometheus-stack
-      sourceRef:
-        kind: HelmRepository
-        name: prometheus-community
-      version: '>=56.19.0 <57.0.0'
-      interval: 1m0s
-  valuesFrom:
-    - kind: ConfigMap
-      name: chart-values
-  install:
-    crds: CreateReplace
-  upgrade:
-    crds: CreateReplace
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
-kind: HelmRelease
-metadata:
   name: thanos-querier
   namespace: monitoring
 spec:
