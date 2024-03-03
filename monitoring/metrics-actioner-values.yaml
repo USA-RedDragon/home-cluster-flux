@@ -38,7 +38,7 @@ configs:
     config.yaml: |
       http:
         pprof:
-          enabled: true
+          enabled: false
         metrics:
           enabled: true
           ipv4_host: '0.0.0.0'
