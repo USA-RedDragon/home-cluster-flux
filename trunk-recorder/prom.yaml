@@ -14,3 +14,20 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: trunk-recorder
       app.kubernetes.io/name: app
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: trunk-recorder
+spec:
+  groups:
+  - name: trunk-recorder
+    rules:
+    - alert: TrunkRecorderNoCalls
+      expr: trunk_recorder_active_calls == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "TrunkRecorder has not received any calls"
+        description: "TrunkRecorder has not received any calls in the last 1 minute"
