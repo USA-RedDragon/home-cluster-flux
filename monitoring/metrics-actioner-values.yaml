@@ -37,7 +37,6 @@ configs:
   data:
     config.yaml: |
       http:
-        trusted_proxies: ""
         pprof:
           enabled: true
         metrics:
