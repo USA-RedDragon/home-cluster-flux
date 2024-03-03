@@ -894,7 +894,7 @@ grafana:
       plugins: /var/lib/grafana/plugins
       provisioning: /etc/grafana/provisioning
     analytics:
-      check_for_updates: true
+      check_for_updates: false
     log:
       mode: console
     grafana_net:
@@ -929,7 +929,7 @@ grafana:
   ## Timezone for the default dashboards
   ## Other options are: browser or a specific timezone, i.e. Europe/Luxembourg
   ##
-  defaultDashboardsTimezone: utc
+  defaultDashboardsTimezone: browser
 
   adminPassword: prom-operator
 
@@ -1049,7 +1049,11 @@ grafana:
 
   ## Configure additional grafana datasources (passed through tpl)
   ## ref: http://docs.grafana.org/administration/provisioning/#datasources
-  additionalDataSources: []
+  additionalDataSources:
+  - name: Thanos
+    type: prometheus
+    url: http://thanos-querier-app:9090
+    access: proxy
   # - name: prometheus-sample
   #   access: proxy
   #   basicAuth: true
