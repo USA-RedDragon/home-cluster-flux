@@ -16,7 +16,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 args:
-- server
+- worker
 
 serviceAccountName: rbac-authentik-remote-cluster
 
@@ -36,20 +36,7 @@ secrets: []
 #       multiline
 #       strings
 
-configs:
-- name: authentik-config
-  data:
-    AUTHENTIK_REDIS__HOST: redis-app.authentik.svc.cluster.local
-    AUTHENTIK_EMAIL__HOST: email.mcswain.dev
-    AUTHENTIK_EMAIL__PORT: '465'
-    AUTHENTIK_EMAIL__USERNAME: authentik
-    AUTHENTIK_EMAIL__USE_TLS: "false"
-    AUTHENTIK_EMAIL__USE_SSL: "true"
-    AUTHENTIK_EMAIL__FROM: authentik@mcswain.dev
-    AUTHENTIK_ERROR_REPORTING__ENABLED: 'false'
-    AUTHENTIK_DISABLE_STARTUP_ANALYTICS: 'true'
-    AUTHENTIK_AVATARS: initials
-    AUTHENTIK_DISABLE_UPDATE_CHECK: "true"
+configs: []
 # - name: app-otherenv
 #   data:
 #     SPECIAL_KEY: here
@@ -102,13 +89,6 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  ports:
-  - name: http
-    port: 9000
-  - name: https
-    port: 9443
-  - name: metrics
-    port: 9300
 
 persistentVolumes: []
 # - name: media
@@ -131,46 +111,17 @@ persistentVolumes: []
 #     secretName: app-keyfile
 
 ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  ingressClassName: nginx
-  hosts:
-  - host: authentik.mcswain.dev
-    paths:
-    - port: 9000
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: authentik-mcswain-dev-tls
-    hosts:
-      - authentik.mcswain.dev
+  enabled: false
 
-probes:
-  liveness:
-    httpGet:
-      path: /-/health/live/
-      port: 9000
-    failureThreshold: 5
-    periodSeconds: 30
-    timeoutSeconds: 10
-  readiness:
-    httpGet:
-      path: /-/health/ready/
-      port: 9000
-    failureThreshold: 5
-    periodSeconds: 30
-    timeoutSeconds: 10
+probes: {}
 
 resources:
   limits:
     cpu: 300m
-    memory: 512Mi
+    memory: 1400Mi
   requests:
     cpu: 10m
-    memory: 128Mi
+    memory: 1Gi
 
 nodeSelector: {}
 
