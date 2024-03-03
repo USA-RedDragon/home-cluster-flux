@@ -3308,10 +3308,10 @@ prometheus:
     ##
     resources:
       requests:
-        cpu: 800m
+        cpu: '1'
         memory: 4Gi
       limits:
-        cpu: '1'
+        cpu: 1200m
         memory: 5Gi
 
     ## Prometheus StorageSpec for persistent data
