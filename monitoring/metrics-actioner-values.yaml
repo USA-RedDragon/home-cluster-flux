@@ -8,11 +8,14 @@ image:
   repository: ghcr.io/usa-reddragon/metrics-actioner
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.7"
+  tag: "v0.0.8"
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+args:
+- --config=/config/config.yaml
 
 secrets: []
 # - name: app-creds
@@ -29,10 +32,23 @@ secrets: []
 #       multiline
 #       strings
 
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
+configs:
+- name: config
+  data:
+    config.yaml: |
+      http:
+        trusted_proxies: ""
+        pprof:
+          enabled: true
+        metrics:
+          enabled: true
+          ipv4_host: '0.0.0.0'
+      actions:
+      - match_common_labels:
+          alertname: TrunkRecorderNoCalls
+        action: rollout-restart-deployment
+        options:
+          deployment: trunk-recorder-app
 # - name: app-otherenv
 #   data:
 #     SPECIAL_KEY: here
@@ -48,15 +64,7 @@ envFrom: []
 # - configMapRef:
 #     name: app-config
 
-env:
-- name: HTTP__TRUSTED_PROXIES
-  value: ""
-- name: HTTP__PPROF__ENABLED
-  value: "true"
-- name: HTTP__METRICS__ENABLED
-  value: "true"
-- name: HTTP__METRICS__IPV4_HOST
-  value: "0.0.0.0"
+env: []
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
@@ -84,14 +92,14 @@ service:
   - name: metrics
     port: 8081
 
-persistentVolumes: []
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
+persistentVolumes:
+- name: config
+  mountPath: /config
+  configMap:
+    name: config
+    items:
+    - key: config.yaml
+      path: config.yaml
 # - name: keys
 #   mountPath: /keys
 #   readOnly: true
