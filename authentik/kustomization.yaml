@@ -16,5 +16,8 @@ configMapGenerator:
   - name: redis-chart-values
     files:
       - values.yaml=redis-values.yaml
+  - name: authentik-worker-chart-values
+    files:
+      - values.yaml=values-worker.yaml
 configurations:
   - kustomizeconfig.yaml

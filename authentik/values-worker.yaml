@@ -1,0 +1,138 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: ghcr.io/goauthentik/server
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "2023.10.7@sha256:10ca1cc0a8313946bc168173c3d37fd38190d04a2019c5583444c67e71a4696a"
+
+imagePullSecrets:
+- name: registry-ghcr
+nameOverride: ""
+fullnameOverride: ""
+
+args:
+- worker
+
+serviceAccountName: rbac-authentik-remote-cluster
+
+deploymentStrategy:
+  rollingUpdate:
+    maxUnavailable: 1
+  type: RollingUpdate
+
+secrets: []
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom:
+- secretRef:
+    name: authentik-secrets
+- configMapRef:
+    name: authentik-config
+
+env:
+- name: AUTHENTIK_POSTGRESQL__PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: password
+- name: AUTHENTIK_POSTGRESQL__USER
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: username
+- name: AUTHENTIK_POSTGRESQL__HOST
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: host
+- name: AUTHENTIK_POSTGRESQL__NAME
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: dbname
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+
+persistentVolumes: []
+# - name: media
+#   mountPath: /usr/share/nginx/html/data
+#   size: 1Gi
+#   persistentVolumeClaim:
+#     name: media
+#     storageClass: longhorn-nvme
+# - name: config
+#   mountPath: /config
+#   configMap:
+#     name: app-configfile
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+ingress:
+  enabled: false
+
+probes: {}
+
+resources:
+  limits:
+    cpu: 300m
+    memory: 1400Mi
+  requests:
+    cpu: 10m
+    memory: 1Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file

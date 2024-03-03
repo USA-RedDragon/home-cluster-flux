@@ -148,46 +148,6 @@ ingress:
     hosts:
       - authentik.mcswain.dev
 
-extraContainers:
-- image: ghcr.io/goauthentik/server:2023.10.7@sha256:10ca1cc0a8313946bc168173c3d37fd38190d04a2019c5583444c67e71a4696a
-  imagePullPolicy: IfNotPresent
-  name: worker
-  args:
-  - worker
-  env:
-  - name: AUTHENTIK_POSTGRESQL__PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-app
-        key: password
-  - name: AUTHENTIK_POSTGRESQL__USER
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-app
-        key: username
-  - name: AUTHENTIK_POSTGRESQL__HOST
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-app
-        key: host
-  - name: AUTHENTIK_POSTGRESQL__NAME
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-app
-        key: dbname
-  envFrom:
-  - configMapRef:
-      name: authentik-config
-  - secretRef:
-      name: authentik-secrets
-  resources:
-    limits:
-      cpu: 300m
-      memory: 1400Mi
-    requests:
-      cpu: 10m
-      memory: 1Gi
-
 probes:
   liveness:
     httpGet:
