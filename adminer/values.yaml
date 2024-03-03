@@ -124,11 +124,11 @@ probes:
 resources:
   limits:
     hugepages-2Mi: 100Mi
-    cpu: 100m
-    memory: 256Mi
-  requests:
-    cpu: 10m
+    cpu: 50m
     memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
 
 nodeSelector: {}
 
