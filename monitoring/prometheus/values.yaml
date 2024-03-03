@@ -284,6 +284,7 @@ alertmanager:
         - alertname=~"InfoInhibitor|Watchdog"
         continue: false
       - receiver: 'metrics-actioner-webhook'
+        continue: true
         matchers:
           # pass all alerts
           - alertname != ""
