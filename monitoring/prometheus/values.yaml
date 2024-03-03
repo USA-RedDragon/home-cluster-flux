@@ -997,7 +997,7 @@ grafana:
     datasources:
       enabled: true
       defaultDatasourceEnabled: true
-      isDefaultDatasource: true
+      isDefaultDatasource: false
 
       uid: prometheus
 
@@ -1054,6 +1054,7 @@ grafana:
     type: prometheus
     url: http://thanos-querier-app:9090
     access: proxy
+    isDefault: true
   # - name: prometheus-sample
   #   access: proxy
   #   basicAuth: true
