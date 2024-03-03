@@ -887,6 +887,26 @@ grafana:
 
   envFromSecret: grafana-oauth
 
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: false
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+  dashboards:
+    default:
+      trunk-recorder:
+        gnetId: 19959
+        revision: 4
+        datasource: Prometheus
+
   grafana.ini:
     paths:
       data: /var/lib/grafana/
