@@ -4,12 +4,10 @@ namespace: monitoring
 resources:
   - ns.yaml
   - helm.yaml
+  - ks.yaml
   - metrics-actioner-helm.yaml
   - metrics-actioner-metrics.yaml
 configMapGenerator:
-  - name: chart-values
-    files:
-      - values.yaml=values.yaml
   - name: querier-chart-values
     files:
       - values.yaml=querier-values.yaml
