@@ -904,7 +904,7 @@ grafana:
     default:
       trunk-recorder:
         gnetId: 19959
-        revision: 4
+        revision: 5
         datasource: Prometheus
 
   grafana.ini:
