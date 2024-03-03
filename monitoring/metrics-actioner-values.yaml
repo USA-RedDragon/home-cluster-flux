@@ -17,6 +17,8 @@ fullnameOverride: ""
 args:
 - --config=/config/config.yaml
 
+serviceAccountName: "metrics-actioner"
+
 secrets: []
 # - name: app-creds
 #   data:
