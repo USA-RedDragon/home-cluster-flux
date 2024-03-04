@@ -178,7 +178,7 @@ extraContainers:
   imagePullPolicy: IfNotPresent
   name: redis
   resources: {}
-- image: ghcr.io/paperless-ngx/tika:2.9.1-minimal@sha256:711b1ee198b5b3593fe7f5b8602b4aa313e9b3b5ddebb1e3d20ca50e7a4a1859
+- image: ghcr.io/paperless-ngx/tika:2.9.1-minimal@sha256:7831bfdd31fa3c2d7935f56eedb299ca57f532988d1d824588cf073b36bcfab0
   imagePullPolicy: IfNotPresent
   name: tika
   resources: {}
