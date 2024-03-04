@@ -7,7 +7,7 @@ metadata:
   name: coredns
   namespace: split-dns
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: coredns
@@ -59,10 +59,10 @@ spec:
           timeoutSeconds: 1
         resources:
           limits:
-            cpu: 200m
+            cpu: '1'
             memory: 80Mi
           requests:
-            cpu: 200m
+            cpu: '1'
             memory: 40Mi
         securityContext:
           allowPrivilegeEscalation: false
