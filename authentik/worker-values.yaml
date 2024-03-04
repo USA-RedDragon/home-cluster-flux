@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/goauthentik/server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2023.10.7@sha256:10ca1cc0a8313946bc168173c3d37fd38190d04a2019c5583444c67e71a4696a"
+  tag: "2024.2.1@sha256:31a1a7354ed0e7a04e25ee282b201427d55108285d80ac644a2fdf4650901429"
 
 imagePullSecrets:
 - name: registry-ghcr
