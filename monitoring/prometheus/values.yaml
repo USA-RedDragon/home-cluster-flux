@@ -265,6 +265,12 @@ alertmanager:
         equal:
           - 'namespace'
           - 'alertname'
+      - source_matchers:
+          - 'alertname = InfoInhibitor'
+        target_matchers:
+          - 'severity = info'
+        equal:
+          - 'namespace'
     route:
       group_by:
       - namespace
@@ -275,7 +281,7 @@ alertmanager:
       routes:
       - receiver: "null"
         matchers:
-        - alertname=~"Watchdog"
+        - alertname=~"InfoInhibitor|Watchdog"
         continue: false
       - receiver: 'metrics-actioner-webhook'
         continue: true
