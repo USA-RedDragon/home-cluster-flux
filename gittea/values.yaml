@@ -102,6 +102,8 @@ env:
     secretKeyRef:
       name: postgresql-app
       key: password
+- name: GITEA__OPENID__ENABLE_OPENID_SIGNIN
+  value: "false"
 
 #   valueFrom:
 #     configMapKeyRef:
