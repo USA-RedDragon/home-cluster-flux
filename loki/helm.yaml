@@ -24,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: grafana
-      version: '5.43.4'
+      version: '5.43.5'
       interval: 1m0s
   valuesFrom:
     - kind: Secret
