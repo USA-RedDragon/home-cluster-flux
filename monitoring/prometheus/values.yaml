@@ -906,6 +906,10 @@ grafana:
         gnetId: 19959
         revision: 5
         datasource: Prometheus
+      ingress-nginx:
+        gnetId: 9614
+        revision: 1
+        datasource: Prometheus
       aredn:
         # gnetId: 20619
         # revision: 1
