@@ -910,6 +910,22 @@ grafana:
         gnetId: 9614
         revision: 1
         datasource: Prometheus
+      node-exporter-full:
+        gnetId: 1860
+        revision: 36
+        datasource: Prometheus
+      postgres:
+        gnetId: 9628
+        revision: 7
+        datasource: Prometheus
+      minio:
+        gnetId: 13502
+        revision: 26
+        datasource: Prometheus
+      golang:
+        gnetId: 6671
+        revision: 2
+        datasource: Prometheus
       aredn:
         # gnetId: 20619
         # revision: 1
