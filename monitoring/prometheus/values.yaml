@@ -1437,7 +1437,7 @@ kubeControllerManager:
     port: null
     targetPort: null
     selector:
-      component: kube-controller-manager
+      k8s-app: kube-controller-manager
 
   serviceMonitor:
     enabled: true
@@ -1766,7 +1766,7 @@ kubeScheduler:
     port: null
     targetPort: null
     selector:
-      component: kube-scheduler
+      k8s-app: kube-scheduler
 
   serviceMonitor:
     enabled: true
