@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/metrics-actioner
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.10"
+  tag: "v0.0.11"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -50,6 +50,20 @@ configs:
         action: rollout-restart-deployment
         options:
           deployment: trunk-recorder-app
+      - match_common_labels:
+          alertname: TargetDown
+          job: aredn-manager
+        action: ssh
+        options:
+          command: 'docker restart oklahoma-tunnel'
+          host: 'kp4djt.zapto.org'
+          port: '333'
+          user: 'ki5vmf'
+          key: '/secrets/ki5vmf.pem'
+          hostKey: |
+            [kp4djt.zapto.org]:333 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID8Dy1TZ1lN8WAZcgdODY9SNVWqWB+hGfsVEzMaUV7n+
+            [kp4djt.zapto.org]:333 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCHZiJbMMx0DobokUVLTxtp/mw1exJz/1W2sImlu4LXVEVSNdXrzaPovg7dtclDUemsWgIupBpWqN6+YpFG3V4SlCeljCmmK1uH0WW56RrLcMYSIAqH1rSbAtn/ieBZmV1NYM/CFG5J//V0E0g6XRuYG79+xXqHZP9XvPHYxoc9IseNwE9dw1DWwbWj/29mVcXjTBibDuO1vP75YezdsER/K60RtT4C3jLmC6zBuaKqdMgbWJKUFlt17w2DQelS1j4ZALR4hcAj4/hOdZVhZZhPuIUHHFC0GNYSrUZQuiEcc5MtCtHX1pBQuuV+IX3pnxXDLYPi0fZbxlhF75olWIdmfq2VRJburvV8hP9o8JxswYqiLYi2ZmmQ1rhcgvWkp7JjGmgf6ScseaLzLWU8qXSzAwYoywHK7WKuLPaNoljtJpL4tKMTnW5hWpcF/4jLR5iJvVTVeQDiOPBBQ2Wwhxt8MhDyMVz/j4+aSnqoMq/3q3W8M6yCbqYbMqWDFMQYp5s=
+            [kp4djt.zapto.org]:333 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBL7nYBnYt6DZYqQS3sVppbM5x9vKd3nNp5nZfSiaMU67PeYpzZ3mx/c+R3oWEY27RuLVuHm8DoZRpED4qyDgfL0=
 # - name: app-otherenv
 #   data:
 #     SPECIAL_KEY: here
@@ -101,11 +115,14 @@ persistentVolumes:
     items:
     - key: config.yaml
       path: config.yaml
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+- name: secrets
+  mountPath: /secrets
+  readOnly: true
+  secret:
+    secretName: metrics-actioner-secrets
+    items:
+    - key: ki5vmf.pem
+      path: ki5vmf.pem
 
 initContainers: []
 
