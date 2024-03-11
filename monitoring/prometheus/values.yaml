@@ -276,7 +276,7 @@ alertmanager:
       - namespace
       group_wait: 30s
       group_interval: 5m
-      repeat_interval: 12h
+      repeat_interval: 5m
       receiver: 'null'
       routes:
       - receiver: "null"
@@ -2965,7 +2965,7 @@ prometheus:
 
     ## Interval between consecutive evaluations.
     ##
-    evaluationInterval: ""
+    evaluationInterval: "5s"
 
     ## ListenLocal makes the Prometheus server listen on loopback, so that it does not bind against the Pod IP.
     ##
