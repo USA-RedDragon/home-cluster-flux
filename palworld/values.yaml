@@ -18,7 +18,7 @@ server:
 
   image:
     repository: ghcr.io/usa-reddragon/palworld-server
-    tag: main@sha256:75af0f2b2cf742b54d196aba82a8a7d4ec5925b410c9f8e1ab111c7572880cfa
+    tag: main@sha256:3d5f0ecb5fbe5f77c7cc84d08ef864fbc5bf79adf26bad3e6c8b17d799b45793
 
   config:
     rcon:
