@@ -144,7 +144,7 @@ service:
 
 extraContainers:
 - name: nginx
-  image: nginx:mainline-alpine@sha256:cb0953165f59b5cf2227ae979a49a2284956d997fad4ed7a338eebc6aef3e70b
+  image: nginx:mainline-alpine@sha256:cb3218c8a053881bd00f4fa93e9f87e2c6204761e391b3aafc942f104362e538
   imagePullPolicy: IfNotPresent
   ports:
     - containerPort: 80
