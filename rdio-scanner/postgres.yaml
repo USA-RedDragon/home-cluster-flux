@@ -12,7 +12,7 @@ spec:
       database: rdio
       owner: rdio
   storage:
-    size: 4Gi
+    size: 8Gi
   monitoring:
     enablePodMonitor: true
   resources:
