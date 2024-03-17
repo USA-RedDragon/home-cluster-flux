@@ -10,6 +10,7 @@ spec:
   releaseName: prometheus-stack
   dependsOn:
     - name: longhorn
+      namespace: longhorn-system
   chart:
     spec:
       chart: kube-prometheus-stack
