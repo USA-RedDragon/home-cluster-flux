@@ -1,0 +1,42 @@
+apiVersion: v1
+stringData:
+    aws-access-key-id: ENC[AES256_GCM,data:Nt28j/BqD3nLfRcKTVfjLG1+dxM=,iv:eCCy4/BNcesJiGi6H5hi6nOC3uW9OPaQoI88lE9RnVU=,tag:S0BOk2oLeNbTWNI2IbL2rw==,type:str]
+    aws-secret-access-key: ENC[AES256_GCM,data:2u4aUUb19w8BOUmVceuqOoI8q39cnjDp8jaQNz0Q+M5c2UDhwIVYRw==,iv:L7ckAF7HGc+5P+Skvt6ChKGMmOFb4AIcZXCjAS9D/Kw=,tag:cKn+hB+hMxa8Op3kMwYbCw==,type:str]
+    aws-smtp-password: ENC[AES256_GCM,data:ZXfL7jCSXbJINf/UkGS2SXgi0iSnJhYOf5LoMSi6tbPZyl0RtGa6ImSni2E=,iv:rg+qNb409BDRmvBL3yz2qdOS1hKgFzeDa9WsAafH89I=,tag:+Owp/NRwPpSRxh/1o2ycOA==,type:str]
+    aws-smtp-username: ENC[AES256_GCM,data:AQJmaLtCj1L2c0hqyhb6gmjqaIE=,iv:emOqgpel3VydRQYaGwNHWffx9gaNnGvUNXWSdRo3qVQ=,tag:ygxBLIG/A3XgpDtXIqXHxQ==,type:str]
+kind: Secret
+metadata:
+    name: ses-email-service
+    namespace: ses-email-service
+type: Opaque
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2023-09-14T06:58:30Z"
+    mac: ENC[AES256_GCM,data:IEHdpEDKPbrfGfxc4sB9WnCDB8esPEmwAayy2sUbfsmpozaXTSnAjaT6BbEfttmnTbtaGpeZ8l1Y6sm1F6jTCzxLJ1iFPijdqKqirusxhh6l1B6sj+NOO0DxKplmmVwq7ycXOP+2rwSrWDVaEmcEbv8Cq9/eGueNEel3SGmgxTA=,iv:0m27iTzH2M94txFCV+BeFjW+IvPikLgTjNPdl4AMStU=,tag:GOIsHerhv+wsAaX3Xi+zSg==,type:str]
+    pgp:
+        - created_at: "2023-09-14T06:58:29Z"
+          enc: |
+            -----BEGIN PGP MESSAGE-----
+
+            hQIMA4MMKSOyI68lAQ//QSBYvbZG2oicZtfvzsvjEzqQmL6zLgJofoSC1YXxxE3M
+            4CusIsS/URuDYmyt0OKCbH1uaOli0zp/+0WEQq0a4czFMSTiyKuEF01d5wX75cu9
+            yLpxZ0xTl9xGKX8hd6FH7ukxBt8XuHxDppaH8/bh1p0SI7ae6/Jp48EVZzWDHcHh
+            TSjwifMbJKZdTEPUiloRUpTjFdMwpBHK0cfIhZz2TxxfdtYTcDpQu83tzH8XnV2L
+            fVGxXDqcyVnZIS/aFef6y1bbjC+gy2g9Ru1EXjEcEAjZgrTbZEFofqxGp6ew113p
+            guA8lrcQb6dYSr4ilrpVU55YorafWNYkjD+eSrlHUtegF2H/zQ/Tq/at96/53r3k
+            PntQrKYbg80WYXZLtdFYcm20sm8G8V1QUBbezIhaJ8QaRt4U/fMyRzQ7dBcq4STz
+            rrncilCjslAyqYLUx+aOqBInmRGQf/e8YZuTDEMo1lm6ID/F97/EQoHvdS9ZlPt1
+            yEor4ka491j4OqjR6F4wKYYexwR6PPYEHjRPWm6U1DBwup37ZMPU3eo1M4a0HUV6
+            utlb1Vz0RLS5ufwZrb8+r+ylhfxfqZ0KRo2XAlJ6Ka+5/tZwyAZ/LavZ2NmvHG7/
+            Suq7f2Mrc+L1YQkffGHdFu+7fdzozLGk/rB70ei0v0eNfYSdtrGdj+E3SAZglGDS
+            XAF4faW7Pn4GaikI4QLIUGq6atB8il+iDT1Uc1pn9TchcbYGPLm5i2ZtJ04Bow75
+            ohedZDe5AdWYW9wJHy/hcZLMY5rtzH9KeBYw8uCCeE2zihF69JPX2fwilEwX
+            =h29x
+            -----END PGP MESSAGE-----
+          fp: A2BDE47C6914DA528CE96C6042D82D6196E0B4FF
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.3
