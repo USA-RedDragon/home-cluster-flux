@@ -4,4 +4,3 @@ namespace: longhorn-system
 resources:
   - trim-job.yaml
   - storageclass.yaml
-  - volumesnapshotclass.yaml
