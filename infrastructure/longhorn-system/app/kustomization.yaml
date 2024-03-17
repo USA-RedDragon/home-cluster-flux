@@ -4,4 +4,4 @@ namespace: longhorn-system
 resources:
   - ns.yaml
   - helm.yaml
-  - prom.yaml
+  # - prom.yaml
