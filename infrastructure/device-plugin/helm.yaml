@@ -18,6 +18,8 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: device-plugin
+  dependsOn:
+    - name: prometheus-stack
   chart:
     spec:
       chart: generic-device-plugin
