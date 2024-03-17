@@ -18,7 +18,6 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: metallb
-  suspend: true
   chart:
     spec:
       chart: metallb

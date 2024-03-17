@@ -8,7 +8,6 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: prometheus-stack
-  suspend: true
   chart:
     spec:
       chart: kube-prometheus-stack
