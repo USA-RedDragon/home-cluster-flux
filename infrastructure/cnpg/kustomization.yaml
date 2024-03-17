@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: cnpg-system
 resources:
   - ns.yaml
-  - helm.yaml
+  - ks.yaml
