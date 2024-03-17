@@ -4,7 +4,7 @@ namespace: healthchecks
 resources:
   - ns.yaml
   - helm.yaml
-  - postgres.yaml
+#  - postgres.yaml
 configMapGenerator:
   - name: chart-values
     files:
