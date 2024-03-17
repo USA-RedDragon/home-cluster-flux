@@ -3,13 +3,4 @@ kind: Kustomization
 namespace: intel-device-plugin
 resources:
   - ns.yaml
-  - helm.yaml
-configMapGenerator:
-  - name: chart-values
-    files:
-      - values.yaml=values.yaml
-  - name: chart-values-gpu
-    files:
-      - values.yaml=gpu-values.yaml
-configurations:
-  - kustomizeconfig.yaml
+  - ks.yaml
