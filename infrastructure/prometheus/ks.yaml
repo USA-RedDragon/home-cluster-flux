@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: monitoring
-  path: ./monitoring/prometheus
+  path: ./infrastructure/prometheus
   prune: true
   sourceRef:
     kind: GitRepository

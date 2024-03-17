@@ -21,6 +21,7 @@ metadata:
 spec:
   dependsOn:
     - name: longhorn
+    - name: prometheus
   interval: 1h
   targetNamespace: longhorn-system
   path: ./infrastructure/longhorn-system/config
