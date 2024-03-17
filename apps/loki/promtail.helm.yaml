@@ -7,7 +7,6 @@ metadata:
 spec:
   interval: 1m0s
   releaseName: promtail
-  suspend: true
   driftDetection:
     mode: enabled
   chart:

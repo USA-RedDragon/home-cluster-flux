@@ -8,7 +8,6 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: rtl-433
-  suspend: true
   chart:
     spec:
       chart: app

@@ -6,7 +6,6 @@ metadata:
 spec:
   interval: 60m0s
   releaseName: hp-scan-to
-  suspend: true
   driftDetection:
     mode: enabled
   chart:

@@ -8,7 +8,6 @@ spec:
     timeout: 10m
   upgrade:
     timeout: 10m
-  suspend: true
   chart:
     spec:
       chart: palworld

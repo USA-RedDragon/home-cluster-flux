@@ -8,7 +8,6 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: metrics-actioner
-  suspend: true
   chart:
     spec:
       chart: app
