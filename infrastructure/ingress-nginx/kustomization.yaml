@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: nginx
 resources:
   - ns.yaml
-  - helm.yaml
+  - ks.yaml
