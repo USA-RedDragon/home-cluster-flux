@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: descheduler
+  namespace: descheduler
+spec:
+  interval: 1h
+  targetNamespace: descheduler
+  path: ./infrastructure/descheduler/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system

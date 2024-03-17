@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: device-plugin
 resources:
   - ns.yaml
-  - helm.yaml
+  - ks.yaml
