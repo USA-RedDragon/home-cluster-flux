@@ -40,6 +40,8 @@ spec:
     - name: longhorn
     - name: prometheus
       namespace: monitoring
+    - name: cert-manager-certs
+      namespace: cert-manager
   interval: 1h
   targetNamespace: longhorn-system
   path: ./infrastructure/longhorn/prometheus
