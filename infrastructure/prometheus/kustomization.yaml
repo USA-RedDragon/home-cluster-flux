@@ -5,4 +5,5 @@ resources:
   - ns.yaml
   - alertmanager-telegram-bot-token.yaml
   - grafana-oauth.yaml
+  - minio-thanos.yaml
   - ks.yaml
