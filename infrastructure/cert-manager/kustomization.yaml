@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: cert-manager
 resources:
   - ns.yaml
+  - ks.yaml
