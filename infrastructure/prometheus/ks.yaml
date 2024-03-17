@@ -8,7 +8,7 @@ spec:
   targetNamespace: monitoring
   path: ./infrastructure/prometheus/app
   dependsOn:
-    - name: longhorn
+    - name: longhorn-config
   prune: true
   sourceRef:
     kind: GitRepository
