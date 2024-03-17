@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: monitoring
 resources:
   - ns.yaml
+  - ks.yaml
