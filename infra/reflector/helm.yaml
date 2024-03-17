@@ -18,7 +18,6 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: reflector
-  suspend: true
   chart:
     spec:
       chart: reflector
