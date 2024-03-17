@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: ses-email-service
+  name: ses-email-service-app
   namespace: ses-email-service
 spec:
   interval: 60m0s
