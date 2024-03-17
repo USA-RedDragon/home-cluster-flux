@@ -8,6 +8,8 @@ spec:
   dependsOn:
     - name: reflector-creds
       namespace: reflector
+    - name: cert-manager-certs
+      namespace: cert-manager
   targetNamespace: ses-email-service
   path: ./infrastructure/ses-email-service/app
   prune: true

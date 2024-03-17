@@ -12,6 +12,8 @@ spec:
       namespace: longhorn-system
     - name: reflector-creds
       namespace: reflector
+    - name: cert-manager-certs
+      namespace: cert-manager
   prune: true
   sourceRef:
     kind: GitRepository
