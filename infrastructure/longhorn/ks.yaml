@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: longhorn-system
-  path: ./infrastructure/longhorn-system/app
+  path: ./infrastructure/longhorn/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -24,7 +24,7 @@ spec:
     - name: prometheus
   interval: 1h
   targetNamespace: longhorn-system
-  path: ./infrastructure/longhorn-system/config
+  path: ./infrastructure/longhorn/config
   prune: true
   sourceRef:
     kind: GitRepository
