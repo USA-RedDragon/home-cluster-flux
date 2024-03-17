@@ -8,7 +8,6 @@ spec:
   path: ./apps
   dependsOn:
     - name: infrastructure
-    - name: secrets
     - name: services
   prune: true
   sourceRef:

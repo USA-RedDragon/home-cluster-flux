@@ -14,7 +14,6 @@ metadata:
   name: renovate-ce
   namespace: renovate-ce
 spec:
-  suspend: true
   chart:
     spec:
       chart: mend-renovate-ce

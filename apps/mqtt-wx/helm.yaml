@@ -6,7 +6,6 @@ metadata:
 spec:
   interval: 60m0s
   releaseName: mqtt-wx
-  suspend: true
   chart:
     spec:
       chart: app

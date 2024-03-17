@@ -30,4 +30,3 @@ spec:
       name: sops-gpg
   dependsOn:
     - name: infrastructure
-    - name: secrets
