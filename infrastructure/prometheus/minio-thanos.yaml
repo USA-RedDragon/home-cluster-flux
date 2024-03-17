@@ -1,0 +1,39 @@
+apiVersion: v1
+stringData:
+    config.yaml: ENC[AES256_GCM,data:SCDzo8Ng6jPBhYj381w7P6N6Tb93/FV9+aaYVL4OkWy97LA8trBJpyDTo0P1Uf56qCOwmam0hi+W0WdYaoS3FKjhJUqpgqcSRqPDShaJhhfsJhz1Gtxh4uCeMYmbrr1kDfHqYd8SnJa+CYHg2j7PDDkZPQ02CnIVrRTo60zJ2pebq5E2imxEWPzXy3OTJ+f6yGVIJoYnOhoHC+FAZKXRqkfHJGX/QRScHCN2GT6f5BFW2j1k+XrSDEC9vs1iXM+j4ZiglNRsLJAqBcdNkAsM9TobcP4YKYIAAbXhrJJELtYW4GwLJrz2Z46w6yVV4n/kxw59nYgeER+VGGPLaIEnVcaypPwDMama7DzFu6yDaNyMXuZXWPKkgyP390ms377nLw==,iv:U61ckGt3BOhPyIoxcDUWb7ZP4G+KRU0lvc5CdFVSkJ0=,tag:9EJipYGKzq59LtMeE7zTbg==,type:str]
+kind: Secret
+type: Opaque
+metadata:
+    name: minio-thanos
+    namespace: monitoring
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2023-11-15T01:28:50Z"
+    mac: ENC[AES256_GCM,data:M1w7hjuvXo5A2NTqtcQUVLDP5Qbo21urydKMMmSiE3r+Zud4UaYXBcG8QFBoTUyDxJqVv3DvgBG9oyacMLtfPdO1hsJOCLxxlr88fHeYfXWTC0jzeiNHuUJ9E5j9ewoNd8SNPZw88WN0wKhwq13T7SUzWeoLaGX9ecKYcrfiCBs=,iv:ZeKE5i8D9q1JotfPTIZUuFz9h8NJ/aUeXJ7xVLXAcJI=,tag:hBfxijqzpIPYUvRbGwVVPQ==,type:str]
+    pgp:
+        - created_at: "2023-11-15T01:16:22Z"
+          enc: |
+            -----BEGIN PGP MESSAGE-----
+
+            hQIMA4MMKSOyI68lAQ//QEZC3EVLC6MayX5uNAsyLiQXf8OOFAJhRzwN7BuagXJa
+            ntctHb4inicXOO1SsjXdmGYhc6pDthZhiYYd1cJhgS8oEpbXyQJDlJBtpdJibS9O
+            2HpykSXDQrAf8MxoOFXW6FW0S5GndLjll1mTzNCs3vqmLO1RAPUgrRMFa1cC+Ulc
+            jmsieN1qVZVPsMMUzZfLuZpg+s+FKCYMxp39xvmXdYDZrvOELBBd0NMRv7GMVU5a
+            1+VDXqEDXV27DqI4S1vRJ9vg02W1vA9a9c/X8zIt6QV4eMweApYYBNBtqx1o/DIO
+            T9o7k/93FYgxv1KFr8NLFWxaJjHl4eLRTj/2mMxcFoAoPlWF812lde5Jt4iKSIvl
+            x8qyqDFE+pbwhW/evsvWiS+zcCf7PGWnge0SSWz2Uj53EeFpud57EP+v/EKnEWGk
+            1AdAmMCKrop02XkRlpM8/hJUo2hZ9xzS9trzIuynJtwp6pp/y8txAwfJZyTbYVtC
+            Ko3JE+X0hGVhmPdFJQ6H7jAj1EbMOkByKLBoRmsoX/k/pWs5r8Io4H7ckSyt+Hho
+            TBpqZTm1hPh8FDHlGsXGSV5sD/e/+TPUzz4U+5LxUN1Jmfr2TaFT3RIFvjGJuHRI
+            dmWW87aUrr69Y70GvugAM1oa5O2fzaQuzBvXd5BiL92gW4a826LQB+FMAPRItLPS
+            XAEmIZgFIJRKlmfWw8ep0+Aq8h9JbQmkdDb33EhycOryOTYO1YSWfZa/joDgKF0t
+            0xu8IEOq9t7MBJXI/jgAzTyXNFVHG56rCU7kTsU+X0BgwqWMC2hjwRRGKAL6
+            =krP6
+            -----END PGP MESSAGE-----
+          fp: A2BDE47C6914DA528CE96C6042D82D6196E0B4FF
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.3
