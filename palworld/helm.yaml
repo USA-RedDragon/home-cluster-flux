@@ -4,6 +4,10 @@ metadata:
   name: palworld
   namespace: palworld
 spec:
+  install:
+    timeout: 10m
+  upgrade:
+    timeout: 10m
   chart:
     spec:
       chart: palworld
