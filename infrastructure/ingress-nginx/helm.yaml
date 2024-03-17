@@ -17,6 +17,8 @@ spec:
   interval: 1m0s
   driftDetection:
     mode: enabled
+  dependsOn:
+    - name: prometheus-stack
   releaseName: nginx
   chart:
     spec:
