@@ -6,6 +6,9 @@ metadata:
 spec:
   interval: 5m
   path: ./apps
+  dependsOn:
+    - name: infrastructure
+    - name: secrets
   prune: true
   sourceRef:
     kind: GitRepository
