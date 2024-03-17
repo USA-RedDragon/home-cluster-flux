@@ -18,6 +18,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: thanos-querier
+  suspend: true
   chart:
     spec:
       chart: app
@@ -41,6 +42,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: thanos-compactor
+  suspend: true
   chart:
     spec:
       chart: app
@@ -64,6 +66,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: pushgateway
+  suspend: true
   chart:
     spec:
       chart: prometheus-pushgateway

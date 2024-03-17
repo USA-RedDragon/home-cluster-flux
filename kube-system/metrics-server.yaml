@@ -18,6 +18,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: metrics-server
+  suspend: true
   chart:
     spec:
       chart: metrics-server

@@ -8,6 +8,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: authentik
+  suspend: true
   chart:
     spec:
       chart: app
@@ -31,6 +32,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: authentik-worker
+  suspend: true
   chart:
     spec:
       chart: app

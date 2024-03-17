@@ -18,6 +18,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: cnpg
+  suspend: true
   chart:
     spec:
       chart: cloudnative-pg
