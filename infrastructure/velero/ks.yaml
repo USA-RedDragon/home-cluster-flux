@@ -1,0 +1,17 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: velero
+  namespace: velero
+spec:
+  interval: 1h
+  dependsOn:
+    - name: reflector-creds
+      namespace: reflector
+  targetNamespace: velero
+  path: ./infrastructure/velero/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
