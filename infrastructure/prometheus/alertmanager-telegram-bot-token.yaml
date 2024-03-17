@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: alertmanager-telegram-bot-token
+    namespace: monitoring
+stringData:
+    telegram_bot_token: ENC[AES256_GCM,data:2IJfF4Ms7RAkCgcRhkmxijUlYpUmF/+iCXjbp6Q3BfT9ngux+dNIcmr0yUQh5g==,iv:J21r1scESbl83Q3Ma3/oQFdvEZCTdHC+gVPi3CQ7zvY=,tag:6Hzv0eQo4cK1k+cxfpg99w==,type:str]
+type: Opaque
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2024-03-03T09:07:35Z"
+    mac: ENC[AES256_GCM,data:Y0zdvB7N8vADHOKS9r4uB+X6tMoKxHWlhtW4HU+xyZ9GudygE48p/VrAtw+jUPiBXp5XcRCRU5Naf4bOaMwcxQWwAfQhgKo3ALW8AxL0QmsyiwdPU/94rucSXzPRxva4PeNrAJAWIaR23LT89GJvvQxopHPApC4fSRy6/+NLACM=,iv:P1LiLNvnKJX7S6nrhehfwYoCpnaumB1dMMsZbmDds3M=,tag:R4KhLdiGXSwR8Sx0A/vysQ==,type:str]
+    pgp:
+        - created_at: "2024-03-03T08:36:58Z"
+          enc: |
+            -----BEGIN PGP MESSAGE-----
+
+            hQIMA4MMKSOyI68lAQ//VFjstUtS4HnRvvF1BKufUzebMlxoGVKwOEsze4IpSG+p
+            gB9XWmAitCX+rbCnZA4rX4zkX8MOooNZ2Zu+uiKn3IFlXkNF5DIphHuh2LJPSnQp
+            RdWHYh+YqD6/cwHwfGQzU7kUiL94LLUaxoAs8ANdDm6ZQfy3sOv/t6wr3gw9+Ksz
+            iT8DtAurgp5iAoIwCNSEt2LAhqfONchRt5CSBnH0bQdH6cU769RKU31M/NGQtuXk
+            KGhODL8ByqWfLEWPDoEzgXIBOuCqookkRRmDoqcIFe4Dl+E8EyurKLoy4kgjRK9A
+            HNp0xdf+0cY7Ju2KOytvHoAGxKbsx8G7dOvo5DhWSggA+SZtX/zGqa8lG5AAIP86
+            WVOx+otIBxzfMYDd6HF4b0aGZLhMT5Arj6uVdgQd6iariocWsMYogx1b2osIALoF
+            Xmw+VvHt3f6ZzzeFvz4rRecFldFxFNbWjz6eUhyP6ZejfMqpAehLLUtMYXtHUPbM
+            0hXnN/mQMjnVrupT6mkG/HOiJJxpTfc8EJGn+VFHaFhjyC6aSEHqdFEHhT1Twd2U
+            jVpTU9bAe7S4KjtLHS2wFGlGW4ZJJodn5lHcA70TJohr5s9vBPPqHOFGg1wn6AOT
+            vuhNKJ6jeSvRBCWqa0HSTNgMoPNDPrRVScFQ5cPSrrP2VLDcvrnlHLd2UpXCS+3S
+            XgH7nDewBiegltwmhmf7K+b83Lgj9SptKfXZFGXgTCLsx2PxVGR15Of/Gk0yTxoT
+            npghvd1oZwFTjE1dZzSGEruBdkFenA06esw7CLEBwqfJ5IkjyXF3wy2iM3rlObE=
+            =wYhx
+            -----END PGP MESSAGE-----
+          fp: A2BDE47C6914DA528CE96C6042D82D6196E0B4FF
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.3
