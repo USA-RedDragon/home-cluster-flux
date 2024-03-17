@@ -15,6 +15,10 @@ spec:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -32,3 +36,7 @@ spec:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg
