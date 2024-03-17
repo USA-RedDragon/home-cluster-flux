@@ -1,0 +1,42 @@
+apiVersion: v1
+data:
+    .dockerconfigjson: ENC[AES256_GCM,data:Zf6nL+n+9rRISw67Ts2y714vNkdDzjx10J/D7Hm6Y5gvAwBfJmiGvW7I5zO6lbxQCd+Dy7KcZMKD+ZZlDxUs9atYV4rv/EEueKg3y+Tc3eR06oddquY3RWhEK5EBsmYnGK2XrSLR8gUF52Hiu9n/6iq49p3lo0cgrvSfDffOtc5GxUnCAwIPuJUNmNO4sAe3QKz4p7oOaKh9LBXwJPK6dcFcKssNi+ErNhu+Sb3AyhCtAgz/HOitH2OoVB8=,iv:/aFs3BJu6KCDsEVhL6E6nJX6IYO7aZnk8zwyeHckqm4=,tag:3uASBmKFLffCy+84pTzeeQ==,type:str]
+kind: Secret
+metadata:
+    name: registry-docker-hub
+    namespace: reflector
+    annotations:
+        reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+        reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
+type: kubernetes.io/dockerconfigjson
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2023-08-13T12:08:19Z"
+    mac: ENC[AES256_GCM,data:zrV66cmvqCuPvbwpQqFv7tnSXj7IvwxSTKvX8/FJ5u3XKkuburjpKf7pckP2n1pA7q45HWSul5l/tRnK+mIQzy4oEnfz18dvlNOhOAqpoqqNuiapo8P6c4YN7f37OMVcLjJyUKKAHcp/ccFR50Q9Eypador6PpyFmeBwFT1Dij4=,iv:77JIDTKl0x4JcgtQZF/YIXB5fb6Ie0qAoy7HgBgMTns=,tag:s4papt/fRZgJwTsiwV590g==,type:str]
+    pgp:
+        - created_at: "2023-08-13T12:08:19Z"
+          enc: |
+            -----BEGIN PGP MESSAGE-----
+
+            hQIMA4MMKSOyI68lAQ/8Cmian3krISJktH0QnrRN70rMU2UNGvTNRZTPAX+MmTEA
+            aWc/GPXSEkkAB9r4RNMUYPMRoZ6MeQCwX9DCb4392snxYHifm+x/jgtZKCQAMgrH
+            e07uyxbXsxpiwyLAPPjw0kfGq4DRwGW9buvk2cgTTVleiUX6t97u5hei9kDYBgXv
+            uTIAeDwWTBSBsJnnidtgB5+nx0hVS7Hsw3DN5IrmzBxK2JP5Z7idq8i9Xb7NFUtb
+            63FELnvtYm1UgO+71qRChq8C31+4pTvwYQy5fPGN1iNYr9BvolScvHrPnw0rbTX2
+            bVSQExpvrSWCk9iu24QA/wB1HPyhcOfwSHEaWnOybzov39BZYHTo6EoJeQHuFuUW
+            JaFmELzNGrCgakBjijkqZxQ4xq11+8aQtaCjNTL6WoZ3HBiL1pthLLLAXVN2zxYO
+            Z6Q9f3yzF7PGcXNuLeuOQiV7HKlZ22cw+mJ468vyZHp1UIcLCUTRwKbN7bKRpci1
+            l7A7SA/ow80QSU7c+3fd2V9C+pazPIUjd/iERbInMXPUVA9GH9hzPIxK99KBEkhH
+            pwxErHQ5CqZIawc1i32IEXEmdbzF8vyMJfudcMRU39k92rZIV0Pbjplz4BL+lf9W
+            ONx+85o3iMjwUK3cnZj4pg7l/WDu0veEqmxPl/oMuIjmf8b8xEoEgiJtkuXzYx/S
+            XgHxD3mTTAI3UK8tzzhOfgAIGbC3s3djY+nIc1uuTybROrSBVV/JwuFez92FeG0W
+            1k1rrTiWctuKY0iKrHPxTHvvzPAgYb+BkDlqRHoDEhbkdH3CLQop6IsqTTq8WAE=
+            =HXz/
+            -----END PGP MESSAGE-----
+          fp: A2BDE47C6914DA528CE96C6042D82D6196E0B4FF
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.3
