@@ -9,6 +9,7 @@ spec:
   path: ./infrastructure/prometheus/app
   dependsOn:
     - name: longhorn-config
+      namespace: longhorn-system
   prune: true
   sourceRef:
     kind: GitRepository
