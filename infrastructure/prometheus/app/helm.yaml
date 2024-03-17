@@ -8,6 +8,8 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: prometheus-stack
+  dependsOn:
+    - name: longhorn
   chart:
     spec:
       chart: kube-prometheus-stack

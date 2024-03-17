@@ -7,6 +7,8 @@ spec:
   interval: 1h
   targetNamespace: monitoring
   path: ./infrastructure/prometheus/app
+  dependsOn:
+    - name: longhorn
   prune: true
   sourceRef:
     kind: GitRepository
