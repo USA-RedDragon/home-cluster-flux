@@ -39,6 +39,7 @@ spec:
   dependsOn:
     - name: longhorn
     - name: prometheus
+      namespace: monitoring
   interval: 1h
   targetNamespace: longhorn-system
   path: ./infrastructure/longhorn/prometheus
