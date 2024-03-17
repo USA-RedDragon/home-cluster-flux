@@ -20,6 +20,7 @@ spec:
   releaseName: device-plugin
   dependsOn:
     - name: prometheus-stack
+      namespace: monitoring
   chart:
     spec:
       chart: generic-device-plugin
