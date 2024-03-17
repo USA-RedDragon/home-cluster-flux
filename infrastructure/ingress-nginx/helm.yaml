@@ -18,7 +18,6 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: nginx
-  suspend: true
   chart:
     spec:
       chart: ingress-nginx
