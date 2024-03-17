@@ -8,6 +8,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: aredn-ntp
+  suspend: true
   chart:
     spec:
       chart: app

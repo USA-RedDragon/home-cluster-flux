@@ -8,6 +8,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: dump978
+  suspend: true
   chart:
     spec:
       chart: app

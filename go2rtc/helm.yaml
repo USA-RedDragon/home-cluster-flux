@@ -6,6 +6,7 @@ metadata:
 spec:
   interval: 60m0s
   releaseName: go2rtc
+  suspend: true
   chart:
     spec:
       chart: app
@@ -29,6 +30,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: go2rtc-real
+  suspend: true
   chart:
     spec:
       chart: app
