@@ -26,6 +26,7 @@ spec:
   interval: 1h
   driftDetection:
     mode: enabled
+  suspend: true
   values:
     server:
       env:
