@@ -8,7 +8,6 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: archivebox
-  suspend: true
   chart:
     spec:
       chart: app
