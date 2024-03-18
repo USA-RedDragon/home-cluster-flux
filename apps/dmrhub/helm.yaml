@@ -8,7 +8,6 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: dmrhub
-  suspend: true
   chart:
     spec:
       chart: app
