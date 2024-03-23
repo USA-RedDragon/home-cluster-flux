@@ -15,7 +15,7 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
-labels:
+selectorLabels:
 - app.kubernetes.io/component=worker
 
 args:
