@@ -58,7 +58,7 @@ env:
 - name: HEADSCALE_EPHEMERAL_NODE_INACTIVITY_TIMEOUT
   value: "1h"
 - name: HEADSCALE_DNS_CONFIG_NAMESERVERS
-  value: "1.1.1.1 1.0.0.1"
+  value: "192.168.1.237"
 - name: HEADSCALE_PRIVATE_KEY_PATH
   value: /etc/headscale/private.key
 - name: HEADSCALE_NOISE_PRIVATE_KEY_PATH
