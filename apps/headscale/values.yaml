@@ -39,6 +39,34 @@ envFrom: []
 env:
 - name: HEADSCALE_DB_TYPE
   value: postgres
+- name: HEADSCALE_SERVER_URL
+  value: "https://headscale.mcswain.dev"
+- name: HEADSCALE_LISTEN_ADDR
+  value: 0.0.0.0:8080
+- name: HEADSCALE_METRICS_LISTEN_ADDR
+  value: 0.0.0.0:9090
+- name: HEADSCALE_DERP_URLS
+  value: https://controlplane.tailscale.com/derpmap/default
+- name: HEADSCALE_DERP_AUTO_UPDATE_ENABLED
+  value: "true"
+- name: HEADSCALE_DERP_UPDATE_FREQUENCY
+  value: "24h"
+- name: HEADSCALE_DNS_CONFIG_MAGIC_DNS
+  value: "true"
+- name: HEADSCALE_DNS_CONFIG_BASE_DOMAIN
+  value: jacob.network
+- name: HEADSCALE_EPHEMERAL_NODE_INACTIVITY_TIMEOUT
+  value: "1h"
+- name: HEADSCALE_DNS_CONFIG_NAMESERVERS
+  value: "1.1.1.1 1.0.0.1"
+- name: HEADSCALE_PRIVATE_KEY_PATH
+  value: /etc/headscale/private.key
+- name: HEADSCALE_NOISE_PRIVATE_KEY_PATH
+  value: /etc/headscale/noise_private.key
+- name: HEADSCALE_NOISE
+  value: "{}"
+- name: HEADSCALE_IP_PREFIXES
+  value: "100.64.0.0/10 fd7a:115c:a1e0::/48"
 - name: HEADSCALE_DB_HOST
   valueFrom:
     secretKeyRef:
