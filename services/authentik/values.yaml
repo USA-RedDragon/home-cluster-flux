@@ -18,6 +18,9 @@ fullnameOverride: ""
 args:
 - server
 
+labels:
+- app.kubernetes.io/component=server
+
 serviceAccountName: rbac-authentik-remote-cluster
 
 deploymentStrategy:
