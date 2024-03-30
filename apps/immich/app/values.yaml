@@ -42,10 +42,10 @@ server:
     repository: ghcr.io/immich-app/immich-server
     tag: v1.95.1
     pullPolicy: IfNotPresent
-  
   ingress:
     main:
       enabled: true
+      className: nginx
       annotations:
         # proxy-body-size is set to 0 to remove the body limit on file uploads
         nginx.ingress.kubernetes.io/proxy-body-size: "0"
@@ -75,12 +75,14 @@ microservices:
   enabled: true
   image:
     repository: ghcr.io/immich-app/immich-server
+    tag: v1.95.1
     pullPolicy: IfNotPresent
 
 machine-learning:
   enabled: true
   image:
     repository: ghcr.io/immich-app/immich-machine-learning
+    tag: v1.95.1
     pullPolicy: IfNotPresent
   env:
     TRANSFORMERS_CACHE: /cache
