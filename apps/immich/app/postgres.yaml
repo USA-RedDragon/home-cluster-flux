@@ -1,0 +1,33 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgresql
+  namespace: immich
+spec:
+  instances: 3
+  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16.2-v0.2.0
+  enableSuperuserAccess: true
+  bootstrap:
+    initdb:
+      database: immich
+      owner: immich
+      postInitApplicationSQL:
+        - CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        - CREATE EXTENSION IF NOT EXISTS cube;
+        - CREATE EXTENSION IF NOT EXISTS earthdistance;
+        - CREATE EXTENSION IF NOT EXISTS vectors;
+        - CREATE EXTENSION IF NOT EXISTS pg_trgm;
+        - CREATE EXTENSION IF NOT EXISTS unaccent;
+  postgresql:
+    shared_preload_libraries:
+      - vectors.so
+  storage:
+    size: 8Gi
+  monitoring:
+    enablePodMonitor: true
+  resources:
+    requests:
+      memory: 60Mi
+      cpu: 20m
+  smartShutdownTimeout: 30
+  stopDelay: 300
