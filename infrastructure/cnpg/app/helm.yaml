@@ -30,3 +30,11 @@ spec:
     crds: Create
   upgrade:
     crds: CreateReplace
+  values:
+    resources:
+      requests:
+        memory: 60Mi
+        cpu: 20m
+      limits:
+        memory: 80Mi
+        cpu: 50m
