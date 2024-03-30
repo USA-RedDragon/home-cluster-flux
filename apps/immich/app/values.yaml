@@ -14,9 +14,8 @@ env:
       name: postgresql-app
       key: password
   IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+  TZ: America/Chicago
 
-image:
-  tag: v1.95.1
 
 immich:
   persistence:
@@ -40,7 +39,7 @@ server:
   enabled: true
   image:
     repository: ghcr.io/immich-app/immich-server
-    tag: v1.95.1
+    tag: v1.100.0
     pullPolicy: IfNotPresent
   ingress:
     main:
@@ -75,14 +74,14 @@ microservices:
   enabled: true
   image:
     repository: ghcr.io/immich-app/immich-server
-    tag: v1.95.1
+    tag: v1.100.0
     pullPolicy: IfNotPresent
 
 machine-learning:
   enabled: true
   image:
     repository: ghcr.io/immich-app/immich-machine-learning
-    tag: v1.95.1
+    tag: v1.100.0
     pullPolicy: IfNotPresent
   env:
     TRANSFORMERS_CACHE: /cache
