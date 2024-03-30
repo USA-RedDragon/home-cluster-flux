@@ -26,3 +26,6 @@ spec:
         name: immich
       version: 0.4.0
       interval: 1m0s
+  valuesFrom:
+    - kind: ConfigMap
+      name: chart-values
