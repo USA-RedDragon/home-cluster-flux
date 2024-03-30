@@ -20,7 +20,7 @@ spec:
       memory: 60Mi
       cpu: 20m
     limits:
-      memory: 800Mi
+      memory: 80Mi
       cpu: 50m
   smartShutdownTimeout: 30
   stopDelay: 300
