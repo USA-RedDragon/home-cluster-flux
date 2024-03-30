@@ -64,6 +64,13 @@ server:
         - secretName: photos-mcswain-dev-tls
           hosts:
             - photos.mcswain.dev
+  resources:
+    requests:
+      memory: 200Mi
+      cpu: 200m
+    limits:
+      memory: 300Mi
+      cpu: 300m
 
 microservices:
   enabled: true
@@ -71,6 +78,13 @@ microservices:
     repository: ghcr.io/immich-app/immich-server
     tag: v1.100.0
     pullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: '1'
+    limits:
+      memory: 3Gi
+      cpu: '2'
 
 machine-learning:
   enabled: true
@@ -87,3 +101,10 @@ machine-learning:
       type: pvc
       accessMode: ReadWriteOnce
       storageClass: longhorn-nvme
+  resources:
+    requests:
+      memory: 300Mi
+      cpu: 300m
+    limits:
+      memory: 600Mi
+      cpu: 600m
