@@ -79,10 +79,10 @@ microservices:
     pullPolicy: IfNotPresent
   resources:
     requests:
-      memory: 2Gi
+      memory: 4Gi
       cpu: '1'
     limits:
-      memory: 3Gi
+      memory: 6Gi
       cpu: '2'
 
 machine-learning:
