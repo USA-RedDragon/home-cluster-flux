@@ -103,8 +103,8 @@ machine-learning:
       storageClass: longhorn-nvme
   resources:
     requests:
-      memory: 300Mi
+      memory: 600Mi
       cpu: 300m
     limits:
-      memory: 600Mi
+      memory: 1.3Gi
       cpu: 600m
