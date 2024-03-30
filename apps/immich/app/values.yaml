@@ -69,7 +69,6 @@ server:
       memory: 750Mi
       cpu: 200m
     limits:
-      memory: 1Gi
       cpu: 300m
 
 microservices:
