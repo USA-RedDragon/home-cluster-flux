@@ -4,6 +4,7 @@ namespace: immich
 resources:
   - helm.yaml
   - postgres.yaml
+  - pvc.yaml
   - redis-helm.yaml
 configMapGenerator:
   - name: chart-values
