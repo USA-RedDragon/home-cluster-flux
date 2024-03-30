@@ -41,6 +41,10 @@ curl -sL https://github.com/fluxcd/flux2/releases/latest/download/crd-schemas.ta
 
 find . ! -path './.github/**' ! -name 'kustomizeconfig.yaml' ! -name '*-values.yaml' ! -name 'values.yaml' -type f -name '*.yaml' -print0 | while IFS= read -r -d $'\0' file;
   do
+    # Skip .sops.yaml files
+    if [[ "$file" == *".sops.yaml" ]]; then
+      continue
+    fi
     echo "INFO - Validating $file"
     yq e 'true' "$file" > /dev/null
     kubeconform "${kubeconform_flags[@]}" "${kubeconform_config[@]}" "${file}"
