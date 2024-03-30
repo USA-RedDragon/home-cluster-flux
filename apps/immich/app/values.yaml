@@ -66,10 +66,10 @@ server:
             - photos.mcswain.dev
   resources:
     requests:
-      memory: 400Mi
+      memory: 750Mi
       cpu: 200m
     limits:
-      memory: 600Mi
+      memory: 1Gi
       cpu: 300m
 
 microservices:
