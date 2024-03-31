@@ -61,7 +61,7 @@ env:
       name: postgresql-app
       key: host
 - name: REDIS_HOST
-  value: sentinel-tunnel.ha-redis.svc.cluster.local:6379
+  value: redis-app:6379
 - name: DEBUG
   value: ""
 - name: NETWORK_NAME
