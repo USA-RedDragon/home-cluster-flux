@@ -45,7 +45,7 @@ configs:
           "tag:aredn": ["group:admin"]
         },
         "hosts": {
-          "dns": "192.168.1.237"
+          "dns": "192.168.1.237",
           "aredn-dns": "10.54.25.3"
         },
         "acls": [
@@ -115,7 +115,7 @@ env:
       name: postgresql-app
       key: password
 - name: HEADSCALE_ACL_POLICY_PATH
-  value: /etc/headscale/acl.json
+  value: /etc/headscale-acl/acl.json
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
@@ -149,33 +149,13 @@ service:
 
 persistentVolumes:
 - name: config
-  mountPath: /etc/headscale/config.yaml
+  mountPath: /etc/headscale
   secret:
     secretName: headscale
-    items:
-    - key: config.yaml
-      path: config.yaml
-- name: noise-private-key
-  mountPath: /etc/headscale/noise_private.key
-  secret:
-    secretName: headscale
-    items:
-    - key: noise_private.key
-      path: noise_private.key
-- name: private-key
-  mountPath: /etc/headscale/private.key
-  secret:
-    secretName: headscale
-    items:
-    - key: private.key
-      path: private.key
 - name: acls
-  mountPath: /etc/headscale/acl.json
+  mountPath: /etc/headscale-acl
   configMap:
     name: headscale-acl
-    items:
-    - key: acl.json
-      path: acl.json
 #     items:
 #     - key: test.ini
 #       path: config.ini
