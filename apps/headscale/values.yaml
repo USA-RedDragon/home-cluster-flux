@@ -30,7 +30,30 @@ secrets: []
 #       multiline
 #       strings
 
-configs: []
+configs:
+- name: headscale-acl
+  data:
+    acl.json: |
+      {
+        "groups": {
+          "group:admin": ["jacob"],
+          "group:aredn": ["jacob"],
+          "group:home": ["jacob","katelyn"]
+        },
+        "tagOwners": {
+          "tag:home": ["group:admin"],
+          "tag:aredn": ["group:admin"]
+        },
+        "hosts": {
+          "dns": "192.168.1.237"
+          "aredn-dns": "10.54.25.3"
+        },
+        "acls": [
+          { "action": "accept", "src": ["group:admin"], "dst": ["*:*"] },
+          { "action": "accept", "src": ["group:aredn"], "dst": ["tag:aredn:*", "aredn-dns:*", "10.0.0.0/8:*"] },
+          { "action": "accept", "src": ["group:home"],  "dst": ["tag:home:*", "dns:*", "192.168.1.0/24:*"] },
+        ]
+      }
 
 envFrom: []
 # - configMapRef:
@@ -91,6 +114,8 @@ env:
     secretKeyRef:
       name: postgresql-app
       key: password
+- name: HEADSCALE_ACL_POLICY_PATH
+  value: /etc/headscale/acl.json
 # - name: SPECIAL_KEY
 #   valueFrom:
 #     configMapKeyRef:
@@ -124,9 +149,33 @@ service:
 
 persistentVolumes:
 - name: config
-  mountPath: /etc/headscale
+  mountPath: /etc/headscale/config.yaml
   secret:
     secretName: headscale
+    items:
+    - key: config.yaml
+      path: config.yaml
+- name: noise-private-key
+  mountPath: /etc/headscale/noise_private.key
+  secret:
+    secretName: headscale
+    items:
+    - key: noise_private.key
+      path: noise_private.key
+- name: private-key
+  mountPath: /etc/headscale/private.key
+  secret:
+    secretName: headscale
+    items:
+    - key: private.key
+      path: private.key
+- name: acls
+  mountPath: /etc/headscale/acl.json
+  configMap:
+    name: headscale-acl
+    items:
+    - key: acl.json
+      path: acl.json
 #     items:
 #     - key: test.ini
 #       path: config.ini
