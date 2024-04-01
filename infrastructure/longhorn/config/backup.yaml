@@ -8,6 +8,6 @@ spec:
   cron: '0 * * * *'
   task: backup
   concurrency: 1
-  retain: 100
+  retain: 48
   groups:
     - default
