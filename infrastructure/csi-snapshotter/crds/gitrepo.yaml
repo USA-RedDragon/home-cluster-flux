@@ -8,4 +8,4 @@ spec:
   ref:
     tag: v7.0.2
   timeout: 60s
-  url: ssh://git@github.com/kubernetes-csi/external-snapshotter.git
+  url: https://github.com/kubernetes-csi/external-snapshotter.git
