@@ -154,9 +154,6 @@ env: {}
 #       name: app-otherenv
 #       key: SPECIAL_KEY
 
-podAnnotations:
-  backup.velero.io/backup-volumes-excludes: server-vtun-config,olsrd-config,nginx-config
-
 podSecurityContext:
   privileged: true
   capabilities:

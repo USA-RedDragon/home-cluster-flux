@@ -61,9 +61,6 @@ env: []
 #       name: app-otherenv
 #       key: SPECIAL_KEY
 
-podAnnotations: 
-  backup.velero.io/backup-volumes-excludes: bucket-config,emptydir
-
 podSecurityContext: {}
   # fsGroup: 2000
 

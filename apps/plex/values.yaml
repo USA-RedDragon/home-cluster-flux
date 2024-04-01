@@ -61,9 +61,6 @@ env:
 #       name: app-otherenv
 #       key: SPECIAL_KEY
 
-podAnnotations:
-  backup.velero.io/backup-volumes-excludes: tv,movies,anime
-
 securityContext:
   runAsNonRoot: true
   runAsUser: 568
