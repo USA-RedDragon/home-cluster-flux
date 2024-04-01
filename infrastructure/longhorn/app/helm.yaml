@@ -33,6 +33,8 @@ spec:
     defaultSettings:
       priorityClass: system-cluster-critical
       logLevel: Warn
+      backupTarget: s3://longhorn@us-east-1/
+      backupTargetCredentialSecret: minio
     longhornManager:
       priorityClass: system-cluster-critical
     longhornDriver:
