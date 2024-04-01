@@ -2,8 +2,8 @@ apiVersion: v1
 stringData:
     GF_AUTH_GENERIC_OAUTH_ENABLED: ENC[AES256_GCM,data:vZr61A==,iv:kaTmwXCSIsDGpMhTaPGL4/dHIB4sipFBGHory9CES8w=,tag:C1k/XQ+RSaGiTUdRJgMRPQ==,type:str]
     GF_AUTH_GENERIC_OAUTH_NAME: ENC[AES256_GCM,data:80hZ1sTxdaIw,iv:cRbaGggWci/W3ysNF4el0cAA5dySVB76i0LscgY5qiM=,tag:lf2xYrN9ON+b0q/aBStK4g==,type:str]
-    GF_AUTH_GENERIC_OAUTH_CLIENT_ID: ENC[AES256_GCM,data:NYzEJWc1vvCYnCH7vcurvt09yODqvp8KWl4RGG2fVagmxraHb9Qr6g==,iv:UaN8wbfzVlo76dR7M9YNNZg+b1RUHBU8fSnlWJtigAs=,tag:2cTPXfVkm2tt6ozllQQOXA==,type:str]
-    GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: ENC[AES256_GCM,data:6bYSLgAgTttKSbBAMzsNCwzSKPI8bObTwUhxX8B2vjuG4L3doGNMs/i8KFqR7eClKmw9eNnZse0Z+se6oDKIWoJExdAy5MU/Ic+VFtINS/OjjSI3L+WCUM/+IN14tmPeeZSZQ0BfB2gIizSXUikx8rSLFewa8vRWs+ie0SYx4eM=,iv:VX9sa66b38ULnwk20wwTC5mYD9dRChKvjF2Y6riW0BI=,tag:Ttoq7FWQaCfDF1PaCFHsIA==,type:str]
+    GF_AUTH_GENERIC_OAUTH_CLIENT_ID: ENC[AES256_GCM,data:Zudy+x73lXrtvaKMTGAcbEv1l7Dj+jjtn8SBLplaOwhgd4Tbpljblw==,iv:n96kKBpx9pcEFpjheCY3xl7n9JFU1umNSxjTlishwcg=,tag:XMIbWsj7Hz5sZUv4NnZYBA==,type:str]
+    GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: ENC[AES256_GCM,data:bIgvdVGg0aJJ2UJ0EuTG6VGPj6WZ8ItxMLbsKyAcS2c6zLpig/Dxi+IJLzqEQz0Tn/6Gh2cjAwG1e6CQEe3bsbJ+kf5PwVKj9YKoBRBTG3WuNPwRXmoiK9s9GwTm41CVjVudiw/Ag6n0r7mHkgTETz5KckEcb9khlUkorYVu15A=,iv:/K+9mDGgCIWMwWkFFh/uSyOhr1+oVhrO0K5S5lUa0+k=,tag:eiTFPZv8FO1MVppp5l6/1g==,type:str]
     GF_AUTH_GENERIC_OAUTH_SCOPES: ENC[AES256_GCM,data:U2/2IlG4MI4eEX6TvxWxlZfRozQ=,iv:jeh0ltLRvclI7XT1KoQ9ZAsqSjmdY7gJ6objuiVYzxg=,tag:g+YTorU7c7MHOqmmhnjn2g==,type:str]
     GF_AUTH_GENERIC_OAUTH_AUTH_URL: ENC[AES256_GCM,data:6pZDSTCX7G7UL/qRhoAwTJoYCCi+BGDO9O/U0MVwQP6rSeOcvJeecCuYV1HBSCOcm4gM3OAT,iv:FlUGxHjnYtKxw6beuNJjCkwtgMdhsGhUEBCyHcFQIYE=,tag:IrDriIjUj6Rfn82VWmyxwg==,type:str]
     GF_AUTH_GENERIC_OAUTH_TOKEN_URL: ENC[AES256_GCM,data:h0vJQqCJRwpAI3GgYzGEgOSxKWo8o8TB4pdD/LRO32UAyJby6zxqHEoHeUfiWdtD1/4=,iv:RrdHYWxK8NDrPnAdH0Dk0CFAYkYaG5TGVL/bsnALrTE=,tag:IlTucJZUzKV7pazDuDnHfw==,type:str]
@@ -24,8 +24,8 @@ sops:
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2023-12-03T11:37:02Z"
-    mac: ENC[AES256_GCM,data:8kC76HICM6WM8snf3A8NmesWq/6kf9R/Y2MXE6pbQxfJH3aGi5z00uhSK5PHRkdmnMK/E5PErp9oPJ8+ZXyOe+tP2eA3X89Nz7E52uFxVRm+Y2BX6ZrBEskEdMqGP8ICIvuIsKt2JzXelcNr/1n1TI0zhTj4DekCWcsvLboIew8=,iv:kdqkYG7zx+UXDiERhCH4fjMnEp36cQhKZ2vvUcir5LU=,tag:enlxnRjhEFcUtkfjss8i0g==,type:str]
+    lastmodified: "2024-04-01T14:41:41Z"
+    mac: ENC[AES256_GCM,data:sNesBuscBKtAOXpYVSh7B9SRLeUMDlKBwl0oLzCcHuLPQOPJo63y3BYkVuaDelUUruRu4LLNwHbGpnm7ZbEl+bt0TMtKGpJ5sC4BuDMB3I3hTH7kiCHWZkatXSPzZ5x5aoSJMmTBjzLnsWJjuv2JaW+NaKxHJt3neqoBfn6GIoY=,iv:Cw3UAszdFPMEo0Z1YbY0xEw8xvoqarIjATrlERouOJE=,tag:yDwCsy7WhthEN9jocjE8iQ==,type:str]
     pgp:
         - created_at: "2023-12-03T11:32:45Z"
           enc: |
