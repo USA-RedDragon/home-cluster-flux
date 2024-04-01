@@ -7,6 +7,19 @@ spec:
   instances: 3
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1-12
   enableSuperuserAccess: true
+  backup:
+    barmanObjectStore:
+      destinationPath: "s3://cnpg/dmrhub"
+      endpointURL: "https://s3.mcswain.dev"
+      s3Credentials:
+        accessKeyId:
+          name: cnpg-minio
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: cnpg-minio
+          key: AWS_SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
   bootstrap:
     initdb:
       database: dmrhub
@@ -24,3 +37,14 @@ spec:
       cpu: 50m
   smartShutdownTimeout: 30
   stopDelay: 300
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: backup
+spec:
+  immediate: true
+  schedule: "0 * * * * *"
+  backupOwnerReference: self
+  cluster:
+    name: postgresql

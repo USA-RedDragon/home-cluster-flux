@@ -11,6 +11,7 @@ resources:
   - prom.yaml
   - postgres.yaml
   - redis-helm.yaml
+  - cnpg-minio.yaml
 configMapGenerator:
   - name: chart-values
     files:
