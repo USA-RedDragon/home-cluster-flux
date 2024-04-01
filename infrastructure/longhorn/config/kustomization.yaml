@@ -5,3 +5,4 @@ resources:
   - trim-job.yaml
   - storageclass.yaml
   - snapshot.yaml
+  - backup.yaml
