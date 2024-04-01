@@ -44,7 +44,7 @@ metadata:
   name: backup
 spec:
   immediate: true
-  schedule: "0 * * * * *"
+  schedule: "* 0 * * * *"
   backupOwnerReference: self
   cluster:
     name: postgresql
