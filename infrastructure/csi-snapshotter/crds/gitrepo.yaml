@@ -1,0 +1,11 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: external-snapshotter
+  namespace: kube-system
+spec:
+  interval: 60m0s
+  ref:
+    tag: v7.0.2
+  timeout: 60s
+  url: ssh://git@github.com/kubernetes-csi/external-snapshotter.git
