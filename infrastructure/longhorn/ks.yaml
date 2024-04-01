@@ -8,6 +8,9 @@ spec:
   targetNamespace: longhorn-system
   path: ./infrastructure/longhorn/app
   prune: true
+  dependsOn:
+    - name: csi-snapshotter-controller
+      namespace: kube-system
   sourceRef:
     kind: GitRepository
     namespace: flux-system
