@@ -2,7 +2,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: postgresql
-  namespace: dmrhub
+  namespace: paperless-ngx
 spec:
   instances: 3
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1-12
@@ -11,13 +11,49 @@ spec:
     initdb:
       database: paperless
       owner: paperless
+  backup:
+    barmanObjectStore:
+      destinationPath: "s3://cnpg/paperless"
+      endpointURL: "https://s3.mcswain.dev"
+      s3Credentials:
+        accessKeyId:
+          name: cnpg-minio
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: cnpg-minio
+          key: AWS_SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
   storage:
     size: 4Gi
   monitoring:
     enablePodMonitor: true
   resources:
     requests:
-      memory: 60Mi
+      memory: 80Mi
       cpu: 20m
+    limits:
+      # The backup process is quite memory intensive
+      memory: 300Mi
+      cpu: 200m
   smartShutdownTimeout: 30
   stopDelay: 300
+---
+apiVersion: v1
+kind: Secret
+metadata:
+ name: cnpg-minio
+ annotations:
+   reflector.v1.k8s.emberstack.com/reflects: reflector/cnpg-minio
+type: Opaque
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: backup
+spec:
+  immediate: true
+  schedule: "0 0 * * * *"
+  backupOwnerReference: self
+  cluster:
+    name: postgresql
