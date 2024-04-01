@@ -1,0 +1,12 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: external-snapshotter-crds
+  namespace: kube-system
+spec:
+  interval: 60m0s
+  path: ./client/config/crd
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: external-snapshotter
