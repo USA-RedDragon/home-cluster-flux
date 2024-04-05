@@ -39,7 +39,7 @@ server:
   enabled: true
   image:
     repository: ghcr.io/immich-app/immich-server
-    tag: v1.100.0
+    tag: v1.101.0
     pullPolicy: IfNotPresent
   ingress:
     main:
@@ -75,7 +75,7 @@ microservices:
   enabled: true
   image:
     repository: ghcr.io/immich-app/immich-server
-    tag: v1.100.0
+    tag: v1.101.0
     pullPolicy: IfNotPresent
   resources:
     requests:
