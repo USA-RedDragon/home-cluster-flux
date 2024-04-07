@@ -225,9 +225,9 @@ extraContainers:
   image: nginx:mainline-alpine@sha256:cb3218c8a053881bd00f4fa93e9f87e2c6204761e391b3aafc942f104362e538
   imagePullPolicy: IfNotPresent
   ports:
-    - containerPort: 80
+    - containerPort: 8443
       protocol: TCP
-      name: http
+      name: https
   volumeMounts:
     - name: nginx-config
       mountPath: /etc/nginx/nginx.conf
