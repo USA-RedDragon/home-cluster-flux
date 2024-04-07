@@ -233,11 +233,11 @@ extraContainers:
       mountPath: /etc/nginx/nginx.conf
       subPath: nginx-config
       readOnly: true
-    - name: nginx-cert
+    - name: nginx-config
       mountPath: /etc/nginx/ssl/cert.pem
       subPath: cert
       readOnly: true
-    - name: nginx-key
+    - name: nginx-config
       mountPath: /etc/nginx/ssl/key.pem
       subPath: key
       readOnly: true
