@@ -57,7 +57,7 @@ configs:
           error_log /dev/stderr;
 
           ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
-          ssl_ciphers 'NULL:aNULL:eNULL:!RC4:!EXPORT:!DES:!CBC:!3DES:!MD5:!PSK';
+          ssl_ciphers 'NULL:aNULL:eNULL:!RC4:!EXPORT:!DES:!CBC:!3DES:!MD5:!PSK:!HIGH:!MEDIUM:!LOW';
           ssl_prefer_server_ciphers on;
           ssl_certificate /etc/nginx/ssl/cert.pem;
           ssl_certificate_key /etc/nginx/ssl/key.pem;
