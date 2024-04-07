@@ -59,13 +59,67 @@ configs:
           ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
           ssl_ciphers 'NULL:aNULL:eNULL:!RC4:!EXPORT:!DES:!CBC:!3DES:!MD5:!PSK';
           ssl_prefer_server_ciphers on;
-          ssl_certificate /path/to/signed_cert_plus_intermediates;
-          ssl_certificate_key /path/to/private_key;
+          ssl_certificate /etc/nginx/ssl/cert.pem;
+          ssl_certificate_key /etc/nginx/ssl/key.pem;
           ssl_session_timeout 1d;
 
           client_max_body_size 16M;
         }
       }
+    cert: |
+      -----BEGIN CERTIFICATE-----
+      MIIEBTCCAu2gAwIBAgIURoOG2rrh4xbKy6uy4rJgcePBRDUwDQYJKoZIhvcNAQEL
+      BQAwgZExCzAJBgNVBAYTAlVTMREwDwYDVQQIDAhPa2xhaG9tYTETMBEGA1UEBwwK
+      QVJFRE4gTWVzaDEOMAwGA1UECgwFQVJFRE4xKDAmBgNVBAMMH0tJNVZNRi1OVUxM
+      LVRMUy1URVNULmxvY2FsLm1lc2gxIDAeBgkqhkiG9w0BCQEWEWphY29iQG1jc3dh
+      aW4uZGV2MB4XDTI0MDQwNzIwMjIyOVoXDTM0MDQwNTIwMjIyOVowgZExCzAJBgNV
+      BAYTAlVTMREwDwYDVQQIDAhPa2xhaG9tYTETMBEGA1UEBwwKQVJFRE4gTWVzaDEO
+      MAwGA1UECgwFQVJFRE4xKDAmBgNVBAMMH0tJNVZNRi1OVUxMLVRMUy1URVNULmxv
+      Y2FsLm1lc2gxIDAeBgkqhkiG9w0BCQEWEWphY29iQG1jc3dhaW4uZGV2MIIBIjAN
+      BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwSbj+8ycSOgI0g55Z2Lt9I8Dr4u9
+      YOVYeeybKjSPMDqM/8k5AJhbSyiOZ/tdkW2PNV1GVptOOaD4LRKYob+xMQg8GtMV
+      DCcMsIpPxCMygfo654ff5TzIRQnozwXDlvCNTHBVbKJCsdWo7f+YqQxA9jEVSuD7
+      /w6Rj+vuHnZcEunrapli2oAqaMG6se+lgqWFMADGYojzW3hTV2qeUHdzMEO+o1VT
+      CI4jss+r8Zyvd8YzGUMNrkhjb7J8wBX9UQr/PzMHJJzAgwCexhMmncXnjmlnw4/G
+      yiWIyO/zJczy0eAzFgUrdqJMgHHjT+1ew9bXxq+tIlx2rUjPof+fI6ahEQIDAQAB
+      o1MwUTAdBgNVHQ4EFgQUfJguoFCRLVNsqqUa63NC7fsgzLgwHwYDVR0jBBgwFoAU
+      fJguoFCRLVNsqqUa63NC7fsgzLgwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
+      AQsFAAOCAQEAl/eoakoTxggmZzgiYag58PyZClgCekEoW9tChCkFN0jN9G7JbigX
+      58f8qlpRSUcqO+gXISCdflW6HtvCdbWOFj/FAw/600GdIpj3qn3HwDTe/J8SCiUT
+      af+/Qq5C/7sTmsjbSGSYoEjIk5tOdtIEQJCDLL/X+5xh+/D9esUUXyIW1EuSh++J
+      S8KmaADVhgWDvMY0pAcGu70UBgu/rSshEFiWdWvNkALkcKyJ5MonX0Qd8AWLrbpn
+      y93kUzT4oLgYnAE5fCySCvoom/BcLIfmBfwhy5/fzNoTM14lhK4A/v27yFx9wG7J
+      nzcybcb/iQmMs6hmez20LGbCYrqaYWqhRg==
+      -----END CERTIFICATE-----
+    key: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDBJuP7zJxI6AjS
+      DnlnYu30jwOvi71g5Vh57JsqNI8wOoz/yTkAmFtLKI5n+12RbY81XUZWm045oPgt
+      Epihv7ExCDwa0xUMJwywik/EIzKB+jrnh9/lPMhFCejPBcOW8I1McFVsokKx1ajt
+      /5ipDED2MRVK4Pv/DpGP6+4edlwS6etqmWLagCpowbqx76WCpYUwAMZiiPNbeFNX
+      ap5Qd3MwQ76jVVMIjiOyz6vxnK93xjMZQw2uSGNvsnzAFf1RCv8/MwcknMCDAJ7G
+      EyadxeeOaWfDj8bKJYjI7/MlzPLR4DMWBSt2okyAceNP7V7D1tfGr60iXHatSM+h
+      /58jpqERAgMBAAECggEADEr4WY81JyK1ZQEM0vql4Fm1x1dibydJkUDwwyfjMROY
+      47Kf0RzhOpBTN+T0mIvbgG72Sg7KVLqc8OltE2ZK1a8LfD2Q6lwV36p91yLSVRli
+      5FdudX1/1X0C9yILx7B5nbLMjQRqsDzD6pnI0oF4JPMMwt48y4fW1c0TM5ce1wk1
+      52P+7cCVoLkRnrAvbaJ9CEUj3lRntPx1Sd3MmKjWunT95A43oExPuQ/sJ75x9237
+      2LR4KtcFRDd+kD41LrD48U7QW90LHSLuiaejYpocpJboFX9gPuIy5G66j5cTqfot
+      quC/Y0DwvNknZamJqKNI24yh8zTvCwNrY0xQJl020QKBgQDesaRDAlZmDaFDsGev
+      hqCfl0qHgSiheVYitd7Qa6Usdr5w8chBUVoDr8yIY5ErRXkAXaYgzqmz/esiO/Dx
+      +jsiaapNmW7HwK/sZXF32X0VFKj4QEaUJ3tfx892fwCkUn3rasjwNZltEfEXx2RB
+      7sN6i8aVIEHGEchfy/DneRjDnQKBgQDeCioSio1bcfo0231lo4USG+xuqeAaUFri
+      erCKSl9Lfm7B0HpedzEtfdkFgEKG91J1pujqtNRCnCSY863jFSFFGFOIN49/9a8s
+      ub0tP48Ff11VR8jA0/vdmID4fTUPZkptKpC66pjM6LWvrgpZ5A4OMBQGxXjDoyU1
+      Dhy+vopbBQKBgQCjY4q1b32cmtt7Im6wpgIrlYElMmpxLuk3xmCYYqJpoSXREFRx
+      OBLnKZDTcNoN+Ybx8cP1xitU2DQwhfIeWA4TDZvaG3zgKkvpEfTSjkvrr6DZo68k
+      /GLUv3FD66K47Z1doJeVRn4vPD67x5uTlG7v9qXYvDYF8P4m6ybxbjPxMQKBgEhd
+      Sa73RvCpqeD2M90fOOxY+2pppOcOj0BGuiin6nzhPNmfx3HoKLfpzwQS9BummVJM
+      zpZHzvHSj77llCNxLIGnVvoLGZKbkLbj5frMPyGMi++SUKQ/slNbM5VIwTU+oj0H
+      5Vl1wczufuA9uZPoVohbNPur+hrQnfy3l7i2wsK9AoGBALVcKeDrLNmcdUssy0fM
+      m0+J2ljEHuA/dmvEwAqFMcJ54CQZvzgkdnHlm7HbE0JezuoGrKGMDOupGe2uLs3y
+      x8x3ihJN9Q8hMMtaOG/wjs2FgdfkGo69cK1zZS+fLnllPMGLMGyZcvuJ0FyBdeQW
+      jO4ARzSmGTdPBGtZ1sXuglGO
+      -----END PRIVATE KEY-----
 - name: olsrd-config
   data:
     olsrd.conf: |
@@ -178,6 +232,14 @@ extraContainers:
     - name: nginx-config
       mountPath: /etc/nginx/nginx.conf
       subPath: nginx-config
+      readOnly: true
+    - name: nginx-cert
+      mountPath: /etc/nginx/ssl/cert.pem
+      subPath: cert
+      readOnly: true
+    - name: nginx-key
+      mountPath: /etc/nginx/ssl/key.pem
+      subPath: key
       readOnly: true
 
 ingress:
