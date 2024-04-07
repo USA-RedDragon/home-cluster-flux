@@ -8,7 +8,6 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: uptime-kuma
-  suspend: true
   chart:
     spec:
       chart: app
