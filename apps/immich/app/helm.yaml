@@ -24,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: immich
-      version: 0.5.0
+      version: 0.6.0
       interval: 1m0s
   valuesFrom:
     - kind: ConfigMap
