@@ -2440,7 +2440,7 @@ prometheusOperator:
     registry: quay.io
     repository: prometheus-operator/prometheus-operator
     # if not set appVersion field from Chart.yaml is used
-    tag: v0.73.0
+    tag: v0.73.1
     sha: "68b893dadba4f491f81897ae85ef14664c91efb40585e2736979b2a591530964"
     pullPolicy: IfNotPresent
 
