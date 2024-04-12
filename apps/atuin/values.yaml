@@ -124,9 +124,9 @@ ingress:
       path: /
       pathType: Prefix
   tls:
-  - secretName: adminer-mcswain-dev-tls
+  - secretName: atuin-mcswain-dev-tls
     hosts:
-      - adminer.mcswain.dev
+      - atuin.mcswain.dev
 
 extraContainers: []
 
