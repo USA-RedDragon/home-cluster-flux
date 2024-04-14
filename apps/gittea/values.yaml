@@ -189,7 +189,6 @@ probes:
 resources:
   limits:
     memory: 4Gi
-    cpu: 2
   requests:
     memory: 3Gi
     cpu: 2

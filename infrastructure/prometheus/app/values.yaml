@@ -2479,7 +2479,6 @@ prometheusOperator:
         cpu: 200m
         memory: 50Mi
       limits:
-        cpu: 200m
         memory: 50Mi
 
   ## Thanos side-car image when configured
@@ -3331,7 +3330,6 @@ prometheus:
         cpu: '2'
         memory: 4Gi
       limits:
-        cpu: 2300m
         memory: 5Gi
 
     ## Prometheus StorageSpec for persistent data

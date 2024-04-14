@@ -136,7 +136,6 @@ probes: {}
 
 resources:
   limits:
-    cpu: '2'
     memory: 300Mi
     gpu.intel.com/i915: "1"
   requests:

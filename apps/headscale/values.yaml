@@ -212,7 +212,6 @@ probes:
 
 resources:
   limits:
-    cpu: 50m
     memory: 150Mi
   requests:
     cpu: 30m

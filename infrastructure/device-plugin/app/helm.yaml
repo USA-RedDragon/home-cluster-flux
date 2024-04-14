@@ -39,7 +39,6 @@ spec:
         cpu: 20m
       limits:
         memory: 80Mi
-        cpu: 30m
     config:
       data: |
         devices:

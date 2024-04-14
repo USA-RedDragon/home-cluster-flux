@@ -150,7 +150,6 @@ resources:
     cpu: '1'
     memory: 3Gi
   limits:
-    cpu: '1'
     memory: 4Gi
 
 annotations: {}
