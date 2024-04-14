@@ -33,7 +33,6 @@ spec:
         cpu: 10m
         memory: 70Mi
       limits:
-        cpu: 30m
         memory: 100Mi
     webhook:
       resources:
@@ -41,7 +40,6 @@ spec:
           cpu: 10m
           memory: 50Mi
         limits:
-          cpu: 30m
           memory: 75Mi
     cainjector:
       resources:
@@ -49,7 +47,6 @@ spec:
           cpu: 10m
           memory: 100Mi
         limits:
-          cpu: 30m
           memory: 150Mi
     extraArgs:
     - --dns01-recursive-nameservers-only

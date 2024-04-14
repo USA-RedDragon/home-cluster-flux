@@ -33,7 +33,6 @@ spec:
     limits:
       # The backup process is quite memory intensive
       memory: 300Mi
-      cpu: 200m
   smartShutdownTimeout: 30
   stopDelay: 300
 ---

@@ -68,8 +68,6 @@ server:
     requests:
       memory: 750Mi
       cpu: 200m
-    limits:
-      cpu: 300m
 
 microservices:
   enabled: true
@@ -83,7 +81,6 @@ microservices:
       cpu: '1'
     limits:
       memory: 6Gi
-      cpu: '2'
 
 machine-learning:
   enabled: true

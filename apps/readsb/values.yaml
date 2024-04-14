@@ -161,7 +161,6 @@ probes: {}
 
 resources:
   limits:
-    cpu: 250m
     memory: 150Mi
     squat.ai/rtl-sdr-ads-b: 1
   requests:

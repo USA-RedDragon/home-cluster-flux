@@ -153,7 +153,6 @@ probes:
 
 resources:
   limits:
-    cpu: '1'
     memory: 300Mi
   requests:
     cpu: '1'

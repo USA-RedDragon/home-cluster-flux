@@ -3647,7 +3647,6 @@ spec:
             port: http
         resources:
           limits:
-            cpu: 300m
             memory: 500Mi
           requests:
             cpu: 50m
@@ -5380,7 +5379,6 @@ spec:
             port: healthz
         resources:
           limits:
-            cpu: 300m
             memory: 256Mi
           requests:
             cpu: 100m
@@ -7737,7 +7735,6 @@ spec:
             port: healthz
         resources:
           limits:
-            cpu: 500m
             memory: 380Mi
           requests:
             cpu: 200m
@@ -9653,7 +9650,6 @@ spec:
             port: healthz
         resources:
           limits:
-            cpu: 200m
             memory: 256Mi
           requests:
             cpu: 100m
