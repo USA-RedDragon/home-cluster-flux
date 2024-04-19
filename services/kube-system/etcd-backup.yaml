@@ -28,7 +28,7 @@ spec:
             - /bin/sh
             - -c
             - |
-              wget -O /usr/local/bin/talosctl https://github.com/siderolabs/talos/releases/download/v1.6.7/talosctl-linux-amd64 \
+              wget -O /usr/local/bin/talosctl https://github.com/siderolabs/talos/releases/download/v1.7.0/talosctl-linux-amd64 \
               && chmod +x /usr/local/bin/talosctl \
               && back=$(date +%s) \
               && talosctl -n 192.168.1.254 etcd snapshot /tmp/etcd-alpha.kubernetes-$back.db \
