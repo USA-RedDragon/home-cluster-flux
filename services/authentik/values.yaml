@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/goauthentik/server
+  repository: ghcr.io/goauthentik/dev-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2024.4.0@sha256:ce159bb56379bc3fcbe6d896b293e68cdb1739e61a9de91699dca93311d3cc90"
+  tag: "gh-version-2024.4"
 
 imagePullSecrets:
 - name: registry-ghcr
