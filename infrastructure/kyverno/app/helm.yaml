@@ -24,5 +24,5 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: kyverno
-      version: '3.2.0'
+      version: '3.2.1'
       interval: 1m0s
