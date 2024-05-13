@@ -86,7 +86,7 @@ machine-learning:
   enabled: true
   image:
     repository: ghcr.io/immich-app/immich-machine-learning
-    tag: v1.103.1
+    tag: v1.104.0
     pullPolicy: IfNotPresent
   env:
     TRANSFORMERS_CACHE: /cache
