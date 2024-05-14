@@ -3,3 +3,7 @@ kind: Kustomization
 resources:
 - flux.yaml
 - apps.yaml
+- infrastructure.yaml
+- secrets.yaml
+- sensitive.yaml
+- services.yaml
