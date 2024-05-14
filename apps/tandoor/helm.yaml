@@ -23,12 +23,11 @@ spec:
       name: chart-values
   postRenderers:
   - kustomize:
-      patchesJson6902:
+      patches:
       - target:
           version: v1
           kind: Deployment
           name: tandoor-app
-        patch:
-        # Replace hostPath /opt/cni/bin with /usr/lib/cni
-        - op: remove
-          path: /spec/template/spec/containers/0/ports
+        patch: |
+          - op: remove
+            path: /spec/template/spec/containers/0/ports
