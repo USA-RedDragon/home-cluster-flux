@@ -7,9 +7,14 @@ spec:
   instances: 3
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1-12
   enableSuperuserAccess: true
+  bootstrap:
+    recovery:
+      database: atuin
+      owner: atuin
+      source: postgresql
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/atuin"
+      destinationPath: "s3://cnpg/atuin-1"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -20,10 +25,20 @@ spec:
           key: AWS_SECRET_ACCESS_KEY
       wal:
         compression: gzip
-  bootstrap:
-    initdb:
-      database: atuin
-      owner: atuin
+  externalClusters:
+  - barmanObjectStore:
+      destinationPath: s3://cnpg/atuin
+      endpointURL: https://s3.mcswain.dev
+      s3Credentials:
+        accessKeyId:
+          key: AWS_ACCESS_KEY_ID
+          name: cnpg-minio
+        secretAccessKey:
+          key: AWS_SECRET_ACCESS_KEY
+          name: cnpg-minio
+      wal:
+        compression: gzip
+    name: postgresql
   storage:
     size: 4Gi
   monitoring:
