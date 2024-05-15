@@ -8,12 +8,13 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1-12
   enableSuperuserAccess: true
   bootstrap:
-    initdb:
+    recovery:
       database: headscale
       owner: headscale
+      source: postgresql
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/headscale"
+      destinationPath: "s3://cnpg/headscale-1"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -24,6 +25,20 @@ spec:
           key: AWS_SECRET_ACCESS_KEY
       wal:
         compression: gzip
+  externalClusters:
+  - barmanObjectStore:
+      destinationPath: s3://cnpg/headscale
+      endpointURL: https://s3.mcswain.dev
+      s3Credentials:
+        accessKeyId:
+          key: AWS_ACCESS_KEY_ID
+          name: cnpg-minio
+        secretAccessKey:
+          key: AWS_SECRET_ACCESS_KEY
+          name: cnpg-minio
+      wal:
+        compression: gzip
+    name: postgresql
   storage:
     size: 4Gi
   monitoring:
