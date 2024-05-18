@@ -23,7 +23,7 @@ command:
   && rsyslogd -n & \
   cat /etc/resolv.conf > /tmp/resolv.conf.auto \
   && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
-  && echo -e "#!/bin/sh\nexec vtund -n -f /etc/vtundsrv.conf KI5VMF-NTP-172-31-180-72 oklahoma.aredn.mcswain.cloud" > /etc/s6/vtund/run \
+  && rm -rf /etc/s6/vtund \
   && exec s6-svscan /etc/s6
 
 secrets: []
@@ -86,7 +86,7 @@ configs:
           PlParam "service" "http://KI5VMF-NTP.local.mesh:0/|udp|NTP Server"
       }
 
-      Interface "tun60"
+      Interface "tun60" "tunnel"
       {
           Ip4Broadcast 255.255.255.255
           Mode "ether"
@@ -116,6 +116,11 @@ podSecurityContext:
     add:
     - NET_ADMIN
 
+securityContext:
+  sysctls:
+  - name: net.ipv4.conf.all.src_valid_mark
+    value: "1"
+
 service:
   type: ClusterIP
   ports:
@@ -128,11 +133,11 @@ persistentVolumes:
   mountPath: /etc/olsrd
   configMap:
     name: olsrd-config
-- name: server-vtun-config
-  mountPath: /etc/vtundsrv.conf
+- name: server-wireguard-config
+  mountPath: /etc/wireguard
   subPath: vtundsrv.conf
   secret:
-    secretName: server-vtun-config
+    secretName: server-wireguard-config
 #     items:
 #     - key: test.ini
 #       path: config.ini
@@ -171,7 +176,39 @@ resources:
     cpu: 10m
     memory: 6Mi
 
-initContainers: []
+initContainers:
+- image: ghcr.io/usa-reddragon/wireguard:main@sha256:23fe2cfb41ba9b8f0f8c9595ad2a5322117ecf038e31267bb941bc37270be9d7
+  name: wireguard-init
+  securityContext:
+    privileged: true
+    capabilities:
+      add:
+      - NET_ADMIN
+  command:
+  - /bin/sh
+  - -c
+  - |
+    set -x && \
+    sleep 10 && \
+    ip l del tunnel 2>/dev/null || true && \
+    wg-quick up /etc/wireguard/tunnel.conf && \
+    ip6tables -P INPUT DROP && \
+    ip6tables -P OUTPUT DROP && \
+    ip6tables -P FORWARD DROP && \
+    iptables -P INPUT DROP && \
+    iptables -P FORWARD DROP && \
+    iptables -A INPUT -i lo -j ACCEPT && \
+    iptables -A INPUT -i tunnel -j ACCEPT && \
+    iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    iptables -A FORWARD -i tunnel -o eth0 -j DROP && \
+    iptables -A FORWARD -i eth0 -o tunnel -j ACCEPT && \
+    iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o tunnel -j SNAT --to-source 10.54.25.6 && \
+    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE
+  volumeMounts:
+  - mountPath: /etc/wireguard
+    name: server-wireguard-config
+  imagePullPolicy: IfNotPresent
 
 nodeSelector: {}
 
