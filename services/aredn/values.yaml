@@ -124,7 +124,7 @@ resources:
     memory: 6Mi
 
 initContainers:
-- image: ghcr.io/usa-reddragon/wireguard:main@sha256:23fe2cfb41ba9b8f0f8c9595ad2a5322117ecf038e31267bb941bc37270be9d7
+- image: ghcr.io/usa-reddragon/wireguard:main@sha256:91b7de8c0be994359215d26b9ab5b038b9e65c2565e5e8dfca5795d15bfdd865
   name: wireguard-init
   securityContext:
     privileged: true
