@@ -8,7 +8,7 @@ image:
   repository: alexxit/go2rtc
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.9.3-hardware"
+  tag: "1.9.4-hardware"
 
 imagePullSecrets:
 - name: registry-docker-hub
