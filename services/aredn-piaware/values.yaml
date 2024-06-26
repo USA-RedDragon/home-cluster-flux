@@ -192,7 +192,7 @@ persistentVolumes:
 
 extraContainers:
 - name: nginx
-  image: nginx:mainline-alpine@sha256:059cdcc5de66cd4e588b5f416b98a7af82e75413e2bf275f1e673c5d7d4b1afa
+  image: nginx:mainline-alpine@sha256:d0540253e168c1c4a6ec65d259aadc293efa9b35ad9bf8575a81fa414f79e0c6
   imagePullPolicy: IfNotPresent
   ports:
     - containerPort: 80
