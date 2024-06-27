@@ -1,0 +1,166 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/usa-reddragon/connect-server
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v0.0.0"
+
+args: []
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+secrets: []
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom:
+# - secretRef:
+#     name: secrets
+# - configMapRef:
+#     name: app-config
+
+env:
+- name: HTTP__CORS_HOSTS
+  value: "https://openpilot.jacob.network,http://localhost:5173"
+- name: HTTP__TRUSTED_PROXIES
+  value: "172.17.0.0/16"
+
+- name: POSTGRES__HOST
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: host
+- name: POSTGRES__DATABASE
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: dbname
+- name: POSTGRES__USER
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: username
+- name: POSTGRES__PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: password
+
+- name: HTTP__METRICS__ENABLED
+  value: "true"
+- name: HTTP__PPROF__ENABLED
+  value: "true"
+# - name: HTTP__TRACING__ENABLED
+#   value: "true"
+# - name: HTTP__TRACING__OTLP_ENDPOINT
+#   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 65534
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+
+service:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+  - name: metrics
+    port: 8081
+
+persistentVolumes: []
+# - name: config
+#   mountPath: /config
+#   configMap:
+#     name: app-configfile
+#     items:
+#     - key: test.ini
+#       path: config.ini
+# - name: keys
+#   mountPath: /keys
+#   readOnly: true
+#   secret:
+#     secretName: app-keyfile
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: cloudflare
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  ingressClassName: nginx
+  hosts:
+  - host: openpilot.jacob.network
+    paths:
+    - port: http
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: openpilot-jacob-network-tls
+    hosts:
+      - openpilot.jacob.network
+
+probes:
+  liveness:
+    httpGet:
+      path: /health
+      port: http
+  readiness:
+    httpGet:
+      path: /health
+      port: http
+
+resources:
+  limits:
+    memory: 50Mi
+  requests:
+    cpu: 250m
+    memory: 20Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
