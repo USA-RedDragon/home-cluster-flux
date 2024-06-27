@@ -51,7 +51,7 @@ env:
 - name: HTTP__TRUSTED_PROXIES
   value: "172.17.0.0/16"
 - name: REGISTRATION__ENABLED
-  value: "false"
+  value: "true"
 - name: REGISTRATION__INITIAL_ADMIN__USERNAME
   value: "admin"
 - name: REGISTRATION__INITIAL_ADMIN__PASSWORD
