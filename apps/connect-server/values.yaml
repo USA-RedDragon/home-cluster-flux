@@ -59,6 +59,11 @@ env:
     secretKeyRef:
       name: connect-server
       key: initial-admin-password
+- name: REGISTRATION__PASSWORD_SALT
+  valueFrom:
+    secretKeyRef:
+      name: connect-server
+      key: password-salt
 - name: PERSISTENCE__DATABASE
   value: "/config/connect.sqlite3"
 
