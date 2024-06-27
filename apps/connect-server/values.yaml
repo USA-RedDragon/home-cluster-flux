@@ -126,7 +126,7 @@ ingress:
   hosts:
   - host: openpilot.jacob.network
     paths:
-    - port: http
+    - port: 8080
       path: /
       pathType: Prefix
   tls:
