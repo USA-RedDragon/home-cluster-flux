@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/connect-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.29"
+  tag: "v0.0.30"
 
 args: []
 imagePullSecrets: []
@@ -77,6 +77,13 @@ env:
     secretKeyRef:
       name: connect-server
       key: google-client-secret
+- name: HTTP__FRONTEND_URL
+  value: 'https://connect-frontend-80j.pages.dev'
+- name: JWT__SECRET
+  valueFrom:
+    secretKeyRef:
+      name: connect-server
+      key: jwt-secret
 
 - name: HTTP__METRICS__ENABLED
   value: "true"
