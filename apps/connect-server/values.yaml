@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/connect-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.23"
+  tag: "v0.0.24"
 
 args: []
 imagePullSecrets: []
@@ -66,6 +66,29 @@ env:
       key: password-salt
 - name: PERSISTENCE__DATABASE
   value: "/config/connect.sqlite3"
+
+- name: AUTH__GITHUB__CLIENT_ID
+  valueFrom:
+    secretKeyRef:
+      name: connect-server
+      key: github-client-id
+- name: AUTH__GITHUB__CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: connect-server
+      key: github-client-secret
+- name: AUTH__GOOGLE__REDIRECT_URI
+  value: 'https://openpilot.jacob.network/v2/auth/g/redirect/'
+- name: AUTH__GOOGLE__CLIENT_ID
+  valueFrom:
+    secretKeyRef:
+      name: connect-server
+      key: google-client-id
+- name: AUTH__GOOGLE__CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: connect-server
+      key: google-client-secret
 
 - name: HTTP__METRICS__ENABLED
   value: "true"
