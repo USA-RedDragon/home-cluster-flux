@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/connect-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.91"
+  tag: "v0.0.92"
 
 args: []
 imagePullSecrets: []
@@ -139,9 +139,10 @@ ingress:
     cert-manager.io/cluster-issuer: cloudflare
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: 32M
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    # 2-minute timeouts
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "120"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
   ingressClassName: nginx
   hosts:
   - host: openpilot.jacob.network
