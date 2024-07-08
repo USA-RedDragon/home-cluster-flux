@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/connect-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.85"
+  tag: "v0.0.86"
 
 args: []
 imagePullSecrets: []
@@ -76,8 +76,6 @@ env:
       name: connect-server
       key: google-client-secret
 
-- name: HTTP__FRONTEND_URL
-  value: 'https://connect-frontend-80j.pages.dev'
 - name: HTTP__BACKEND_URL
   value: 'https://openpilot.jacob.network'
 - name: JWT__SECRET
