@@ -47,7 +47,7 @@ envFrom: []
 
 env:
 - name: HTTP__CORS_HOSTS
-  value: "https://openpilot.jacob.network,http://localhost:5173,https://connect-frontend-80j.pages.dev"
+  value: "https://openpilot.jacob.network,http://localhost:5173,https://connect-frontend-80j.pages.dev,https://*.connect-frontend-80j.pages.dev"
 - name: HTTP__TRUSTED_PROXIES
   value: "172.17.0.0/16"
 - name: REGISTRATION__ENABLED
