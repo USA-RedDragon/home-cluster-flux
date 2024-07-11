@@ -8,7 +8,7 @@ spec:
     storage: 1Ti
   volumeMode: Filesystem
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: rtz-uploads
   mountOptions:
