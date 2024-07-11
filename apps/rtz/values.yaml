@@ -52,7 +52,7 @@ env:
   value: "172.17.0.0/16"
 - name: REGISTRATION__ENABLED
   value: "true"
-- name: PERSISTENCE__DATABASE
+- name: PERSISTENCE__DATABASE__DATABASE
   value: "/config/rtz.sqlite3"
 
 - name: AUTH__GITHUB__CLIENT_ID
