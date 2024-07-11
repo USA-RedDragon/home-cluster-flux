@@ -156,12 +156,6 @@ service:
     port: 8081
 
 persistentVolumes:
-- name: config
-  mountPath: /config
-  size: 1Gi
-  persistentVolumeClaim:
-    name: config
-    storageClass: longhorn-nvme
 - name: uploads
   mountPath: /uploads
   size: 1Gi
