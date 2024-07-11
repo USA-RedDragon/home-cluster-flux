@@ -4,6 +4,9 @@
 
 replicaCount: 3
 
+deploymentStrategy:
+  type: RollingUpdate
+
 image:
   repository: ghcr.io/usa-reddragon/rtz-server
   pullPolicy: IfNotPresent
