@@ -52,8 +52,33 @@ env:
   value: "172.17.0.0/16"
 - name: REGISTRATION__ENABLED
   value: "true"
+- name: PERSISTENCE__DATABASE__DRIVER
+  value: "postgres"
 - name: PERSISTENCE__DATABASE__DATABASE
-  value: "/config/rtz.sqlite3"
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: dbname
+- name: PERSISTENCE__DATABASE__USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: username
+- name: PERSISTENCE__DATABASE__PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: password
+- name: PERSISTENCE__DATABASE__PORT
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: port
+- name: PERSISTENCE__DATABASE__HOST
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: host
 
 - name: AUTH__GITHUB__CLIENT_ID
   valueFrom:
