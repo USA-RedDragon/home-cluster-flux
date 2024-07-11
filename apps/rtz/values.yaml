@@ -53,27 +53,27 @@ env:
 - name: REGISTRATION__ENABLED
   value: "true"
 - name: PERSISTENCE__DATABASE
-  value: "/config/connect.sqlite3"
+  value: "/config/rtz.sqlite3"
 
 - name: AUTH__GITHUB__CLIENT_ID
   valueFrom:
     secretKeyRef:
-      name: connect-server
+      name: rtz
       key: github-client-id
 - name: AUTH__GITHUB__CLIENT_SECRET
   valueFrom:
     secretKeyRef:
-      name: connect-server
+      name: rtz
       key: github-client-secret
 - name: AUTH__GOOGLE__CLIENT_ID
   valueFrom:
     secretKeyRef:
-      name: connect-server
+      name: rtz
       key: google-client-id
 - name: AUTH__GOOGLE__CLIENT_SECRET
   valueFrom:
     secretKeyRef:
-      name: connect-server
+      name: rtz
       key: google-client-secret
 
 - name: HTTP__BACKEND_URL
@@ -81,7 +81,7 @@ env:
 - name: JWT__SECRET
   valueFrom:
     secretKeyRef:
-      name: connect-server
+      name: rtz
       key: jwt-secret
 
 - name: HTTP__METRICS__ENABLED
@@ -97,12 +97,12 @@ env:
 - name: MAPBOX__PUBLIC_TOKEN
   valueFrom:
     secretKeyRef:
-      name: connect-server
+      name: rtz
       key: mapbox-public-token
 - name: MAPBOX__SECRET_TOKEN
   valueFrom:
     secretKeyRef:
-      name: connect-server
+      name: rtz
       key: mapbox-secret-token
 
 podAnnotations: {}
