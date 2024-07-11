@@ -1,13 +1,13 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: connect-server
-  namespace: connect-server
+  name: rtz
+  namespace: rtz
 spec:
   interval: 60m0s
   driftDetection:
     mode: enabled
-  releaseName: connect-server
+  releaseName: rtz
   chart:
     spec:
       chart: app

@@ -1,9 +1,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: connect-server
+  name: rtz
   labels:
-    app.kubernetes.io/instance: connect-server
+    app.kubernetes.io/instance: rtz
     app.kubernetes.io/name: app
 spec:
   endpoints:
@@ -12,5 +12,5 @@ spec:
       interval: 10s
   selector:
     matchLabels:
-      app.kubernetes.io/instance: connect-server
+      app.kubernetes.io/instance: rtz
       app.kubernetes.io/name: app
