@@ -6,6 +6,7 @@ resources:
   - helm.yaml
   - prom.yaml
   - postgres.yaml
+  - redis.helm.yaml
 configMapGenerator:
   - name: chart-values
     files:
