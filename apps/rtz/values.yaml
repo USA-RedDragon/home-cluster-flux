@@ -11,7 +11,7 @@ image:
   repository: ghcr.io/usa-reddragon/rtz-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.154"
+  tag: "v0.0.155"
 
 args: []
 imagePullSecrets: []
@@ -116,12 +116,17 @@ env:
 
 - name: REDIS__ENABLED
   value: "true"
-- name: REDIS__SENTINEL
+- name: REDIS__SENTINEL__ENABLED
   value: "true"
-- name: REDIS__SENTINEL_ADDRESSES
+- name: REDIS__SENTINEL__ADDRESSES
   value: "redis-headless:26379"
-- name: REDIS__SENTINEL_MASTER
+- name: REDIS__SENTINEL__MASTER_NAME
   value: "mymaster"
+- name: REDIS__SENTINEL__PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: redis-auth
+      key: password
 - name: REDIS__PASSWORD
   valueFrom:
     secretKeyRef:
