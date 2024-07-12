@@ -118,7 +118,7 @@ env:
   value: "true"
 - name: REDIS__SENTINEL
   value: "true"
-- name: REDIS__SENTINEL_ADDRESSES
+- name: REDIS__SENTINEL_HOSTS
   value: "redis-node-0:26379,redis-node-1:26379,redis-node-2:26379"
 - name: REDIS__SENTINEL_MASTER
   value: "mymaster"
