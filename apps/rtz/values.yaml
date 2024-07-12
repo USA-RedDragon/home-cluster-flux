@@ -116,7 +116,7 @@ env:
 
 - name: REDIS__ENABLED
   value: "true"
-- name: REDIS__SENTINEL_ENABLED
+- name: REDIS__SENTINEL
   value: "true"
 - name: REDIS__SENTINEL_ADDRESSES
   value: "redis-node-0:26379,redis-node-1:26379,redis-node-2:26379"
