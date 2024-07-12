@@ -11,7 +11,7 @@ image:
   repository: ghcr.io/usa-reddragon/rtz-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.157"
+  tag: "v0.0.158"
 
 args: []
 imagePullSecrets: []
@@ -83,6 +83,8 @@ env:
       name: postgresql-app
       key: host
 
+- name: AUTH__GITHUB__ENABLED
+  value: "true"
 - name: AUTH__GITHUB__CLIENT_ID
   valueFrom:
     secretKeyRef:
@@ -93,16 +95,24 @@ env:
     secretKeyRef:
       name: rtz
       key: github-client-secret
-- name: AUTH__GOOGLE__CLIENT_ID
+- name: AUTH__GOOGLE__ENABLED
+  value: "false"
+- name: AUTH__CUSTOM__ENABLED
+  value: "true"
+- name: AUTH__CUSTOM__CLIENT_ID
   valueFrom:
     secretKeyRef:
       name: rtz
-      key: google-client-id
-- name: AUTH__GOOGLE__CLIENT_SECRET
+      key: custom-client-id
+- name: AUTH__CUSTOM__CLIENT_SECRET
   valueFrom:
     secretKeyRef:
       name: rtz
-      key: google-client-secret
+      key: custom-client-secret
+- name: AUTH__CUSTOM__TOKEN_URL
+  value: https://authentik.mcswain.dev/login/oauth/access_token
+- name: AUTH__CUSTOM__USER_URL
+  value: https://authentik.mcswain.dev/user
 
 - name: HTTP__FRONTEND_URL
   value: 'https://connect-frontend-80j.pages.dev'
