@@ -53,8 +53,6 @@ env:
   value: "https://openpilot.jacob.network,http://localhost:5173,https://connect-frontend-80j.pages.dev,https://*.connect-frontend-80j.pages.dev"
 - name: HTTP__TRUSTED_PROXIES
   value: "172.17.0.0/16"
-- name: REGISTRATION__ENABLED
-  value: "true"
 - name: PERSISTENCE__DATABASE__DRIVER
   value: "postgres"
 - name: PERSISTENCE__DATABASE__DATABASE
@@ -83,20 +81,6 @@ env:
       name: postgresql-app
       key: host
 
-- name: AUTH__GITHUB__ENABLED
-  value: "true"
-- name: AUTH__GITHUB__CLIENT_ID
-  valueFrom:
-    secretKeyRef:
-      name: rtz
-      key: github-client-id
-- name: AUTH__GITHUB__CLIENT_SECRET
-  valueFrom:
-    secretKeyRef:
-      name: rtz
-      key: github-client-secret
-- name: AUTH__GOOGLE__ENABLED
-  value: "false"
 - name: AUTH__CUSTOM__ENABLED
   value: "true"
 - name: AUTH__CUSTOM__CLIENT_ID
