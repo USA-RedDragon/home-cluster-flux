@@ -190,6 +190,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "120"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    nginx.ingress.kubernetes.io/service-upstream: "true"
   ingressClassName: nginx
   hosts:
   - host: openpilot.jacob.network
