@@ -36,14 +36,13 @@ spec:
         repository: nats
         tag: 2.10.17-alpine
     reloader:
-      enabled: true
-      image:
-        repository: natsio/nats-server-config-reloader
-        tag: 0.15.0
+      enabled: false
     promExporter:
       enabled: true
       image:
         repository: natsio/prometheus-nats-exporter
         tag: 0.15.0
+      podMonitor:
+        enabled: true
     natsBox:
       enabled: false
