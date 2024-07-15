@@ -35,6 +35,12 @@ spec:
       image:
         repository: nats
         tag: 2.10.17-alpine
+      env:
+        TOKEN:
+          valueFrom:
+            secretKeyRef:
+              name: rtz
+              key: nats-token
     reloader:
       enabled: false
     promExporter:
@@ -51,3 +57,7 @@ spec:
         enabled: false
       cluster:
         enabled: true
+      merge:
+        authorization:
+          token: << $TOKEN >>
+        max_payload: << 32MB >>
