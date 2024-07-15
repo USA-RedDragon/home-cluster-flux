@@ -30,7 +30,7 @@ spec:
     global:
       image:
         pullSecretNames:
-        - name: registry-docker-hub
+        - registry-docker-hub
     container:
       image:
         repository: nats
