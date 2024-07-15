@@ -34,7 +34,7 @@ spec:
     container:
       image:
         repository: nats
-        tag: 2.10.16-alpine
+        tag: 2.10.17-alpine
     reloader:
       enabled: true
       image:
