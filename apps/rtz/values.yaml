@@ -81,6 +81,9 @@ env:
       name: postgresql-app
       key: host
 
+- name: GO_LOG
+  value: "debug"
+
 - name: AUTH__CUSTOM__ENABLED
   value: "true"
 - name: AUTH__CUSTOM__CLIENT_ID
