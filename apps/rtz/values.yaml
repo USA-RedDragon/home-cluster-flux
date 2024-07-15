@@ -115,6 +115,8 @@ env:
     secretKeyRef:
       name: rtz
       key: nats-token
+- name: NATS__URL
+  value: nats://nats:4222
 
 - name: HTTP__METRICS__ENABLED
   value: "true"
