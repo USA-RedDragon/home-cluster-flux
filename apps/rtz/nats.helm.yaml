@@ -1,0 +1,49 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: nats
+  namespace: rtz
+spec:
+  interval: 1m0s
+  url: https://nats-io.github.io/k8s/helm/charts/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nats
+  namespace: rtz
+spec:
+  interval: 1m0s
+  driftDetection:
+    mode: enabled
+  releaseName: nats
+  chart:
+    spec:
+      chart: nats
+      sourceRef:
+        kind: HelmRepository
+        name: nats
+      version: '1.2.0'
+      interval: 1m0s
+  values:
+    global:
+      image:
+        pullSecretNames:
+        - name: registry-docker-hub
+    container:
+      image:
+        repository: nats
+        tag: 2.10.16-alpine
+    reloader:
+      enabled: true
+      image:
+        repository: natsio/nats-server-config-reloader
+        tag: 0.14.3
+    promExporter:
+      enabled: true
+      image:
+        repository: natsio/prometheus-nats-exporter
+        tag: 0.15.0
+    natsBox:
+      enabled: false
