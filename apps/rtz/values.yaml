@@ -11,7 +11,7 @@ image:
   repository: ghcr.io/usa-reddragon/rtz-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.179"
+  tag: "v0.0.180"
 
 args: []
 imagePullSecrets: []
@@ -81,7 +81,7 @@ env:
       name: postgresql-app
       key: host
 
-- name: GO_LOG
+- name: LOG_LEVEL
   value: "debug"
 
 - name: AUTH__CUSTOM__ENABLED
