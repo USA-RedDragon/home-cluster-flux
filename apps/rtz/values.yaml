@@ -50,7 +50,7 @@ envFrom: []
 
 env:
 - name: HTTP__CORS_HOSTS
-  value: "https://openpilot.jacob.network,http://localhost:5173,https://connect-frontend-80j.pages.dev,https://*.connect-frontend-80j.pages.dev,http://localhost:4173"
+  value: "https://openpilot.jacob.network,http://localhost:5173,https://rtz.pages.dev,https://*.rtz.pages.dev,http://localhost:4173"
 - name: HTTP__TRUSTED_PROXIES
   value: "172.17.0.0/16"
 - name: PERSISTENCE__DATABASE__DRIVER
@@ -107,7 +107,7 @@ env:
   value: https://authentik.mcswain.dev/user
 
 - name: HTTP__FRONTEND_URL
-  value: 'https://connect-frontend-80j.pages.dev'
+  value: 'https://rtz.pages.dev'
 - name: HTTP__BACKEND_URL
   value: 'https://openpilot.jacob.network'
 - name: JWT__SECRET
