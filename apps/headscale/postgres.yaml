@@ -27,7 +27,7 @@ spec:
         compression: gzip
   externalClusters:
   - barmanObjectStore:
-      destinationPath: s3://cnpg/headscale-1
+      destinationPath: s3://cnpg/headscale
       endpointURL: https://s3.mcswain.dev
       s3Credentials:
         accessKeyId:
