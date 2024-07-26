@@ -6,7 +6,7 @@ imagePullSecrets:
 
 # Image sets the repo, name and tag of the Terraform Enterprise image to use.
 image:
-  tag: v202312-1
+  tag: v202407-1
   pullPolicy: IfNotPresent
 
 # Resource limits are not set by default, to give the user the ability to set specific resource limits.
@@ -55,11 +55,27 @@ env:
     - name: tfe-secrets
   variables:
     TFE_OPERATIONAL_MODE: external
-    TFE_CAPACITY_CONCURRENCY: "1"
-    TFE_DATABASE_HOST: "cluster.postgres.svc.cluster.local"
-    TFE_DATABASE_NAME: "tfe"
+    TFE_DATABASE_HOST:
+      valueFrom:
+        secretKeyRef:
+          name: postgresql-app
+          key: host
+    TFE_DATABASE_NAME:
+      valueFrom:
+        secretKeyRef:
+          name: postgresql-app
+          key: dbname
     TFE_DATABASE_PARAMETERS: sslmode=require
-    TFE_DATABASE_USER: "tfe.tfe"
+    TFE_DATABASE_USER:
+      valueFrom:
+        secretKeyRef:
+          name: postgresql-app
+          key: username
+    TFE_DATABASE_PASSWORD:
+      valueFrom:
+        secretKeyRef:
+          name: postgresql-app
+          key: password
     TFE_HOSTNAME: tfe.mcswain.dev
     TFE_OBJECT_STORAGE_TYPE: "s3"
     TFE_OBJECT_STORAGE_S3_ACCESS_KEY_ID: LgUhs4wSxp2eVT7AtJvN
