@@ -1,4 +1,4 @@
-replicaCount: 1
+replicaCount: 0
 
 # Image pull secret to use for registry authentication.
 imagePullSecrets:
