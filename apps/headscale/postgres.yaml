@@ -14,7 +14,7 @@ spec:
       source: postgresql
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/headscale-1"
+      destinationPath: "s3://cnpg/headscale-2"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -27,7 +27,7 @@ spec:
         compression: gzip
   externalClusters:
   - barmanObjectStore:
-      destinationPath: s3://cnpg/headscale
+      destinationPath: s3://cnpg/headscale-1
       endpointURL: https://s3.mcswain.dev
       s3Credentials:
         accessKeyId:
@@ -40,7 +40,7 @@ spec:
         compression: gzip
     name: postgresql
   storage:
-    size: 4Gi
+    size: 8Gi
   monitoring:
     enablePodMonitor: true
   resources:
