@@ -35,6 +35,10 @@ spec:
       image:
         repository: nats
         tag: 2.10.18-alpine
+      ports:
+        monitor:
+          containerPort: 8222
+          name: monitor
       env:
         TOKEN:
           valueFrom:
