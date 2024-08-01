@@ -1,0 +1,17 @@
+operator:
+  image:
+    repository: quay.io/minio/operator
+    tag: v6.0.1
+    pullPolicy: IfNotPresent
+
+  env:
+    - name: OPERATOR_STS_ENABLED
+      value: "on"
+
+  replicaCount: 2
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+      ephemeral-storage: 500Mi
