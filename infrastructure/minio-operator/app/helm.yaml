@@ -25,7 +25,7 @@ spec:
         kind: HelmRepository
         name: minio
         namespace: minio-operator
-      version: '0.1.30'
+      version: '6.0.1'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
