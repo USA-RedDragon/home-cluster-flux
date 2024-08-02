@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/trunk-recorder-soapysdrplay3-prometheus
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:55a882d90f657e1ba12ab4dd6ce2fd8f2f1d589a5e41d187a1fdfac3bae1c1a5"
+  tag: "main@sha256:28d1be5cc6dcef24e74cabbe94113e0d1da4bd0ab2d4c03fd629c4e77756786d"
 
 imagePullSecrets: []
 nameOverride: ""
