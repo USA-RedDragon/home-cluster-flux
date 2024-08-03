@@ -31,8 +31,8 @@ global:
       # If using an external DB, disable the MySQL deployment in the "mysqlha" section
       useInternal: false
       existingDatabaseSecret:
-        name: postgresql-app
-        key: uri
+        name: mattermost
+        key: pgurl
     elasticsearch:
       enabled: false
     grafana:
