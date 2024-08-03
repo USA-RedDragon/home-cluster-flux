@@ -1,12 +1,8 @@
 global:
-  siteUrl: "https://mattermost.mcswain.dev"  # REQUIRED SETTING, PLEASE UPDATE
   # Use an existing secret for License credential (see secret-mattermost-license.yaml for required fields)
   existingLicenseSecret:
     name: mattermost
     key: license
-  # Settings for configuration of Mattermost
-  # For more details: https://docs.mattermost.com/administration/config-settings.html
-  siteName: "Mattermost"
   enableTeamCreation: true
   enableUserCreation: true
   enableOpenServer: true
@@ -19,10 +15,6 @@ global:
   feedbackName: "Mattermost"
   feedbackEmail: "mattermost@mcswain.dev"
   feedbackOrganization: "McSwain"
-  smtpUsername: "mattermost"
-  smtpServer: "email.mcswain.dev"
-  smtpPort: "465"
-  connectionSecurity: "TLS"
 
   features:
     database:
@@ -170,6 +162,54 @@ mattermostApp:
         secretKeyRef:
           name: mattermost
           key: smtp_password
+    - name: MM_EMAILSETTINGS_SMTPSERVER
+      value: "email.mcswain.dev"
+    - name: MM_EMAILSETTINGS_SMTPPORT
+      value: "465"
+    - name: MM_EMAILSETTINGS_SMTPUSERNAME
+      value: "mattermost"
+    - name: MM_EMAILSETTINGS_ENABLESMTPAUTH
+      value: "true"
+    - name: MM_EMAILSETTINGS_CONNECTIONSECURITY
+      value: "TLS"
+    - name: MM_SERVICESETTINGS_ENABLESECURITYFIXALERT
+      value: "true"
+    - name: MM_CLUSTERSETTINGS_ENABLE
+      value: "true"
+    - name: MM_CLUSTERSETTINGS_CLUSTERNAME
+      value: "mattermost"
+    - name: MM_CLUSTERSETTINGS_USEIPADDRESS
+      value: "true"
+    - name: MM_SERVICESETTINGS_SITEURL
+      value: "https://mattermost.mcswain.dev"
+    - name: MM_SERVICESETTINGS_WEBSOCKETURL
+      value: "wss://mattermost.mcswain.dev"
+    - name: MM_SERVICESETTINGS_ENABLEEMAILINVITATIONS
+      value: "true"
+    - name: MM_EMAILSETTINGS_ENABLESIGNUPWITHEMAIL
+      value: "false"
+    - name: MM_EMAILSETTINGS_REQUIREEMAILVERIFICATION
+      value: "true"
+    - name: MM_EMAILSETTINGS_ENABLESIGNINWITHEMAIL
+      value: "false"
+    - name: MM_EMAILSETTINGS_ENABLESIGNINWITHUSERNAME
+      value: "true"
+    - name: MM_OPENIDSETTINGS_ENABLE
+      value: "true"
+    - name: MM_OPENIDSETTINGS_BUTTONTEXT
+      value: "Sign in with Authentik"
+    - name: MM_OPENIDSETTINGS_DISCOVERYENDPOINT
+      value: "https://authentik.mcswain.dev/application/o/mattermost/.well-known/openid-configuration"
+    - name: MM_OPENIDSETTINGS_ID
+      valueFrom:
+        secretKeyRef:
+          name: mattermost
+          key: openid_id
+    - name: MM_OPENIDSETTINGS_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: mattermost
+          key: openid_secret
     # See more environments variables that you can set here: https://docs.mattermost.com/administration/config-settings.html#configuration-settings
     # for example
     # - name: MM_SERVICESETTINGS_ENABLEMULTIFACTORAUTHENTICATION
