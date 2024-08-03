@@ -17,7 +17,7 @@ spec:
   interval: 1m0s
   driftDetection:
     mode: enabled
-  releaseName: immich
+  releaseName: mattermost
   chart:
     spec:
       chart: mattermost-enterprise-edition
