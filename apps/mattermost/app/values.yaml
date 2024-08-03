@@ -1,0 +1,267 @@
+global:
+  siteUrl: "http://mattermost.mcswain.dev"  # REQUIRED SETTING, PLEASE UPDATE
+  # Use an existing secret for License credential (see secret-mattermost-license.yaml for required fields)
+  existingLicenseSecret:
+    name: mattermost
+    key: license
+  # Settings for configuration of Mattermost
+  # For more details: https://docs.mattermost.com/administration/config-settings.html
+  siteName: "Mattermost"
+  enableTeamCreation: true
+  enableUserCreation: true
+  enableOpenServer: true
+  enableLinkPreviews: true
+  enableCustomEmoji: true
+
+  # Settings to enable email notifications
+  sendEmailNotifications: true
+  requireEmailVerification: true
+  feedbackName: "Mattermost"
+  feedbackEmail: "mattermost@mcswain.dev"
+  feedbackOrganization: "McSwain"
+  smtpUsername: "mattermost"
+  smtpPassword: ""
+  smtpServer: "email.mcswain.dev"
+  smtpPort: "465"
+  connectionSecurity: "TLS"
+
+  features:
+    database:
+      # If using an internal DB, update the passwords in the "mysqlha" section
+      # If using an external DB, disable the MySQL deployment in the "mysqlha" section
+      useInternal: false
+      existingDatabaseSecret:
+        name: postgresql-app
+        key: uri
+    elasticsearch:
+      enabled: false
+    grafana:
+      enabled: false
+    jobserver:
+      name: jobserver
+      enabled: true
+      replicaCount: 1
+      strategy:
+        type: Recreate
+        rollingUpdate: null
+      revisionHistoryLimit: 2
+      service:
+        name: mattermost-app-jobserver
+        type: ClusterIP
+      # jobserver Node selector
+      # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+      nodeSelector: {}
+      # jobserver Affinity
+      # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+      affinity: {}
+      # jobserver Tolerations for pod assignment
+      # Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+      tolerations: []
+      # Allows the specification of additional environment variables for Mattermost Jobserver
+      extraEnv: {}
+    notifications:
+      # Push proxy must be configured or useHPNS must be true for push noticiations to work.
+      push:
+        enabled: true
+        # Hosted push notification service. Requires an enterprise license.
+        # More details at https://docs.mattermost.com/mobile/mobile-hpns.html.
+        useHPNS: true
+    loadTest:
+      enabled: false
+      image:
+        repository: mattermost/mattermost-loadtest
+        tag: latest
+        pullPolicy: Always
+      replicaCount: 1
+      strategy:
+        type: Recreate
+        rollingUpdate: null
+      revisionHistoryLimit: 2
+      numTeams: 1
+      numChannelsPerTeam: 400
+      numUsers: 5
+      numPosts: 200
+      numEmoji: 2000
+      replyChance: 0.3
+      skipBulkLoad: false
+      testLengthMinutes: 2
+      numActiveEntities: 5
+      actionRateMilliseconds: 60000
+      actionRateMaxVarianceMilliseconds: 15000
+      linkPreviewChance: 0.2
+      customEmojiChance: 0.2
+      pprofDelayMinutes: 15
+      pprofLengthSeconds: 240
+      sendReportToMMServer: false
+      resultsServerUrl: ""
+      resultsChannelId: ""
+      resultsUsername: ""
+      resultsPassword: ""
+      # loadTest Node selector
+      # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+      nodeSelector: {}
+      # loadTest Affinity
+      # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+      affinity: {}
+      # loadTest Tolerations for pod assignment
+      # Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+      tolerations: []
+
+initContainerImage:
+  repository: appropriate/curl
+  tag: latest
+  imagePullPolicy: IfNotPresent
+
+# Mattermost deployment section.
+# Use to configure the deploymento the Mattermost app servers.
+mattermostApp:
+  replicaCount: 2
+  image:
+    repository: ghcr.io/usa-reddragon/mattermost
+    tag: v9.11.0@sha256:343bd9afd1c9dcd554c01759a18ffe9996982cc335c0656a461c3d70b1c517f9
+    pullPolicy: IfNotPresent
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  revisionHistoryLimit: 2
+
+  service:
+    name: mattermost-app
+    type: ClusterIP
+    externalPort: 8065
+    internalPort: 8065
+    metricsPort: 8067
+    clusterPort: 8075
+    gossipPort: 8074
+    metricsName: mattermost-app-metrics
+
+  ingress:
+    # Used to create Ingress record (should be used with service.type: ClusterIP).
+    enabled: true
+    hosts:
+      - mattermost.mcswain.dev
+    tls:
+      # Secrets must be manually created in the namespace.
+      - secretName: mattermost-mcswain-dev-tls
+        hosts:
+          - mattermost.mcswain.dev
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-buffering: "on"
+      nginx.ingress.kubernetes.io/proxy-body-size: 50m
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+        proxy_cache mattermost_cache;
+        proxy_cache_revalidate on;
+        proxy_cache_min_uses 2;
+        proxy_cache_use_stale timeout;
+        proxy_cache_lock on;
+    ingressClassName: nginx
+
+  ## Pod Security Context
+  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext:
+    # fsGroup: 2000
+    # runAsGroup: 2000
+    # runAsUser: 2000
+
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 300Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 300Mi
+
+  extraInitContainers: []
+    # Extra Container to donwload and install plugins
+    # - name: init-plugins-config
+    #   image: busybox
+    #   imagePullPolicy: IfNotPresent
+    #   command:
+    #     - sh
+    #     - "-c"
+    #     - |
+    #       PLUGINS_TAR="hovercardexample.tar.gz"
+    #       PLUGINS_TAR="${PLUGINS_TAR} https://<YOUR_PATH_TO_DOWNLOAD_PLUGINS_1>"
+    #       PLUGINS_TAR="${PLUGINS_TAR} https://<YOUR_PATH_TO_DOWNLOAD_PLUGINS_2>"
+    #       PLUGINS_TAR="${PLUGINS_TAR} https://<YOUR_PATH_TO_DOWNLOAD_PLUGINS_N>"
+
+    #       for plugin_tar in ${PLUGINS_TAR};
+    #       do
+    #         wget ${plugin_tar} -P /mattermost/plugins
+    #         cd /mattermost/plugins
+    #         tar -xzvf ${plugin_tar##*/}
+    #         rm -f ${plugin_tar##*/}
+    #       done
+    #   volumeMounts:
+    #   # Need to match the volume mount for plugins volumes
+    #   - name: mattermost-plugins
+    #     mountPath: /mattermost/plugins/
+    #   - name: mattermost-plugins-client
+    #     mountPath: /mattermost/client/plugins/
+    #   Add the extra volumes you might want to use here. Use the values you define in the extraVolumeMounts
+
+  # Add additional volumes and mounts, for example to add SAML keys in the app or other files the app server may need to access
+  extraVolumes: []
+    # - hostPath:
+    #     path: /var/log
+    #   name: varlog
+  extraVolumeMounts: []
+    # - name: varlog
+    #   mountPath: /host/var/log
+    #   readOnly: true
+  ## Allows the specification of additional environment variables for Mattermost
+  extraEnv: []
+    # See more environments variables that you can set here: https://docs.mattermost.com/administration/config-settings.html#configuration-settings
+    # for example
+    # - name: MM_SERVICESETTINGS_ENABLEMULTIFACTORAUTHENTICATION
+    #   value: "true"
+    # - name: MM_SERVICESETTINGS_ENABLECUSTOMEMOJI
+    #   value: "true"
+  ## Allows the specification of a configmap or secret to set all key-value pairs as environment variables for Mattermost
+  envFrom: []
+  ## Additional pod annotations
+  extraPodAnnotations: {}
+
+mysqlha:
+  enabled: false
+
+mattermost-elasticsearch:
+  client:
+    replicaCount: 2
+  master:
+    replicaCount: 3
+  data:
+    replicaCount: 2
+
+minio:
+  enabled: false
+
+# See https://github.com/kubernetes/charts/tree/master/stable/prometheus#configuration
+# for more configuration options
+prometheus:
+  install: false
+  rbac:
+    create: true
+  alertmanager:
+    enabled: false
+  alertmanagerFiles:
+    alertmanager.yml: {}
+  kubeStateMetrics:
+    enabled: false
+  nodeExporter:
+    enabled: false
+  pushgateway:
+    enabled: false
+
+serviceAccount:
+  create: false
+  name:
+  annotations: {}
