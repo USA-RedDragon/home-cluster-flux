@@ -211,8 +211,6 @@ mattermostApp:
         secretKeyRef:
           name: mattermost
           key: openid_secret
-    - name: MM_TEAMSETTINGS_ENABLEUSERCREATION
-      value: "false"
     # See more environments variables that you can set here: https://docs.mattermost.com/administration/config-settings.html#configuration-settings
     # for example
     # - name: MM_SERVICESETTINGS_ENABLEMULTIFACTORAUTHENTICATION
