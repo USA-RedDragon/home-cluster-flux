@@ -41,6 +41,22 @@ server:
     repository: ghcr.io/immich-app/immich-server
     tag: v1.111.0
     pullPolicy: IfNotPresent
+  env:
+    CPU_CORES: '1'
+    TZ: America/Chicago
+    IMMICH_CONFIG_FILE: /config/config.json
+    IMMICH_TRUSTED_PROXIES: 172.17.0.0/16
+    IMMICH_METRICS: 'true'
+    IMMICH_API_METRICS: 'true'
+    IMMICH_IO_METRICS: 'true'
+    IMMICH_JOB_METRICS: 'true'
+  persistence:
+    config:
+      enabled: true
+      type: secret
+      mountPath: /config
+      name: immich-config
+      readOnly: true
   ingress:
     main:
       enabled: true
@@ -67,7 +83,7 @@ server:
   resources:
     requests:
       memory: 750Mi
-      cpu: 200m
+      cpu: '1'
 
 microservices:
   enabled: true
