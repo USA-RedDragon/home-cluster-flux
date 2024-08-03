@@ -83,14 +83,6 @@
             "automerge": true
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/nginx-rtmp$"],
-            "matchUpdateTypes": [
-                "digest",
-                "pinDigest"
-            ],
-            "automerge": true
-        },
-        {
             "matchPackagePatterns": ["^ghcr.io\\/hertzg\\/rtl_433_docker$"],
             "matchUpdateTypes": [
                 "digest",
