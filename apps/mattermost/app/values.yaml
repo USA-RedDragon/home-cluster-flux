@@ -219,6 +219,11 @@ mattermostApp:
       value: mattermost@mcswain.dev
     - name: MM_EMAILSETTINGS_REPLYTOADDRESS
       value: mattermost@mcswain.dev
+    - name: MM_LICENSE
+      valueFrom:
+        secretKeyRef:
+          name: mattermost
+          key: license
     # See more environments variables that you can set here: https://docs.mattermost.com/administration/config-settings.html#configuration-settings
     # for example
     # - name: MM_SERVICESETTINGS_ENABLEMULTIFACTORAUTHENTICATION
