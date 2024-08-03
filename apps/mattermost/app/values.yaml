@@ -20,7 +20,6 @@ global:
   feedbackEmail: "mattermost@mcswain.dev"
   feedbackOrganization: "McSwain"
   smtpUsername: "mattermost"
-  smtpPassword: ""
   smtpServer: "email.mcswain.dev"
   smtpPort: "465"
   connectionSecurity: "TLS"
@@ -216,7 +215,12 @@ mattermostApp:
     #   mountPath: /host/var/log
     #   readOnly: true
   ## Allows the specification of additional environment variables for Mattermost
-  extraEnv: []
+  extraEnv:
+    - name: MM_EMAILSETTINGS_SMTPPASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: mattermost
+          key: smtp_password
     # See more environments variables that you can set here: https://docs.mattermost.com/administration/config-settings.html#configuration-settings
     # for example
     # - name: MM_SERVICESETTINGS_ENABLEMULTIFACTORAUTHENTICATION
