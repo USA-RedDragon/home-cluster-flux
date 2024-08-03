@@ -43,14 +43,6 @@
             "allowedVersions": "<=1.19.2"
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/weewx$"],
-            "matchUpdateTypes": [
-                "digest",
-                "pinDigest"
-            ],
-            "automerge": true
-        },
-        {
             "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/aredn-base$"],
             "matchUpdateTypes": [
                 "digest",
