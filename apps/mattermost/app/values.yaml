@@ -1,5 +1,5 @@
 global:
-  siteUrl: "http://mattermost.mcswain.dev"  # REQUIRED SETTING, PLEASE UPDATE
+  siteUrl: "https://mattermost.mcswain.dev"  # REQUIRED SETTING, PLEASE UPDATE
   # Use an existing secret for License credential (see secret-mattermost-license.yaml for required fields)
   existingLicenseSecret:
     name: mattermost
@@ -47,17 +47,6 @@ global:
       service:
         name: mattermost-app-jobserver
         type: ClusterIP
-      # jobserver Node selector
-      # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
-      nodeSelector: {}
-      # jobserver Affinity
-      # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-      affinity: {}
-      # jobserver Tolerations for pod assignment
-      # Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-      tolerations: []
-      # Allows the specification of additional environment variables for Mattermost Jobserver
-      extraEnv: {}
     notifications:
       # Push proxy must be configured or useHPNS must be true for push noticiations to work.
       push:
@@ -65,46 +54,6 @@ global:
         # Hosted push notification service. Requires an enterprise license.
         # More details at https://docs.mattermost.com/mobile/mobile-hpns.html.
         useHPNS: true
-    loadTest:
-      enabled: false
-      image:
-        repository: mattermost/mattermost-loadtest
-        tag: latest
-        pullPolicy: Always
-      replicaCount: 1
-      strategy:
-        type: Recreate
-        rollingUpdate: null
-      revisionHistoryLimit: 2
-      numTeams: 1
-      numChannelsPerTeam: 400
-      numUsers: 5
-      numPosts: 200
-      numEmoji: 2000
-      replyChance: 0.3
-      skipBulkLoad: false
-      testLengthMinutes: 2
-      numActiveEntities: 5
-      actionRateMilliseconds: 60000
-      actionRateMaxVarianceMilliseconds: 15000
-      linkPreviewChance: 0.2
-      customEmojiChance: 0.2
-      pprofDelayMinutes: 15
-      pprofLengthSeconds: 240
-      sendReportToMMServer: false
-      resultsServerUrl: ""
-      resultsChannelId: ""
-      resultsUsername: ""
-      resultsPassword: ""
-      # loadTest Node selector
-      # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
-      nodeSelector: {}
-      # loadTest Affinity
-      # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-      affinity: {}
-      # loadTest Tolerations for pod assignment
-      # Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-      tolerations: []
 
 initContainerImage:
   repository: appropriate/curl
