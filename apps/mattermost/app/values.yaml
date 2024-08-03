@@ -1,4 +1,5 @@
 global:
+  siteUrl: "https://mattermost.mcswain.dev"
   # Use an existing secret for License credential (see secret-mattermost-license.yaml for required fields)
   existingLicenseSecret:
     name: mattermost
