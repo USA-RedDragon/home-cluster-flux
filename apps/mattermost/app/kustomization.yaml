@@ -4,9 +4,13 @@ namespace: mattermost
 resources:
   - helm.yaml
   - postgres.yaml
+  - push-proxy-helm.yaml
 configMapGenerator:
   - name: chart-values
     files:
       - values.yaml=values.yaml
+  - name: push-proxy-chart-values
+    files:
+      - values.yaml=push-proxy-values.yaml
 configurations:
   - kustomizeconfig.yaml

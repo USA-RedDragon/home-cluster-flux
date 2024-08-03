@@ -1,0 +1,137 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: mattermost/mattermost-push-proxy
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "6.1.0@sha256:67c0d7639f5e279e2c4beb1a4dfa9e3d80457fefe6980d93ebef1d9fd0add202"
+
+imagePullSecrets:
+- name: registry-docker-hub
+nameOverride: ""
+fullnameOverride: ""
+
+args:
+- -config
+- /config/config.json
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs: []
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom: []
+# - secretRef:
+#     name: app-creds
+# - configMapRef:
+#     name: app-config
+
+env: {}
+
+# - name: SPECIAL_KEY
+#   valueFrom:
+#     configMapKeyRef:
+#       name: app-otherenv
+#       key: SPECIAL_KEY
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8066
+
+persistentVolumes:
+- name: config
+  mountPath: /config
+  readOnly: true
+  secret:
+    secretName: push-proxy
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/tls-acme: "true"
+    # cert-manager.io/cluster-issuer: cloudflare
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+    #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+  # ingressClassName: nginx
+  hosts:
+  - host: example.mcswain.dev
+    paths:
+    - port: 8066
+      path: /
+      pathType: Prefix
+  tls:
+  - secretName: example-mcswain-dev-tls
+    hosts:
+      - example.mcswain.dev
+
+probes:
+  liveness:
+    httpGet:
+      path: /version
+      port: 8066
+  readiness:
+    httpGet:
+      path: /version
+      port: 8066
+
+resources:
+  limits:
+    memory: 50Mi
+  requests:
+    cpu: 100m
+    memory: 30Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
