@@ -241,7 +241,7 @@ mattermostApp:
     - name: MM_FILESETTINGS_AMAZONS3BUCKET
       value: "mattermost"
     - name: MM_FILESETTINGS_AMAZONS3ENDPOINT
-      value: "https://s3.mcswain.dev"
+      value: "s3.mcswain.dev"
     - name: MM_FILESETTINGS_AMAZONS3SIGNV2
       value: "true"
     - name: MM_FILESETTINGS_AMAZONS3ACCESSKEYID
