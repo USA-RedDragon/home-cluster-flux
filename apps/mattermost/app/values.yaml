@@ -230,6 +230,8 @@ mattermostApp:
       value: "false"
     - name: MM_CLOUDSETTINGS_DISABLE
       value: "true"
+    - name: MM_EMAILSETTINGS_PUSHNOTIFICATIONCONTENTS
+      value: "id_loaded"
     # See more environments variables that you can set here: https://docs.mattermost.com/administration/config-settings.html#configuration-settings
     # for example
     # - name: MM_SERVICESETTINGS_ENABLEMULTIFACTORAUTHENTICATION
