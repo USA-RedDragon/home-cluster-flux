@@ -224,6 +224,12 @@ mattermostApp:
         secretKeyRef:
           name: mattermost
           key: license
+    - name: MM_LOGSETTINGS_ENABLEDIAGNOSTICS
+      value: "false"
+    - name: MM_SERVICESETTINGS_ENABLESECURITYFIXALERT
+      value: "false"
+    - name: MM_CLOUDSETTINGS_DISABLE
+      value: "true"
     # See more environments variables that you can set here: https://docs.mattermost.com/administration/config-settings.html#configuration-settings
     # for example
     # - name: MM_SERVICESETTINGS_ENABLEMULTIFACTORAUTHENTICATION
