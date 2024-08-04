@@ -170,8 +170,6 @@ mattermostApp:
       value: "true"
     - name: MM_EMAILSETTINGS_CONNECTIONSECURITY
       value: "TLS"
-    - name: MM_SERVICESETTINGS_ENABLESECURITYFIXALERT
-      value: "true"
     - name: MM_CLUSTERSETTINGS_ENABLE
       value: "true"
     - name: MM_CLUSTERSETTINGS_CLUSTERNAME
