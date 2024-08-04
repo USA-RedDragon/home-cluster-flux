@@ -40,6 +40,13 @@ global:
       service:
         name: mattermost-app-jobserver
         type: ClusterIP
+      resources:
+        limits:
+          cpu: 100m
+          memory: 200Mi
+        requests:
+          cpu: 100m
+          memory: 200Mi
     notifications:
       # Push proxy must be configured or useHPNS must be true for push noticiations to work.
       push:
@@ -65,7 +72,7 @@ mattermostApp:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 0
+      maxSurge: 1
       maxUnavailable: 1
   revisionHistoryLimit: 2
 
@@ -110,13 +117,13 @@ mattermostApp:
     # runAsGroup: 2000
     # runAsUser: 2000
 
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 300Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 300Mi
+  resources:
+    limits:
+      cpu: 100m
+      memory: 300Mi
+    requests:
+      cpu: 100m
+      memory: 300Mi
 
   extraInitContainers: []
     # Extra Container to donwload and install plugins
@@ -147,16 +154,6 @@ mattermostApp:
     #     mountPath: /mattermost/client/plugins/
     #   Add the extra volumes you might want to use here. Use the values you define in the extraVolumeMounts
 
-  # Add additional volumes and mounts, for example to add SAML keys in the app or other files the app server may need to access
-  extraVolumes: []
-    # - hostPath:
-    #     path: /var/log
-    #   name: varlog
-  extraVolumeMounts: []
-    # - name: varlog
-    #   mountPath: /host/var/log
-    #   readOnly: true
-  ## Allows the specification of additional environment variables for Mattermost
   extraEnv:
     - name: MM_EMAILSETTINGS_SMTPPASSWORD
       valueFrom:
@@ -264,47 +261,15 @@ mattermostApp:
         secretKeyRef:
           name: mattermost
           key: minio-secret-key
-    # See more environments variables that you can set here: https://docs.mattermost.com/administration/config-settings.html#configuration-settings
-    # for example
-    # - name: MM_SERVICESETTINGS_ENABLEMULTIFACTORAUTHENTICATION
-    #   value: "true"
-    # - name: MM_SERVICESETTINGS_ENABLECUSTOMEMOJI
-    #   value: "true"
-  ## Allows the specification of a configmap or secret to set all key-value pairs as environment variables for Mattermost
-  envFrom: []
-  ## Additional pod annotations
-  extraPodAnnotations: {}
 
 mysqlha:
   enabled: false
 
-mattermost-elasticsearch:
-  client:
-    replicaCount: 2
-  master:
-    replicaCount: 3
-  data:
-    replicaCount: 2
-
 minio:
   enabled: false
 
-# See https://github.com/kubernetes/charts/tree/master/stable/prometheus#configuration
-# for more configuration options
 prometheus:
   install: false
-  rbac:
-    create: true
-  alertmanager:
-    enabled: false
-  alertmanagerFiles:
-    alertmanager.yml: {}
-  kubeStateMetrics:
-    enabled: false
-  nodeExporter:
-    enabled: false
-  pushgateway:
-    enabled: false
 
 serviceAccount:
   create: false
