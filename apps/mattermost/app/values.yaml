@@ -196,6 +196,8 @@ mattermostApp:
       value: "false"
     - name: MM_OPENIDSETTINGS_ENABLE
       value: "true"
+    - name: MM_CLUSTERSETTINGS_READONLYCONFIG
+      value: "true"
     - name: MM_CLUSTERSETTINGS_ENABLEEXPERIMENTALGOSSIPENCRYPTION
       value: "true"
     - name: MM_OPENIDSETTINGS_BUTTONTEXT
