@@ -93,7 +93,7 @@ mattermostApp:
       kubernetes.io/ingress.class: nginx
       cert-manager.io/cluster-issuer: cloudflare
       nginx.ingress.kubernetes.io/proxy-buffering: "on"
-      nginx.ingress.kubernetes.io/proxy-body-size: 50m
+      nginx.ingress.kubernetes.io/proxy-body-size: 100m
       nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
       nginx.ingress.kubernetes.io/configuration-snippet: |
@@ -219,6 +219,16 @@ mattermostApp:
       value: mattermost@mcswain.dev
     - name: MM_EMAILSETTINGS_REPLYTOADDRESS
       value: mattermost@mcswain.dev
+    - name: MM_SUPPORTSETTINGS_ENABLEASKCOMMUNITYLINK
+      value: "false"
+    - name: MM_SUPPORTSETTINGS_HELPLINK
+      value: ""
+    - name: MM_SUPPORTSETTINGS_ABOUTLINK
+      value: ""
+    - name: MM_SUPPORTSETTINGS_REPORTAPROBLEMLINK
+      value: ""
+    - name: MM_PRIVACYSETTINGS_SHOWEMAILADDRESS
+      value: "false"
     - name: MM_LICENSE
       valueFrom:
         secretKeyRef:
