@@ -236,6 +236,24 @@ mattermostApp:
       value: "true"
     - name: MM_EMAILSETTINGS_PUSHNOTIFICATIONSERVER
       value: "https://push.mattermost.com"
+    - name: MM_FILESETTINGS_DRIVERNAME
+      value: "amazons3"
+    - name: MM_FILESETTINGS_AMAZONS3BUCKET
+      value: "mattermost"
+    - name: MM_FILESETTINGS_AMAZONS3ENDPOINT
+      value: "https://s3.mcswain.dev"
+    - name: MM_FILESETTINGS_AMAZONS3SIGNV2
+      value: "true"
+    - name: MM_FILESETTINGS_AMAZONS3ACCESSKEYID
+      valueFrom:
+        secretKeyRef:
+          name: mattermost
+          key: minio-access-key
+    - name: MM_FILESETTINGS_AMAZONS3SECRETACCESSKEY
+      valueFrom:
+        secretKeyRef:
+          name: mattermost
+          key: minio-secret-key
     # See more environments variables that you can set here: https://docs.mattermost.com/administration/config-settings.html#configuration-settings
     # for example
     # - name: MM_SERVICESETTINGS_ENABLEMULTIFACTORAUTHENTICATION
