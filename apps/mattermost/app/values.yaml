@@ -196,6 +196,8 @@ mattermostApp:
       value: "false"
     - name: MM_OPENIDSETTINGS_ENABLE
       value: "true"
+    - name: MM_CLUSTERSETTINGS_ENABLEEXPERIMENTALGOSSIPENCRYPTION
+      value: "true"
     - name: MM_OPENIDSETTINGS_BUTTONTEXT
       value: "Sign in with Authentik"
     - name: MM_OPENIDSETTINGS_DISCOVERYENDPOINT
