@@ -242,7 +242,7 @@ mattermostApp:
     - name: MM_EMAILSETTINGS_SENDPUSHNOTIFICATIONS
       value: "true"
     - name: MM_EMAILSETTINGS_PUSHNOTIFICATIONSERVER
-      value: "https://push.mattermost.com"
+      value: "http://push-proxy-app:8066"
     - name: MM_FILESETTINGS_DRIVERNAME
       value: "amazons3"
     - name: MM_FILESETTINGS_AMAZONS3BUCKET
