@@ -118,9 +118,6 @@ mattermostApp:
     # runAsUser: 2000
 
   resources:
-    limits:
-      cpu: 100m
-      memory: 300Mi
     requests:
       cpu: 100m
       memory: 300Mi
