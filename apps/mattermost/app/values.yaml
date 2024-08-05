@@ -100,7 +100,7 @@ mattermostApp:
       kubernetes.io/ingress.class: nginx
       cert-manager.io/cluster-issuer: cloudflare
       nginx.ingress.kubernetes.io/proxy-buffering: "on"
-      nginx.ingress.kubernetes.io/proxy-body-size: 100m
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
       nginx.ingress.kubernetes.io/configuration-snippet: |
@@ -283,6 +283,8 @@ mattermostApp:
         secretKeyRef:
           name: mattermost
           key: minio-secret-key
+    - name: MM_FILESETTINGS_MAXFILESIZE
+      value: "2147483648" # 2gb
 
 mysqlha:
   enabled: false
