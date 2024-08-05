@@ -120,6 +120,7 @@ mattermostApp:
   resources:
     limits:
       cpu: 100m
+      memory: 300Mi
     requests:
       cpu: 100m
       memory: 300Mi
@@ -284,6 +285,14 @@ mattermostApp:
           key: minio-secret-key
     - name: MM_FILESETTINGS_MAXFILESIZE
       value: "2147483648" # 2gb
+    - name: MM_SERVICESETTINGS_READTIMEOUT
+      value: "1200"
+    - name: MM_SERVICESETTINGS_WRITETIMEOUT
+      value: "1200"
+    - name: MM_SERVICESETTINGS_IDLETIMEOUT
+      value: "1200"
+    - name: MM_FILESETTINGS_AMAZONS3REQUESTTIMEOUTMILLISECONDS
+      value: "1200000"
 
 mysqlha:
   enabled: false
