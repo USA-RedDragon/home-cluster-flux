@@ -290,7 +290,7 @@ mattermostApp:
     - name: MM_SERVICESETTINGS_IDLETIMEOUT
       value: "43200"
     - name: MM_FILESETTINGS_AMAZONS3REQUESTTIMEOUTMILLISECONDS
-      value: "1200000"
+      value: "432000"
     - name: MM_SERVICESETTINGS_ENABLELOCALMODE
       value: "true"
 
