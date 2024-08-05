@@ -101,9 +101,9 @@ mattermostApp:
       cert-manager.io/cluster-issuer: cloudflare
       nginx.ingress.kubernetes.io/proxy-buffering: "on"
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
-      nginx.ingress.kubernetes.io/proxy-connect-timeout: "1200"
-      nginx.ingress.kubernetes.io/proxy-send-timeout: "1200"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "1200"
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
       nginx.ingress.kubernetes.io/configuration-snippet: |
         proxy_cache_revalidate on;
         proxy_cache_min_uses 2;
@@ -284,11 +284,11 @@ mattermostApp:
     - name: MM_FILESETTINGS_MAXFILESIZE
       value: "10737418240" # 10gb
     - name: MM_SERVICESETTINGS_READTIMEOUT
-      value: "1200"
+      value: "43200"
     - name: MM_SERVICESETTINGS_WRITETIMEOUT
-      value: "1200"
+      value: "43200"
     - name: MM_SERVICESETTINGS_IDLETIMEOUT
-      value: "1200"
+      value: "43200"
     - name: MM_FILESETTINGS_AMAZONS3REQUESTTIMEOUTMILLISECONDS
       value: "1200000"
     - name: MM_SERVICESETTINGS_ENABLELOCALMODE
