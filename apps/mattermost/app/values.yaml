@@ -293,6 +293,8 @@ mattermostApp:
       value: "1200"
     - name: MM_FILESETTINGS_AMAZONS3REQUESTTIMEOUTMILLISECONDS
       value: "1200000"
+    - name: MM_SERVICESETTINGS_ENABLELOCALMODE
+      value: "true"
 
 mysqlha:
   enabled: false
