@@ -281,7 +281,7 @@ mattermostApp:
           name: mattermost
           key: minio-secret-key
     - name: MM_FILESETTINGS_MAXFILESIZE
-      value: "2147483648" # 2gb
+      value: "10737418240" # 10gb
     - name: MM_SERVICESETTINGS_READTIMEOUT
       value: "1200"
     - name: MM_SERVICESETTINGS_WRITETIMEOUT
