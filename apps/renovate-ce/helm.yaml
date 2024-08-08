@@ -16,7 +16,7 @@ metadata:
 spec:
   chart:
     spec:
-      chart: mend-renovate-ce
+      chart: mend-renovate-enterprise-edition
       sourceRef:
         kind: HelmRepository
         name: renovate-ce-ee
