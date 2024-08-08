@@ -1,72 +1,28 @@
-image:
-  repository: ghcr.io/mend/renovate-ce
-  tag: 7.6.1-full
-  pullPolicy: IfNotPresent
+license:
+  mendRnvLicenseKey: '${LICENSE_KEY}'
+  mendRnvAcceptTos: 'y'
 
-nameOverride: ""
-fullnameOverride: ""
+renovateWorker:
+  image:
+    repository: ghcr.io/usa-reddragon/renovate-ee-worker
+    tag: v7.6.1
 
-renovate:
+  existingSecret: renovate-secrets
+  replicas: 3
+
   extraEnvVars:
+  - name: RENOVATE_REPOSITORY_CACHE
+    value: 'enabled'
   - name: RENOVATE_PAGINATE_ALL
     value: 'true'
   - name: RENOVATE_PERSIST_REPO_DATA
     value: 'true'
   - name: RENOVATE_ONBOARDING_CONFIG
     value: "{\n  \"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\",\n  \"extends\": [\n    \"local>USA-RedDragon/renovate-configs\"\n  ]\n}"
-  # You must accept the Mend Terms of Service to use the image.
-  # Please read https://www.mend.io/terms-of-service/
-  # Set this value to 'y' to consent.
-  mendRnvAcceptTos: 'y'
-
-  # Which platform Mend Renovate will connect to. For example "github" or "gitlab"
-  mendRnvPlatform: github
-
-  # API endpoint, include trailing slash. Examples: https://api.github.com/, https://gitlab.com/api/v4/
-  mendRnvEndpoint: https://api.github.com/
-
-  # Optional: Set to 'true' to enable Admin APIs. Defaults to 'false'.
-  mendRnvAdminApiEnabled: 'true'
-
-  # Existing secret with secret values with the following keys:
-  #   mendRnvLicenseKey:
-  #   mendRnvGitlabPat:
-  #   mendRnvGithubAppId:
-  #   mendRnvGithubAppKey:
-  #   mendRnvWebhookSecret:
-  #   mendRnvServerApiSecret:
-  #   githubComToken:
-  #   pipIndexUrl:
-  existingSecret: renovate-secrets
-
-  # Optional, defaults to '0 * * * *' (hourly)
-  mendRnvCronJobScheduler: '*/5 * * * *'
-
-  # Optional, defaults to '0 0,4,8,12,16,20 * * *' (every 4 hours)
-  mendRnvCronAppSync: '*/15 * * * *'
-
-  # Optional, a string of a comma separated values. (e.g. `org1/*, org2/test*, org2/test*`). Same behavior as Renovate cli 'autodiscoverFilter' feature
-  # Warning: The Renovate CLI 'autodiscover' configuration option is disabled.
-  # Repository filtering should solely rely on server-side filtering using 'mendRnvAutoDiscoverFilter'.
-  mendRnvAutoDiscoverFilter: 'kubewg-net/*,AstroGardenLLC/*,USA-RedDragon/*'
-
-  # Optional. Accepted values: 'enabled', 'discovered', and 'disabled'. Defaults to 'discovered'.
-  mendRnvEnqueueJobsOnStartup:
-
-  # Optional. Specify a directory path to save Renovate job log files.
-  # It is recommended to use an external volume to preserve history.
-  mendRnvLogHistoryDir:
-
-  # Optional: The number of days to save log files. Defaults to 30.
-  mendRnvLogHistoryTTLDays:
-
-  # Optional: Specifies a 5-part cron schedule. Defaults to `0 0 * * *` (every midnight).
-  # This cron job cleans up log history in the directory defined by `mendRnvLogHistoryDir`.
-  # It deletes any log file that exceeds the `mendRnvLogHistoryTTLDays` value.
-  mendRnvLogHistoryCleanupCron:
 
   # Optional: Sets the maximum execution duration of a Renovate CLI scan in minutes. Defaults to 60.
   mendRnvWorkerExecutionTimeout:
+
 
   # Self-hosted renovate configuration file, will be mounted as a config map
   config: |
@@ -97,27 +53,156 @@ renovate:
   # defaults to https://github.com/renovatebot/renovate
   renovateUserAgent:
 
+  logLevel: info
+
+  resources:
+    requests:
+      cpu: '1'
+      memory: 3Gi
+    limits:
+      memory: 4Gi
+
+  podSecurityContext:
+    fsGroup: 1000
+
+renovateServer:
+  image:
+    repository: ghcr.io/usa-reddragon/renovate-ee
+    tag: v7.6.1
+
+  replicas: 3
+
+  extraEnvVars:
+  - name: MEND_RNV_DATA_HANDLER_TYPE
+    value: "postgresql"
+  - name: PGDATABASE
+    valueFrom:
+      secretKeyRef:
+        name: postgresql-app
+        key: dbname
+  - name: PGHOST
+    valueFrom:
+      secretKeyRef:
+        name: postgresql-app
+        key: host
+  - name: PGPORT
+    valueFrom:
+      secretKeyRef:
+        name: postgresql-app
+        key: port
+  - name: PGSSLMODE
+    value: require
+  - name: PGUSER
+    valueFrom:
+      secretKeyRef:
+        name: postgresql-app
+        key: username
+  - name: PGPASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgresql-app
+        key: password
+  - name: MEND_RNV_REPORTING_ENABLED
+    value: 'true'
+  - name: RENOVATE_REPOSITORY_CACHE
+    value: 'enabled'
+  - name: RENOVATE_PAGINATE_ALL
+    value: 'true'
+  - name: RENOVATE_PERSIST_REPO_DATA
+    value: 'true'
+  - name: RENOVATE_ONBOARDING_CONFIG
+    value: "{\n  \"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\",\n  \"extends\": [\n    \"local>USA-RedDragon/renovate-configs\"\n  ]\n}"
+
+  mendRnvPlatform: github
+  mendRnvEndpoint: https://api.github.com/
+  mendRnvAdminApiEnabled: 'true'
+
+  # Existing secret with secret values with the following keys:
+  #   mendRnvGitlabPat:
+  #   mendRnvGithubAppId:
+  #   mendRnvGithubAppKey:
+  #   mendRnvWebhookSecret:
+  #   mendRnvServerApiSecret:
+  existingSecret: renovate-secrets
+
+  # Optional, defaults to '0 * * * *' (hourly)
+  mendRnvCronJobScheduler: '*/5 * * * *'
+
+  # Optional, defaults to '0 0,4,8,12,16,20 * * *' (every 4 hours)
+  mendRnvCronAppSync: '*/15 * * * *'
+
+  # Optional, a string of a comma separated values. (e.g. `org1/*, org2/test*, org2/test*`). Same behavior as Renovate cli 'autodiscoverFilter' feature
+  # Warning: The Renovate CLI 'autodiscover' configuration option is disabled.
+  # Repository filtering should solely rely on server-side filtering using 'mendRnvAutoDiscoverFilter'.
+  mendRnvAutoDiscoverFilter: 'kubewg-net/*,AstroGardenLLC/*,USA-RedDragon/*'
+
+  # Optional. Accepted values: 'enabled', 'discovered', and 'disabled'. Defaults to 'discovered'.
+  mendRnvEnqueueJobsOnStartup:
+
+  # Optional. Specify a directory path to save Renovate job log files.
+  # It is recommended to use an external volume to preserve history.
+  mendRnvLogHistoryDir:
+
+  # Optional: The number of days to save log files. Defaults to 30.
+  mendRnvLogHistoryTTLDays:
+
+  # Optional: Specifies a 5-part cron schedule. Defaults to `0 0 * * *` (every midnight).
+  # This cron job cleans up log history in the directory defined by `mendRnvLogHistoryDir`.
+  # It deletes any log file that exceeds the `mendRnvLogHistoryTTLDays` value.
+  mendRnvLogHistoryCleanupCron:
+
   # Set log level, defaults to 'info'. Allowed values: fatal, error, warn, info, debug, trace
   logLevel: info
 
-## Cache Persistence Parameters
-## ref: https://kubernetes.io/docs/user-guide/persistent-volumes/
+  resources:
+    requests:
+      cpu: 200m
+      memory: 100Mi
+    limits:
+      memory: 300Mi
+
+  podSecurityContext:
+    fsGroup: 1000
+
+  extraVolumes:
+    []
+    # - name: secrets-store-inline
+    #   csi:
+    #     driver: secrets-store.csi.k8s.io
+    #     readOnly: true
+    #     volumeAttributes:
+    #       secretProviderClass: "some-secret-store"
+
+  extraVolumeMounts:
+    []
+    # - name: secrets-store-inline
+    #   mountPath: "/mnt/secrets-store"
+    #   readOnly: true
+
+## data Persistence Parameters
+## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 ##
-cachePersistence:
+dataPersistence:
   ## Enable persistence using Persistent Volume Claims
-  enabled: false
+  enabled: true
   ## Persistent Volume storage class
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
-  storageClass: "longhorn-nvme"
+  storageClass: longhorn-nvme
   ## @param Persistent Volume access modes
   accessModes:
     - ReadWriteOnce
   ## Persistent Volume size
-  size: 60Gi
-  ## The name of an existing PVC to use for persistence
-  existingClaim: ""
+  size: 6Gi
+
+## Cache in Memory
+## ref: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
+## cachePersistence.enabled takes precedence, make sure its disabled
+##
+dataInMemory:
+  ## Place the cache/data in memory (tmpfs)
+  enabled: false
 
 service:
   type: ClusterIP
@@ -144,61 +229,3 @@ ingress:
     - secretName: renovate-mcswain-dev-tls
       hosts:
         - renovate.mcswain.dev
-
-resources:
-  requests:
-    cpu: '1'
-    memory: 3Gi
-  limits:
-    memory: 4Gi
-
-annotations: {}
-
-labels:
-  pods: {}
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-podSecurityContext:
-  fsGroup: 1000
-
-# This allows renovate to finish running for a repo and then gracefully exit
-terminationGracePeriodSeconds: 60
-
-livenessProbe:
-  initialDelaySeconds: 60
-  httpGet:
-    path: /health
-    port: http
-  periodSeconds: 10
-  timeoutSeconds: 1
-  failureThreshold: 3
-  successThreshold: 1
-
-readinessProbe:
-  httpGet:
-    path: /health
-    port: http
-  periodSeconds: 10
-  timeoutSeconds: 1
-  failureThreshold: 3
-  successThreshold: 1
-
-extraVolumes:
-  []
-  # - name: secrets-store-inline
-  #   csi:
-  #     driver: secrets-store.csi.k8s.io
-  #     readOnly: true
-  #     volumeAttributes:
-  #       secretProviderClass: "some-secret-store"
-
-extraVolumeMounts:
-  []
-  # - name: secrets-store-inline
-  #   mountPath: "/mnt/secrets-store"
-  #   readOnly: true
