@@ -123,6 +123,10 @@ securityContext:
 
 service:
   type: ClusterIP
+  annotations:
+    tailscale.com/hostname: "ntp"
+    tailscale.com/expose: "true"
+    tailscale.com/tags: "ntp"
   ports:
   - name: ntp
     port: 123
