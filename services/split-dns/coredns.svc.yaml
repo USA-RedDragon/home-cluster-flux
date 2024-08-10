@@ -8,7 +8,7 @@ metadata:
     #,fdeb:abba:237c::ed
     tailscale.com/expose: "true"
     tailscale.com/hostname: "dns"
-    tailscale.com/tags: "dns"
+    tailscale.com/tags: "tag:dns,tag:k8s"
 spec:
   type: LoadBalancer
   selector:
