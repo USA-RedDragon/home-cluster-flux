@@ -203,6 +203,7 @@ initContainers:
     iptables -P FORWARD DROP && \
     iptables -A INPUT -i lo -j ACCEPT && \
     iptables -A INPUT -i tunnel -j ACCEPT && \
+    iptables -A INPUT -i eth0 -j ACCEPT && \
     iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     iptables -A FORWARD -i tunnel -o eth0 -j DROP && \
     iptables -A FORWARD -i eth0 -o tunnel -j ACCEPT && \
