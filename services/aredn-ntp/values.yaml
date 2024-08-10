@@ -126,7 +126,7 @@ service:
   annotations:
     tailscale.com/hostname: "ntp"
     tailscale.com/expose: "true"
-    tailscale.com/tags: "ntp"
+    tailscale.com/tags: "tag:ntp,tag:k8s"
   ports:
   - name: ntp
     port: 123
