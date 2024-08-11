@@ -182,7 +182,7 @@ renovateServer:
 ##
 dataPersistence:
   ## Enable persistence using Persistent Volume Claims
-  enabled: true
+  enabled: false
   ## Persistent Volume storage class
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
@@ -200,7 +200,7 @@ dataPersistence:
 ##
 dataInMemory:
   ## Place the cache/data in memory (tmpfs)
-  enabled: false
+  enabled: true
 
 service:
   type: ClusterIP
