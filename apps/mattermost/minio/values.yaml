@@ -9,7 +9,7 @@ tenant:
     name: mattermost-minio
 
   pools:
-    - servers: 6
+    - servers: 5
       name: pool
       volumesPerServer: 1
       size: 30Gi
