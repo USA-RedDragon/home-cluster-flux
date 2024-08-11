@@ -51,6 +51,8 @@ env:
     secretKeyRef:
       name: tailscale
       key: authkey
+- name: XDG_CONFIG_HOME
+  value: /data
 
 podAnnotations: {}
 
