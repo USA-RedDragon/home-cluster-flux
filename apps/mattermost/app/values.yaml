@@ -314,6 +314,23 @@ mattermostApp:
       value: "generic"
     - name: MM_THEMESETTINGS_DEFAULTTHEME
       value: "onyx"
+    - name: MM_PLUGINSETTINGS_ENABLEUPLOADS
+      value: "false"
+    - name: MM_PLUGINSETTINGS_ALLOWINSECUREDOWNLOADURL
+      value: "false"
+    - name: MM_PLUGINSETTINGS_PLUGINSTATES
+      value: |-
+        {
+          "com.mattermost.calls": {
+            "Enable": true
+          },
+          "com.mattermost.nps": {
+            "Enable": false
+          },
+          "playbooks": {
+            "Enable": false
+          }
+        }
 
 mysqlha:
   enabled: false
