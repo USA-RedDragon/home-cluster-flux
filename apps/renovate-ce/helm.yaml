@@ -27,3 +27,27 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          version: v1
+          kind: Service
+          name: mend-renovate-svc-server
+        patch: |
+          - op: replace
+            path: /metadata/name
+            value: mend-renovate
+      - patch: |
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: mend-renovate-worker
+          spec:
+            template:
+              spec:
+                containers:
+                  - name: mend-renovate-worker
+                    env:
+                      - name: MEND_RNV_SERVER_HOSTNAME
+                        value: mend-renovate
