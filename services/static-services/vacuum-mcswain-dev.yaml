@@ -20,7 +20,7 @@ metadata:
   annotations:
     tailscale.com/expose: "true"
     tailscale.com/hostname: "vacuum"
-    tailscale.com/tags: "tag:k8s;tag:vacuum"
+    tailscale.com/tags: "tag:k8s,tag:vacuum"
 spec:
   internalTrafficPolicy: Cluster
   ports:
