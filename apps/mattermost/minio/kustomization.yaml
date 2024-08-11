@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: mattermost
 resources:
   - helm.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: minio-chart-values
     files:
