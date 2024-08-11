@@ -274,13 +274,13 @@ mattermostApp:
     - name: MM_FILESETTINGS_AMAZONS3ACCESSKEYID
       valueFrom:
         secretKeyRef:
-          name: mattermost
-          key: minio-access-key
+          name: mattermost-minio
+          key: CONSOLE_ACCESS_KEY
     - name: MM_FILESETTINGS_AMAZONS3SECRETACCESSKEY
       valueFrom:
         secretKeyRef:
-          name: mattermost
-          key: minio-secret-key
+          name: mattermost-minio
+          key: CONSOLE_SECRET_KEY
     - name: MM_FILESETTINGS_MAXFILESIZE
       value: "10737418240" # 10gb
     - name: MM_SERVICESETTINGS_READTIMEOUT
