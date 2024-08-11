@@ -181,6 +181,10 @@ mattermostApp:
       value: "true"
     - name: MM_SERVICESETTINGS_ALLOWCORSFROM
       value: "*"
+    - name: MM_SERVICESETTINGS_ENABLEUSERACCESSTOKENS
+      value: "true"
+    - name: MM_EXPERIMENTALSETTINGS_ENABLESHAREDCHANNELS
+      value: "true"
     - name: MM_FILESETTINGS_EXTRACTCONTENT
       value: "false"
     - name: MM_LOGSETTINGS_ENABLEFILE
@@ -254,6 +258,10 @@ mattermostApp:
           key: license
     - name: MM_LOGSETTINGS_ENABLEDIAGNOSTICS
       value: "false"
+    - name: MM_LOGSETTINGS_ENABLECOLOR
+      value: "true"
+    - name: MM_LOGSETTINGS_CONSOLEJSON
+      value: "false"
     - name: MM_SERVICESETTINGS_ENABLESECURITYFIXALERT
       value: "false"
     - name: MM_CLOUDSETTINGS_DISABLE
@@ -294,6 +302,18 @@ mattermostApp:
       value: "432000"
     - name: MM_SERVICESETTINGS_ENABLELOCALMODE
       value: "true"
+    - name: MM_FILESETTINGS_AMAZONS3TRACE
+      value: "true"
+    - name: MM_LOCALIZATIONSETTINGS_AVAILABLELOCALES
+      value: "en"
+    - name: MM_EMAILSETTINGS_SENDEMAILNOTIFICATIONS
+      value: "true"
+    - name: MM_EMAILSETTINGS_USECHANNELINEMAILNOTIFICATIONS
+      value: "true"
+    - name: MM_EMAILSETTINGS_EMAILNOTIFICATIONCONTENTSTYPE
+      value: "generic"
+    - name: MM_THEMESETTINGS_DEFAULTTHEME
+      value: "onyx"
 
 mysqlha:
   enabled: false
