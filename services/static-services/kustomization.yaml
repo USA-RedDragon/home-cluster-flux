@@ -4,6 +4,4 @@ namespace: static-services
 resources:
   - ns.yaml
   - home-mcswain-dev.yaml
-  - nas-mcswain-dev.yaml
-  - printer-mcswain-dev.yaml
   - vacuum-mcswain-dev.yaml
