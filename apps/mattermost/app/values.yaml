@@ -318,6 +318,8 @@ mattermostApp:
       value: "false"
     - name: MM_PLUGINSETTINGS_ALLOWINSECUREDOWNLOADURL
       value: "false"
+    - name: MM_FILESETTINGS_AMAZONS3UPLOADPARTSIZEBYTES
+      value: "52428800"
     - name: MM_PLUGINSETTINGS_PLUGINSTATES
       value: |-
         {
