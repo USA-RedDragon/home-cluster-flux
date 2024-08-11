@@ -54,18 +54,18 @@ env:
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 999
+podSecurityContext:
+  fsGroup: 65534
 
 securityContext:
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 999
-  # runAsGroup: 999
-  # fsGroup: 999
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  fsGroup: 65534
 
 service:
   type: ClusterIP
