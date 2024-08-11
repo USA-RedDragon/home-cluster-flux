@@ -43,6 +43,7 @@ spec:
           kind: Deployment
           metadata:
             name: mend-renovate-worker
+            namespace: renovate-ce
           spec:
             template:
               spec:
