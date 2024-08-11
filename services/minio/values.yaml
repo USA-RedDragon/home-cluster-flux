@@ -88,9 +88,10 @@ service:
 persistentVolumes:
 - name: data
   mountPath: /data
-  nfs:
-    path: /mnt/data/K8S/minio
-    server: 192.168.1.135
+  size: 1Ti
+  persistentVolumeClaim:
+    name: minio-data
+    storageClass: minio-data
 # - name: config
 #   mountPath: /config
 #   configMap:

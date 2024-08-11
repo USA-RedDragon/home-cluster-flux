@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: minio
 resources:
   - ns.yaml
+  - data.yaml
   - helm.yaml
   - s3-ingress.yaml
 configMapGenerator:
