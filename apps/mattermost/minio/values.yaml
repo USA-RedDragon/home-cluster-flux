@@ -1,6 +1,3 @@
-secrets:
-  existingSecret: mattermost-minio
-
 tenant:
   name: mattermost
 
@@ -9,7 +6,7 @@ tenant:
     tag: RELEASE.2024-07-31T05-46-26Z
 
   configuration:
-    name: mattermost
+    name: mattermost-minio
 
   pools:
     - servers: 3
