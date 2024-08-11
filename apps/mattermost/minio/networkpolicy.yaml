@@ -17,6 +17,9 @@ spec:
           kubernetes.io/metadata.name: nginx
     - namespaceSelector:
         matchLabels:
+          kubernetes.io/metadata.name: mattermost
+    - namespaceSelector:
+        matchLabels:
           kubernetes.io/metadata.name: uptime-kuma
     - namespaceSelector:
         matchLabels:
