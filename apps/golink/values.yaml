@@ -1,0 +1,110 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/tailscale/golink
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "main@sha256:06a6e41309d276d4b97d27c0037e1a07251b3bc61e5de7feb25c875fd5b9076d"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+args:
+- -sqlitedb
+- /data/golink.db
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs:
+# - name: app-config
+#   data:
+#     TEST_ENV: alive
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+
+envFrom: []
+# - configMapRef:
+#     name: app-config
+
+env:
+- name: TS_AUTHKEY
+  valueFrom:
+    secretKeyRef:
+      name: tailscale
+      key: authkey
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 999
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 999
+  # runAsGroup: 999
+  # fsGroup: 999
+
+service:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+
+persistentVolumes:
+- name: data
+  mountPath: /data
+  subPath: data
+  size: 2Gi
+  persistentVolumeClaim:
+    name: data
+    storageClass: longhorn-nvme
+
+ingress:
+  enabled: false
+
+probes: {}
+
+resources:
+  limits:
+    memory: 100Mi
+  requests:
+    cpu: 20m
+    memory: 50Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
+
