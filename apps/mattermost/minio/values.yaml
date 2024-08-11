@@ -3,7 +3,7 @@ tenant:
 
   image:
     repository: ghcr.io/usa-reddragon/minio
-    tag: RELEASE.2024-08-03T04-33-23Z
+    tag: RELEASE.2024-08-03T04-33-23Z@sha256:8783c4ca898332076ea8124cdccc6a79d6a7bc72beb5c58eb509b4e5122f321b
 
   configuration:
     name: mattermost-minio
@@ -15,19 +15,6 @@ tenant:
       size: 30Gi
       storageClassName: longhorn-ssd
       resources: { }
-      securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
-        runAsNonRoot: false
-      containerSecurityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        runAsNonRoot: false
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop:
-            - ALL
 
   metrics:
     enabled: true
