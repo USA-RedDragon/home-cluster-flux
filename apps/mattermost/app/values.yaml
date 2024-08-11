@@ -104,6 +104,7 @@ mattermostApp:
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
       nginx.ingress.kubernetes.io/configuration-snippet: |
         proxy_cache_revalidate on;
         proxy_cache_min_uses 2;
