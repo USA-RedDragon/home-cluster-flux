@@ -90,8 +90,6 @@ renovateServer:
       secretKeyRef:
         name: postgresql-app
         key: port
-  - name: PGSSLMODE
-    value: require
   - name: PGUSER
     valueFrom:
       secretKeyRef:
