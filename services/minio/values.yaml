@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: quay.io/minio/minio
+  repository: ghcr.io/usa-reddragon/minio
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: RELEASE.2024-08-03T04-33-23Z
