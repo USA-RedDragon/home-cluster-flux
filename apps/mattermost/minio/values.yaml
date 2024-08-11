@@ -44,6 +44,8 @@ tenant:
   env:
     - name: MINIO_PROMETHEUS_URL
       value: thanos-querier-app.monitoring.svc.cluster.local:9090
+    - name: MINIO_PROMETHEUS_AUTH_TYPE
+      value: none
 
 ingress:
   api:
