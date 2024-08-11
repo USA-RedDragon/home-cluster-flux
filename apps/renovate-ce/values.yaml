@@ -1,6 +1,3 @@
-nameOverride: ""
-fullnameOverride: ""
-
 license:
   mendRnvLicenseKey: '${LICENSE_KEY}'
   mendRnvAcceptTos: 'y'
