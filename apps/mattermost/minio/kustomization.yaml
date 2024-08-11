@@ -4,7 +4,7 @@ namespace: mattermost
 resources:
   - helm.yaml
 configMapGenerator:
-  - name: chart-values
+  - name: minio-chart-values
     files:
       - values.yaml=values.yaml
 configurations:
