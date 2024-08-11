@@ -9,11 +9,11 @@ tenant:
     name: mattermost-minio
 
   pools:
-    - servers: 4
+    - servers: 6
       name: pool
       volumesPerServer: 1
       size: 30Gi
-      storageClassName: longhorn-ssd
+      storageClassName: longhorn-nvme
       resources: { }
 
   metrics:
@@ -54,6 +54,7 @@ ingress:
     annotations:
       cert-manager.io/cluster-issuer: cloudflare
       kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
@@ -74,6 +75,7 @@ ingress:
     annotations:
       cert-manager.io/cluster-issuer: cloudflare
       kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
