@@ -47,7 +47,7 @@ spec:
             template:
               spec:
                 containers:
-                  - name: mend-renovate-worker
+                  - name: mend-renovate-enterprise-edition-worker
                     env:
                       - name: MEND_RNV_SERVER_HOSTNAME
-                        value: mend-renovate
+                        value: http://mend-renovate
