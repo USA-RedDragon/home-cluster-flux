@@ -212,9 +212,9 @@ mattermostApp:
     - name: MM_SUPPORTSETTINGS_FORGETPASSWORDCUSTOMLINK
       value: ""
     - name: MM_NATIVEAPPSETTINGS_APPDOWNLOADLINK
-      value: ""
+      value: "https://github.com/USA-RedDragon/mattermost-android/releases/latest"
     - name: MM_NATIVEAPPSETTINGS_ANDROIDAPPDOWNLOADLINK
-      value: ""
+      value: "https://github.com/USA-RedDragon/mattermost-android/releases/latest"
     - name: MM_NATIVEAPPSETTINGS_IOSAPPDOWNLOADLINK
       value: ""
     - name: MM_CLUSTERSETTINGS_ENABLEEXPERIMENTALGOSSIPENCRYPTION
@@ -302,12 +302,10 @@ mattermostApp:
       value: "43200000"
     - name: MM_SERVICESETTINGS_ENABLELOCALMODE
       value: "false"
-    - name: MM_FILESETTINGS_AMAZONS3TRACE
-      value: "false"
     - name: MM_LOCALIZATIONSETTINGS_AVAILABLELOCALES
       value: "en"
     - name: MM_EMAILSETTINGS_SENDEMAILNOTIFICATIONS
-      value: "false"
+      value: "true"
     - name: MM_EMAILSETTINGS_USECHANNELINEMAILNOTIFICATIONS
       value: "true"
     - name: MM_EMAILSETTINGS_EMAILNOTIFICATIONCONTENTSTYPE
