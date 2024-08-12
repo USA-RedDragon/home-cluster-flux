@@ -194,9 +194,9 @@ mattermostApp:
     - name: MM_EMAILSETTINGS_REQUIREEMAILVERIFICATION
       value: "true"
     - name: MM_EMAILSETTINGS_ENABLESIGNINWITHEMAIL
-      value: "true"
+      value: "false"
     - name: MM_EMAILSETTINGS_ENABLESIGNINWITHUSERNAME
-      value: "true"
+      value: "false"
     - name: MM_OPENIDSETTINGS_ENABLE
       value: "true"
     - name: MM_CLUSTERSETTINGS_READONLYCONFIG
@@ -301,13 +301,13 @@ mattermostApp:
     - name: MM_FILESETTINGS_AMAZONS3REQUESTTIMEOUTMILLISECONDS
       value: "43200000"
     - name: MM_SERVICESETTINGS_ENABLELOCALMODE
-      value: "true"
+      value: "false"
     - name: MM_FILESETTINGS_AMAZONS3TRACE
-      value: "true"
+      value: "false"
     - name: MM_LOCALIZATIONSETTINGS_AVAILABLELOCALES
       value: "en"
     - name: MM_EMAILSETTINGS_SENDEMAILNOTIFICATIONS
-      value: "true"
+      value: "false"
     - name: MM_EMAILSETTINGS_USECHANNELINEMAILNOTIFICATIONS
       value: "true"
     - name: MM_EMAILSETTINGS_EMAILNOTIFICATIONCONTENTSTYPE
