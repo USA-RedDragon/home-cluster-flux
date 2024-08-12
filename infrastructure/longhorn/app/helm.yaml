@@ -42,6 +42,9 @@ spec:
           effect: NoSchedule
     longhornDriver:
       priorityClass: system-cluster-critical
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
     ingress:
       enabled: true
       ingressClassName: tailscale
