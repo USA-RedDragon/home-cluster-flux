@@ -63,7 +63,7 @@ initContainerImage:
 # Mattermost deployment section.
 # Use to configure the deploymento the Mattermost app servers.
 mattermostApp:
-  replicaCount: 1
+  replicaCount: 3
   image:
     repository: ghcr.io/usa-reddragon/mattermost
     tag: v9.11.0@sha256:343bd9afd1c9dcd554c01759a18ffe9996982cc335c0656a461c3d70b1c517f9
@@ -170,7 +170,7 @@ mattermostApp:
     - name: MM_EMAILSETTINGS_CONNECTIONSECURITY
       value: "TLS"
     - name: MM_CLUSTERSETTINGS_ENABLE
-      value: "false"
+      value: "true"
     - name: MM_CLUSTERSETTINGS_CLUSTERNAME
       value: "mattermost"
     - name: MM_CLUSTERSETTINGS_USEIPADDRESS
