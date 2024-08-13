@@ -183,6 +183,10 @@ mattermostApp:
       value: "*"
     - name: MM_SERVICESETTINGS_ENABLEUSERACCESSTOKENS
       value: "false"
+    - name: MM_SERVICESETTINGS_ENABLEPOSTUSERNAMEOVERRIDE
+      value: "true"
+    - name: MM_SERVICESETTINGS_ENABLEPOSTICONOVERRIDE
+      value: "true"
     - name: MM_EXPERIMENTALSETTINGS_ENABLESHAREDCHANNELS
       value: "true"
     - name: MM_FILESETTINGS_EXTRACTCONTENT
