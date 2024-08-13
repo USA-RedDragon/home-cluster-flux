@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: monitoring
 resources:
   - ns.yaml
-  - alertmanager-telegram-bot-token.yaml
+  - alertmanager-slack-webhook-url.yaml
   - grafana-oauth.yaml
   - minio-thanos.yaml
   - ks.yaml
