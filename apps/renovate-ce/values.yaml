@@ -58,9 +58,9 @@ renovateWorker:
   resources:
     requests:
       cpu: '1'
-      memory: 3Gi
+      memory: 5Gi
     limits:
-      memory: 4Gi
+      memory: 8Gi
 
   podSecurityContext:
     fsGroup: 1000
