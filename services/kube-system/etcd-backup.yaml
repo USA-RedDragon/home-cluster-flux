@@ -31,15 +31,15 @@ spec:
               wget -O /usr/local/bin/talosctl https://github.com/siderolabs/talos/releases/download/v1.7.6/talosctl-linux-amd64 \
               && chmod +x /usr/local/bin/talosctl \
               && back=$(date +%s) \
-              && talosctl -n 192.168.1.254 etcd snapshot /tmp/etcd-alpha.kubernetes-$back.db \
-              && gzip -9 /tmp/etcd-alpha.kubernetes-$back.db \
-              && mv /tmp/etcd-alpha.kubernetes-$back.db.gz /backups/etcd-alpha.kubernetes-$back.db.gz \
-              && talosctl -n 192.168.1.253 etcd snapshot /tmp/etcd-beta.kubernetes-$back.db \
-              && gzip -9 /tmp/etcd-beta.kubernetes-$back.db \
-              && mv /tmp/etcd-beta.kubernetes-$back.db.gz /backups/etcd-beta.kubernetes-$back.db.gz \
-              && talosctl -n 192.168.1.252 etcd snapshot /tmp/etcd-gamma.kubernetes-$back.db \
-              && gzip -9 /tmp/etcd-gamma.kubernetes-$back.db \
-              && mv /tmp/etcd-gamma.kubernetes-$back.db.gz /backups/etcd-gamma.kubernetes-$back.db.gz
+              && talosctl -n 192.168.1.249 etcd snapshot /tmp/etcd-chi.kubernetes-$back.db \
+              && gzip -9 /tmp/etcd-chi.kubernetes-$back.db \
+              && mv /tmp/etcd-chi.kubernetes-$back.db.gz /backups/etcd-chi.kubernetes-$back.db.gz \
+              && talosctl -n 192.168.1.250 etcd snapshot /tmp/etcd-psi.kubernetes-$back.db \
+              && gzip -9 /tmp/etcd-psi.kubernetes-$back.db \
+              && mv /tmp/etcd-psi.kubernetes-$back.db.gz /backups/etcd-psi.kubernetes-$back.db.gz \
+              && talosctl -n 192.168.1.251 etcd snapshot /tmp/etcd-omega.kubernetes-$back.db \
+              && gzip -9 /tmp/etcd-omega.kubernetes-$back.db \
+              && mv /tmp/etcd-omega.kubernetes-$back.db.gz /backups/etcd-omega.kubernetes-$back.db.gz
           restartPolicy: OnFailure
           volumes:
           - name: backups
