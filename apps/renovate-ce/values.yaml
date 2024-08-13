@@ -68,7 +68,7 @@ renovateWorker:
 renovateServer:
   image:
     repository: ghcr.io/usa-reddragon/renovate-ee
-    tag: v7.6.1
+    tag: 8.0.0
 
   replicas: 3
 
