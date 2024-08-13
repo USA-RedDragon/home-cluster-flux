@@ -18,7 +18,7 @@ metadata:
   namespace: flux-system
 spec:
   type: slack
-  channel: "Flux"
+  channel: "#Flux"
   secretRef:
     name: mattermost
 ---
