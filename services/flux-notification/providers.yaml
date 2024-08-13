@@ -2,18 +2,6 @@
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Provider
 metadata:
-  name: telegram
-  namespace: flux-system
-spec:
-  type: telegram
-  address: https://api.telegram.org
-  channel: "202588723"
-  secretRef:
-    name: telegram-bot-token
----
-apiVersion: notification.toolkit.fluxcd.io/v1beta3
-kind: Provider
-metadata:
   name: mattermost
   namespace: flux-system
 spec:
