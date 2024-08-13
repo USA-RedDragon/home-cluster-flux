@@ -14,6 +14,17 @@ spec:
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Provider
 metadata:
+  name: mattermost
+  namespace: flux-system
+spec:
+  type: slack
+  channel: "Flux"
+  secretRef:
+    name: mattermost
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
   name: github-home-cluster-flux
   namespace: flux-system
 spec:

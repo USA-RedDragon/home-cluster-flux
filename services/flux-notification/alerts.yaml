@@ -23,6 +23,28 @@ spec:
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
+  name: mattermost
+  namespace: flux-system
+spec:
+  summary: "Home Cluster"
+  providerRef:
+    name: mattermost
+  eventSeverity: info
+  eventSources:
+    - kind: GitRepository
+      name: '*'
+    - kind: Kustomization
+      name: '*'
+    - kind: HelmRepository
+      name: '*'
+    - kind: HelmChart
+      name: '*'
+    - kind: HelmRelease
+      name: '*'
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Alert
+metadata:
   name: github-status-home-cluster-flux
   namespace: flux-system
 spec:
