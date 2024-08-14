@@ -17,3 +17,11 @@ spec:
               - NET_ADMIN
           appArmorProfile:
             type: Unconfined
+      tailscaleInitContainer:
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - NET_ADMIN
+          appArmorProfile:
+            type: Unconfined
