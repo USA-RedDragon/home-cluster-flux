@@ -11,5 +11,9 @@ spec:
         kubernetes.io/os: "linux"
       tailscaleContainer:
         securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - NET_ADMIN
           appArmorProfile:
             type: Unconfined
