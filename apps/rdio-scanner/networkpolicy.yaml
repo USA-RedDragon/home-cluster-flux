@@ -23,6 +23,10 @@ spec:
     - namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: uptime-kuma
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: trunk-recorder
   egress:
   - to:
     - namespaceSelector:
