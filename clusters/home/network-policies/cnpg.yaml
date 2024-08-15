@@ -9,6 +9,8 @@ spec:
   ingress:
     - fromEndpoints:
         - {}
+    - fromEntities:
+        - kube-apiserver
   egress:
     - toEndpoints:
         - {}
