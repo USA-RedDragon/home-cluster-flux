@@ -46,7 +46,13 @@ spec:
           path: /spec/template/metadata/labels
           value:
             policy.mcswain.dev/egress-kubeapi: "true"
+        - op: add
+          path: /spec/template/metadata/labels
+          value:
             policy.mcswain.dev/egress-namespace: "true"
+        - op: add
+          path: /spec/template/metadata/labels
+          value:
             policy.mcswain.dev/ingress-namespace: "true"
       target:
         kind: Deployment
@@ -56,8 +62,17 @@ spec:
           path: /spec/template/metadata/labels
           value:
             policy.mcswain.dev/egress-kubeapi: "true"
+        - op: add
+          path: /spec/template/metadata/labels
+          value:
             policy.mcswain.dev/egress-internet: "true"
+        - op: add
+          path: /spec/template/metadata/labels
+          value:
             policy.mcswain.dev/egress-namespace: "true"
+        - op: add
+          path: /spec/template/metadata/labels
+          value:
             policy.mcswain.dev/ingress-namespace: "true"
       target:
         kind: Deployment
