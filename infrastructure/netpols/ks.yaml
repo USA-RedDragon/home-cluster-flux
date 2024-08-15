@@ -5,7 +5,7 @@ metadata:
   namespace: kube-system
 spec:
   interval: 1h
-  targetNamespace: networkpolicies
+  targetNamespace: kube-system
   path: ./infrastructure/netpols/egress
   prune: true
   dependsOn:
@@ -23,7 +23,7 @@ metadata:
   namespace: kube-system
 spec:
   interval: 1h
-  targetNamespace: networkpolicies
+  targetNamespace: kube-system
   path: ./infrastructure/netpols/ingress
   prune: true
   dependsOn:
