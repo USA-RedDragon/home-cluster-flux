@@ -1,22 +1,15 @@
-kind: NetworkPolicy
-apiVersion: networking.k8s.io/v1
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
 metadata:
   name: trunk-recorder
   namespace: trunk-recorder
 spec:
-  podSelector:
+  endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: trunk-recorder
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: metrics
   egress:
-  - to:
-    - namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: rdio-scanner
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: rdio-scanner
+            app.kubernetes.io/instance: rdio-scanner
+
