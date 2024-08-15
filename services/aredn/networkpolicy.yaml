@@ -31,4 +31,8 @@ spec:
           - port: "51820"
             protocol: TCP
   - toCIDR:
-      - 107.208.0.0/12 # AS #7018
+      - 107.221.156.130/32
+    toPorts:
+      - ports:
+          - port: "5528"
+            protocol: UDP
