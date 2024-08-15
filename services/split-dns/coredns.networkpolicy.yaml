@@ -1,32 +1,51 @@
-kind: NetworkPolicy
-apiVersion: networking.k8s.io/v1
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
 metadata:
   name: coredns
   namespace: split-dns
 spec:
-  podSelector:
+  endpointSelector:
     matchLabels:
       app: coredns
-  policyTypes:
-  - Ingress
-  - Egress
   ingress:
-  - from:
-    - ipBlock:
-        cidr: 192.168.1.0/24
-    ports:
-    - protocol: TCP
-      port: 53
-    - protocol: UDP
-      port: 53
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: monitoring
-    ports:
-    - protocol: TCP
-      port: 9153
+  - fromCIDR:
+      - 192.168.1.0/24
+    toPorts:
+    - ports:
+      - protocol: TCP
+        port: "53"
+      - protocol: UDP
+        port: "53"
+  - fromEndpoints:
+    - matchLabels:
+        io.kubernetes.pod.namespace: monitoring
+        app.kubernetes.io/name: prometheus
+    toPorts:
+    - ports:
+      - protocol: TCP
+        port: "9153"
   egress:
-  - to:
-    - ipBlock:
-        cidr: 192.168.1.0/24
+  - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: kube-system
+          k8s-app: kube-dns
+    toPorts:
+      - ports:
+          - port: "53"
+  - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: split-dns
+          app.kubernetes.io/component: etcd
+          app.kubernetes.io/instance: etcd
+    toPorts:
+    - ports:
+      - protocol: TCP
+        port: "2379"
+  - toCIDR:
+      - 192.168.1.1/32
+    toPorts:
+    - ports:
+      - protocol: TCP
+        port: "53"
+      - protocol: UDP
+        port: "53"
