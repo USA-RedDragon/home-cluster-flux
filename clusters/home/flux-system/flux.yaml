@@ -49,6 +49,9 @@ spec:
           path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-namespace
           value: "true"
         - op: add
+          path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-coredns
+          value: "true"
+        - op: add
           path: /spec/template/metadata/labels/policy.mcswain.dev~1ingress-namespace
           value: "true"
       target:
@@ -60,6 +63,9 @@ spec:
           value: "true"
         - op: add
           path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-internet
+          value: "true"
+        - op: add
+          path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-coredns
           value: "true"
         - op: add
           path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-namespace
