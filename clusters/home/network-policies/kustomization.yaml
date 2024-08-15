@@ -8,6 +8,7 @@ resources:
   - egress-kubeapi.yaml
   - egress-lan.yaml
   - egress-namespace.yaml
+  - egress-nginx.yaml
   - ingress-namespace.yaml
   - ingress-prometheus.yaml
   - ingress-world.yaml
