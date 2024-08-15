@@ -7,12 +7,15 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: piaware
-  ingress:
-    - fromEndpoints:
+  egress:
+    - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: readsb
             app.kubernetes.io/instance: readsb
-  egress:
+      toPorts:
+        - ports:
+            - port: "30005"
+              protocol: TCP
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
