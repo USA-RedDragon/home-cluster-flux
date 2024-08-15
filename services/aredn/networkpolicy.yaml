@@ -13,9 +13,14 @@ spec:
           io.kubernetes.pod.namespace: nginx
           app.kubernetes.io/name: ingress-nginx
           app.kubernetes.io/component: controller
+  - fromEndpoints:
       - matchLabels:
-          io.kubernetes.pod.namespace: aredn
-          app.kubernetes.io/instance: wireguard-tunnel
+          io.kubernetes.pod.namespace: aredn-meshmap
+          app.kubernetes.io/instance: aredn-meshmap
+    toPorts:
+      - ports:
+          - port: "51820"
+            protocol: UDP
   egress:
   - toEndpoints:
       - matchLabels:
@@ -26,7 +31,11 @@ spec:
           - port: "53"
   - toEndpoints:
       - matchLabels:
-          io.kubernetes.pod.namespace: aredn
-          app.kubernetes.io/instance: wireguard-tunnel
+          io.kubernetes.pod.namespace: aredn-meshmap
+          app.kubernetes.io/instance: aredn-meshmap
+    toPorts:
+      - ports:
+          - port: "51820"
+            protocol: UDP
   - toCIDR:
       - 107.208.0.0/12 # AS #7018
