@@ -14,6 +14,9 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+podLabels:
+  policy.mcswain.dev/egress-coredns: "true"
+
 command:
 - /bin/sh
 - -c
