@@ -63,6 +63,14 @@ spec:
         kind: Deployment
         name: (notification-controller|source-controller)
     - patch: |
+        - op: add
+          path: /spec/template/metadata/labels
+          value:
+            policy.mcswain.dev/ingress-nginx: "true"
+      target:
+        kind: Deployment
+        name: notification-controller
+    - patch: |
         apiVersion: apps/v1
         kind: Deployment
         metadata:
