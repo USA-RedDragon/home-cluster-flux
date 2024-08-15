@@ -96,6 +96,7 @@ probes: {}
 
 podLabels:
   policy.mcswain.dev/egress-coredns: "true"
+  policy.mcswain.dev/ingress-prometheus: "true"
 
 resources:
   limits:
