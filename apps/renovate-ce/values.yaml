@@ -10,6 +10,11 @@ renovateWorker:
   existingSecret: renovate-secrets
   replicas: 3
 
+  labels:
+    pods:
+      policy.mcswain.dev/egress-coredns: "true"
+      policy.mcswain.dev/egress-internet: "true"
+
   extraEnvVars:
   - name: RENOVATE_REPOSITORY_CACHE
     value: 'enabled'
@@ -71,6 +76,13 @@ renovateServer:
     tag: 8.0.0
 
   replicas: 3
+
+  labels:
+    pods:
+      policy.mcswain.dev/egress-coredns: "true"
+      policy.mcswain.dev/egress-internet: "true"
+      policy.mcswain.dev/egress-namespace: "true"
+      policy.mcswain.dev/ingress-nginx: "true"
 
   extraEnvVars:
   - name: MEND_RNV_DATA_HANDLER_TYPE
