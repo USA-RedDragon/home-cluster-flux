@@ -19,3 +19,6 @@ spec:
       - ports:
           - port: "123"
             protocol: UDP
+      - ports:
+          - port: "5564"
+            protocol: UDP
