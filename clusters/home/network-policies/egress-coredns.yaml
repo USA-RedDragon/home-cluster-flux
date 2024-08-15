@@ -6,9 +6,9 @@ spec:
   endpointSelector:
     matchExpressions:
       - key: policy.mcswain.dev/egress-coredns
-        operator: NotIn
+        operator: In
         values:
-          - "false"
+          - "true"
   egress:
     - toEndpoints:
         - matchLabels:
