@@ -1,0 +1,16 @@
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: weewx
+  namespace: weewx
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: weewx
+  egress:
+    - toCIDR:
+        - 192.168.1.19/32
+      toPorts:
+      - ports:
+          - port: "1883"
+            protocol: TCP
