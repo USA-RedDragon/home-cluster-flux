@@ -12,25 +12,10 @@ spec:
       - matchLabels:
           io.kubernetes.pod.namespace: aredn-meshmap
           app.kubernetes.io/instance: aredn-meshmap
-    toPorts:
-      - ports:
-          - port: "51820"
-            protocol: UDP
   egress:
-  - toEndpoints:
-      - matchLabels:
-          io.kubernetes.pod.namespace: kube-system
-          k8s-app: kube-dns
-    toPorts:
-      - ports:
-          - port: "53"
   - toEndpoints:
       - matchLabels:
           io.kubernetes.pod.namespace: aredn-meshmap
           app.kubernetes.io/instance: aredn-meshmap
-    toPorts:
-      - ports:
-          - port: "51820"
-            protocol: UDP
   - toCIDR:
       - 107.208.0.0/12 # AS #7018
