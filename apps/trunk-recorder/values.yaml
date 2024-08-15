@@ -94,6 +94,9 @@ ingress:
 
 probes: {}
 
+podLabels:
+  policy.mcswain.dev/egress-coredns: "true"
+
 resources:
   limits:
     memory: 300Mi
