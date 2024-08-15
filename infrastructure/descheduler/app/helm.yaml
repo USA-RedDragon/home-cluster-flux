@@ -29,3 +29,6 @@ spec:
   values:
     serviceMonitor:
       enabled: true
+    podLabels:
+      policy.mcswain.dev/egress-coredns: "true"
+      policy.mcswain.dev/egress-kubeapi: "true"
