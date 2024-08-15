@@ -16,7 +16,7 @@ spec:
         kind: HelmRepository
         name: usa-reddragon
         namespace: flux-system
-      version: '0.1.31'
+      version: '0.1.32'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
@@ -39,7 +39,7 @@ spec:
         kind: HelmRepository
         name: usa-reddragon
         namespace: flux-system
-      version: '0.1.31'
+      version: '0.1.32'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
