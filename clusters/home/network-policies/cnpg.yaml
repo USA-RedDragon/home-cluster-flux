@@ -8,9 +8,7 @@ spec:
       cnpg.io/cluster: postgresql
   ingress:
     - fromEndpoints:
-        - matchLabels:
-            cnpg.io/cluster: postgresql
+        - {}
   egress:
     - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: minio
+        - {}
