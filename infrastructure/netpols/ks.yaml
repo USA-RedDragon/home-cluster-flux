@@ -9,8 +9,8 @@ spec:
   path: ./infrastructure/netpols/egress
   prune: true
   dependsOn:
-    - name: nginx
-      namespace: ingress-nginx
+    - name: ingress-nginx
+      namespace: nginx
   sourceRef:
     kind: GitRepository
     namespace: flux-system
@@ -27,8 +27,8 @@ spec:
   path: ./infrastructure/netpols/ingress
   prune: true
   dependsOn:
-    - name: nginx
-      namespace: ingress-nginx
+    - name: ingress-nginx
+      namespace: nginx
   sourceRef:
     kind: GitRepository
     namespace: flux-system
