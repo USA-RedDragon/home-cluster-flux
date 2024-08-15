@@ -7,3 +7,4 @@ resources:
 - secrets.yaml
 - sensitive.yaml
 - services.yaml
+- network-policies.yaml
