@@ -1,0 +1,16 @@
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: cnpg
+spec:
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: postgresql
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            cnpg.io/cluster: postgresql
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: minio
