@@ -34,9 +34,6 @@ spec:
       patches:
       - patch: |
           - op: add
-            path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-kubeapi
-            value: "true"
-          - op: add
             path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-namespace
             value: "true"
           - op: add
