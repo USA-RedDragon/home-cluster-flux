@@ -67,6 +67,11 @@ env:
 podAnnotations:
   app.kubernetes.io/name: weewx
 
+podLabels:
+  policy.mcswain.dev/egress-coredns: "true"
+  policy.mcswain.dev/egress-internet: "true"
+  policy.mcswain.dev/ingress-nginx: "true"
+
 podSecurityContext:
   fsGroup: 1000
 
