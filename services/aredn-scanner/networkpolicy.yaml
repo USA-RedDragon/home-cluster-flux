@@ -12,3 +12,14 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: rdio-scanner
             app.kubernetes.io/instance: rdio-scanner
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
+      toPorts:
+      - ports:
+          - port: "5525"
+            protocol: TCP

@@ -1,32 +1,21 @@
-kind: NetworkPolicy
-apiVersion: networking.k8s.io/v1
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
 metadata:
   name: aredn-ntp
   namespace: aredn-ntp
 spec:
-  podSelector:
+  endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: aredn-ntp
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.16.0.0/16
-    - ipBlock:
-        cidr: 172.17.0.0/16
-    - ipBlock:
-        cidr: 172.18.0.0/16
   egress:
-  - to:
-    - ipBlock:
-        cidr: 107.208.0.0/12 # AS #7018
-    - ipBlock:
-        cidr: 10.0.0.0/8
-    - ipBlock:
-        cidr: 172.16.0.0/16
-    - ipBlock:
-        cidr: 172.17.0.0/16
-    - ipBlock:
-        cidr: 172.18.0.0/16
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
+      toPorts:
+      - ports:
+          - port: "123"
+            protocol: UDP
