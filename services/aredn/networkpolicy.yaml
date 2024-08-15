@@ -10,11 +10,6 @@ spec:
   ingress:
   - fromEndpoints:
       - matchLabels:
-          io.kubernetes.pod.namespace: nginx
-          app.kubernetes.io/name: ingress-nginx
-          app.kubernetes.io/component: controller
-  - fromEndpoints:
-      - matchLabels:
           io.kubernetes.pod.namespace: aredn-meshmap
           app.kubernetes.io/instance: aredn-meshmap
     toPorts:
