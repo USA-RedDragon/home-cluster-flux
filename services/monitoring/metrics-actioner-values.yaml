@@ -17,6 +17,11 @@ fullnameOverride: ""
 args:
 - --config=/config/config.yaml
 
+podLabels:
+  policy.mcswain.dev/egress-kubeapi: "true"
+  policy.mcswain.dev/egress-coredns: "true"
+  policy.mcswain.dev/egress-internet: "true"
+
 serviceAccountName: "metrics-actioner"
 
 secrets: []
