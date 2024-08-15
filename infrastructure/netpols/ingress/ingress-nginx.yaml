@@ -12,21 +12,3 @@ spec:
             io.kubernetes.pod.namespace: nginx
             app.kubernetes.io/name: ingress-nginx
             app.kubernetes.io/component: controller
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: egress-nginx
-  namespace: nginx
-spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: ingress-nginx
-      app.kubernetes.io/component: controller
-  ingress:
-    - fromEndpoints:
-        - matchLabels:
-            policy.mcswain.dev/ingress-nginx: "true"
-          matchExpressions:
-            - key: io.kubernetes.pod.namespace
-              operator: Exists
