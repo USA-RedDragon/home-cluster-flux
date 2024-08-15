@@ -29,3 +29,25 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
+  postRenderers:
+  - kustomize:
+      patches:
+      - patch: |
+          - op: add
+            path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-kubeapi
+            value: "true"
+          - op: add
+            path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-namespace
+            value: "true"
+          - op: add
+            path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-coredns
+            value: "true"
+          - op: add
+            path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-internet
+            value: "true"
+          - op: add
+            path: /spec/template/metadata/labels/policy.mcswain.dev~1ingress-nginx
+            value: "true"
+        target:
+          kind: Deployment
+          name: mattermost-mattermost-enterprise-edition
