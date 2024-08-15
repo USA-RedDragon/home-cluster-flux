@@ -44,44 +44,36 @@ spec:
     - patch: |
         - op: add
           path: /spec/template/metadata/labels
-          value:
-            policy.mcswain.dev/egress-kubeapi: "true"
+          value: {"policy.mcswain.dev/egress-kubeapi": "true"}
         - op: add
           path: /spec/template/metadata/labels
-          value:
-            policy.mcswain.dev/egress-namespace: "true"
+          value: {"policy.mcswain.dev/egress-namespace": "true"}
         - op: add
           path: /spec/template/metadata/labels
-          value:
-            policy.mcswain.dev/ingress-namespace: "true"
+          value: {"policy.mcswain.dev/ingress-namespace": "true"}
       target:
         kind: Deployment
         name: (kustomize-controller|helm-controller)
     - patch: |
         - op: add
           path: /spec/template/metadata/labels
-          value:
-            policy.mcswain.dev/egress-kubeapi: "true"
+          value: {"policy.mcswain.dev/egress-kubeapi": "true"}
         - op: add
           path: /spec/template/metadata/labels
-          value:
-            policy.mcswain.dev/egress-internet: "true"
+          value: {"policy.mcswain.dev/egress-internet": "true"}
         - op: add
           path: /spec/template/metadata/labels
-          value:
-            policy.mcswain.dev/egress-namespace: "true"
+          value: {"policy.mcswain.dev/egress-namespace": "true"}
         - op: add
           path: /spec/template/metadata/labels
-          value:
-            policy.mcswain.dev/ingress-namespace: "true"
+          value: {"policy.mcswain.dev/ingress-namespace": "true"}
       target:
         kind: Deployment
         name: (notification-controller|source-controller)
     - patch: |
         - op: add
           path: /spec/template/metadata/labels
-          value:
-            policy.mcswain.dev/ingress-nginx: "true"
+          value: {"policy.mcswain.dev/ingress-nginx": "true"}
       target:
         kind: Deployment
         name: notification-controller
