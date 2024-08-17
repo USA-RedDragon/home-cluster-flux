@@ -309,7 +309,7 @@ mattermostApp:
     - name: MM_LOCALIZATIONSETTINGS_AVAILABLELOCALES
       value: "en"
     - name: MM_EMAILSETTINGS_SENDEMAILNOTIFICATIONS
-      value: "true"
+      value: "false"
     - name: MM_EMAILSETTINGS_USECHANNELINEMAILNOTIFICATIONS
       value: "true"
     - name: MM_EMAILSETTINGS_EMAILNOTIFICATIONCONTENTSTYPE
