@@ -322,6 +322,10 @@ mattermostApp:
       value: "false"
     - name: MM_FILESETTINGS_AMAZONS3UPLOADPARTSIZEBYTES
       value: "52428800"
+    - name: MM_SERVICESETTINGS_ENABLEAPIUSERDELETION
+      value: "true"
+    - name: MM_SERVICESETTINGS_ENABLEAPICHANNELDELETION
+      value: "true"
     - name: MM_PLUGINSETTINGS_PLUGINSTATES
       value: |-
         {
