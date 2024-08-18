@@ -3,7 +3,7 @@ tenant:
 
   image:
     repository: ghcr.io/usa-reddragon/minio
-    tag: RELEASE.2024-08-03T04-33-23Z@sha256:8783c4ca898332076ea8124cdccc6a79d6a7bc72beb5c58eb509b4e5122f321b
+    tag: RELEASE.2024-08-17T01-24-54Z@sha256:f373e6fd7dbe9018982ef7867018564a6100123c5b055ffe8dc1c338295d58d3
 
   configuration:
     name: mattermost-minio
