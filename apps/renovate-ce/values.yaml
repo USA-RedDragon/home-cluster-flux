@@ -25,6 +25,16 @@ renovateWorker:
     value: 'true'
   - name: RENOVATE_ONBOARDING_CONFIG
     value: "{\n  \"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\",\n  \"extends\": [\n    \"local>USA-RedDragon/renovate-configs\"\n  ]\n}"
+  - name: GHCR_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: ghcr-username
+  - name: GHCR_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: ghcr-password
 
   # Optional: Sets the maximum execution duration of a Renovate CLI scan in minutes. Defaults to 60.
   mendRnvWorkerExecutionTimeout:
@@ -39,6 +49,14 @@ renovateWorker:
       cacheHardTtlMinutes: 5,
       onboardingConfigFileName: ".github/renovate.json",
       onboardingRebaseCheckbox: true,
+      hostRules: [
+        {
+          hostType: 'docker',
+          matchHost: 'ghcr.io',
+          username: process.env.GHCR_USERNAME,
+          password: process.env.GHCR_PASSWORD,
+        },
+      ],
     }
 
   # Npmrc file. Will be mounted as a secret
@@ -124,6 +142,16 @@ renovateServer:
     value: 'true'
   - name: RENOVATE_ONBOARDING_CONFIG
     value: "{\n  \"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\",\n  \"extends\": [\n    \"local>USA-RedDragon/renovate-configs\"\n  ]\n}"
+  - name: GHCR_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: username
+  - name: GHCR_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: password
 
   mendRnvPlatform: github
   mendRnvEndpoint: https://api.github.com/
@@ -219,16 +247,10 @@ dataInMemory:
 service:
   type: ClusterIP
   port: 80
-  annotations:
-    {}
-    # cloud.google.com/load-balancer-type: "Internal"
+  annotations: {}
 
 ingress:
   enabled: true
-
-  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
-  # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
-  # ingressClassName: nginx
 
   annotations:
     kubernetes.io/tls-acme: "true"
