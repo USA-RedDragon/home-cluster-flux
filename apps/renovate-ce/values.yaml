@@ -146,12 +146,12 @@ renovateServer:
     valueFrom:
       secretKeyRef:
         name: renovate-secrets
-        key: username
+        key: ghcr-username
   - name: GHCR_PASSWORD
     valueFrom:
       secretKeyRef:
         name: renovate-secrets
-        key: password
+        key: ghcr-password
 
   mendRnvPlatform: github
   mendRnvEndpoint: https://api.github.com/
