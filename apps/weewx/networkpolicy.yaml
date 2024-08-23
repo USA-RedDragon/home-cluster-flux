@@ -14,3 +14,7 @@ spec:
       - ports:
           - port: "1883"
             protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/instance: pushgateway
