@@ -23,6 +23,8 @@ spec:
       toPorts:
         - ports:
             - port: "53"
+    - toEntities:
+      - world
   ingress:
     - fromEndpoints:
       - matchLabels:
