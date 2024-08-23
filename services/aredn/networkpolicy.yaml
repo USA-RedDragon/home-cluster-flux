@@ -18,12 +18,12 @@ spec:
             protocol: UDP
   egress:
   - toEndpoints:
-    - matchLabels:
-        io.kubernetes.pod.namespace: kube-system
-        k8s-app: kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
+      - matchLabels:
+          io.kubernetes.pod.namespace: kube-system
+          k8s-app: kube-dns
+    toPorts:
+      - ports:
+          - port: "53"
   - toEndpoints:
       - matchLabels:
           io.kubernetes.pod.namespace: aredn-meshmap
