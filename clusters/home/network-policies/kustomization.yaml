@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: kube-system
 resources:
   - cnpg.yaml
+  - coredns.yaml
   - egress-coredns.yaml
   - egress-internet.yaml
   - egress-kubeapi.yaml
