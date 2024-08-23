@@ -10,26 +10,21 @@ spec:
   ingress:
   - fromEndpoints:
       - matchLabels:
-          k8s:io.kubernetes.pod.namespace: aredn-meshmap
-          k8s:app.kubernetes.io/instance: aredn-meshmap
+          io.kubernetes.pod.namespace: aredn-meshmap
+          app.kubernetes.io/instance: aredn-meshmap
     toPorts:
       - ports:
           - port: "51820"
             protocol: UDP
-          - port: "51820"
-            protocol: TCP
   egress:
   - toEndpoints:
       - matchLabels:
-          k8s:io.kubernetes.pod.namespace: aredn-meshmap
-          k8s:app.kubernetes.io/instance: aredn-meshmap
+          io.kubernetes.pod.namespace: aredn-meshmap
+          app.kubernetes.io/instance: aredn-meshmap
     toPorts:
       - ports:
           - port: "51820"
             protocol: UDP
-      - ports:
-          - port: "51820"
-            protocol: TCP
   - toCIDR:
       - 107.221.156.130/32
     toPorts:
