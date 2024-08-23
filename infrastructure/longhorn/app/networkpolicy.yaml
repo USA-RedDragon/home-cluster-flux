@@ -35,9 +35,6 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: minio
             app.kubernetes.io/instance: minio
-      toPorts:
-        - ports:
-            - port: "443"
     - toEntities:
         - host
     - toEntities:
