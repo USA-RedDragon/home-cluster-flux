@@ -26,9 +26,6 @@ spec:
   driftDetection:
     mode: enabled
   values:
-    networkPolicies:
-      enabled: true
-      type: ""
     persistence:
       defaultClass: false
       defaultClassReplicaCount: 2
