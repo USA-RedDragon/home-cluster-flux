@@ -9,7 +9,6 @@ spec:
   - fromEndpoints:
       - matchLabels:
           io.kubernetes.pod.namespace: aredn-meshmap
-          app.kubernetes.io/instance: aredn-meshmap
   egress:
   - toEndpoints:
       - matchLabels:
@@ -21,7 +20,6 @@ spec:
   - toEndpoints:
       - matchLabels:
           io.kubernetes.pod.namespace: aredn-meshmap
-          app.kubernetes.io/instance: aredn-meshmap
   - toCIDR:
       - 107.221.156.130/32
     toPorts:
