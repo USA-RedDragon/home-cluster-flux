@@ -152,7 +152,8 @@ initContainers:
   - |
     export GW=$(ip r list match default | awk '{ print $3 }') && \
     wg-quick down wg0 || true && \
-    ip link del wg0 || true
+    ip link del wg0 || true && \
+    wg-quick up /etc/wireguard/wg0.conf
   securityContext:
     privileged: true
     capabilities:
