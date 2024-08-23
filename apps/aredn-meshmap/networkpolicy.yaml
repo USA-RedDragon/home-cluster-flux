@@ -4,14 +4,11 @@ metadata:
   name: aredn-meshmap
   namespace: aredn-meshmap
 spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/instance: aredn-meshmap
+  endpointSelector: {}
   egress:
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: aredn
-            app.kubernetes.io/instance: wireguard-tunnel
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: nginx
@@ -28,7 +25,6 @@ spec:
     - fromEndpoints:
       - matchLabels:
           io.kubernetes.pod.namespace: aredn
-          app.kubernetes.io/instance: wireguard-tunnel
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: nginx
