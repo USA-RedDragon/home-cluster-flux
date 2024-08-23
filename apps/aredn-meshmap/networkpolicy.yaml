@@ -16,8 +16,18 @@ spec:
         - ports:
             - port: "51820"
               protocol: UDP
-            - port: "51820"
-              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: nginx
+            app.kubernetes.io/name: ingress-nginx
+            app.kubernetes.io/component: controller
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
   ingress:
     - fromEndpoints:
       - matchLabels:
@@ -27,5 +37,8 @@ spec:
         - ports:
             - port: "51820"
               protocol: UDP
-            - port: "51820"
-              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: nginx
+            app.kubernetes.io/name: ingress-nginx
+            app.kubernetes.io/component: controller
