@@ -4,11 +4,9 @@ metadata:
   name: wireguard-tunnel
   namespace: aredn
 spec:
-  endpointSelector: {}
-  ingress:
-  - fromEndpoints:
-      - matchLabels:
-          io.kubernetes.pod.namespace: aredn-meshmap
+  endpointSelector:
+    matchLabels: 
+      app.kubernetes.io/instance: wireguard-tunnel
   egress:
   - toEndpoints:
       - matchLabels:

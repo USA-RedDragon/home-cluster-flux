@@ -4,7 +4,9 @@ metadata:
   name: aredn-meshmap
   namespace: aredn-meshmap
 spec:
-  endpointSelector: {}
+  endpointSelector:
+    matchLabels: 
+      app.kubernetes.io/instance: aredn-meshmap
   egress:
     - toEndpoints:
         - matchLabels:
