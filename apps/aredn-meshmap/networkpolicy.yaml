@@ -10,12 +10,8 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: aredn
-            k8s:app.kubernetes.io/instance: wireguard-tunnel
-      toPorts:
-        - ports:
-            - port: "51820"
-              protocol: UDP
+            io.kubernetes.pod.namespace: aredn
+            app.kubernetes.io/instance: wireguard-tunnel
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: nginx
@@ -31,8 +27,8 @@ spec:
   ingress:
     - fromEndpoints:
       - matchLabels:
-          k8s:io.kubernetes.pod.namespace: aredn
-          k8s:app.kubernetes.io/instance: wireguard-tunnel
+          io.kubernetes.pod.namespace: aredn
+          app.kubernetes.io/instance: wireguard-tunnel
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: nginx
