@@ -14,10 +14,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-podLabels:
-  policy.mcswain.dev/egress-coredns: "true"
-  policy.mcswain.dev/ingress-nginx: "true"
-  policy.mcswain.dev/egress-nginx: "true"
+podLabels: {}
 
 command: []
 
