@@ -17,7 +17,7 @@ spec:
             io.kubernetes.pod.namespace: nginx
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: tailscale
+            io.kubernetes.pod.namespace: tailscale-operator
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: monitoring
