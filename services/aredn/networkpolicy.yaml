@@ -1,0 +1,33 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: wireguard-tunnel
+  namespace: aredn
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: wireguard-tunnel
+  ingress:
+  - fromEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: aredn-meshmap
+          app.kubernetes.io/instance: aredn-meshmap
+    toPorts:
+      - ports:
+          - port: "51820"
+            protocol: UDP
+  egress:
+  - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: aredn-meshmap
+          app.kubernetes.io/instance: aredn-meshmap
+    toPorts:
+      - ports:
+          - port: "51820"
+            protocol: UDP
+  - toCIDR:
+      - 107.221.156.130/32
+    toPorts:
+      - ports:
+          - port: "5528"
+            protocol: UDP
