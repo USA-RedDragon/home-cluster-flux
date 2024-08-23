@@ -33,10 +33,6 @@ spec:
       - matchLabels:
           k8s:io.kubernetes.pod.namespace: aredn
           k8s:app.kubernetes.io/instance: wireguard-tunnel
-      toPorts:
-        - ports:
-            - port: "51820"
-              protocol: UDP
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: nginx
