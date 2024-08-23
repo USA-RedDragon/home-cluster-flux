@@ -17,6 +17,9 @@ spec:
             io.kubernetes.pod.namespace: nginx
     - fromEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: tailscale
+    - fromEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: monitoring
   egress:
     - toEndpoints:
@@ -28,6 +31,13 @@ spec:
       toPorts:
         - ports:
             - port: "53"
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: minio
+            app.kubernetes.io/instance: minio
+      toPorts:
+        - ports:
+            - port: "443"
     - toEntities:
         - host
     - toEntities:
