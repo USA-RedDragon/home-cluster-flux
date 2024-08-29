@@ -37,6 +37,8 @@ renovateWorker:
         key: aws-secret-access-key
   - name: RENOVATE_S3_PATH_STYLE
     value: 'true'
+  - name: LOG_LEVEL
+    value: 'debug'
   - name: RENOVATE_ONBOARDING_CONFIG
     value: "{\n  \"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\",\n  \"extends\": [\n    \"local>USA-RedDragon/renovate-configs\"\n  ]\n}"
   - name: GHCR_USERNAME
@@ -167,13 +169,9 @@ renovateServer:
         key: password
   - name: MEND_RNV_REPORTING_ENABLED
     value: 'true'
-  - name: MEND_RNV_LOG_HISTORY_S3
-    value: 's3://renovate/log-history'
   - name: MEND_RNV_S3_FORCE_PATH_STYLE
     value: 'true'
-  - name: MEND_RNV_LOG_HISTORY_TTL_DAYS
-    value: '30'
-  - name:  AWS_ACCESS_KEY_ID
+  - name: AWS_ACCESS_KEY_ID
     valueFrom:
       secretKeyRef:
         name: renovate-secrets
@@ -223,8 +221,12 @@ renovateServer:
   # It is recommended to use an external volume to preserve history.
   mendRnvLogHistoryDir:
 
+  mendRnvLogHistoryS3: 's3://renovate/log-history'
+
   # Optional: The number of days to save log files. Defaults to 30.
-  mendRnvLogHistoryTTLDays:
+  mendRnvLogHistoryTTLDays: 30
+
+  mendRnvSyncOnStartup: false
 
   # Optional: Specifies a 5-part cron schedule. Defaults to `0 0 * * *` (every midnight).
   # This cron job cleans up log history in the directory defined by `mendRnvLogHistoryDir`.
