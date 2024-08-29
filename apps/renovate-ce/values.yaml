@@ -5,7 +5,7 @@ license:
 renovateWorker:
   image:
     repository: ghcr.io/usa-reddragon/renovate-ee-worker
-    tag: 8.1.1
+    version: 8.1.1
 
   existingSecret: renovate-secrets
   replicas: 3
@@ -88,11 +88,23 @@ renovateWorker:
 
   podSecurityContext:
     fsGroup: 1000
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
 
 renovateServer:
   image:
     repository: ghcr.io/usa-reddragon/renovate-ee
-    tag: 8.1.1
+    version: 8.1.1
 
   replicas: 3
 
@@ -166,7 +178,12 @@ renovateServer:
   existingSecret: renovate-secrets
 
   # Optional, defaults to '0 * * * *' (hourly)
-  mendRnvCronJobScheduler: '*/5 * * * *'
+  mendRnvCronJobSchedulerAll: '*/5 * * * *'
+
+  mendRnvDiskUsageWarnThreshold: 0
+
+  # Optional. valid values: 'disabled', 'enabled', 'managed' and default to unset (see documentation)
+  mendRnvForksProcessing: enabled
 
   # Optional, defaults to '0 0,4,8,12,16,20 * * *' (every 4 hours)
   mendRnvCronAppSync: '*/15 * * * *'
@@ -203,6 +220,18 @@ renovateServer:
 
   podSecurityContext:
     fsGroup: 1000
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
 
   extraVolumes:
     []
