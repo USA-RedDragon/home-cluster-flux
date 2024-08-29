@@ -185,7 +185,7 @@ renovateServer:
       secretKeyRef:
         name: renovate-secrets
         key: aws-secret-access-key
-  - name: MEND_RNV_S3_ENDPOINT
+  - name: AWS_ENDPOINT_URL_S3
     value: 'https://s3.mcswain.dev'
 
   mendRnvPlatform: github
