@@ -23,6 +23,24 @@ renovateWorker:
     value: 'true'
   - name: RENOVATE_PERSIST_REPO_DATA
     value: 'true'
+  - name: RENOVATE_PLATFORM_COMMIT
+    value: 'true'
+  - name: RENOVATE_REPOSITORY_CACHE_TYPE
+    value: 's3://renovate/repository-cache'
+  - name: RENOVATE_S3_ENDPOINT
+    value: 'https://s3.mcswain.dev'
+  - name: AWS_ACCESS_KEY_ID
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: aws-access-key-id
+  - name: AWS_SECRET_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: aws-secret-access-key
+  - name: RENOVATE_S3_PATH_STYLE
+    value: 'true'
   - name: RENOVATE_ONBOARDING_CONFIG
     value: "{\n  \"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\",\n  \"extends\": [\n    \"local>USA-RedDragon/renovate-configs\"\n  ]\n}"
   - name: GHCR_USERNAME
@@ -45,7 +63,6 @@ renovateWorker:
     module.exports = {
       // Enter self-hosted configuration options here.
       // https://docs.renovatebot.com/self-hosted-configuration/
-      autodiscover: true,
       cacheHardTtlMinutes: 5,
       onboardingConfigFileName: ".github/renovate.json",
       onboardingRebaseCheckbox: true,
@@ -146,24 +163,6 @@ renovateServer:
         key: password
   - name: MEND_RNV_REPORTING_ENABLED
     value: 'true'
-  - name: RENOVATE_REPOSITORY_CACHE
-    value: 'enabled'
-  - name: RENOVATE_PAGINATE_ALL
-    value: 'true'
-  - name: RENOVATE_PERSIST_REPO_DATA
-    value: 'true'
-  - name: RENOVATE_ONBOARDING_CONFIG
-    value: "{\n  \"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\",\n  \"extends\": [\n    \"local>USA-RedDragon/renovate-configs\"\n  ]\n}"
-  - name: GHCR_USERNAME
-    valueFrom:
-      secretKeyRef:
-        name: renovate-secrets
-        key: ghcr-username
-  - name: GHCR_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: renovate-secrets
-        key: ghcr-password
 
   mendRnvPlatform: github
   mendRnvEndpoint: https://api.github.com/
