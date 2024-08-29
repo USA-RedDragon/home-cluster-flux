@@ -165,6 +165,26 @@ renovateServer:
         key: password
   - name: MEND_RNV_REPORTING_ENABLED
     value: 'true'
+  - name: MEND_RNV_LOG_HISTORY_S3
+    value: 's3://renovate/log-history/'
+  - name: MEND_RNV_S3_FORCE_PATH_STYLE
+    value: 'true'
+  - name: MEND_RNV_LOG_HISTORY_TTL_DAYS
+    value: '30'
+  - name:  AWS_ACCESS_KEY_ID
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: aws-access-key-id
+  - name: AWS_REGION
+    value: 'us-east-1'
+  - name: AWS_SECRET_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: aws-secret-access-key
+  - name: MEND_RNV_S3_ENDPOINT
+    value: 'https://s3.mcswain.dev'
 
   mendRnvPlatform: github
   mendRnvEndpoint: https://api.github.com/
