@@ -168,7 +168,7 @@ renovateServer:
   - name: MEND_RNV_REPORTING_ENABLED
     value: 'true'
   - name: MEND_RNV_LOG_HISTORY_S3
-    value: 's3://renovate/log-history/'
+    value: 's3://renovate/log-history'
   - name: MEND_RNV_S3_FORCE_PATH_STYLE
     value: 'true'
   - name: MEND_RNV_LOG_HISTORY_TTL_DAYS
