@@ -14,10 +14,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-podLabels:
-  policy.mcswain.dev/egress-coredns: "true"
-  policy.mcswain.dev/ingress-nginx: "true"
-
 secrets: []
 # - name: app-creds
 #   data:
