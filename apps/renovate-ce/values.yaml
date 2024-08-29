@@ -194,7 +194,7 @@ renovateServer:
   mendRnvAutoDiscoverFilter: 'kubewg-net/*,AstroGardenLLC/*,USA-RedDragon/*'
 
   # Optional. Accepted values: 'enabled', 'discovered', and 'disabled'. Defaults to 'discovered'.
-  mendRnvEnqueueJobsOnStartup:
+  mendRnvEnqueueJobsOnStartup: disabled
 
   # Optional. Specify a directory path to save Renovate job log files.
   # It is recommended to use an external volume to preserve history.
