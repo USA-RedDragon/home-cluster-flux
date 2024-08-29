@@ -121,6 +121,8 @@ service:
   ports:
   - name: http
     port: 8080
+  - name: health
+    port: 8888
 
 persistentVolumes:
 - name: config
@@ -147,7 +149,16 @@ ingress:
     hosts:
     - kromgo.mcswain.dev
 
-probes: {}
+
+probes:
+  liveness:
+    httpGet:
+      path: /healthz
+      port: health
+  readiness:
+    httpGet:
+      path: /readyz
+      port: health
 
 resources:
   limits:
