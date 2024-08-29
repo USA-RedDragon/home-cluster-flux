@@ -26,7 +26,7 @@ renovateWorker:
   - name: RENOVATE_PLATFORM_COMMIT
     value: 'true'
   - name: RENOVATE_REPOSITORY_CACHE_TYPE
-    value: 's3://renovate/repository-cache'
+    value: 's3://renovate/repository-cache/'
   - name: RENOVATE_S3_ENDPOINT
     value: 'https://s3.mcswain.dev'
   - name: AWS_ACCESS_KEY_ID
