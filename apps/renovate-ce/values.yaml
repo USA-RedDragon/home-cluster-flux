@@ -34,6 +34,8 @@ renovateWorker:
       secretKeyRef:
         name: renovate-secrets
         key: aws-access-key-id
+  - name: AWS_REGION
+    value: 'us-east-1'
   - name: AWS_SECRET_ACCESS_KEY
     valueFrom:
       secretKeyRef:
