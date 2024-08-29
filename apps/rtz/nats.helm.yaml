@@ -24,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: nats
-      version: '1.2.2'
+      version: '1.2.3'
       interval: 1m0s
   values:
     global:
