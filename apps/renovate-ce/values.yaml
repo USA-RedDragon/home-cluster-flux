@@ -49,6 +49,16 @@ renovateWorker:
       secretKeyRef:
         name: renovate-secrets
         key: ghcr-password
+  - name: DOCKER_HUB_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: docker-hub-username
+  - name: DOCKER_HUB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: docker-hub-password
 
   # Optional: Sets the maximum execution duration of a Renovate CLI scan in minutes. Defaults to 60.
   mendRnvWorkerExecutionTimeout:
@@ -68,6 +78,12 @@ renovateWorker:
           matchHost: 'ghcr.io',
           username: process.env.GHCR_USERNAME,
           password: process.env.GHCR_PASSWORD,
+        },
+        {
+          hostType: 'docker',
+          matchHost: 'docker.io',
+          username: process.env.DOCKER_HUB_USERNAME,
+          password: process.env.DOCKER_HUB_PASSWORD,
         },
       ],
     }
