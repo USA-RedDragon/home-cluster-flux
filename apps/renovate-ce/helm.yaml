@@ -42,11 +42,30 @@ spec:
           apiVersion: apps/v1
           kind: Deployment
           metadata:
+            name: mend-renovate-server
+            namespace: renovate-ce
+          spec:
+            template:
+              spec:
+                strategy:
+                  type: RollingUpdate
+                  rollingUpdate:
+                    maxSurge: 1
+                    maxUnavailable: 1
+      - patch: |
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
             name: mend-renovate-worker
             namespace: renovate-ce
           spec:
             template:
               spec:
+                strategy:
+                  type: RollingUpdate
+                  rollingUpdate:
+                    maxSurge: 1
+                    maxUnavailable: 1
                 containers:
                   - name: mend-renovate-enterprise-edition-worker
                     env:
