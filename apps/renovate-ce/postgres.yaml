@@ -14,7 +14,7 @@ spec:
       source: postgresql
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/renovate-ce"
+      destinationPath: "s3://cnpg/renovate-ce-1"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -27,7 +27,7 @@ spec:
         compression: gzip
   externalClusters:
   - barmanObjectStore:
-      destinationPath: s3://cnpg/atuin
+      destinationPath: s3://cnpg/renovate-ce
       endpointURL: https://s3.mcswain.dev
       s3Credentials:
         accessKeyId:
