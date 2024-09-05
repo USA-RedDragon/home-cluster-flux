@@ -87,6 +87,8 @@ env:
   value: rtz-uploads
 - name: PERSISTENCE__UPLOADS__S3_OPTIONS__ENDPOINT
   value: https://s3.mcswain.dev
+- name: PERSISTENCE__UPLOADS__S3_OPTIONS__REGION
+  value: us-east-1
 - name: AWS_ACCESS_KEY_ID
   valueFrom:
     secretKeyRef:
