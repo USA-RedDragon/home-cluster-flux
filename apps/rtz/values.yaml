@@ -82,9 +82,21 @@ env:
       key: host
 
 - name: PERSISTENCE__UPLOADS__DRIVER
-  value: "filesystem"
-- name: PERSISTENCE__UPLOADS__FILESYSTEM_OPTIONS__DIRECTORY
-  value: "/uploads"
+  value: "s3"
+- name: PERSISTENCE__UPLOADS__S3_OPTIONS__BUCKET
+  value: rtz-uploads
+- name: PERSISTENCE__UPLOADS__S3_OPTIONS__ENDPOINT
+  value: https://s3.mcswain.dev
+- name: AWS_ACCESS_KEY_ID
+  valueFrom:
+    secretKeyRef:
+      name: rtz
+      key: minio-access-key
+- name: AWS_SECRET_ACCESS_KEY
+  valueFrom:
+    secretKeyRef:
+      name: rtz
+      key: minio-secret-key
 
 - name: LOG_LEVEL
   value: "info"
