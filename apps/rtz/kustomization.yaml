@@ -7,7 +7,6 @@ resources:
   - prom.yaml
   - postgres.yaml
   - nats.helm.yaml
-  - uploads.yaml
 configMapGenerator:
   - name: chart-values
     files:
