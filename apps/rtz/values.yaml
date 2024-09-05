@@ -182,13 +182,7 @@ service:
   - name: metrics
     port: 8081
 
-persistentVolumes:
-- name: uploads
-  mountPath: /uploads
-  size: 1Ti
-  persistentVolumeClaim:
-    name: rtz-uploads
-    storageClass: rtz-uploads
+persistentVolumes: []
 
 ingress:
   enabled: true
