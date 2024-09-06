@@ -13,7 +13,7 @@ spec:
           - name: registry-docker-hub
           containers:
           - name: backup
-            image: alpine:3.20.2
+            image: alpine:3.20.3
             imagePullPolicy: IfNotPresent
             volumeMounts:
             - name: backups
