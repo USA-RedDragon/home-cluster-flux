@@ -32,3 +32,16 @@ spec:
         enabled: false
       labels:
         policy.mcswain.dev/egress-world: "true"
+        policy.mcswain.dev/egress-coredns: "true"
+        policy.mcswain.dev/egress-namespace: "true"
+        policy.mcswain.dev/egress-lan: "true"
+        policy.mcswain.dev/ingress-namespace: "true"
+        policy.mcswain.dev/ingress-nodes: "true"
+    controller:
+      labels:
+        policy.mcswain.dev/egress-kubeapi: "true"
+        policy.mcswain.dev/egress-coredns: "true"
+        policy.mcswain.dev/egress-namespace: "true"
+        policy.mcswain.dev/egress-lan: "true"
+        policy.mcswain.dev/ingress-namespace: "true"
+        policy.mcswain.dev/ingress-nodes: "true"

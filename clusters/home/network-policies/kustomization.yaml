@@ -11,5 +11,6 @@ resources:
   - egress-namespace.yaml
   - egress-nginx.yaml
   - ingress-namespace.yaml
+  - ingress-nodes.yaml
   - ingress-prometheus.yaml
   - ingress-world.yaml
