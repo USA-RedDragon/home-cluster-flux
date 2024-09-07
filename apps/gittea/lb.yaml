@@ -4,10 +4,10 @@ metadata:
   name: gitea-ssh
   namespace: gitea
   annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.1.231
-    #,fdeb:abba:237c::e7
+    lbipam.cilium.io/ips: 192.168.254.2
 spec:
   type: LoadBalancer
+  loadBalancerClass: io.cilium/l2-announcer
   selector:
     app.kubernetes.io/instance: gitea
   ports:

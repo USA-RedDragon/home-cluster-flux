@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: palworld
   annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.1.241
-    #,fdeb:abba:237c::f1
+    lbipam.cilium.io/ips: 192.168.254.6
 spec:
   type: LoadBalancer
+  loadBalancerClass: io.cilium/l2-announcer
   selector:
     app.kubernetes.io/instance: palworld
   ports:
