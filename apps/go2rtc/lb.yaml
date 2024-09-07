@@ -4,10 +4,10 @@ metadata:
   name: go2rtc
   namespace: go2rtc
   annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.1.240
-    #,fdeb:abba:237c::f0
+    lbipam.cilium.io/ips: 192.168.254.3
 spec:
   type: LoadBalancer
+  loadBalancerClass: io.cilium/l2-announcer
   selector:
     app.kubernetes.io/instance: go2rtc-real
   ports:
