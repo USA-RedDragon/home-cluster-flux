@@ -30,3 +30,5 @@ spec:
     speaker:
       frr:
         enabled: false
+      labels:
+        policy.mcswain.dev/egress-world: "true"
