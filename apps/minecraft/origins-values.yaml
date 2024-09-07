@@ -82,7 +82,6 @@ service:
   annotations:
     metallb.universe.tf/loadBalancerIPs: 192.168.1.235
     #,fdeb:abba:237c::eb
-  externalTrafficPolicy: Local
 
 persistentVolumes:
 - name: data

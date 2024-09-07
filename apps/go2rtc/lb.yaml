@@ -15,4 +15,3 @@ spec:
       protocol: TCP
       port: 1984
       targetPort: 1984
-  externalTrafficPolicy: Local
