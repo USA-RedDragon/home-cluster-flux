@@ -18,4 +18,3 @@ spec:
       protocol: UDP
       port: 27015
       targetPort: 27015
-  externalTrafficPolicy: Local

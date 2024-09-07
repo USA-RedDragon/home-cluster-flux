@@ -15,4 +15,3 @@ spec:
       protocol: TCP
       port: 1935
       targetPort: 1935
-  externalTrafficPolicy: Local
