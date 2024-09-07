@@ -39,7 +39,7 @@ spec:
       allowSnippetAnnotations: true
       service:
         annotations:
-          lbipam.cilium.io/ips: 192.168.254.7
+          lbipam.cilium.io/ips: 192.168.254.0
         loadBalancerClass: io.cilium/l2-announcer
         # ipFamilyPolicy: PreferDualStack
         # ipFamilies:
