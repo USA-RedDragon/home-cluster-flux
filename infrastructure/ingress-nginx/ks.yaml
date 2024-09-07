@@ -9,8 +9,6 @@ spec:
   dependsOn:
     - name: cert-manager-certs
       namespace: cert-manager
-    - name: metallb-system-config
-      namespace: metallb-system
   path: ./infrastructure/ingress-nginx/app
   prune: true
   sourceRef:
