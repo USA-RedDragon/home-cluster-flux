@@ -268,6 +268,8 @@ mattermostApp:
       value: "false"
     - name: MM_SERVICESETTINGS_ENABLESECURITYFIXALERT
       value: "false"
+    - name: MM_SERVICESETTINGS_COLLAPSEDTHREADS
+      value: "default_off"
     - name: MM_CLOUDSETTINGS_DISABLE
       value: "true"
     - name: MM_EMAILSETTINGS_PUSHNOTIFICATIONCONTENTS
