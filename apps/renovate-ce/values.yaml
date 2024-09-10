@@ -5,7 +5,7 @@ license:
 renovateWorker:
   image:
     repository: ghcr.io/usa-reddragon/renovate-ee-worker
-    version: 8.1.1
+    version: 8.2.0
 
   existingSecret: renovate-secrets
   replicas: 3
