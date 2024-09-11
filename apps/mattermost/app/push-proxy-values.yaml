@@ -8,7 +8,7 @@ image:
   repository: mattermost/mattermost-push-proxy
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "6.1.0@sha256:67c0d7639f5e279e2c4beb1a4dfa9e3d80457fefe6980d93ebef1d9fd0add202"
+  tag: "6.2.0@sha256:94547fe78b026cdd6e6aa545b0225033aa5aeef938d2daa5d7fc91614102464d"
 
 imagePullSecrets:
 - name: registry-docker-hub
