@@ -39,7 +39,7 @@ server:
   enabled: true
   image:
     repository: ghcr.io/immich-app/immich-server
-    tag: v1.114.0
+    tag: v1.115.0
     pullPolicy: IfNotPresent
   env:
     CPU_CORES: '1'
@@ -89,7 +89,7 @@ microservices:
   enabled: true
   image:
     repository: ghcr.io/immich-app/immich-server
-    tag: v1.114.0
+    tag: v1.115.0
     pullPolicy: IfNotPresent
   resources:
     requests:
