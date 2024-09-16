@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: tfe
+  namespace: tfe
+spec:
+  endpointSelector:
+    matchLabels:
+      app: terraform-enterprise
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: minio
+            app.kubernetes.io/instance: minio
+    # Allow egress to pods in the same namespace, namely Redis and Postgres
+    - toEndpoints:
+        - {}
+  ingress:
+    # Allow ingress from nginx ingress controller
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: nginx
+            app.kubernetes.io/instance: nginx
