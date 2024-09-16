@@ -30,6 +30,9 @@ spec:
       toPorts:
         - ports:
             - port: "443"
+    # Allow egress to CloudFront (for TF Releases) AS16509
+    - toCIDR:
+        - 100.20.0.0/14
   ingress:
     # Allow ingress (responses) from kube-dns
     - fromEndpoints:
