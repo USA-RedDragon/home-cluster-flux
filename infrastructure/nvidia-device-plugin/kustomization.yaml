@@ -4,3 +4,4 @@ namespace: nvidia
 resources:
   - ns.yaml
   - ks.yaml
+  - runtimeclass.yaml
