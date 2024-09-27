@@ -8,7 +8,6 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: plex
-  
   chart:
     spec:
       chart: app
@@ -16,7 +15,7 @@ spec:
         kind: HelmRepository
         name: usa-reddragon
         namespace: flux-system
-      version: '0.1.32'
+      version: '0.1.33'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
