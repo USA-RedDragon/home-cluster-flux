@@ -6,8 +6,6 @@ resources:
   - redis-helm.yaml
   - hashicorp-helm.yaml
   - postgres.yaml
-  - networkpolicy.yaml
-  - networkpolicy-agents.yaml
 configMapGenerator:
   - name: chart-values-redis
     files:
