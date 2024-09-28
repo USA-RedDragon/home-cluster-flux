@@ -14,7 +14,7 @@ namespaceOverride: ""
 image:
   repository: quay.io/prometheus/pushgateway
   # if not set appVersion field from Chart.yaml is used
-  tag: v1.9.0
+  tag: v1.10.0
   pullPolicy: IfNotPresent
 
 # Optional pod imagePullSecrets
