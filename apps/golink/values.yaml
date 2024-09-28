@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/tailscale/golink
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:29599f9707216318ab71ac1f41dca920f5a7033e361582190e4cd9bec1453980"
+  tag: "main@sha256:142f10e325224b2e1af76d448c481adef490087fd3b56fe03e470d6f28b3f266"
 
 imagePullSecrets: []
 nameOverride: ""
