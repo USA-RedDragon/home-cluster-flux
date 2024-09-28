@@ -20,7 +20,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: renovate-ce-ee
-      version: 2.2.0
+      version: 2.3.1
   interval: 60m0s
   driftDetection:
     mode: enabled
