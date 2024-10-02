@@ -50,6 +50,14 @@ ingress:
 service:
   type: ClusterIP
 
+agentWorkerPodTemplate:
+  spec:
+    containers:
+      - name: tfe-agent
+        env:
+        - name: TESTING_ENV_VAR_TEMPLATE
+          value: "This is a test environment variable"
+
 env:
   secretRefs:
     - name: tfe-secrets
