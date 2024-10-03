@@ -14,9 +14,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-podLabels:
-  policy.mcswain.dev/egress-coredns: "true"
-
 command:
 - /bin/sh
 - -c
@@ -217,9 +214,7 @@ initContainers:
     iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o tunnel -j SNAT --to-source 10.54.25.6 && \
     iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE && \
     ip r add 172.17.0.0/16 via $GW dev eth0 && \
-    ip r add 172.18.0.0/16 via $GW dev eth0 && \
-    ip r del default && \
-    ip r add default via $GW dev eth0 priority 32769
+    ip r add 172.18.0.0/16 via $GW dev eth0
   volumeMounts:
   - mountPath: /etc/wireguard
     name: server-wireguard-config
