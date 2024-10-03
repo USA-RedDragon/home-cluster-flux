@@ -219,7 +219,7 @@ initContainers:
     ip r add 172.17.0.0/16 via $GW dev eth0 && \
     ip r add 172.18.0.0/16 via $GW dev eth0 && \
     ip r del default && \
-    ip r add default via $GW dev eth0 priority 32767
+    ip r add default via $GW dev eth0 priority 32769
   volumeMounts:
   - mountPath: /etc/wireguard
     name: server-wireguard-config
