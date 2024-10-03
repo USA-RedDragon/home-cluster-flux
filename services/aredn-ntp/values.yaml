@@ -199,7 +199,7 @@ initContainers:
   - -c
   - |
     set -x && \
-    sleep 10 && \
+    export GW=$(ip r list match default | awk '{ print $3 }') && \
     ip l del tunnel 2>/dev/null || true && \
     wg-quick up /etc/wireguard/tunnel.conf && \
     ip6tables -P INPUT DROP && \
@@ -215,7 +215,9 @@ initContainers:
     iptables -A FORWARD -i eth0 -o tunnel -j ACCEPT && \
     iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o tunnel -j SNAT --to-source 10.54.25.6 && \
-    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE
+    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE && \
+    ip r add 172.17.0.0/16 via $GW dev eth0 && \
+    ip r add 172.18.0.0/16 via $GW dev eth0
   volumeMounts:
   - mountPath: /etc/wireguard
     name: server-wireguard-config
