@@ -22,6 +22,7 @@ command:
 - -c
 - |
   ip addr add 10.54.25.6/32 dev eth0 \
+  && ip r del default dev tunnel \
   && sysctl -w net.ipv4.ip_forward=1 \
   && rsyslogd -n & \
   cat /etc/resolv.conf > /tmp/resolv.conf.auto \
@@ -214,8 +215,7 @@ initContainers:
     iptables -A FORWARD -i eth0 -o tunnel -j ACCEPT && \
     iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o tunnel -j SNAT --to-source 10.54.25.6 && \
-    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE && \
-    ip r del default dev tunnel
+    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE
   volumeMounts:
   - mountPath: /etc/wireguard
     name: server-wireguard-config
