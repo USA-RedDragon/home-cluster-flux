@@ -15,9 +15,9 @@ spec:
     toPorts:
     - ports:
       - protocol: TCP
-        port: "53"
+        port: "5353"
       - protocol: UDP
-        port: "53"
+        port: "5353"
   - fromEntities:
       - world
   - fromEndpoints:
