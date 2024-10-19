@@ -1,0 +1,135 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/usa-reddragon/arlo-cam-api
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "main@sha256:7ad0b3d191d1db345cf836f683d385195b0b775b3f8cc05f2d86e48c1c20e748"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# command:
+# - /scripts/estimate_rtlsdr_ppm.sh
+
+secrets: []
+# - name: app-creds
+#   data:
+#     API_KEY: 'asdfgh123456'
+#     SMTP_PASSWORD: '123456asdfgh'
+# - name: app-secret-key
+#   data:
+#     SECRET_KEY: ashdfsfa
+# - name: app-keyfile
+#   data:
+#     keyfile.txt: |
+#       using
+#       multiline
+#       strings
+
+configs:
+- name: arlo-cam-api-config
+  data:
+    config.yaml: |
+      WifiCountryCode: "US"
+      VideoAntiFlickerRate: 60
+      VideoQualityDefault: "default"
+      NotifyOnMotionAlert: true
+      NotifyOnMotionTimeoutAlert: false
+      NotifyOnAudioAlert: false
+      NotifyOnButtonPressAlert: true
+      MotionRecordingWebHookUrl: ""
+      MotionTimeoutWebHookUrl: ""
+      AudioRecordingWebHookUrl: ""
+      UserRecordingWebHookUrl: ""
+      StatusUpdateWebHookUrl: ""
+      RegistrationWebHookUrl: ""
+      ButtonPressWebHookUrl: ""
+# - name: app-otherenv
+#   data:
+#     SPECIAL_KEY: here
+# - name: app-configfile
+#   data:
+#     test.ini: |
+#       [test]
+#       value=1
+
+envFrom: []
+# - configMapRef:
+#     name: app-config
+
+env: []
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 999
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 999
+  # runAsGroup: 999
+  # fsGroup: 999
+
+service:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 5000
+  - name: cam-api
+    port: 4000
+    protocol: UDP
+  annotations:
+    lbipam.cilium.io/ips: 192.168.254.10
+  loadBalancerClass: io.cilium/l2-announcer
+
+persistentVolumes:
+- name: config
+  mountPath: /opt/arlo-cam-api
+  subPath: config.yaml
+  size: 1Gi
+  configMap:
+    name: arlo-cam-api-config
+
+ingress:
+  enabled: true
+  ingressClassName: tailscale
+  hosts:
+  - host: arlo-cam-api
+    paths:
+    - port: 5000
+      path: /
+      pathType: Prefix
+  tls:
+  - hosts:
+      - arlo-cam-api
+
+probes: {}
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 100Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+lifecycle: {}
+  # postStart:
+  #   exec:
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #       - cp /tmp/file /var/app/file
