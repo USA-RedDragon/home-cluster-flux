@@ -50,6 +50,6 @@ spec:
     toPorts:
     - ports:
       - protocol: TCP
-        port: "5353"
+        port: "5354"
       - protocol: UDP
-        port: "5353"
+        port: "5354"
