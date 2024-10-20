@@ -92,7 +92,7 @@ config: |
     front_door:
       ffmpeg:
         inputs:
-          - path: rtsp://mediamtx-app.mediamtx.svc.cluster.local:554/front
+          - path: rtsp://mediamtx-app.mediamtx.svc.cluster.local:8554/front
             roles:
               - detect
 
