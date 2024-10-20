@@ -109,6 +109,12 @@ config: |
           - path: rtsp://mediamtx-app.mediamtx.svc.cluster.local:8554/garage
             roles:
               - detect
+    back_porch:
+      ffmpeg:
+        inputs:
+          - path: rtsp://mediamtx-app.mediamtx.svc.cluster.local:8554/back
+            roles:
+              - detect
 
 # Probes configuration
 probes:
