@@ -1,0 +1,29 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: tfe
+  namespace: tfe-agents
+spec:
+  endpointSelector:
+    matchLabels: 
+      app: terraform-enterprise
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tfe
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: nginx
+            app.kubernetes.io/name: ingress-nginx
+            app.kubernetes.io/component: controller
+  ingress:
+    - fromEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: tfe
