@@ -4,3 +4,4 @@ namespace: device-plugin
 resources:
   - ns.yaml
   - ks.yaml
+  - coral-nfd.yaml
