@@ -61,6 +61,7 @@ fullnameOverride: ""
 # -- frigate configuration - see [Docs](https://docs.frigate.video/configuration/index) for more info
 config: |
   mqtt:
+    enabled: False
     # Required: host name
     host: mqtt.server.com
     # Optional: port (default: shown below)
@@ -79,6 +80,9 @@ config: |
     password: password
     # Optional: interval in seconds for publishing stats (default: shown below)
     stats_interval: 60
+
+  auth:
+    enabled: False
 
   tls:
     # Optional: Enable TLS for port 8971 (default: shown below)
