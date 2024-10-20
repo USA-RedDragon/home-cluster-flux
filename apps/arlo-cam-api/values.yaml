@@ -101,6 +101,13 @@ persistentVolumes:
   subPath: config.yaml
   configMap:
     name: arlo-cam-api-config
+- name: db
+  mountPath: /opt/arlo-cam-api/arlo.db
+  subPath: arlo.db
+  size: 1Gi
+  persistentVolumeClaim:
+    name: db
+    storageClass: longhorn-ssd
 
 ingress:
   enabled: true
