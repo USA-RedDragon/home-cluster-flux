@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/arlo-cam-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:0b851d87708e6d34a5e6d571327b279ee5ba6f62a98e88cfcf146ea1d5c6567c"
+  tag: "main@sha256:f7044ce0fa6697ae535ff228ddce285c1152e02d8e580e7d6575054d2a8293a6"
 
 imagePullSecrets: []
 nameOverride: ""
