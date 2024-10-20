@@ -4,7 +4,6 @@ namespace: arlo-cam-api
 resources:
   - ns.yaml
   - helm.yaml
-  - prom.yaml
 configMapGenerator:
   - name: chart-values
     files:
