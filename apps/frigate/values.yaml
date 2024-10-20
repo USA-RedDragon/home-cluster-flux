@@ -115,6 +115,12 @@ config: |
           - path: rtsp://mediamtx-app.mediamtx.svc.cluster.local:8554/back
             roles:
               - detect
+    side:
+      ffmpeg:
+        inputs:
+          - path: rtsp://mediamtx-app.mediamtx.svc.cluster.local:8554/side
+            roles:
+              - detect
 
 # Probes configuration
 probes:
