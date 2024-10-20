@@ -85,8 +85,12 @@ service:
   ports:
   - name: http
     port: 5000
-  - name: cam-api
+  - name: cam-api-udo
     port: 4000
+    protocol: UDP
+  - name: cam-api-tcp
+    port: 4000
+    protocol: TCP
   annotations:
     lbipam.cilium.io/ips: 192.168.254.10
   loadBalancerClass: io.cilium/l2-announcer
