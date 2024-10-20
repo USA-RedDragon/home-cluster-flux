@@ -167,7 +167,7 @@ ingress:
 
   # -- list of TLS configurations
   tls:
-    hosts:
+    - hosts:
       - frigate
   #  - secretName: chart-example-tls
   #    hosts:
