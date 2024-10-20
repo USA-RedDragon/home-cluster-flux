@@ -94,9 +94,8 @@ service:
 
 persistentVolumes:
 - name: config
-  mountPath: /opt/arlo-cam-api
+  mountPath: /opt/arlo-cam-api/config.yaml
   subPath: config.yaml
-  size: 1Gi
   configMap:
     name: arlo-cam-api-config
 
