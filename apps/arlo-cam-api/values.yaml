@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/arlo-cam-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:7ad0b3d191d1db345cf836f683d385195b0b775b3f8cc05f2d86e48c1c20e748"
+  tag: "main@sha256:0b851d87708e6d34a5e6d571327b279ee5ba6f62a98e88cfcf146ea1d5c6567c"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -63,7 +63,9 @@ envFrom: []
 # - configMapRef:
 #     name: app-config
 
-env: []
+env:
+- name: DB_PATH
+  value: /db/arlo.db
 
 podAnnotations: {}
 
@@ -102,8 +104,7 @@ persistentVolumes:
   configMap:
     name: arlo-cam-api-config
 - name: db
-  mountPath: /opt/arlo-cam-api
-  subPath: arlo.db
+  mountPath: /db
   size: 1Gi
   persistentVolumeClaim:
     name: db
