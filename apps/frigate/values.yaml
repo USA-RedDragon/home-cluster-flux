@@ -27,7 +27,7 @@ envFromSecrets: []
 
 coral:
   # -- enables the use of a Coral device
-  enabled: false
+  enabled: true
   # -- path on the host to which to mount the Coral device
   hostPath: /dev/bus/usb
 
