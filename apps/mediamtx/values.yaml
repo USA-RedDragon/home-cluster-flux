@@ -78,6 +78,8 @@ service:
   ports:
   - name: http
     port: 8889
+  - name: rtsp
+    port: 8554
 
 persistentVolumes:
 - name: config
