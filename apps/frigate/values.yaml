@@ -89,11 +89,9 @@ config: |
     enabled: False
 
   detectors:
-    # coral:
-    #   type: edgetpu
-    #   device: usb
-    cpu1:
-      type: cpu
+    coral:
+      type: edgetpu
+      device: usb
 
   cameras:
     # Name of your camera
