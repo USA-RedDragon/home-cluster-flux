@@ -41,6 +41,12 @@ configs:
           sourceAnyPortEnable: yes
           sourceOnDemandCloseAfter: 1s
           maxReaders: 1
+        garage:
+          source: rtsp://172.38.1.185/live
+          sourceOnDemand: yes
+          sourceAnyPortEnable: yes
+          sourceOnDemandCloseAfter: 1s
+          maxReaders: 1
 # - name: app-otherenv
 #   data:
 #     SPECIAL_KEY: here
