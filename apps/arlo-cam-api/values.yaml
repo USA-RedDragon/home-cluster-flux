@@ -102,7 +102,7 @@ persistentVolumes:
   configMap:
     name: arlo-cam-api-config
 - name: db
-  mountPath: /opt/arlo-cam-api/arlo.db
+  mountPath: /opt/arlo-cam-api
   subPath: arlo.db
   size: 1Gi
   persistentVolumeClaim:
