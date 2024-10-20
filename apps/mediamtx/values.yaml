@@ -53,6 +53,12 @@ configs:
           sourceAnyPortEnable: yes
           sourceOnDemandCloseAfter: 1s
           maxReaders: 1
+        side:
+          source: rtsp://172.38.1.156/live
+          sourceOnDemand: yes
+          sourceAnyPortEnable: yes
+          sourceOnDemandCloseAfter: 1s
+          maxReaders: 1
 # - name: app-otherenv
 #   data:
 #     SPECIAL_KEY: here
