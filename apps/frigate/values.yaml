@@ -281,7 +281,8 @@ securityContext: {}
   # privileged: true
 
 # -- Node Selector configuration
-nodeSelector: {}
+nodeSelector:
+  google.feature.node.kubernetes.io/coral: "true"
 
 # -- Node toleration configuration
 tolerations: []
