@@ -43,6 +43,14 @@ persistence:
     type: nfs
     path: /mnt/data/nvr
     server: 192.168.1.135
+  data:
+    type: persistentVolumeClaim
+    storageClass: longhorn-ssd
+    size: 2Gi
+    advancedMounts:
+      scrypted:
+        scrypted:
+          - path: /server/volume
 
 ingress:
   nvr:
