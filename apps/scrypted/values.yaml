@@ -33,7 +33,7 @@ service:
     controller: scrypted
     ports:
       http:
-        port: 11080
+        port: 11443
       cloud:
         port: 12443
 
@@ -58,19 +58,6 @@ persistence:
           - path: /server/volume
 
 ingress:
-  tailscale:
-    enabled: true
-    className: tailscale
-    hosts:
-      - host: nvr
-        paths:
-          - path: /
-            service:
-              identifier: scrypted
-              port: http
-    tls:
-      - hosts:
-          - nvr
   nginx:
     enabled: true
     className: nginx
@@ -78,6 +65,7 @@ ingress:
       kubernetes.io/tls-acme: "true"
       cert-manager.io/cluster-issuer: cloudflare
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     hosts:
       - host: nvr.mcswain.dev
         paths:
