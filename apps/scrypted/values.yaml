@@ -7,6 +7,8 @@ controllers:
     rollingUpdate:
       unavailable: 1
       surge: 1
+    nodeSelector:
+      google.feature.node.kubernetes.io/coral: "true"
     containers:
       scrypted:
         image:
@@ -23,8 +25,6 @@ controllers:
         env:
           - name: SCRYPTED_NVR_VOLUME
             value: /nvr
-        nodeSelector:
-          google.feature.node.kubernetes.io/coral: "true"
         resources:
           requests:
             cpu: 100m
