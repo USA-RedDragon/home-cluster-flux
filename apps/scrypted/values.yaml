@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  scrypted:
+    strategy: RollingUpdate
+    replicas: 1
+    rollingUpdate:
+      unavailable: 1
+      surge: 1
+    containers:
+      scrypted:
+        image:
+          repository: ghcr.io/koush/scrypted
+          tag: v0.120.0-jammy-full@sha256:8df04a75c64b3c27c4e07ca11f88d3ea235673f2095f8ebfb4030f557410c65b
+          pullPolicy: IfNotPresent
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          - name: SCRYPTED_NVR_VOLUME
+            value: /nvr
+        nodeSelector:
+          google.feature.node.kubernetes.io/coral: "true"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+
+service:
+  scrypted:
+    controller: scrypted
+    ports:
+      http:
+        port: 8080
+
+persistence:
+  nvr:
+    enabled: true
+    type: nfs
+    path: /mnt/data/nvr
+    server: 192.168.1.135
+
+ingress:
+  nvr:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: nvr
+        paths:
+          - path: /
+            service:
+              identifier: scrypted
+              port: http
+    tls:
+      - hosts:
+          - nvr
