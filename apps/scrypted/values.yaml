@@ -33,7 +33,7 @@ service:
     controller: scrypted
     ports:
       http:
-        port: 11443
+        port: 10443
       cloud:
         port: 12443
 
