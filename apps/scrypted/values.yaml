@@ -5,6 +5,8 @@ controllers:
     replicas: 1
     pod:
       priorityClassName: system-cluster-critical
+      nodeSelector:
+        google.feature.node.kubernetes.io/coral: "true"
     containers:
       scrypted:
         securityContext:
