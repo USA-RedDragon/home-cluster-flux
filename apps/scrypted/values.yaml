@@ -48,6 +48,7 @@ persistence:
     type: persistentVolumeClaim
     storageClass: longhorn-ssd
     size: 2Gi
+    accessMode: ReadWriteOnce
     advancedMounts:
       scrypted:
         scrypted:
