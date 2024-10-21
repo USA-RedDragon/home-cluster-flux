@@ -44,6 +44,10 @@ persistence:
     type: nfs
     path: /mnt/data/nvr
     server: 192.168.1.135
+  usb:
+    enabled: true
+    type: hostPath
+    hostPath: /dev/bus/usb
   data:
     type: persistentVolumeClaim
     storageClass: longhorn-ssd
