@@ -36,6 +36,8 @@ service:
     ports:
       http:
         port: 10443
+      http-insecure:
+        port: 11080
       cloud:
         port: 12443
 
