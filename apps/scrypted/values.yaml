@@ -15,13 +15,17 @@ controllers:
           repository: ghcr.io/koush/scrypted
           tag: v0.120.0-jammy-full@sha256:8df04a75c64b3c27c4e07ca11f88d3ea235673f2095f8ebfb4030f557410c65b
           pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: '1'
+            memory: 2.5Gi
         probes:
           liveness:
-            enabled: false
+            enabled: true
           readiness:
-            enabled: false
+            enabled: true
           startup:
-            enabled: false
+            enabled: true
         env:
           - name: SCRYPTED_NVR_VOLUME
             value: /nvr
