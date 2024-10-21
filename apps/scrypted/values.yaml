@@ -53,7 +53,7 @@ persistence:
           - path: /server/volume
 
 ingress:
-  nvr:
+  scrypted:
     enabled: true
     className: tailscale
     hosts:
