@@ -57,7 +57,6 @@ persistence:
     enabled: true
     type: hostPath
     hostPath: /dev/apex_0
-    hostPathType: CharDevice
   data:
     type: persistentVolumeClaim
     storageClass: longhorn-ssd
