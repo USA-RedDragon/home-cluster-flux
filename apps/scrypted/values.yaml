@@ -56,7 +56,7 @@ persistence:
           - path: /server/volume
 
 ingress:
-  scrypted:
+  tailscale:
     enabled: true
     className: tailscale
     hosts:
@@ -69,3 +69,21 @@ ingress:
     tls:
       - hosts:
           - nvr
+  nginx:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+      - host: nvr.mcswain.dev
+        paths:
+          - path: /
+            service:
+              identifier: scrypted
+              port: http
+    tls:
+      - hosts:
+          - nvr.mcswain.dev
+        secretName: nvr-mcswain-dev
