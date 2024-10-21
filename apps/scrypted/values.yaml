@@ -7,8 +7,9 @@ controllers:
     rollingUpdate:
       unavailable: 1
       surge: 1
-    nodeSelector:
-      google.feature.node.kubernetes.io/coral: "true"
+    pod:
+      nodeSelector:
+        google.feature.node.kubernetes.io/coral: "true"
     containers:
       scrypted:
         image:
