@@ -15,11 +15,11 @@ controllers:
           pullPolicy: IfNotPresent
         probes:
           liveness:
-            enabled: true
+            enabled: false
           readiness:
-            enabled: true
+            enabled: false
           startup:
-            enabled: true
+            enabled: false
         env:
           - name: SCRYPTED_NVR_VOLUME
             value: /nvr
