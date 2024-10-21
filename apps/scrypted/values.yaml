@@ -10,6 +10,7 @@ controllers:
     pod:
       nodeSelector:
         google.feature.node.kubernetes.io/coral: "true"
+      priorityClassName: system-cluster-critical
     containers:
       scrypted:
         securityContext:
