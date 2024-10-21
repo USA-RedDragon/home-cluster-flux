@@ -35,7 +35,7 @@ service:
       http:
         port: 11080
       cloud:
-        port: 11443
+        port: 12443
 
 persistence:
   nvr:
