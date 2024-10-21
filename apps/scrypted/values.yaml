@@ -34,6 +34,8 @@ service:
     ports:
       http:
         port: 11080
+      cloud:
+        port: 11443
 
 persistence:
   nvr:
@@ -87,3 +89,21 @@ ingress:
       - hosts:
           - nvr.mcswain.dev
         secretName: nvr-mcswain-dev
+  cloud:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+      - host: cloud.nvr.mcswain.dev
+        paths:
+          - path: /
+            service:
+              identifier: scrypted
+              port: cloud
+    tls:
+      - hosts:
+          - cloud.nvr.mcswain.dev
+        secretName: cloud-nvr-mcswain-dev
