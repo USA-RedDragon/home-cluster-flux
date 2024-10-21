@@ -36,7 +36,7 @@ service:
     controller: scrypted
     ports:
       http:
-        port: 8080
+        port: 11080
 
 persistence:
   nvr:
