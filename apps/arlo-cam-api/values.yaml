@@ -43,13 +43,13 @@ configs:
       NotifyOnMotionTimeoutAlert: false
       NotifyOnAudioAlert: false
       NotifyOnButtonPressAlert: true
-      MotionRecordingWebHookUrl: ""
+      MotionRecordingWebHookUrl: "http://scrypted.scrypted.svc.cluster.local:11080/endpoint/@scrypted/arlo-local/public/motionDetected"
       MotionTimeoutWebHookUrl: ""
       AudioRecordingWebHookUrl: ""
       UserRecordingWebHookUrl: ""
-      StatusUpdateWebHookUrl: ""
-      RegistrationWebHookUrl: ""
-      ButtonPressWebHookUrl: ""
+      StatusUpdateWebHookUrl: "http://scrypted.scrypted.svc.cluster.local:11080/endpoint/@scrypted/arlo-local/public/statusUpdated"
+      RegistrationWebHookUrl: "http://scrypted.scrypted.svc.cluster.local:11080/endpoint/@scrypted/arlo-local/public/registered"
+      ButtonPressWebHookUrl: "http://scrypted.scrypted.svc.cluster.local:11080/endpoint/@scrypted/arlo-local/public/buttonPressed"
 # - name: app-otherenv
 #   data:
 #     SPECIAL_KEY: here
