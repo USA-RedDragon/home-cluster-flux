@@ -12,6 +12,8 @@ controllers:
         google.feature.node.kubernetes.io/coral: "true"
     containers:
       scrypted:
+        securityContext:
+          privileged: true
         image:
           repository: ghcr.io/koush/scrypted
           tag: v0.120.0-jammy-full@sha256:8df04a75c64b3c27c4e07ca11f88d3ea235673f2095f8ebfb4030f557410c65b
