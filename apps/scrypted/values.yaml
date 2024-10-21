@@ -55,10 +55,6 @@ persistence:
     type: hostPath
     hostPath: /sys/bus/usb
     hostPathType: Directory
-  apex:
-    enabled: true
-    type: hostPath
-    hostPath: /dev/apex_0
   data:
     type: persistentVolumeClaim
     storageClass: longhorn-ssd
