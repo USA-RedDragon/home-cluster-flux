@@ -96,6 +96,7 @@ ingress:
       kubernetes.io/tls-acme: "true"
       cert-manager.io/cluster-issuer: cloudflare
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     hosts:
       - host: cloud.nvr.mcswain.dev
         paths:
