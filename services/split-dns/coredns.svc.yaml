@@ -12,6 +12,7 @@ metadata:
     tailscale.com/proxy-class: "tailscale"
 spec:
   type: LoadBalancer
+  internalTrafficPolicy: Cluster
   loadBalancerClass: io.cilium/l2-announcer
   selector:
     app: coredns

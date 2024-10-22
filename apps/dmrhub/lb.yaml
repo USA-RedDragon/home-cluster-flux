@@ -8,6 +8,7 @@ metadata:
 spec:
   type: LoadBalancer
   loadBalancerClass: io.cilium/l2-announcer
+  internalTrafficPolicy: Cluster
   selector:
     app.kubernetes.io/instance: dmrhub
   ports:
