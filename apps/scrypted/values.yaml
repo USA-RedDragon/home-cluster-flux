@@ -29,10 +29,6 @@ controllers:
         env:
           - name: SCRYPTED_NVR_VOLUME
             value: /nvr
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
 
 service:
   scrypted:
