@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/arlo-cam-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:f7044ce0fa6697ae535ff228ddce285c1152e02d8e580e7d6575054d2a8293a6"
+  tag: "main@sha256:c90abd00816b6606d6fe4c66e1f1519fcbc14e0a1d24e54000aa99f6b7b025c2"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -66,6 +66,8 @@ envFrom: []
 env:
 - name: DB_PATH
   value: /db/arlo.db
+- name: USE_HOSTNAMES
+  value: "true"
 
 podAnnotations: {}
 
