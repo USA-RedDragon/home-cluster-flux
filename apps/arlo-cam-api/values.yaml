@@ -86,6 +86,7 @@ securityContext:
 
 service:
   type: LoadBalancer
+  internalTrafficPolicy: Cluster
   ports:
   - name: http
     port: 5000

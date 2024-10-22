@@ -6,6 +6,7 @@ metadata:
     lbipam.cilium.io/ips: 192.168.254.6
 spec:
   type: LoadBalancer
+  internalTrafficPolicy: Cluster
   loadBalancerClass: io.cilium/l2-announcer
   selector:
     app.kubernetes.io/instance: palworld
