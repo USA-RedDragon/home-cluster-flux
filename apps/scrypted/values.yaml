@@ -17,8 +17,8 @@ controllers:
           pullPolicy: IfNotPresent
         resources:
           requests:
-            cpu: '2'
-            memory: 4Gi
+            cpu: '3'
+            memory: 5Gi
           limits:
             gpu.intel.com/i915: '1'
         probes:
