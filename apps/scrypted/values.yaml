@@ -18,7 +18,7 @@ controllers:
         resources:
           requests:
             cpu: '1.25'
-            memory: 2.5Gi
+            memory: 5.3Gi
         probes:
           liveness:
             enabled: true
