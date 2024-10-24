@@ -54,6 +54,10 @@ persistence:
     type: hostPath
     hostPath: /dev/bus/usb
     hostPathType: Directory
+  dri:
+    enabled: true
+    type: hostPath
+    hostPath: /dev/dri
   usb-sys:
     enabled: true
     type: hostPath
