@@ -11,7 +11,7 @@ image:
   repository: ghcr.io/usa-reddragon/rtz-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.242"
+  tag: "v0.0.243"
 
 args: []
 imagePullSecrets: []
