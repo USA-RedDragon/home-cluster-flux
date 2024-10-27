@@ -75,7 +75,7 @@ persistence:
   scrub:
     type: persistentVolumeClaim
     storageClass: longhorn-nvme
-    size: 1Ti
+    size: 300Gi
     accessMode: ReadWriteOnce
 
 ingress:
