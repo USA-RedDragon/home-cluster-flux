@@ -75,7 +75,7 @@ persistence:
   scrub:
     type: persistentVolumeClaim
     storageClass: longhorn-ssd
-    size: 5Ti
+    size: 1Ti
     accessMode: ReadWriteOnce
 
 ingress:
