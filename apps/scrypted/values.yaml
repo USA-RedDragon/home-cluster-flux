@@ -72,6 +72,11 @@ persistence:
       scrypted:
         scrypted:
           - path: /server/volume
+  scrub:
+    type: persistentVolumeClaim
+    storageClass: longhorn-ssd
+    size: 5Ti
+    accessMode: ReadWriteOnce
 
 ingress:
   nginx:
