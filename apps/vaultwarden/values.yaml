@@ -8,7 +8,7 @@ image:
   repository: vaultwarden/server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.32.0@sha256:71668d20d4208d70919cf8cb3caf3071d41ed4b7d95afe71125ccad8408b040d"
+  tag: "1.32.3@sha256:7de8fd442afc26e4932a0b2521e2eec82db9f17667eef7b46fd9c2fa2e639de2"
 
 imagePullSecrets:
 - name: registry-docker-hub
