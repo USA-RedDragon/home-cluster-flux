@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/mqtt-wx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:b3436cd08031661413a9f480a0b2b9f33d893b0f563a7baf6b2c8fc2d1fe4c2c"
+  tag: "main@sha256:a1d82810afa4cc02a47d3a6aa3b8c7ecb5d82aab78846d280bbcaaefe1e2b807"
 
 imagePullSecrets: []
 nameOverride: ""
