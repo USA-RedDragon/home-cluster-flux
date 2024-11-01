@@ -3,5 +3,6 @@ kind: Kustomization
 namespace: static-services
 resources:
   - ns.yaml
+  - allsky-mcswain-dev.yaml
   - home-mcswain-dev.yaml
   - vacuum-mcswain-dev.yaml
