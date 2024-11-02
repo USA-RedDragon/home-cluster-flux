@@ -1,50 +1,10 @@
-apiVersion: v1
-kind: Endpoints
-metadata:
-  name: allsky
-  namespace: static-services
-subsets:
-- addresses:
-  - ip: 172.38.1.226
-  ports:
-  - appProtocol: http
-    name: http
-    port: 80
-    protocol: TCP
----
-apiVersion: v1
-kind: Service
+apiVersion: tailscale.com/v1alpha1
+kind: Connector
 metadata:
   name: allsky
   namespace: static-services
 spec:
-  internalTrafficPolicy: Cluster
-  ports:
-  - name: allsky
-    port: 80
-    protocol: TCP
-    targetPort: 80
-  sessionAffinity: None
-  type: ClusterIP
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: allsky
-  namespace: static-services
-spec:
-  ingressClassName: tailscale
-  rules:
-  - host: allsky
-    http:
-      paths:
-      - backend:
-          service:
-            name: allsky
-            port:
-              number: 80
-        path: /
-        pathType: Prefix
-  tls:
-  - hosts:
-    - allsky
+  proxyClass: tailscale
+  subnetRouter:
+    advertiseRoutes:
+    - 172.38.1.226/32
