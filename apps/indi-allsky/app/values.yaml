@@ -99,6 +99,8 @@ controllers:
                 key: web-password
           - name: INDIALLSKY_WEB_NAME
             value: "AllSky Camera"
+          - name: INDIALLSKY_WEB_EMAIL
+            value: none@example.com
 
 service:
   capture:
