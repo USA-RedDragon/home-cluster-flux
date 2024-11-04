@@ -41,6 +41,8 @@ controllers:
               secretKeyRef:
                 name: indi-allsky
                 key: flask-password-key
+          - name: INDIALLSKY_CAPTURE_NO_WAIT
+            value: "true"
   gunicorn:
     replicas: 1
     containers:
@@ -81,6 +83,8 @@ controllers:
               secretKeyRef:
                 name: indi-allsky
                 key: flask-password-key
+          - name: INDIALLSKY_GUNICORN_NO_WAIT
+            value: "true"
 
 service:
   capture:
