@@ -1,12 +1,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: indi-allsky
+  name: indi-allsky-mariadb
   namespace: indi-allsky
 spec:
   interval: 1h
   targetNamespace: indi-allsky
-  path: ./apps/indi-allsky/app
+  path: ./apps/indi-allsky/mariadb
   prune: true
   sourceRef:
     kind: GitRepository
@@ -16,13 +16,15 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: indi-allsky-mariadb
+  name: indi-allsky
   namespace: indi-allsky
 spec:
   interval: 1h
   targetNamespace: indi-allsky
-  path: ./apps/indi-allsky/mariadb
+  path: ./apps/indi-allsky/app
   prune: true
+  dependsOn:
+    - name: indi-allsky-mariadb
   sourceRef:
     kind: GitRepository
     namespace: flux-system
