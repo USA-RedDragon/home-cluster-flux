@@ -140,6 +140,7 @@ ingress:
       nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
       nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+      nginx.ingress.kubernetes.io/app-root: /indi-allsky
     hosts:
       - host: allsky.mcswain.dev
         paths:
