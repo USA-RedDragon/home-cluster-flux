@@ -92,6 +92,11 @@ controllers:
             value: /images
           - name: INDIALLSKY_WEB_USER
             value: admin
+          - name: INDIALLSKY_WEB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: indi-allsky
+                key: web-password
 
 service:
   capture:
