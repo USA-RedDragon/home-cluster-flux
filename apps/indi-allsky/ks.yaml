@@ -1,0 +1,29 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: indi-allsky
+  namespace: indi-allsky
+spec:
+  interval: 1h
+  targetNamespace: indi-allsky
+  path: ./apps/indi-allsky/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: indi-allsky-mariadb
+  namespace: indi-allsky
+spec:
+  interval: 1h
+  targetNamespace: indi-allsky
+  path: ./apps/indi-allsky/mariadb
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
