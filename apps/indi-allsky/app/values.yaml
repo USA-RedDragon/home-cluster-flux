@@ -10,7 +10,7 @@ controllers:
           tag: main
           pullPolicy: Always
         env:
-          - name: MARIADB_HOST
+          - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
           - name: MARIADB_USER
             value: root
@@ -28,7 +28,7 @@ controllers:
           tag: main
           pullPolicy: Always
         env:
-          - name: MARIADB_HOST
+          - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
           - name: MARIADB_USER
             value: root
