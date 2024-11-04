@@ -43,6 +43,8 @@ controllers:
                 key: flask-password-key
           - name: INDIALLSKY_CAPTURE_NO_WAIT
             value: "true"
+          - name: INDIALLSKY_IMAGE_FOLDER
+            value: /images
   gunicorn:
     replicas: 1
     containers:
@@ -96,7 +98,14 @@ service:
       http:
         port: 8000
 
-persistence: {}
+persistence:
+  images:
+    enabled: true
+    type: emptyDir
+    advancedMounts:
+      capture:
+        capture:
+          - path: /images
 
 ingress:
   nginx:
