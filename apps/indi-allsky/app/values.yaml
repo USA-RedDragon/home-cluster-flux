@@ -90,6 +90,8 @@ controllers:
             value: "true"
           - name: INDIALLSKY_IMAGE_FOLDER
             value: /images
+          - name: INDIALLSKY_WEB_USER
+            value: admin
 
 service:
   capture:
