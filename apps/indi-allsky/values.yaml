@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  capture:
+    replicas: 1
+    containers:
+      capture:
+        image:
+          repository: ghcr.io/usa-reddragon/capture.indi.allsky
+          tag: main
+          pullPolicy: Always
+        env: []
+  gunicorn:
+    replicas: 1
+    containers:
+      gunicorn:
+        image:
+          repository: ghcr.io/usa-reddragon/gunicorn.indi.allsky
+          tag: main
+          pullPolicy: Always
+        env: []
+
+service:
+  capture:
+    controller: capture
+    enabled: false
+  gunicorn:
+    controller: gunicorn
+    ports:
+      http:
+        port: 8000
+
+persistence: {}
+
+ingress:
+  nginx:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    hosts:
+      - host: allsky.mcswain.dev
+        paths:
+          - path: /
+            service:
+              identifier: gunicorn
+              port: http
+    tls:
+      - hosts:
+          - allsky.mcswain.dev
+        secretName: allsky-mcswain-dev
