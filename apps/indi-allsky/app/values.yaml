@@ -31,6 +31,11 @@ controllers:
             value: America/Chicago
           - name: INDIALLSKY_FLASK_AUTH_ALL_VIEWS
             value: "false"
+          - name: INDIALLSKY_FLASK_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: indi-allsky
+                key: flask-secret-key
   gunicorn:
     replicas: 1
     containers:
@@ -61,6 +66,11 @@ controllers:
             value: America/Chicago
           - name: INDIALLSKY_FLASK_AUTH_ALL_VIEWS
             value: "false"
+          - name: INDIALLSKY_FLASK_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: indi-allsky
+                key: flask-secret-key
 
 service:
   capture:
