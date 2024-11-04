@@ -97,6 +97,8 @@ controllers:
               secretKeyRef:
                 name: indi-allsky
                 key: web-password
+          - name: INDIALLSKY_WEB_NAME
+            value: "AllSky Camera"
 
 service:
   capture:
