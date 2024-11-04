@@ -9,7 +9,16 @@ controllers:
           repository: ghcr.io/usa-reddragon/capture.indi.allsky
           tag: main
           pullPolicy: Always
-        env: []
+        env:
+          - name: MARIADB_HOST
+            value: mariadb
+          - name: MARIADB_USER
+            value: root
+          - name: MARIADB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mariadb
+                key: mariadb-root-password
   gunicorn:
     replicas: 1
     containers:
@@ -18,7 +27,16 @@ controllers:
           repository: ghcr.io/usa-reddragon/gunicorn.indi.allsky
           tag: main
           pullPolicy: Always
-        env: []
+        env:
+          - name: MARIADB_HOST
+            value: mariadb
+          - name: MARIADB_USER
+            value: root
+          - name: MARIADB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mariadb
+                key: mariadb-root-password
 
 service:
   capture:
