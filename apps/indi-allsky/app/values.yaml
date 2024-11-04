@@ -27,6 +27,10 @@ controllers:
             value: utf8mb4
           - name: INDIALLSKY_MARIADB_COLLATION
             value: utf8mb4_unicode_ci
+          - name: TZ
+            value: America/Chicago
+          - name: INDIALLSKY_FLASK_AUTH_ALL_VIEWS
+            value: "false"
   gunicorn:
     replicas: 1
     containers:
@@ -53,6 +57,10 @@ controllers:
             value: utf8mb4
           - name: INDIALLSKY_MARIADB_COLLATION
             value: utf8mb4_unicode_ci
+          - name: TZ
+            value: America/Chicago
+          - name: INDIALLSKY_FLASK_AUTH_ALL_VIEWS
+            value: "false"
 
 service:
   capture:
