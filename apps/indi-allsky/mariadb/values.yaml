@@ -3,3 +3,6 @@ image:
   repository: bitnami/mariadb
   tag: 11.4.3-debian-12-r3
   digest: ""
+
+auth:
+  database: indi_allsky
