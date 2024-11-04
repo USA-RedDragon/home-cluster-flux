@@ -88,6 +88,8 @@ controllers:
                 key: flask-password-key
           - name: INDIALLSKY_GUNICORN_NO_WAIT
             value: "true"
+          - name: INDIALLSKY_IMAGE_FOLDER
+            value: /images
 
 service:
   capture:
@@ -102,11 +104,10 @@ service:
 persistence:
   images:
     enabled: true
-    type: emptyDir
-    advancedMounts:
-      capture:
-        capture:
-          - path: /images
+    type: nfs
+    nfs:
+      path: /mnt/data/astrocam
+      server: 192.168.1.135
 
 ingress:
   nginx:
