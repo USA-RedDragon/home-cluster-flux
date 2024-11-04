@@ -36,6 +36,11 @@ controllers:
               secretKeyRef:
                 name: indi-allsky
                 key: flask-secret-key
+          - name: INDIALLSKY_FLASK_PASSWORD_KEY
+            valueFrom:
+              secretKeyRef:
+                name: indi-allsky
+                key: flask-password-key
   gunicorn:
     replicas: 1
     containers:
@@ -71,6 +76,11 @@ controllers:
               secretKeyRef:
                 name: indi-allsky
                 key: flask-secret-key
+          - name: INDIALLSKY_FLASK_PASSWORD_KEY
+            valueFrom:
+              secretKeyRef:
+                name: indi-allsky
+                key: flask-password-key
 
 service:
   capture:
