@@ -89,7 +89,7 @@ controllers:
           - name: INDIALLSKY_GUNICORN_NO_WAIT
             value: "true"
           - name: INDIALLSKY_IMAGE_FOLDER
-            value: /images
+            value: /home/allsky/indi-allsky/html/images/darks
           - name: INDIALLSKY_WEB_USER
             value: admin
           - name: INDIALLSKY_WEB_PASS
@@ -118,6 +118,13 @@ persistence:
     type: nfs
     path: /mnt/data/astrocam
     server: 192.168.1.135
+    advancedMounts:
+      capture:
+        capture:
+          - path: /images
+      gunicorn:
+        gunicorn:
+          - path: /home/allsky/indi-allsky/html/images/darks
 
 ingress:
   nginx:
