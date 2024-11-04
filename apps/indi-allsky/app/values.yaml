@@ -12,6 +12,8 @@ controllers:
         env:
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
+          - name: INDIALLSKY_MARIADB_PORT
+            value: "3306"
           - name: MARIADB_USER
             value: root
           - name: MARIADB_PASSWORD
@@ -30,6 +32,8 @@ controllers:
         env:
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
+          - name: INDIALLSKY_MARIADB_PORT
+            value: "3306"
           - name: MARIADB_USER
             value: root
           - name: MARIADB_PASSWORD
