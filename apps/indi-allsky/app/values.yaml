@@ -105,9 +105,8 @@ persistence:
   images:
     enabled: true
     type: nfs
-    nfs:
-      path: /mnt/data/astrocam
-      server: 192.168.1.135
+    path: /mnt/data/astrocam
+    server: 192.168.1.135
 
 ingress:
   nginx:
