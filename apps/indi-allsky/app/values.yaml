@@ -45,6 +45,7 @@ controllers:
             value: "true"
           - name: INDIALLSKY_IMAGE_FOLDER
             value: /images
+
   gunicorn:
     replicas: 1
     containers:
