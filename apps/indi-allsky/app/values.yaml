@@ -44,7 +44,7 @@ controllers:
           - name: INDIALLSKY_CAPTURE_NO_WAIT
             value: "true"
           - name: INDIALLSKY_IMAGE_FOLDER
-            value: /images
+            value: /home/allsky/indi-allsky/html/images
 
   gunicorn:
     replicas: 1
@@ -89,7 +89,7 @@ controllers:
           - name: INDIALLSKY_GUNICORN_NO_WAIT
             value: "true"
           - name: INDIALLSKY_IMAGE_FOLDER
-            value: /home/allsky/indi-allsky/html/images/darks
+            value: /home/allsky/indi-allsky/html/images
           - name: INDIALLSKY_WEB_USER
             value: admin
           - name: INDIALLSKY_WEB_PASS
@@ -121,10 +121,10 @@ persistence:
     advancedMounts:
       capture:
         capture:
-          - path: /images
+          - path: /home/allsky/indi-allsky/html/images
       gunicorn:
         gunicorn:
-          - path: /home/allsky/indi-allsky/html/images/darks
+          - path: /home/allsky/indi-allsky/html/images
 
 ingress:
   nginx:
