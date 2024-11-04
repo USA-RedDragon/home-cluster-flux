@@ -23,6 +23,10 @@ controllers:
               secretKeyRef:
                 name: mariadb
                 key: mariadb-root-password
+          - name: INDIALLSKY_MARIADB_CHARSET
+            value: utf8mb4
+          - name: INDIALLSKY_MARIADB_COLLATION
+            value: utf8mb4_unicode_ci
   gunicorn:
     replicas: 1
     containers:
@@ -45,6 +49,10 @@ controllers:
               secretKeyRef:
                 name: mariadb
                 key: mariadb-root-password
+          - name: INDIALLSKY_MARIADB_CHARSET
+            value: utf8mb4
+          - name: INDIALLSKY_MARIADB_COLLATION
+            value: utf8mb4_unicode_ci
 
 service:
   capture:
