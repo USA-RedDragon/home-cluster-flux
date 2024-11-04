@@ -6,3 +6,10 @@ image:
 
 auth:
   database: indi_allsky
+
+primary:
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+    limits: {}
