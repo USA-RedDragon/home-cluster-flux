@@ -14,6 +14,8 @@ controllers:
             value: mariadb
           - name: INDIALLSKY_MARIADB_PORT
             value: "3306"
+          - name: MARIADB_DATABASE
+            value: indi_allsky
           - name: MARIADB_USER
             value: root
           - name: MARIADB_PASSWORD
@@ -34,6 +36,8 @@ controllers:
             value: mariadb
           - name: INDIALLSKY_MARIADB_PORT
             value: "3306"
+          - name: MARIADB_DATABASE
+            value: indi_allsky
           - name: MARIADB_USER
             value: root
           - name: MARIADB_PASSWORD
