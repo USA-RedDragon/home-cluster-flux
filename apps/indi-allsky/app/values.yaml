@@ -16,9 +16,6 @@ controllers:
           limits:
             cpu: 500m
             memory: 850Mi
-        probes:
-          startup:
-            enabled: true
         env:
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
