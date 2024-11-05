@@ -7,7 +7,7 @@ controllers:
       capture:
         image:
           repository: ghcr.io/usa-reddragon/capture.indi.allsky
-          tag: sha-1312834
+          tag: sha-bd4050d
           pullPolicy: IfNotPresent
         env:
           - name: INDIALLSKY_MARIADB_HOST
@@ -52,7 +52,7 @@ controllers:
       gunicorn:
         image:
           repository: ghcr.io/usa-reddragon/gunicorn.indi.allsky
-          tag: sha-1312834
+          tag: sha-bd4050d
           pullPolicy: IfNotPresent
         env:
           - name: INDIALLSKY_MARIADB_HOST
