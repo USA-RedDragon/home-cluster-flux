@@ -9,6 +9,16 @@ controllers:
           repository: ghcr.io/usa-reddragon/capture.indi.allsky
           tag: sha-bd4050d
           pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 250m
+            memory: 600Mi
+          limits:
+            cpu: 500m
+            memory: 850Mi
+        probes:
+          startup:
+            enabled: true
         env:
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
@@ -54,6 +64,20 @@ controllers:
           repository: ghcr.io/usa-reddragon/gunicorn.indi.allsky
           tag: sha-bd4050d
           pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 300m
+            memory: 512Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
         env:
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
