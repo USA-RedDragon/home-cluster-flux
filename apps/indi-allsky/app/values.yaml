@@ -7,7 +7,7 @@ controllers:
       capture:
         image:
           repository: ghcr.io/usa-reddragon/capture.indi.allsky
-          tag: sha-testy
+          tag: sha-testycle
           pullPolicy: IfNotPresent
         resources:
           requests:
