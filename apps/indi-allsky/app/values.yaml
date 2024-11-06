@@ -70,10 +70,16 @@ controllers:
         probes:
           liveness:
             enabled: true
+            spec:
+              initialDelaySeconds: 10
           readiness:
             enabled: true
+            spec:
+              initialDelaySeconds: 10
           startup:
             enabled: true
+            spec:
+              initialDelaySeconds: 10
         env:
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
