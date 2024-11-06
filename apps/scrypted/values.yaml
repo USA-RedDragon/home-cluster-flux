@@ -17,10 +17,8 @@ controllers:
           pullPolicy: IfNotPresent
         resources:
           requests:
-            cpu: '3'
+            cpu: '2'
             memory: 5Gi
-          limits:
-            gpu.intel.com/i915: '1'
         probes:
           liveness:
             enabled: true
