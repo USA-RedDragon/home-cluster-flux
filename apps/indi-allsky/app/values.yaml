@@ -16,6 +16,8 @@ controllers:
           limits:
             gpu.intel.com/i915: '1'
         env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
           - name: INDIALLSKY_MARIADB_PORT
@@ -81,6 +83,8 @@ controllers:
             spec:
               initialDelaySeconds: 30
         env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
           - name: INDIALLSKY_MARIADB_PORT
