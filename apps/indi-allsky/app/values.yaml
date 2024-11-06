@@ -15,7 +15,6 @@ controllers:
             memory: 600Mi
           limits:
             cpu: 500m
-            memory: 850Mi
         env:
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
