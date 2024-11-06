@@ -71,15 +71,15 @@ controllers:
           liveness:
             enabled: true
             spec:
-              initialDelaySeconds: 10
+              initialDelaySeconds: 30
           readiness:
             enabled: true
             spec:
-              initialDelaySeconds: 10
+              initialDelaySeconds: 30
           startup:
             enabled: true
             spec:
-              initialDelaySeconds: 10
+              initialDelaySeconds: 30
         env:
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
