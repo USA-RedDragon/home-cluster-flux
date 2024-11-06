@@ -9,8 +9,6 @@ controllers:
           repository: ghcr.io/usa-reddragon/capture.indi.allsky
           tag: sha-9bf4707
           pullPolicy: IfNotPresent
-        securityContext:
-          privileged: true
         resources:
           requests:
             cpu: 500m
