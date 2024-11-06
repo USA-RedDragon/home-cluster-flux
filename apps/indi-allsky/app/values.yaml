@@ -7,7 +7,7 @@ controllers:
       capture:
         image:
           repository: ghcr.io/usa-reddragon/capture.indi.allsky
-          tag: sha-b2048e5
+          tag: sha-test
           pullPolicy: IfNotPresent
         resources:
           requests:
