@@ -199,3 +199,22 @@ ingress:
       - hosts:
           - allsky.mcswain.dev
         secretName: allsky-mcswain-dev
+  old-redirect:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/permanent-redirect: https://allsky.mcswain.dev
+    hosts:
+      - host: allsky.mcswain.dev
+        paths:
+          - path: /allsky
+            service:
+              identifier: gunicorn
+              port: http
+    tls:
+      - hosts:
+          - allsky.mcswain.dev
+        secretName: allsky-mcswain-dev
