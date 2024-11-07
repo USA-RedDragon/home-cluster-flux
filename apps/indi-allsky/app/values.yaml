@@ -53,14 +53,15 @@ controllers:
             value: "true"
           - name: INDIALLSKY_IMAGE_FOLDER
             value: /home/allsky/indi-allsky/html/images
-          - name: INDIALLSKY_DARK_CAPTURE_ENABLE
-            value: 'true'
-          - name: INDIALLSKY_DARK_CAPTURE_BITMAX
-            value: '12'
-          - name: INDIALLSKY_DARK_CAPTURE_MODE
-            value: tempsigmaclip
-          - name: INDIALLSKY_DARK_CAPTURE_DAYTIME
-            value: '--daytime'
+          ## Dark calibration frames
+          # - name: INDIALLSKY_DARK_CAPTURE_ENABLE
+          #   value: 'true'
+          # - name: INDIALLSKY_DARK_CAPTURE_BITMAX
+          #   value: '12'
+          # - name: INDIALLSKY_DARK_CAPTURE_MODE
+          #   value: tempsigmaclip
+          # - name: INDIALLSKY_DARK_CAPTURE_DAYTIME
+          #   value: '--daytime'
 
   gunicorn:
     replicas: 1
