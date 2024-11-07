@@ -214,6 +214,11 @@ ingress:
             service:
               identifier: gunicorn
               port: http
+          - path: /allsky/
+            pathType: Exact
+            service:
+              identifier: gunicorn
+              port: http
           - path: /
             pathType: Exact
             service:
