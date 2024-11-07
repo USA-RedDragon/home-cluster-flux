@@ -187,11 +187,10 @@ ingress:
       nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
       nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-      nginx.ingress.kubernetes.io/app-root: /indi-allsky
     hosts:
       - host: allsky.mcswain.dev
         paths:
-          - path: /
+          - path: /indi-allsky
             service:
               identifier: gunicorn
               port: http
@@ -199,18 +198,24 @@ ingress:
       - hosts:
           - allsky.mcswain.dev
         secretName: allsky-mcswain-dev
-  old-redirect:
+  redirects:
     enabled: true
     className: nginx
     annotations:
       kubernetes.io/tls-acme: "true"
       cert-manager.io/cluster-issuer: cloudflare
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/permanent-redirect: https://allsky.mcswain.dev
+      nginx.ingress.kubernetes.io/permanent-redirect: https://allsky.mcswain.dev/indi-allsky
     hosts:
       - host: allsky.mcswain.dev
         paths:
           - path: /allsky
+            pathType: Exact
+            service:
+              identifier: gunicorn
+              port: http
+          - path: /
+            pathType: Exact
             service:
               identifier: gunicorn
               port: http
