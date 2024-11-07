@@ -82,15 +82,15 @@ controllers:
           liveness:
             enabled: true
             spec:
-              initialDelaySeconds: 30
+              initialDelaySeconds: 60
           readiness:
             enabled: true
             spec:
-              initialDelaySeconds: 30
+              initialDelaySeconds: 60
           startup:
             enabled: true
             spec:
-              initialDelaySeconds: 30
+              initialDelaySeconds: 60
         env:
           - name: PYTHONUNBUFFERED
             value: "1"
