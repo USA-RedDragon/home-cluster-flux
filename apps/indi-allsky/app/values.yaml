@@ -7,7 +7,7 @@ controllers:
       capture:
         image:
           repository: ghcr.io/usa-reddragon/capture.indi.allsky
-          tag: sha-testycle
+          tag: sha-c72b2cf
           pullPolicy: IfNotPresent
         resources:
           requests:
@@ -69,7 +69,7 @@ controllers:
       gunicorn:
         image:
           repository: ghcr.io/usa-reddragon/gunicorn.indi.allsky
-          tag: sha-b2048e5
+          tag: sha-c72b2cf
           pullPolicy: IfNotPresent
         resources:
           requests:
