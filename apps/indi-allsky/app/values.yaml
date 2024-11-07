@@ -60,7 +60,7 @@ controllers:
           - name: INDIALLSKY_DARK_CAPTURE_MODE
             value: tempsigmaclip
           - name: INDIALLSKY_DARK_CAPTURE_DAYTIME
-            value: '--no-daytime'
+            value: '--daytime'
 
   gunicorn:
     replicas: 1
