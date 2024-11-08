@@ -95,7 +95,7 @@ controllers:
           - name: PYTHONUNBUFFERED
             value: "1"
           - name: GUNICORN_ERROR_LOG_HANDLER
-            value: wgsi
+            value: wsgi
           - name: INDIALLSKY_MARIADB_HOST
             value: mariadb
           - name: INDIALLSKY_MARIADB_PORT
