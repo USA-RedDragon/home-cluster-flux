@@ -7,7 +7,7 @@ controllers:
       capture:
         image:
           repository: ghcr.io/usa-reddragon/capture.indi.allsky
-          tag: test@sha256:f40559872aeea0b4b4f2a2b057730954f1d7f98cee5a72ed416895f5ddf240b4
+          tag: test@sha256:c9720cf57d7ab9a598a232718d58c28022d0e68a97267e06a00531f3627eaddb
           pullPolicy: IfNotPresent
         resources:
           requests:
