@@ -7,7 +7,7 @@ controllers:
       capture:
         image:
           repository: ghcr.io/usa-reddragon/capture.indi.allsky
-          tag: sha-cca0fd9
+          tag: test@sha256:f40559872aeea0b4b4f2a2b057730954f1d7f98cee5a72ed416895f5ddf240b4
           pullPolicy: IfNotPresent
         resources:
           requests:
@@ -69,7 +69,7 @@ controllers:
       gunicorn:
         image:
           repository: ghcr.io/usa-reddragon/gunicorn.indi.allsky
-          tag: sha-cca0fd9
+          tag: test@sha256:810100b994e964456ea7eca960af6315cfc9ff6e0cdeedfb0213ce520b1c0ced
           pullPolicy: IfNotPresent
         resources:
           requests:
