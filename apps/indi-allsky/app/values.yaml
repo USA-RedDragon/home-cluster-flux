@@ -13,8 +13,6 @@ controllers:
           requests:
             cpu: 500m
             memory: 3Gi
-          limits:
-            gpu.intel.com/i915: '1'
         env:
           - name: PYTHONUNBUFFERED
             value: "1"
@@ -166,14 +164,6 @@ persistence:
       gunicorn:
         gunicorn:
           - path: /home/allsky/indi-allsky/html/images
-  dri:
-    enabled: true
-    type: hostPath
-    hostPath: /dev/dri
-    advancedMounts:
-      capture:
-        capture:
-          - path: /dev/dri
 
 ingress:
   nginx:
