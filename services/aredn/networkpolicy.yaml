@@ -19,7 +19,7 @@ spec:
       - matchLabels:
           io.kubernetes.pod.namespace: aredn-meshmap
   - toCIDR:
-      - 107.221.156.130/32
+      - 107.221.156.131/32
     toPorts:
       - ports:
           - port: "5528"
