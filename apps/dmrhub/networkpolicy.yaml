@@ -15,6 +15,9 @@ spec:
             app.kubernetes.io/component: controller
     - toEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: dmrhub
+    - toEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: kube-system
             k8s-app: kube-dns
       toPorts:
