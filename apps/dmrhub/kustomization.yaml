@@ -5,8 +5,7 @@ resources:
   - ns.yaml
   - lb.yaml
   - helm.yaml
-  - networkpolicy-dmr.yaml
-  - networkpolicy-http.yaml
+  - networkpolicy.yaml
   - ingress-redirect.yaml
   - prom.yaml
   - postgres.yaml
