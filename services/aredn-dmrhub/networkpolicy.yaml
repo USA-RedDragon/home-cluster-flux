@@ -1,38 +1,24 @@
-kind: NetworkPolicy
-apiVersion: networking.k8s.io/v1
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
 metadata:
   name: aredn-dmrhub
   namespace: aredn-dmrhub
 spec:
-  podSelector:
-    matchLabels:
+  endpointSelector:
+    matchLabels: 
       app.kubernetes.io/instance: aredn-dmrhub
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: dmrhub
-    - ipBlock:
-        cidr: 172.16.0.0/16
-    - ipBlock:
-        cidr: 172.17.0.0/16
-    - ipBlock:
-        cidr: 172.18.0.0/16
   egress:
-  - to:
-    - namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: dmrhub
-    - ipBlock:
-        cidr: 107.208.0.0/12 # AS #7018
-    - ipBlock:
-        cidr: 10.0.0.0/8
-    - ipBlock:
-        cidr: 172.16.0.0/16
-    - ipBlock:
-        cidr: 172.17.0.0/16
-    - ipBlock:
-        cidr: 172.18.0.0/16
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: aredn-dmrhub
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dmrhub
+            app.kubernetes.io/instance: dmrhub
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
