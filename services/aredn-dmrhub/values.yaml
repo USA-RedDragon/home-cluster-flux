@@ -201,8 +201,7 @@ persistentVolumes:
   configMap:
     name: olsrd-config
 - name: server-wireguard-config
-  mountPath: /etc/wireguard/
-  subPath: wg0.conf
+  mountPath: /etc/wireguard
   secret:
     secretName: dmrhub-wireguard-config
 - name: nginx-config
