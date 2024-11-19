@@ -23,7 +23,8 @@ command:
   && rsyslogd -n & \
   cat /etc/resolv.conf > /tmp/resolv.conf.auto \
   && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
-  && echo -e "#!/bin/sh\nexec vtund -n -f /etc/vtundsrv.conf KI5VMF-DMRHUB-172-31-180-68 oklahoma.aredn.mcswain.cloud" > /etc/s6/vtund/run \
+  && rm -rf /etc/s6/vtund \
+  && wg-quick up wg0 \
   && exec s6-svscan /etc/s6
 
 secrets: []
@@ -161,7 +162,7 @@ configs:
           PlParam "service" "udp://KI5VMF-DMRHUB.local.mesh:0/|tcp|DMR OpenBridge Port 62035"
       }
 
-      Interface "tun60"
+      Interface "wg0"
       {
           Ip4Broadcast 255.255.255.255
           Mode "ether"
@@ -199,11 +200,11 @@ persistentVolumes:
   mountPath: /etc/olsrd
   configMap:
     name: olsrd-config
-- name: server-vtun-config
-  mountPath: /etc/vtundsrv.conf
-  subPath: vtundsrv.conf
+- name: server-wireguard-config
+  mountPath: /etc/wireguard/
+  subPath: wg0.conf
   secret:
-    secretName: server-vtun-config
+    secretName: dmrhub-wireguard-config
 - name: nginx-config
   mountPath: /etc/nginx/nginx.conf
   configMap:
