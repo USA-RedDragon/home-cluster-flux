@@ -20,7 +20,7 @@ command:
 - |
   set -xe \
   && export GW=$(ip r list match default | awk '{ print $3 }') \
-  && ip addr add 10.54.25.5/32 dev eth0 \
+  && ip addr add 10.54.25.5/32 dev eth0 || true \
   && wg-quick down wg0 || true \
   && ip link del wg0 || true \
   && sysctl -w net.ipv4.ip_forward=1 \
