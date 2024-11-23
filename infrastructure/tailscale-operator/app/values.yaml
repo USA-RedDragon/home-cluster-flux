@@ -9,7 +9,7 @@ operatorConfig:
 proxyConfig:
   image:
     repository: ghcr.io/tailscale/tailscale
-    tag: v1.76.1
+    tag: v1.76.6
 
 apiServerProxyConfig:
   mode: "noauth"
