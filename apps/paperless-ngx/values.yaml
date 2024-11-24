@@ -179,7 +179,7 @@ extraContainers:
   imagePullPolicy: IfNotPresent
   name: tika
   resources: {}
-- image: gotenberg/gotenberg:8.12.0@sha256:b10708db3ccabbee040d0b6d9ec68b6034a066c1d4e27b13fb7a6af4ade012e4
+- image: gotenberg/gotenberg:8.14.1@sha256:c81f625afc869ba10819622f7e7d6d76708b2a32645b3fb74fbee610bf030465
   imagePullPolicy: IfNotPresent
   name: gotenberg
   resources: {}
