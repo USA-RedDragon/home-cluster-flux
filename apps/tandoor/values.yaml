@@ -8,7 +8,7 @@ image:
   repository: vabene1111/recipes
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.5.20@sha256:6c449f9aa4a47fdfded488c9df708096bb40bebc16e5bced881cbde7ec21c0dc"
+  tag: "1.5.23@sha256:be2e5c805f0c722664757203fbfd9ac0f7efb26f96706dd7fc6d90f9594589d4"
 
 command:
 - /opt/recipes/venv/bin/gunicorn
