@@ -25,7 +25,7 @@ spec:
       database: dmrhub
       owner: dmrhub
   storage:
-    size: 4Gi
+    size: 8Gi
   monitoring:
     enablePodMonitor: true
   resources:
