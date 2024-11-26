@@ -26,7 +26,7 @@ spec:
   - patch: |
       - op: add
         path: /spec/template/spec/imagePullSecrets
-        value: value: [{ name: registry-docker-hub }]
+        value: [{ name: registry-docker-hub }]
     target:
       kind: Deployment
       name: ses-email-service
