@@ -6,7 +6,7 @@ resources:
 patches:
   - patch: |
       # Request a specific IP
-      - op: replace
+      - op: add
         path: /metadata/annotations/lbipam.cilium.io~1ips
         value: 192.168.254.10
       - op: add
