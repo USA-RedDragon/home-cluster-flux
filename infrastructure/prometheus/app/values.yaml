@@ -2951,7 +2951,8 @@ prometheus:
 
     ## Allows setting additional arguments for the Prometheus container
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.Prometheus
-    additionalArgs: []
+    additionalArgs:
+      - --web.enable-otlp-receiver
 
     ## Interval between consecutive scrapes.
     ## Defaults to 30s.
@@ -3237,7 +3238,7 @@ prometheus:
     ## Allow out-of-order/out-of-bounds samples ingested into Prometheus for a specified duration
     ## See https://prometheus.io/docs/prometheus/latest/configuration/configuration/#tsdb
     tsdb:
-      outOfOrderTimeWindow: 0s
+      outOfOrderTimeWindow: 30m
 
     ## Enable compression of the write-ahead log using Snappy.
     ##
