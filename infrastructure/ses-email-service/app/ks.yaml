@@ -11,3 +11,22 @@ spec:
   sourceRef:
     kind: GitRepository
     name: ses-email-service
+  patches:
+  - patch: |
+      # Request a specific IP
+      - op: add
+        path: /metadata/annotations/lbipam.cilium.io~1ips
+        value: 192.168.254.10
+      - op: add
+        path: /spec/loadBalancerClass
+        value: io.cilium/l2-announcer
+    target:
+      kind: Service
+      name: ses-email-service
+  - patch: |
+      - op: add
+        path: /spec/template/spec/imagePullSecrets/-
+        value: registry-docker-hub
+    target:
+      kind: Deployment
+      name: ses-email-service
