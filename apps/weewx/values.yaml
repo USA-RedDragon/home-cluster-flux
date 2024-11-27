@@ -70,6 +70,7 @@ podAnnotations:
 podLabels:
   policy.mcswain.dev/egress-coredns: "true"
   policy.mcswain.dev/egress-internet: "true"
+  policy.mcswain.dev/egress-namespace: "true"
   policy.mcswain.dev/ingress-nginx: "true"
 
 podSecurityContext:
