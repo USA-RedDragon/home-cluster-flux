@@ -6,14 +6,19 @@
     "rebaseWhen": "auto",
     "flux": {
         "enabled": true,
-        "fileMatch": ["\\.ya?ml$"]
+        "fileMatch": [
+            "\\.ya?ml$"
+        ]
     },
     "helm-values": {
         "enabled": true,
-        "fileMatch": ["\\.ya?ml$"]
+        "fileMatch": [
+            "\\.ya?ml$"
+        ]
     },
-    "regexManagers": [
+    "customManagers": [
         {
+            "customType": "regex",
             "fileMatch": [
                 "(^|/)kube-system\\/etcd-backup\\.yaml"
             ],
@@ -34,80 +39,104 @@
             "automerge": false
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/papermc$"],
-            "automerge": false
-        },
-        {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/fabric$"],
             "automerge": false,
-            "allowedVersions": "<=1.19.2"
+            "matchPackageNames": [
+                "/^ghcr.io\\/usa-reddragon\\/papermc$/"
+            ]
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/aredn-base$"],
+            "automerge": false,
+            "allowedVersions": "<=1.19.2",
+            "matchPackageNames": [
+                "/^ghcr.io\\/usa-reddragon\\/fabric$/"
+            ]
+        },
+        {
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"
             ],
-            "automerge": true
+            "automerge": true,
+            "matchPackageNames": [
+                "/^ghcr.io\\/usa-reddragon\\/aredn-base$/"
+            ]
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/mc-mcswain-dev$"],
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"
             ],
-            "automerge": true
+            "automerge": true,
+            "matchPackageNames": [
+                "/^ghcr.io\\/usa-reddragon\\/mc-mcswain-dev$/"
+            ]
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/meshmap$"],
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"
             ],
-            "automerge": true
+            "automerge": true,
+            "matchPackageNames": [
+                "/^ghcr.io\\/usa-reddragon\\/meshmap$/"
+            ]
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/trunk-recorder-soapysdrplay3-prometheus$"],
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"
             ],
-            "automerge": true
+            "automerge": true,
+            "matchPackageNames": [
+                "/^ghcr.io\\/usa-reddragon\\/trunk-recorder-soapysdrplay3-prometheus$/"
+            ]
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/hertzg\\/rtl_433_docker$"],
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"
             ],
-            "automerge": true
+            "automerge": true,
+            "matchPackageNames": [
+                "/^ghcr.io\\/hertzg\\/rtl_433_docker$/"
+            ]
         },
         {
-            "matchPackagePatterns": ["^ghcr.io\\/usa-reddragon\\/mqtt-wx$"],
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"
             ],
-            "automerge": true
+            "automerge": true,
+            "matchPackageNames": [
+                "/^ghcr.io\\/usa-reddragon\\/mqtt-wx$/"
+            ]
         },
         {
             "matchUpdateTypes": [
                 "major"
             ],
             "automerge": true,
-            "matchPackagePatterns": ["kube-prometheus-stack"]
+            "matchPackageNames": [
+                "/kube-prometheus-stack/"
+            ]
         },
         {
-            "matchDatasources": ["docker"],
-            "matchPackagePatterns": ["minio"],
-            "versioning": "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z$"
-        },
-        {
-            "matchPackagePatterns": [
-                "^ghcr.io\\/usa-reddragon\\/palworld-server-docker$",
-                "^palworld$"
+            "matchDatasources": [
+                "docker"
             ],
-            "schedule": ["after 4:00am, before 7:00am"]
+            "versioning": "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z$",
+            "matchPackageNames": [
+                "/minio/"
+            ]
+        },
+        {
+            "schedule": [
+                "after 4:00am, before 7:00am"
+            ],
+            "matchPackageNames": [
+                "/^ghcr.io\\/usa-reddragon\\/palworld-server-docker$/",
+                "/^palworld$/"
+            ]
         }
     ]
 }
