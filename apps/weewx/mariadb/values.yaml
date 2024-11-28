@@ -5,7 +5,7 @@ image:
   digest: ""
 
 auth:
-  database: weewx
+  database: root
 
 architecture: "replication"
 
