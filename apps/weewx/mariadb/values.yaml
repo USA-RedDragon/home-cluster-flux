@@ -1,0 +1,25 @@
+image:
+  registry: docker.io
+  repository: bitnami/mariadb
+  tag: 11.6.2-debian-12-r0
+  digest: ""
+
+auth:
+  database: weewx
+
+architecture: "replication"
+
+primary:
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+    limits: {}
+
+secondary:
+  replicaCount: 2
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+    limits: {}

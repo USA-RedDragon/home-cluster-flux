@@ -3,9 +3,7 @@ kind: Kustomization
 namespace: weewx
 resources:
   - ns.yaml
-  - helm.yaml
-  - networkpolicy.yaml
-  - postgres.yaml
+  - ks.yaml
 configMapGenerator:
   - name: chart-values
     files:

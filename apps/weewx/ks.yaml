@@ -1,0 +1,31 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: weewx-mariadb
+  namespace: weewx
+spec:
+  interval: 1h
+  targetNamespace: weewx
+  path: ./apps/weewx/mariadb
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: weewx
+  namespace: weewx
+spec:
+  interval: 1h
+  targetNamespace: weewx
+  path: ./apps/weewx/app
+  prune: true
+  dependsOn:
+    - name: weewx-mariadb
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
