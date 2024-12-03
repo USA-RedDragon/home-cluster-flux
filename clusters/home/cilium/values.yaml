@@ -12,7 +12,12 @@ operator:
 socketLB:
   hostNamespaceOnly: true
 
-routingMode: native
+loadBalancer:
+  mode: hybrid
+  dsrDispatch: geneve
+
+routingMode: tunnel
+tunnelProtocol: geneve
 
 externalIPs:
   enabled: true
@@ -25,6 +30,7 @@ cni:
 
 bpf:
   policyMapMax: 32768
+  masquerade: true
 
 global:
   encryption:
@@ -33,7 +39,7 @@ global:
 
 policyEnforcementMode: default
 
-kubeProxyReplacement: false
+kubeProxyReplacement: true
 
 securityContext:
   capabilities:
@@ -56,7 +62,7 @@ securityContext:
 
 image:
   repository: "quay.io/cilium/cilium"
-  tag: "v1.16.4"
+  tag: "v1.16.3"
   digest: "sha256:cd096a343861d48e2849b403f0c410bfbb36e64d042f0692b73b93c97d94d9bd"
 
 priorityClassName: system-node-critical
@@ -104,3 +110,9 @@ hubble:
 
   relay:
     enabled: true
+
+envoy:
+  image:
+    repository: "quay.io/cilium/cilium-envoy"
+    tag: "v1.29.9-1728346947-0d05e48bfbb8c4737ec40d5781d970a550ed2bbd"
+    digest: "sha256:42614a44e508f70d03a04470df5f61e3cffd22462471a0be0544cf116f2c50ba"
