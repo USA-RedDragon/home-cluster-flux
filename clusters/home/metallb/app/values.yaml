@@ -21,7 +21,7 @@ speaker:
     tag: v0.14.8
   resources: {}
   frr:
-    enabled: true
+    enabled: false
     image:
       repository: quay.io/frrouting/frr
       tag: 9.1.2
