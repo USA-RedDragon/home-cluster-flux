@@ -15,11 +15,6 @@ socketLB:
 externalIPs:
   enabled: true
 
-bgp:
-  enabled: true
-  announce:
-    loadbalancerIP: true
-
 bgpControlPlane:
   enabled: true
 
