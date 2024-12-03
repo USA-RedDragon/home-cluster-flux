@@ -4,10 +4,10 @@ metadata:
   name: dmr-udp-input
   namespace: dmrhub
   annotations:
-    lbipam.cilium.io/ips: 192.168.254.1
+    metallb.universe.tf/load-balancer-ips: 192.168.254.1
 spec:
   type: LoadBalancer
-  loadBalancerClass: io.cilium/bgp-control-plane
+  loadBalancerClass: metallb
   internalTrafficPolicy: Cluster
   selector:
     app.kubernetes.io/instance: dmrhub

@@ -15,11 +15,11 @@ spec:
   - patch: |
       # Request a specific IP
       - op: add
-        path: /metadata/annotations/lbipam.cilium.io~1ips
+        path: /metadata/annotations/metallb.universe.tf~1load-balancer-ips
         value: 192.168.254.10
       - op: add
         path: /spec/loadBalancerClass
-        value: io.cilium/bgp-control-plane
+        value: metallb
     target:
       kind: Service
       name: ses-email-service

@@ -39,8 +39,8 @@ spec:
       allowSnippetAnnotations: true
       service:
         annotations:
-          lbipam.cilium.io/ips: 192.168.254.0
-        loadBalancerClass: io.cilium/bgp-control-plane
+          metallb.universe.tf/load-balancer-ips: 192.168.254.0
+        loadBalancerClass: metallb
         # ipFamilyPolicy: PreferDualStack
         # ipFamilies:
         #   - IPv4

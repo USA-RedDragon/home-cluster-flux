@@ -74,14 +74,14 @@ securityContext:
 
 service:
   type: LoadBalancer
-  loadBalancerClass: io.cilium/bgp-control-plane
+  loadBalancerClass: metallb
   ports:
   - name: game
     port: 25565
   - name: rcon
     port: 25575
   annotations:
-    lbipam.cilium.io/ips: 192.168.254.4
+    metallb.universe.tf/load-balancer-ips: 192.168.254.4
 
 persistentVolumes:
 - name: data

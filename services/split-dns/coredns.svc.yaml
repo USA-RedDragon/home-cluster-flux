@@ -4,7 +4,7 @@ metadata:
   name: coredns
   namespace: split-dns
   annotations:
-    lbipam.cilium.io/ips: 192.168.254.8
+    metallb.universe.tf/load-balancer-ips: 192.168.254.8
     tailscale.com/expose: "true"
     tailscale.com/hostname: "dns"
     tailscale.com/tags: "tag:dns,tag:k8s"
@@ -13,7 +13,7 @@ metadata:
 spec:
   type: LoadBalancer
   internalTrafficPolicy: Cluster
-  loadBalancerClass: io.cilium/bgp-control-plane
+  loadBalancerClass: metallb
   selector:
     app: coredns
   ports:
