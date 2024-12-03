@@ -40,7 +40,7 @@ spec:
         compression: gzip
     name: postgresql
   storage:
-    size: 8Gi
+    size: 12Gi
   monitoring:
     enablePodMonitor: true
   resources:
