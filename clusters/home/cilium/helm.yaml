@@ -17,6 +17,10 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: cilium
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
   chart:
     spec:
       chart: cilium
