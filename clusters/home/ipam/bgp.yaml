@@ -1,0 +1,43 @@
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumBGPAdvertisement 
+metadata:
+  name: bgp
+  labels:
+    advertise: bgp
+spec:
+  advertisements:
+    - advertisementType: "PodCIDR"
+    - advertisementType: "Service"
+      service:
+        addresses:
+          - LoadBalancerIP
+---
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumBGPPeerConfig
+metadata:
+  name: peer-config
+spec:
+  gracefulRestart:
+    enabled: true
+    restartTimeSeconds: 15
+  families:
+    - afi: ipv4
+      safi: unicast
+      advertisements:
+        matchLabels:
+          advertise: "bgp"
+---
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumBGPClusterConfig 
+metadata:
+  name: bgp-cluster-config
+spec:
+  bgpInstances:
+    - name: "instance-64512"
+      localASN: 64512
+      peers:
+        - name: "peer-64513"
+          peerASN: 64513
+          peerAddress: "192.168.1.1"
+          peerConfigRef:
+            name: "peer-config"
