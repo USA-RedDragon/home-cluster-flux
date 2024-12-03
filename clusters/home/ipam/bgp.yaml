@@ -1,23 +1,25 @@
 apiVersion: "cilium.io/v2alpha1"
-kind: CiliumBGPAdvertisement 
+kind: CiliumBGPAdvertisement
 metadata:
   name: bgp
   labels:
     advertise: bgp
 spec:
   advertisements:
-    - advertisementType: "PodCIDR"
     - advertisementType: "Service"
       service:
         addresses:
           - LoadBalancerIP
+          - ClusterIP
+      selector:
+        matchExpressions:
+        - {key: somekey, operator: NotIn, values: ['never-used-value']}
 ---
 apiVersion: "cilium.io/v2alpha1"
 kind: CiliumBGPPeerConfig
 metadata:
   name: peer-config
 spec:
-  authSecretRef: bgp-auth-secret
   gracefulRestart:
     enabled: true
     restartTimeSeconds: 15
@@ -29,19 +31,19 @@ spec:
           advertise: "bgp"
 ---
 apiVersion: "cilium.io/v2alpha1"
-kind: CiliumBGPClusterConfig 
+kind: CiliumBGPClusterConfig
 metadata:
   name: bgp-cluster-config
 spec:
   nodeSelector:
-    matchLabels:
-      kubernetes.io/os: linux
+    matchExpressions:
+      - {key: somekey, operator: NotIn, values: ['never-used-value']}
   bgpInstances:
     - name: "instance-64512"
       localASN: 64512
       peers:
-        - name: "peer-64513"
-          peerASN: 64513
+        - name: "peer-64512"
+          peerASN: 64512
           peerAddress: "192.168.1.1"
           peerConfigRef:
             name: "peer-config"
