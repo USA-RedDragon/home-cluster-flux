@@ -15,6 +15,9 @@ socketLB:
 externalIPs:
   enabled: true
 
+bgpControlPlane:
+  enabled: true
+
 dnsProxy:
   dnsRejectResponseCode: nameError
 
