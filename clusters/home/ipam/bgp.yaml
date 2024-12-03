@@ -17,6 +17,7 @@ kind: CiliumBGPPeerConfig
 metadata:
   name: peer-config
 spec:
+  authSecretRef: bgp-auth-secret
   gracefulRestart:
     enabled: true
     restartTimeSeconds: 15
