@@ -25,7 +25,7 @@ spec:
       wal:
         compression: gzip
   storage:
-    size: 25Gi
+    size: 60Gi
   monitoring:
     enablePodMonitor: true
   resources:
