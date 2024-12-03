@@ -20,6 +20,8 @@ speaker:
     repository: quay.io/metallb/speaker
     tag: v0.14.8
   resources: {}
+  updateStrategy:
+    type: OnDelete
   frr:
     enabled: false
     image:
