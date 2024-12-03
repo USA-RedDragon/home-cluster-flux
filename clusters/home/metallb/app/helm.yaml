@@ -16,7 +16,7 @@ spec:
   interval: 60m0s
   driftDetection:
     mode: enabled
-  releaseName: cilium
+  releaseName: metallb
   install:
     crds: Create
   upgrade:
@@ -26,8 +26,8 @@ spec:
       chart: metallb
       sourceRef:
         kind: HelmRepository
-        name: cilium
-      version: '1.16.3'
+        name: metallb
+      version: '0.14.8'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
