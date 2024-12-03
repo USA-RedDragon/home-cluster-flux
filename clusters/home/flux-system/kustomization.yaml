@@ -8,3 +8,4 @@ resources:
 - sensitive.yaml
 - services.yaml
 - cilium.yaml
+- metallb.yaml
