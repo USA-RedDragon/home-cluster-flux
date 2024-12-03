@@ -4,7 +4,7 @@ metadata:
   name: rtmp
   namespace: nginx-rtmp
   annotations:
-    metallb.universe.tf/load-balancer-ips: 192.168.254.5
+    metallb.universe.tf/load-balancer-ips: 172.75.0.5
 spec:
   type: LoadBalancer
   internalTrafficPolicy: Cluster

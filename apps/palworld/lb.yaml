@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: palworld
   annotations:
-    metallb.universe.tf/load-balancer-ips: 192.168.254.6
+    metallb.universe.tf/load-balancer-ips: 172.75.0.6
 spec:
   type: LoadBalancer
   internalTrafficPolicy: Cluster
