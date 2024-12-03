@@ -40,7 +40,7 @@ spec:
       service:
         annotations:
           lbipam.cilium.io/ips: 192.168.254.0
-        loadBalancerClass: io.cilium/l2-announcer
+        loadBalancerClass: io.cilium/bgp-control-plane
         # ipFamilyPolicy: PreferDualStack
         # ipFamilies:
         #   - IPv4

@@ -13,7 +13,7 @@ metadata:
 spec:
   type: LoadBalancer
   internalTrafficPolicy: Cluster
-  loadBalancerClass: io.cilium/l2-announcer
+  loadBalancerClass: io.cilium/bgp-control-plane
   selector:
     app: coredns
   ports:

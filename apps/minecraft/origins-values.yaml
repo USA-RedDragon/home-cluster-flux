@@ -74,7 +74,7 @@ securityContext:
 
 service:
   type: LoadBalancer
-  loadBalancerClass: io.cilium/l2-announcer
+  loadBalancerClass: io.cilium/bgp-control-plane
   ports:
   - name: game
     port: 25565
