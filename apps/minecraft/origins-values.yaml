@@ -81,7 +81,7 @@ service:
   - name: rcon
     port: 25575
   annotations:
-    metallb.universe.tf/load-balancer-ips: 192.168.254.4
+    metallb.universe.tf/loadBalancerIPs: 192.168.254.4
 
 persistentVolumes:
 - name: data

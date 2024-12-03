@@ -4,7 +4,7 @@ metadata:
   name: go2rtc
   namespace: go2rtc
   annotations:
-    metallb.universe.tf/load-balancer-ips: 192.168.254.3
+    metallb.universe.tf/loadBalancerIPs: 192.168.254.3
 spec:
   type: LoadBalancer
   internalTrafficPolicy: Cluster
