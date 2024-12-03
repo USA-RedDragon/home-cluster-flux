@@ -59,7 +59,7 @@ persistence:
     hostPathType: Directory
   data:
     type: persistentVolumeClaim
-    storageClass: longhorn-ssd
+    storageClass: longhorn-nvme
     size: 2Gi
     accessMode: ReadWriteOnce
     advancedMounts:
