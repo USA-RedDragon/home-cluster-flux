@@ -7,6 +7,8 @@ prometheus:
   prometheusRule:
     enabled: true
 
+  rbacPrometheus: false
+
 controller:
   image:
     repository: quay.io/metallb/controller
