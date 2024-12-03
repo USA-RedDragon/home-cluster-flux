@@ -12,11 +12,15 @@ operator:
 socketLB:
   hostNamespaceOnly: true
 
+routingMode: native
+
 externalIPs:
   enabled: true
 
 bgpControlPlane:
   enabled: true
+
+enableIPv4Masquerade: false
 
 dnsProxy:
   dnsRejectResponseCode: nameError
