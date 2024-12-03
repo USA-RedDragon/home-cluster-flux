@@ -8,3 +8,4 @@ resources:
 - secrets.yaml
 - sensitive.yaml
 - services.yaml
+- cilium.yaml
