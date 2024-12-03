@@ -4,7 +4,7 @@ metadata:
   name: gitea-ssh
   namespace: gitea
   annotations:
-    metallb.universe.tf/load-balancer-ips: 192.168.254.2
+    metallb.universe.tf/loadBalancerIPs: 192.168.254.2
 spec:
   type: LoadBalancer
   internalTrafficPolicy: Cluster

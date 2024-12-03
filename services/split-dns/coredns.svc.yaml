@@ -4,7 +4,7 @@ metadata:
   name: coredns
   namespace: split-dns
   annotations:
-    metallb.universe.tf/load-balancer-ips: 192.168.254.8
+    metallb.universe.tf/loadBalancerIPs: 192.168.254.8
     tailscale.com/expose: "true"
     tailscale.com/hostname: "dns"
     tailscale.com/tags: "tag:dns,tag:k8s"
