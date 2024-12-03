@@ -19,7 +19,7 @@ spec:
   releaseName: cilium
   chart:
     spec:
-      chart: app
+      chart: cilium
       sourceRef:
         kind: HelmRepository
         name: cilium
