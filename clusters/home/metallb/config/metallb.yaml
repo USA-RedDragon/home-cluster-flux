@@ -8,27 +8,7 @@ spec:
   - 192.168.254.0/24
 ---
 apiVersion: metallb.io/v1beta1
-kind: BFDProfile
+kind: L2Advertisement
 metadata:
-  name: bfdprofile
-  namespace: metallb-system
-spec:
-  receiveInterval: 380
-  transmitInterval: 270
----
-apiVersion: metallb.io/v1beta2
-kind: BGPPeer
-metadata:
-  name: bpg
-  namespace: metallb-system
-spec:
-  myASN: 64512
-  peerASN: 64513
-  peerAddress: 192.168.1.1
-  bfdProfile: bfdprofile
----
-apiVersion: metallb.io/v1beta1
-kind: BGPAdvertisement
-metadata:
-  name: bgp
+  name: l2
   namespace: metallb-system
