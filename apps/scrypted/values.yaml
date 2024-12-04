@@ -13,7 +13,7 @@ controllers:
           privileged: true
         image:
           repository: ghcr.io/koush/scrypted
-          tag: v0.123.51-jammy-full@sha256:19e2f5d69a0a86bbac54751b623421deb5b86042f09fa85d954112bf6eb58c87
+          tag: v0.123.53-jammy-full@sha256:e774ea8e49a7b0ebbb54fe365cee8cb4065d093a3f7c8a3f6e1ccac0fb691e5b
           pullPolicy: IfNotPresent
         resources:
           requests:
