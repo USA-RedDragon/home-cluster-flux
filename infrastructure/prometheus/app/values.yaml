@@ -2483,7 +2483,7 @@ prometheusOperator:
   thanosImage:
     registry: quay.io
     repository: thanos/thanos
-    tag: v0.37.0
+    tag: v0.37.1
 
   ## Set a Label Selector to filter watched prometheus and prometheusAgent
   ##
@@ -3929,7 +3929,7 @@ thanosRuler:
     image:
       registry: quay.io
       repository: thanos/thanos
-      tag: v0.37.0
+      tag: v0.37.1
 
     ## Namespaces to be selected for PrometheusRules discovery.
     ## If nil, select own namespace. Namespaces to be selected for ServiceMonitor discovery.
