@@ -14,7 +14,7 @@ spec:
       source: postgresql
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/authentik-1"
+      destinationPath: "s3://cnpg/authentik-2"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -27,7 +27,7 @@ spec:
         compression: gzip
   externalClusters:
   - barmanObjectStore:
-      destinationPath: s3://cnpg/authentik
+      destinationPath: s3://cnpg/authentik-1
       endpointURL: https://s3.mcswain.dev
       s3Credentials:
         accessKeyId:
