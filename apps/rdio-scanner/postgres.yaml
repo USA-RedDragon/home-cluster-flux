@@ -25,6 +25,7 @@ spec:
           key: AWS_SECRET_ACCESS_KEY
       wal:
         compression: gzip
+    retentionPolicy: "4w"
   externalClusters:
   - barmanObjectStore:
       destinationPath: s3://cnpg/atuin
