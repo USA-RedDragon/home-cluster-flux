@@ -24,6 +24,7 @@ spec:
           key: AWS_SECRET_ACCESS_KEY
       wal:
         compression: gzip
+    retentionPolicy: "4w"
   storage:
     size: 4Gi
   monitoring:
