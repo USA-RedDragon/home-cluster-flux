@@ -180,7 +180,10 @@ mattermostApp:
     - name: MM_SERVICESETTINGS_ENABLEEMAILINVITATIONS
       value: "true"
     - name: MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS
-      value: "192.168.254.0"
+      valueFrom:
+        secretKeyRef:
+          name: mattermost
+          key: internal-connnections
     - name: MM_SERVICESETTINGS_ALLOWCORSFROM
       value: "*"
     - name: MM_SERVICESETTINGS_ENABLEUSERACCESSTOKENS
