@@ -3,10 +3,11 @@
 controllers:
   jellyfin:
     replicas: 1
+    pod:
+      imagePullSecrets:
+        - name: registry-docker-hub
     containers:
       jellyfin:
-        imagePullSecrets:
-          - name: registry-docker-hub
         image:
           repository: jellyfin/jellyfin
           tag: 10.10.3
