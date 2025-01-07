@@ -39,10 +39,8 @@ controllers:
         env:
           - name: JELLYFIN_PublishedServerUrl
             value: https://jellyfin.mcswain.dev
-          - name: JELLYFIN_FFmpeg__analyzeduration
-            value: "0"
           - name: JELLYFIN_FFmpeg__probesize
-            value: 1M
+            value: 3M
         securityContext:
           fsGroup: 568
           readOnlyRootFilesystem: true
