@@ -1,0 +1,115 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  jellyfin:
+    replicas: 1
+    imagePullSecrets:
+    - name: registry-docker-hub
+    containers:
+      jellyfin:
+        image:
+          repository: jellyfin/jellyfin
+          tag: 10.10.3
+          pullPolicy: IfNotPresent
+        # resources:
+        #   requests:
+        #     cpu: 4
+        #     memory: 4Gi
+        #   limits:
+        #     memory: 4Gi
+        env:
+          - name: JELLYFIN_PublishedServerUrl
+            value: https://jellyfin.mcswain.dev
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 568
+          fsGroup: 568
+
+service:
+  jellyfin:
+    controller: jellyfin
+    ports:
+      http:
+        port: 8096
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: longhorn-ssd
+  cache:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 15Gi
+    storageClass: longhorn-ssd
+  media-anime:
+    enabled: true
+    type: persistentVolumeClaim
+    storageClass: media-anime
+    accessMode: ReadWriteMany
+    advancedMounts:
+      jellyfin:
+        jellyfin:
+          - path: /media/anime
+  media-movies:
+    enabled: true
+    type: persistentVolumeClaim
+    storageClass: media-movies
+    accessMode: ReadWriteMany
+    advancedMounts:
+      jellyfin:
+        jellyfin:
+          - path: /media/movies
+  media-tv:
+    enabled: true
+    type: persistentVolumeClaim
+    storageClass: media-tv
+    accessMode: ReadWriteMany
+    advancedMounts:
+      jellyfin:
+        jellyfin:
+          - path: /media/tv
+
+ingress:
+  jellyfin:
+    enabled: false
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    hosts:
+      - host: jellyfin.mcswain.dev
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: jellyfin
+              port: http
+    tls:
+      - hosts:
+          - jellyfin.mcswain.dev
+        secretName: jellyfin-mcswain-dev
+  tailscale:
+    enabled: true
+    ingressClassName: tailscale
+    hosts:
+      - host: jellyfin
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: jellyfin
+              port: http
+    tls:
+      - hosts:
+          - jellyfin
