@@ -59,6 +59,12 @@ persistence:
     sizeLimit: 30Gi
     globalMounts:
       - path: /cache/transcodes
+  jellyfin-tmp:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 30Gi
+    globalMounts:
+      - path: /tmp/jellyfin
   media-anime:
     enabled: true
     type: nfs
