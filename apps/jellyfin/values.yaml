@@ -48,37 +48,25 @@ persistence:
     storageClass: longhorn-ssd
   media-anime:
     enabled: true
-    nameOverride: media-anime
-    type: persistentVolumeClaim
-    storageClass: media-anime
-    accessMode: ReadWriteMany
-    size: 50Ti
-    advancedMounts:
-      jellyfin:
-        jellyfin:
-          - path: /media/anime
+    type: nfs
+    path: /mnt/data/media/Anime
+    server: 192.168.1.135
+    globalMounts:
+      - path: /media/anime
   media-movies:
     enabled: true
-    nameOverride: media-movies
-    type: persistentVolumeClaim
-    storageClass: media-movies
-    accessMode: ReadWriteMany
-    size: 50Ti
-    advancedMounts:
-      jellyfin:
-        jellyfin:
-          - path: /media/movies
+    type: nfs
+    path: /mnt/data/media/Movies
+    server: 192.168.1.135
+    globalMounts:
+      - path: /media/movies
   media-tv:
     enabled: true
-    nameOverride: media-tv
-    type: persistentVolumeClaim
-    storageClass: media-tv
-    accessMode: ReadWriteMany
-    size: 50Ti
-    advancedMounts:
-      jellyfin:
-        jellyfin:
-          - path: /media/tv
+    type: nfs
+    path: /mnt/data/media/TV
+    server: 192.168.1.135
+    globalMounts:
+      - path: /media/tv
 
 ingress:
   jellyfin:
