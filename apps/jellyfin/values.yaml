@@ -26,10 +26,16 @@ controllers:
         probes:
           liveness:
             enabled: true
+            spec:
+              initialDelaySeconds: 60
           readiness:
             enabled: true
+            spec:
+              initialDelaySeconds: 60
           startup:
             enabled: true
+            spec:
+              initialDelaySeconds: 60
         env:
           - name: JELLYFIN_PublishedServerUrl
             value: https://jellyfin.mcswain.dev
