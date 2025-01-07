@@ -142,7 +142,7 @@ resources:
   limits:
     memory: 128Mi
   requests:
-    cpu: 50m
+    cpu: 20m
     memory: 64Mi
 
 nodeSelector: {}

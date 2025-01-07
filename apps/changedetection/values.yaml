@@ -146,7 +146,7 @@ extraContainers:
     limits:
       memory: 1500Mi
     requests:
-      cpu: 800m
+      cpu: 200m
       memory: 500Mi
 
 probes:
