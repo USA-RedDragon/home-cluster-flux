@@ -56,6 +56,7 @@ persistence:
   cache-transcodes:
     enabled: true
     type: emptyDir
+    accessMode: ReadWriteOnce
     size: 30Gi
   media-anime:
     enabled: true
