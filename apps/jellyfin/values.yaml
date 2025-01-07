@@ -23,6 +23,13 @@ controllers:
         #     memory: 4Gi
         #   limits:
         #     memory: 4Gi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
         env:
           - name: JELLYFIN_PublishedServerUrl
             value: https://jellyfin.mcswain.dev
