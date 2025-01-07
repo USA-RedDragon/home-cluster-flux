@@ -14,7 +14,7 @@ image:
 resources:
   requests:
     memory: "2000Mi"
-    cpu: "1"
+    cpu: 20m
 #  limits:
 #    memory: ""
 #    cpu: ""
