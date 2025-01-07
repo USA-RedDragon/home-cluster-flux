@@ -53,6 +53,10 @@ persistence:
     accessMode: ReadWriteOnce
     size: 15Gi
     storageClass: longhorn-ssd
+  cache-transcodes:
+    enabled: true
+    type: emptyDir
+    size: 30Gi
   media-anime:
     enabled: true
     type: nfs
