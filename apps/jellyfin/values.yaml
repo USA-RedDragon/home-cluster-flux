@@ -144,3 +144,9 @@ serviceMonitor:
   jellyfin:
     enabled: true
     serviceName: jellyfin
+    endpoints:
+      - port: http
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
