@@ -56,7 +56,7 @@ persistence:
   cache-transcodes:
     enabled: true
     type: emptyDir
-    maxSize: 30Gi
+    sizeLimit: 30Gi
   media-anime:
     enabled: true
     type: nfs
