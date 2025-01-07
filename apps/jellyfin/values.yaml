@@ -41,6 +41,8 @@ controllers:
             value: https://jellyfin.mcswain.dev
           - name: JELLYFIN_FFmpeg__analyzeduration
             value: "0"
+          - name: JELLYFIN_FFmpeg__probesize
+            value: 1M
         securityContext:
           fsGroup: 568
           readOnlyRootFilesystem: true
