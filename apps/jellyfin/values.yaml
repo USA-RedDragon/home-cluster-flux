@@ -6,6 +6,15 @@ controllers:
     pod:
       imagePullSecrets:
         - name: registry-docker-hub
+      securityContext:
+        runAsNonRoot: true
+        readOnlyRootFilesystem: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        capabilities:
+          drop:
+          - ALL
     containers:
       jellyfin:
         image:
@@ -22,8 +31,6 @@ controllers:
           - name: JELLYFIN_PublishedServerUrl
             value: https://jellyfin.mcswain.dev
         securityContext:
-          runAsNonRoot: true
-          runAsUser: 568
           fsGroup: 568
 
 service:
