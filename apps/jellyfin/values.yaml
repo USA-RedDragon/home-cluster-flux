@@ -17,12 +17,12 @@ controllers:
           repository: jellyfin/jellyfin
           tag: 10.10.3
           pullPolicy: IfNotPresent
-        # resources:
-        #   requests:
-        #     cpu: 4
-        #     memory: 4Gi
-        #   limits:
-        #     memory: 4Gi
+        resources:
+          requests:
+            cpu: 1
+            memory: 2Gi
+          limits:
+            memory: 4Gi
         probes:
           liveness:
             enabled: true
