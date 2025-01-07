@@ -81,7 +81,7 @@ persistence:
 
 ingress:
   jellyfin:
-    enabled: false
+    enabled: true
     className: nginx
     annotations:
       kubernetes.io/tls-acme: "true"
