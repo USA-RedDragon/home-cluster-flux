@@ -3,10 +3,10 @@
 controllers:
   jellyfin:
     replicas: 1
-    imagePullSecrets:
-    - name: registry-docker-hub
     containers:
       jellyfin:
+        imagePullSecrets:
+          - name: registry-docker-hub
         image:
           repository: jellyfin/jellyfin
           tag: 10.10.3
@@ -50,6 +50,7 @@ persistence:
     type: persistentVolumeClaim
     storageClass: media-anime
     accessMode: ReadWriteMany
+    size: 50Ti
     advancedMounts:
       jellyfin:
         jellyfin:
@@ -59,6 +60,7 @@ persistence:
     type: persistentVolumeClaim
     storageClass: media-movies
     accessMode: ReadWriteMany
+    size: 50Ti
     advancedMounts:
       jellyfin:
         jellyfin:
@@ -68,6 +70,7 @@ persistence:
     type: persistentVolumeClaim
     storageClass: media-tv
     accessMode: ReadWriteMany
+    size: 50Ti
     advancedMounts:
       jellyfin:
         jellyfin:
@@ -101,7 +104,7 @@ ingress:
         secretName: jellyfin-mcswain-dev
   tailscale:
     enabled: true
-    ingressClassName: tailscale
+    className: tailscale
     hosts:
       - host: jellyfin
         paths:
