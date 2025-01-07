@@ -27,15 +27,15 @@ controllers:
           liveness:
             enabled: true
             spec:
-              initialDelaySeconds: 60
+              initialDelaySeconds: 20
           readiness:
             enabled: true
             spec:
-              initialDelaySeconds: 60
+              initialDelaySeconds: 20
           startup:
             enabled: true
             spec:
-              initialDelaySeconds: 60
+              initialDelaySeconds: 20
         env:
           - name: JELLYFIN_PublishedServerUrl
             value: https://jellyfin.mcswain.dev
