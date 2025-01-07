@@ -40,7 +40,7 @@ controllers:
           - name: JELLYFIN_PublishedServerUrl
             value: https://jellyfin.mcswain.dev
           - name: JELLYFIN_FFmpeg__probesize
-            value: 3M
+            value: 10M
         securityContext:
           fsGroup: 568
           readOnlyRootFilesystem: true
