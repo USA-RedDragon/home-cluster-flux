@@ -48,6 +48,7 @@ persistence:
     storageClass: longhorn-ssd
   media-anime:
     enabled: true
+    nameOverride: media-anime
     type: persistentVolumeClaim
     storageClass: media-anime
     accessMode: ReadWriteMany
@@ -58,6 +59,7 @@ persistence:
           - path: /media/anime
   media-movies:
     enabled: true
+    nameOverride: media-movies
     type: persistentVolumeClaim
     storageClass: media-movies
     accessMode: ReadWriteMany
@@ -68,6 +70,7 @@ persistence:
           - path: /media/movies
   media-tv:
     enabled: true
+    nameOverride: media-tv
     type: persistentVolumeClaim
     storageClass: media-tv
     accessMode: ReadWriteMany
