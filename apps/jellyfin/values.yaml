@@ -8,13 +8,9 @@ controllers:
         - name: registry-docker-hub
       securityContext:
         runAsNonRoot: true
-        readOnlyRootFilesystem: true
         runAsUser: 568
         runAsGroup: 568
         fsGroup: 568
-        capabilities:
-          drop:
-          - ALL
     containers:
       jellyfin:
         image:
@@ -32,6 +28,10 @@ controllers:
             value: https://jellyfin.mcswain.dev
         securityContext:
           fsGroup: 568
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
 
 service:
   jellyfin:
