@@ -35,6 +35,7 @@ spec:
       logLevel: Warn
       backupTarget: s3://longhorn@us-east-1/
       backupTargetCredentialSecret: minio
+      guaranteedInstanceManagerCPU: '4'
     longhornManager:
       priorityClass: system-cluster-critical
       tolerations:
