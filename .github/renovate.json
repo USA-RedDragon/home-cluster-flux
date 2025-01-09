@@ -28,6 +28,17 @@
             "depNameTemplate": "siderolabs/talos",
             "datasourceTemplate": "github-releases",
             "versioningTemplate": "semver"
+        },
+        {
+            "customType": "regex",
+            "fileMatch": [
+                "(^|/)infrastructure\\/longhorn\\/app\\/values\\.yaml"
+            ],
+            "matchStrings": [
+                "repository: (?<depName>.*)\\n\\s*tag; (?<currentValue>.*)"
+            ],
+            "datasourceTemplate": "docker",
+            "versioningTemplate": "semver"
         }
     ],
     "packageRules": [
