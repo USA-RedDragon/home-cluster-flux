@@ -150,6 +150,13 @@
             ]
         },
         {
+            "automerge": false,
+            "allowedVersions": "<=500",
+            "matchPackageNames": [
+                "/^longhornio\\/longhorn-engine$/"
+            ]
+        },
+        {
             "groupName": "Longhorn",
             "matchDatasources": [
                 "docker"
