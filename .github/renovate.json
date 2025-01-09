@@ -159,9 +159,11 @@
         {
             "groupName": "Longhorn",
             "matchDatasources": [
-                "docker"
+                "docker",
+                "helm"
             ],
             "matchPackageNames": [
+                "longhorn",
                 "longhornio/longhorn-engine",
                 "longhornio/longhorn-manager",
                 "longhornio/longhorn-ui",
