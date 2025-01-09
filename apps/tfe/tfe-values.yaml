@@ -23,6 +23,10 @@ resources:
 tls:
   certificateSecret: tfe-mcswain-dev-tls
 
+container:
+  securityContext:
+    runAsUser: 1000
+
 # Ingress allows ingress services to be created to allow external access
 # from Kubernetes to access Terraform Enterprise pods.
 ingress:
