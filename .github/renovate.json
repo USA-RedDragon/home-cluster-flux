@@ -35,10 +35,10 @@
                 "(^|/)infrastructure\\/longhorn\\/app\\/values\\.yaml"
             ],
             "matchStrings": [
-                "repository: (?<depName>.*)\\n\\s*tag; (?<currentValue>.*)"
+                "repository:\\s+(?<depName>.*)\\n\\s*tag:\\s+(?<currentValue>.*)"
             ],
             "datasourceTemplate": "docker",
-            "versioningTemplate": "semver"
+            "versioningTemplate": "semver-coerced"
         }
     ],
     "packageRules": [
@@ -147,6 +147,28 @@
             "matchPackageNames": [
                 "/^ghcr.io\\/usa-reddragon\\/palworld-server-docker$/",
                 "/^palworld$/"
+            ]
+        },
+        {
+            "groupName": "Longhorn",
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchPackageNames": [
+                "longhornio/longhorn-engine",
+                "longhornio/longhorn-manager",
+                "longhornio/longhorn-ui",
+                "longhornio/longhorn-instance-manager",
+                "longhornio/longhorn-share-manager",
+                "longhornio/backing-image-manager",
+                "longhornio/support-bundle-kit",
+                "longhornio/csi-attacher",
+                "longhornio/csi-provisioner",
+                "longhornio/csi-node-driver-registrar",
+                "longhornio/csi-resizer",
+                "longhornio/csi-snapshotter",
+                "longhornio/livenessprobe",
+                "longhornio/openshift-origin-oauth-proxy"
             ]
         }
     ]
