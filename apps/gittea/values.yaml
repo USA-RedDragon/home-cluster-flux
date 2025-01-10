@@ -8,7 +8,7 @@ image:
   repository: gitea/gitea
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.22.6@sha256:538658de667c5d098a274f2f63aa6ec891d88f670cdd5282cf27221ba747dda4"
+  tag: "1.23.0@sha256:ee55efa92a1dd7fcabad02d581972589f3cebda89c11ca57eadb67a1eb7c4254"
 
 imagePullSecrets:
 - name: registry-docker-hub
