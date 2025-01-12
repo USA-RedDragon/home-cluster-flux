@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/tailscale/golink
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:313aa850aad5427392ba9b71e0c8fa54262f8d82be96d689004545d20c638dd2"
+  tag: "1.0.0@sha256:e629f13cf8dcf9224e26317630172b3dcf1e69a44e5902207a38d4fe9e69bb3a"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -81,7 +81,7 @@ persistentVolumes:
   size: 2Gi
   persistentVolumeClaim:
     name: data
-    storageClass: longhorn-nvme
+    storageClass: longhorn-ssd
 
 ingress:
   enabled: false
