@@ -3335,7 +3335,7 @@ prometheus:
     storageSpec:
       volumeClaimTemplate:
         spec:
-          storageClassName: longhorn-nvme
+          storageClassName: longhorn-nvme-no-replicas
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
