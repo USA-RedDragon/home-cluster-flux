@@ -9,28 +9,12 @@ allowVolumeExpansion: true
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
 parameters:
-  numberOfReplicas: "3"
+  numberOfReplicas: "2"
   staleReplicaTimeout: "30"
   fromBackup: ""
   fsType: ext4
   dataLocality: best-effort
   diskSelector: "nvme"
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: longhorn-rootfs
-provisioner: driver.longhorn.io
-allowVolumeExpansion: true
-reclaimPolicy: Delete
-volumeBindingMode: Immediate
-parameters:
-  numberOfReplicas: "3"
-  staleReplicaTimeout: "30"
-  fromBackup: ""
-  fsType: ext4
-  dataLocality: best-effort
-  diskSelector: "rootfs"
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -41,7 +25,7 @@ allowVolumeExpansion: true
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
 parameters:
-  numberOfReplicas: "3"
+  numberOfReplicas: "2"
   staleReplicaTimeout: "30"
   fromBackup: ""
   fsType: ext4
