@@ -21,9 +21,9 @@ controllers:
         resources:
           requests:
             cpu: 250m
-            memory: 2Gi
+            memory: 10Gi
           limits:
-            memory: 4Gi
+            memory: 12Gi
             nvidia.com/gpu: 1
         probes:
           liveness:
@@ -78,7 +78,7 @@ persistence:
     enabled: true
     type: emptyDir
     medium: Memory
-    sizeLimit: 30Gi
+    sizeLimit: 10Gi
     globalMounts:
       - path: /cache/transcodes
   jellyfin-tmp:
