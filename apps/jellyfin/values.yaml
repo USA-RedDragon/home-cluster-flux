@@ -42,7 +42,7 @@ controllers:
           - name: JELLYFIN_PublishedServerUrl
             value: https://jellyfin.mcswain.dev
           - name: JELLYFIN_FFmpeg__probesize
-            value: 10M
+            value: 20M
           - name: NVIDIA_VISIBLE_DEVICES
             value: all
           - name: NVIDIA_DRIVER_CAPABILITIES
