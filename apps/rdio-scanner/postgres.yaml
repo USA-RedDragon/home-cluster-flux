@@ -8,13 +8,12 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1-12
   enableSuperuserAccess: true
   bootstrap:
-    recovery:
+    initdb:
       database: rdio
       owner: rdio
-      source: postgresql
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/rdio-1"
+      destinationPath: "s3://cnpg/rdio-scanner"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -26,20 +25,6 @@ spec:
       wal:
         compression: gzip
     retentionPolicy: "4w"
-  externalClusters:
-  - barmanObjectStore:
-      destinationPath: s3://cnpg/atuin
-      endpointURL: https://s3.mcswain.dev
-      s3Credentials:
-        accessKeyId:
-          key: AWS_ACCESS_KEY_ID
-          name: cnpg-minio
-        secretAccessKey:
-          key: AWS_SECRET_ACCESS_KEY
-          name: cnpg-minio
-      wal:
-        compression: gzip
-    name: postgresql
   storage:
     size: 12Gi
   monitoring:
