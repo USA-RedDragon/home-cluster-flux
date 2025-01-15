@@ -9,7 +9,7 @@ spec:
   enableSuperuserAccess: true
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/dmrhub"
+      destinationPath: "s3://cnpg/dmrhub-1"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -21,10 +21,25 @@ spec:
       wal:
         compression: gzip
     retentionPolicy: "4w"
+  externalClusters:
+  - barmanObjectStore:
+      destinationPath: s3://cnpg/dmrhub
+      endpointURL: https://s3.mcswain.dev
+      s3Credentials:
+        accessKeyId:
+          key: AWS_ACCESS_KEY_ID
+          name: cnpg-minio
+        secretAccessKey:
+          key: AWS_SECRET_ACCESS_KEY
+          name: cnpg-minio
+      wal:
+        compression: gzip
+    name: postgresql
   bootstrap:
-    initdb:
+    recovery:
       database: dmrhub
       owner: dmrhub
+      source: postgresql
   storage:
     size: 8Gi
   monitoring:
