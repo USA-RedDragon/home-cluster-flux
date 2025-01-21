@@ -199,7 +199,8 @@
             ],
             "matchPackageNames": [
                 "mend-renovate-enterprise-edition",
-                ".*/renovate-ee.*"
+                "ghcr.io/usa-reddragon/renovate-ee-worker",
+                "ghcr.io/usa-reddragon/renovate-ee"
             ]
         }
     ]
