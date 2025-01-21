@@ -199,7 +199,7 @@
             ],
             "matchPackageNames": [
                 "mend-renovate-enterprise-edition",
-                ".*/renovate-ee.*",
+                ".*/renovate-ee.*"
             ]
         }
     ]
