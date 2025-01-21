@@ -39,6 +39,17 @@
             ],
             "datasourceTemplate": "docker",
             "versioningTemplate": "semver-coerced"
+        },
+        {
+            "customType": "regex",
+            "fileMatch": [
+                "(^|/)apps\\/renovate-ce\\/values\\.yaml"
+            ],
+            "matchStrings": [
+                "repository:\\s+(?<depName>.*)\\n\\s*version:\\s+(?<currentValue>.*)"
+            ],
+            "datasourceTemplate": "docker",
+            "versioningTemplate": "semver-coerced"
         }
     ],
     "packageRules": [
