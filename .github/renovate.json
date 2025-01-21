@@ -190,6 +190,17 @@
                 "longhornio/livenessprobe",
                 "longhornio/openshift-origin-oauth-proxy"
             ]
+        },
+        {
+            "groupName": "Renovate",
+            "matchDatasources": [
+                "docker",
+                "helm"
+            ],
+            "matchPackageNames": [
+                "mend-renovate-enterprise-edition",
+                ".*/renovate-ee.*",
+            ]
         }
     ]
 }
