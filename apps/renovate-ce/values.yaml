@@ -8,7 +8,7 @@ renovateWorker:
     version: 9.2.0
 
   existingSecret: renovate-secrets
-  replicas: 3
+  replicas: 2
 
   extraEnvVars:
   - name: RENOVATE_REPOSITORY_CACHE
@@ -111,9 +111,9 @@ renovateWorker:
   resources:
     requests:
       cpu: '1'
-      memory: 5Gi
-    limits:
       memory: 8Gi
+    limits:
+      memory: 12Gi
 
   readinessProbe:
     failureThreshold: 6
