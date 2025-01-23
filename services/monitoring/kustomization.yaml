@@ -6,6 +6,7 @@ resources:
   - metrics-actioner-helm.yaml
   - metrics-actioner-metrics.yaml
   - metrics-actioner-rbac.yaml
+  - observatory-svc.yaml
 configMapGenerator:
   - name: querier-chart-values
     files:
