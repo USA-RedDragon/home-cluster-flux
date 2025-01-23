@@ -32,3 +32,15 @@ spec:
     podLabels:
       policy.mcswain.dev/egress-coredns: "true"
       policy.mcswain.dev/egress-kubeapi: "true"
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: ClusterRole
+            patch: |
+              - op: add
+                path: /rules/-
+                value:
+                  verbs: ["get", "watch", "list"]
+                  apiGroups: ["policy"]
+                  resources: ["poddisruptionbudgets"]
