@@ -24,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: bitnami
-      version: '20.2.1'
+      version: '20.2.2'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
