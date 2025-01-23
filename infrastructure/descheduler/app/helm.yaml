@@ -24,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: descheduler
-      version: '>=0.32.1 <0.32.2'
+      version: '0.32.1'
       interval: 1m0s
   values:
     serviceMonitor:
