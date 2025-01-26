@@ -63,7 +63,7 @@ initContainerImage:
 # Mattermost deployment section.
 # Use to configure the deploymento the Mattermost app servers.
 mattermostApp:
-  replicaCount: 3
+  replicaCount: 2
   image:
     repository: ghcr.io/usa-reddragon/mattermost
     tag: 10.4.2@sha256:0c1c1f81efdcec106971c2a98ac2bdae0828534ba96d6fdfc98c6e87c02433c4
