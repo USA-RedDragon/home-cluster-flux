@@ -141,7 +141,7 @@ renovateServer:
     repository: ghcr.io/usa-reddragon/renovate-ee
     version: 9.2.0
 
-  replicas: 3
+  replicas: 2
 
   extraEnvVars:
   - name: MEND_RNV_DATA_HANDLER_TYPE
