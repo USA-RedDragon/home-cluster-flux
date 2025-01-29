@@ -23,10 +23,6 @@ resources:
 tls:
   certificateSecret: tfe-mcswain-dev-tls
 
-container:
-  securityContext:
-    runAsUser: 1000
-
 # Ingress allows ingress services to be created to allow external access
 # from Kubernetes to access Terraform Enterprise pods.
 ingress:
@@ -62,9 +58,6 @@ agentWorkerPodTemplate:
         - name: TESTING_ENV_VAR_TEMPLATE
           value: "This is a test environment variable"
 
-openshift:
-  enabled: true
-
 env:
   secretRefs:
     - name: tfe-secrets
@@ -78,3 +71,26 @@ env:
     TFE_OBJECT_STORAGE_S3_ENDPOINT: https://s3.mcswain.dev
     TFE_OBJECT_STORAGE_S3_REGION: us-east-1
     TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
+
+openshift:
+  enabled: true
+
+container:
+  securityContext:
+    readOnlyRootFilesystem: true
+
+extraVolumes:
+  - emptyDir: {}
+    name: tmp
+  - emptyDir: {}
+    name: var-run
+  - emptyDir: {}
+    name: logs
+
+extraVolumeMounts:
+  - mountPath: /var/run
+    name: var-run
+  - mountPath: /tmp
+    name: tmp
+  - mountPath: /var/log/terraform-enterprise
+    name: logs
