@@ -41,6 +41,8 @@ controllers:
             value: tandoor
           - name: S3_REGION_NAME
             value: us-east-1
+          - name: ALLOWED_HOSTS
+            value: recipes.mydomain.com,127.0.0.1
           - name: DB_ENGINE
             value: django.db.backends.postgresql
           - name: DEBUG
