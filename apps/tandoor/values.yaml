@@ -142,7 +142,7 @@ persistence:
   nginx-config:
     enabled: true
     type: configMap
-    name: nginx-config
+    name: tandoor-nginx-config
     advancedMounts:
       tandoor:
         nginx:
