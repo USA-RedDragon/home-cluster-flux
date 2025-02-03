@@ -2,10 +2,15 @@
 
 controllers:
   tandoor:
+    strategy: RollingUpdate
     replicas: 1
     pod:
       imagePullSecrets:
         - name: registry-docker-hub
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
     containers:
       tandoor:
         image:
@@ -17,10 +22,25 @@ controllers:
             memory: 350Mi
           requests:
             memory: 250Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        securityContext:
+          readOnlyRootFilesystem: true
         envFrom:
           - secretRef:
               name: app-secrets
         env:
+          - name: S3_ENDPOINT_URL
+            value: https://s3.mcswain.dev
+          - name: S3_BUCKET_NAME
+            value: tandoor
+          - name: S3_REGION_NAME
+            value: us-east-1
           - name: DB_ENGINE
             value: django.db.backends.postgresql
           - name: POSTGRES_PORT
@@ -73,47 +93,6 @@ controllers:
               secretKeyRef:
                 name: postgresql-app
                 key: dbname
-      nginx:
-        image:
-          repository: nginx
-          tag: mainline-alpine@sha256:679a5fd058f6ca754a561846fe27927e408074431d63556e8fc588fc38be6901
-          pullPolicy: IfNotPresent
-        probes:
-          liveness:
-            enabled: true
-          readiness:
-            enabled: true
-          startup:
-            enabled: true
-
-configMaps:
-  nginx-config:
-    enabled: true
-    data:
-      nginx-config: |-
-        events {
-          worker_connections 1024;
-        }
-        http {
-          include mime.types;
-          server {
-            listen 80;
-            server_name _;
-            access_log /dev/stdout;
-            error_log /dev/stderr;
-
-            client_max_body_size 16M;
-
-            # serve static files
-            location /static/ {
-              alias /static/;
-            }
-            # serve media files
-            location /media/ {
-              alias /media/;
-            }
-          }
-        }
 
 service:
   tandoor:
@@ -121,35 +100,19 @@ service:
     ports:
       http:
         port: 8080
-      nginx:
-        port: 80
 
 persistence:
-  staticfiles:
+  static:
     enabled: true
-    type: persistentVolumeClaim
-    accessMode: ReadWriteOnce
-    size: 5Gi
-    storageClass: longhorn-ssd
+    type: emptyDir
     globalMounts:
       - path: /opt/recipes/staticfiles
-  mediafiles:
+        subPath: staticfiles
+      - path: /opt/recipes/cookbook/static/django_js_reverse
+        subPath: django_js_reverse
+  tmp:
     enabled: true
-    type: persistentVolumeClaim
-    accessMode: ReadWriteOnce
-    size: 5Gi
-    storageClass: longhorn-ssd
-    globalMounts:
-      - path: /opt/recipes/mediafiles
-  nginx-config:
-    enabled: true
-    type: configMap
-    name: tandoor-nginx-config
-    advancedMounts:
-      tandoor:
-        nginx:
-          - path: /etc/nginx/nginx.conf
-            subPath: nginx-config
+    type: emptyDir
 
 ingress:
   tandoor:
