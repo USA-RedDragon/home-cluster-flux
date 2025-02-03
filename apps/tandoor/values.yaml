@@ -33,6 +33,8 @@ controllers:
             value: "2"
           - name: GUNICORN_THREADS
             value: "2"
+          - name: SOCIAL_PROVIDERS
+            value: allauth.socialaccount.providers.openid_connect
           - name: EMAIL_HOST
             value: email.mcswain.dev
           - name: EMAIL_PORT
