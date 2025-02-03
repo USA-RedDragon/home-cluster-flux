@@ -43,6 +43,8 @@ controllers:
             value: us-east-1
           - name: DB_ENGINE
             value: django.db.backends.postgresql
+          - name: DEBUG
+            value: "0"
           - name: POSTGRES_PORT
             value: "5432"
           - name: TZ
