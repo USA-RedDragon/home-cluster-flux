@@ -8,6 +8,7 @@ metadata:
 spec:
   type: LoadBalancer
   loadBalancerClass: metallb
+  externalTrafficPolicy: Local
   internalTrafficPolicy: Cluster
   selector:
     app.kubernetes.io/instance: dmrhub

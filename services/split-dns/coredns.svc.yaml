@@ -12,6 +12,7 @@ metadata:
     tailscale.com/proxy-class: "tailscale"
 spec:
   type: LoadBalancer
+  externalTrafficPolicy: Local
   internalTrafficPolicy: Cluster
   loadBalancerClass: metallb
   selector:
