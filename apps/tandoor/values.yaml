@@ -152,7 +152,7 @@ persistence:
             subPath: nginx-config
 
 ingress:
-  nginx:
+  tandoor:
     enabled: true
     className: nginx
     annotations:
@@ -177,7 +177,7 @@ ingress:
     annotations:
       kubernetes.io/tls-acme: "true"
       cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/temporal-redirect: /accounts/oidc/authentik/login
+      nginx.ingress.kubernetes.io/temporal-redirect: https://recipes.mcswain.dev/accounts/oidc/authentik/login
     hosts:
       - host: recipes.mcswain.dev
         paths:
