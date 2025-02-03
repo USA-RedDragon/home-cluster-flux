@@ -11,23 +11,13 @@ spec:
   suspend: true
   chart:
     spec:
-      chart: app
+      chart: app-template
       sourceRef:
         kind: HelmRepository
-        name: usa-reddragon
+        name: bjw-s
         namespace: flux-system
-      version: '0.1.35'
+      version: '3.6.1'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
-  postRenderers:
-  - kustomize:
-      patches:
-      - target:
-          version: v1
-          kind: Deployment
-          name: tandoor-app
-        patch: |
-          - op: remove
-            path: /spec/template/spec/containers/0/ports

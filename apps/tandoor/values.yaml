@@ -1,233 +1,171 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 1
+controllers:
+  tandoor:
+    replicas: 1
+    pod:
+      imagePullSecrets:
+        - name: registry-docker-hub
+    containers:
+      tandoor:
+        image:
+          repository: vabene1111/recipes
+          tag: 1.5.31@sha256:063eb446e2981a737c8722642acef6aeacbd7b33f672a982209bd82c068b1a2c
+          pullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 350Mi
+          requests:
+            memory: 250Mi
+        envFrom:
+          - secretRef:
+              name: app-secrets
+        env:
+          - name: DB_ENGINE
+            value: django.db.backends.postgresql
+          - name: POSTGRES_PORT
+            value: "5432"
+          - name: TZ
+            value: "America/Chicago"
+          - name: GUNICORN_MEDIA
+            value: "0"
+          - name: GUNICORN_WORKERS
+            value: "2"
+          - name: GUNICORN_THREADS
+            value: "2"
+          - name: EMAIL_HOST
+            value: email.mcswain.dev
+          - name: EMAIL_PORT
+            value: "465"
+          - name: EMAIL_HOST_USER
+            value: tandoor
+          - name: EMAIL_USE_TLS
+            value: "0"
+          - name: EMAIL_USE_SSL
+            value: "1"
+          - name: DEFAULT_FROM_EMAIL
+            value: recipes@mcswain.dev
+          - name: ACCOUNT_EMAIL_SUBJECT_PREFIX
+            value: '[Recipes] '
+          - name: ENABLE_PDF_EXPORT
+            value: "1"
+          - name: PYTHONUNBUFFERED
+            value: "1"
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: password
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: username
+          - name: POSTGRES_HOST
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: host
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: dbname
+      nginx:
+        image:
+          repository: nginx
+          tag: mainline-alpine@sha256:679a5fd058f6ca754a561846fe27927e408074431d63556e8fc588fc38be6901
+          pullPolicy: IfNotPresent
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
 
-image:
-  repository: vabene1111/recipes
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.5.31@sha256:063eb446e2981a737c8722642acef6aeacbd7b33f672a982209bd82c068b1a2c"
+configMaps:
+  nginx-config:
+    enabled: true
+    data:
+      nginx-config: |-
+        events {
+          worker_connections 1024;
+        }
+        http {
+          include mime.types;
+          server {
+            listen 80;
+            server_name _;
+            access_log /dev/stdout;
+            error_log /dev/stderr;
 
-command:
-- /opt/recipes/boot.sh
+            client_max_body_size 16M;
 
-args: []
-
-imagePullSecrets:
-- name: registry-docker-hub
-nameOverride: ""
-fullnameOverride: ""
-
-secrets: []
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs:
-- name: recipes-nginx-config
-  data:
-    nginx-config: |-
-      events {
-        worker_connections 1024;
-      }
-      http {
-        include mime.types;
-        server {
-          listen 80;
-          server_name _;
-          access_log /dev/stdout;
-          error_log /dev/stderr;
-
-          client_max_body_size 16M;
-
-          # serve static files
-          location /static/ {
-            alias /static/;
-          }
-          # serve media files
-          location /media/ {
-            alias /media/;
+            # serve static files
+            location /static/ {
+              alias /static/;
+            }
+            # serve media files
+            location /media/ {
+              alias /media/;
+            }
           }
         }
-      }
-- name: app-config
-  data:
-    DB_ENGINE: django.db.backends.postgresql
-    POSTGRES_PORT: "5432"
-    TZ: "America/Chicago"
-    GUNICORN_MEDIA: "0"
-    GUNICORN_WORKERS: "2"
-    GUNICORN_THREADS: "2"
-    EMAIL_HOST: email.mcswain.dev
-    EMAIL_PORT: "465"
-    EMAIL_HOST_USER: tandoor
-    EMAIL_USE_TLS: "0"
-    EMAIL_USE_SSL: "1"
-    DEFAULT_FROM_EMAIL: recipes@mcswain.dev
-    ACCOUNT_EMAIL_SUBJECT_PREFIX: '[Recipes] '
-    ENABLE_PDF_EXPORT: "1"
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom:
-- secretRef:
-    name: app-secrets
-- configMapRef:
-    name: app-config
-
-env:
-- name: POSTGRES_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: password
-- name: POSTGRES_USER
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: username
-- name: POSTGRES_HOST
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: host
-- name: POSTGRES_DB
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: dbname
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 8080
+  tandoor:
+    controller: tandoor
+    ports:
+      http:
+        port: 8080
+      nginx:
+        port: 80
 
-extraContainers:
-- name: nginx
-  image: nginx:mainline-alpine@sha256:679a5fd058f6ca754a561846fe27927e408074431d63556e8fc588fc38be6901
-  imagePullPolicy: IfNotPresent
-  ports:
-    - containerPort: 80
-      protocol: TCP
-      name: http
-    - containerPort: 8080
-      protocol: TCP
-      name: gunicorn
-  volumeMounts:
-    - mountPath: /media
-      name: mediafiles
-    - mountPath: /static
-      name: staticfiles
-    - name: nginx-config
-      mountPath: /etc/nginx/nginx.conf
-      subPath: nginx-config
-      readOnly: true
-
-persistentVolumes:
-- name: staticfiles
-  mountPath: /opt/recipes/staticfiles
-  size: 5Gi
-  persistentVolumeClaim:
-    name: staticfiles
-    storageClass: longhorn-nvme
-- name: mediafiles
-  mountPath: /opt/recipes/mediafiles
-  size: 5Gi
-  persistentVolumeClaim:
-    name: mediafiles
+persistence:
+  staticfiles:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 5Gi
     storageClass: longhorn-ssd
-- name: nginx-config
-  mountPath: /etc/nginx/nginx.conf
-  configMap:
-    name: recipes-nginx-config
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+    globalMounts:
+      - path: /opt/recipes/staticfiles
+  mediafiles:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    storageClass: longhorn-ssd
+    globalMounts:
+      - path: /opt/recipes/mediafiles
+  nginx-config:
+    enabled: true
+    type: configMap
+    name: nginx-config
+    advancedMounts:
+      tandoor:
+        nginx:
+          - path: /etc/nginx/nginx.conf
+            subPath: nginx-config
 
 ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    # nginx.ingress.kubernetes.io/configuration-snippet: |
-    #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-    #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-  ingressClassName: nginx
-  hosts:
-  - host: recipes.mcswain.dev
-    paths:
-    - port: 8080
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: recipes-mcswain-dev-tls
+  nginx:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
     hosts:
-      - recipes.mcswain.dev
-
-probes:
-  liveness:
-    httpGet:
-      path: /
-      port: 8080
-  readiness:
-    httpGet:
-      path: /
-      port: 8080
-
-resources:
-  limits:
-    memory: 350Mi
-  requests:
-    memory: 250Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+      - host: recipes.mcswain.dev
+        paths:
+          - path: /
+            service:
+              identifier: tandoor
+              port: http
+    tls:
+      - hosts:
+          - recipes.mcswain.dev
+        secretName: recipes-mcswain-dev
