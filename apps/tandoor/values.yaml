@@ -164,10 +164,23 @@ ingress:
       - host: recipes.mcswain.dev
         paths:
           - path: /
-            service:
+            service: &svc
               identifier: tandoor
               port: http
-    tls:
+    tls: &tls
       - hosts:
           - recipes.mcswain.dev
         secretName: recipes-mcswain-dev
+  redirect-login:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/temporal-redirect: /accounts/oidc/authentik/login
+    hosts:
+      - host: recipes.mcswain.dev
+        paths:
+          - path: /accounts/login
+            service: *svc
+    tls: *tls
