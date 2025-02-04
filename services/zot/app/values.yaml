@@ -92,7 +92,11 @@ configMaps:
               path: /metrics
         storage:
           rootDirectory: /tmp/zot
-          dedupe: false
+          remoteCache: true
+          cacheDriver:
+            name: redis
+            url: redis://redis:6379
+          dedupe: true
           storageDriver:
             name: s3
             regionendpoint: minio-app.minio.svc.cluster.local:9000
