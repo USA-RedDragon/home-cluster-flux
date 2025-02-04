@@ -54,9 +54,18 @@ configMaps:
         http:
           address: 0.0.0.0
           port: 5000
+          externalUrl: https://zot.mcswain.dev
           compat: [docker2s2]
           auth:
             failDelay: 3
+          accessControl:
+            openid:
+              providers:
+                oidc:
+                  issuer: https://authentik.mcswain.dev/application/o/zot/
+                  scopes: [openid, profile, email, groups]
+                  clientid: ${zot_oidc_clientid}
+                  clientsecret: ${zot_oidc_clientsecret}
         log:
           level: info
         extensions:
