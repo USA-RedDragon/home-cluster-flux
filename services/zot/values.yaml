@@ -39,7 +39,7 @@ service:
         port: 5000
 
 configMaps:
-  zot-config:
+  config:
     data:
       config.yaml: |
         http:
