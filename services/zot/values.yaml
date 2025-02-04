@@ -8,6 +8,9 @@ controllers:
       priorityClassName: system-cluster-critical
     containers:
       zot:
+        args:
+        - serve
+        - /etc/zot/config.yaml
         image:
           repository: ghcr.io/project-zot/zot
           tag: v2.1.2
