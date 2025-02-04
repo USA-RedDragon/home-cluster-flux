@@ -59,19 +59,16 @@ configMaps:
           accessControl:
             groups:
               trusted: {}
+            adminPolicy:
+              groups: [trusted]
+              actions: [create, read, update, delete]
             repositories:
               "**":
                 anonymousPolicy: []
                 defaultPolicy: []
-                policies:
-                  - groups: [trusted]
-                    actions: [create, read, update, delete]
               pub/**:
                 anonymousPolicy: [read]
                 defaultPolicy: [read]
-                policies:
-                  - groups: [trusted]
-                    actions: [create, read, update, delete]
           auth:
             failDelay: 3
             openid:
