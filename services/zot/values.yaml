@@ -54,13 +54,20 @@ configMaps:
         http:
           address: 0.0.0.0
           port: 5000
+          compat: [docker2s2]
+          auth:
+            failDelay: 3
         log:
-          level: debug
+          level: info
         extensions:
           ui:
             enable: true
           search:
             enable: true
+          metrics:
+            enable: true
+            prometheus:
+              path: /metrics
         storage:
           rootDirectory: /tmp/zot
           dedupe: false
@@ -106,6 +113,25 @@ ingress:
             service:
               identifier: zot
               port: http
+    tls:
+      - hosts:
+          - zot.mcswain.dev
+        secretName: zot-mcswain-dev
+  block-metrics:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/temporal-redirect: https://zot.mcswain.dev/
+    hosts:
+      - host: zot.mcswain.dev
+        paths: /metrics
+        pathType: Exact
+        service:
+          identifier: zot
+          port: http
     tls:
       - hosts:
           - zot.mcswain.dev
