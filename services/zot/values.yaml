@@ -127,11 +127,12 @@ ingress:
       nginx.ingress.kubernetes.io/temporal-redirect: https://zot.mcswain.dev/
     hosts:
       - host: zot.mcswain.dev
-        paths: /metrics
-        pathType: Exact
-        service:
-          identifier: zot
-          port: http
+        paths:
+          - path: /metrics
+            pathType: Exact
+            service:
+              identifier: zot
+              port: http
     tls:
       - hosts:
           - zot.mcswain.dev
