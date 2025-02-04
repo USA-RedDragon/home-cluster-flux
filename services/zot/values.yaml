@@ -61,8 +61,6 @@ configMaps:
             enable: true
           search:
             enable: true
-            cve:
-              updateInterval: 2h
         storage:
           rootDirectory: /tmp/zot
           dedupe: false
