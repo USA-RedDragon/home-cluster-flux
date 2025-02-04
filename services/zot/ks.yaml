@@ -12,9 +12,10 @@ spec:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
-  substituteFrom:
-    - kind: Secret
-      name: zot-oidc
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: zot-oidc
   dependsOn:
     - name: secrets
       namespace: flux-system
