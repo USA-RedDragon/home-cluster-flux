@@ -95,7 +95,7 @@ configMaps:
           remoteCache: true
           cacheDriver:
             name: redis
-            url: redis://redis:6379
+            url: redis://redis-master:6379
           dedupe: true
           storageDriver:
             name: s3
