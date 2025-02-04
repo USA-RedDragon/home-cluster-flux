@@ -71,7 +71,7 @@ configMaps:
                 defaultPolicy: [read]
           auth:
             failDelay: 3
-            sessionKeysFile: /etc/zot/sessionkeys
+            sessionKeysFile: /etc/zot/sessionkeys.json
             openid:
               providers:
                 oidc:
@@ -114,7 +114,7 @@ persistence:
     type: secret
     name: zot-sessionkeys
     globalMounts:
-      - path: /etc/zot/sessionkeys
+      - path: /etc/zot/sessionkeys.json
         subPath: sessionkeys
   tmp-zot:
     enabled: true
