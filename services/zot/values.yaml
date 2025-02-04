@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  zot:
+    strategy: RollingUpdate
+    replicas: 2
+    pod:
+      priorityClassName: system-cluster-critical
+    containers:
+      zot:
+        image:
+          repository: ghcr.io/project-zot/zot
+          tag: v2.1.2
+          pullPolicy: IfNotPresent
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: minio
+                key: accesskey
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: minio
+                key: secretkey
+
+service:
+  zot:
+    controller: zot
+    ports:
+      http:
+        port: 5000
+
+configMaps:
+  zot-config:
+    data:
+      config.yaml: |
+        http:
+          address: 0.0.0.0
+          port: 5000
+        log:
+          level: debug
+        storage:
+          rootDirectory: /tmp/zot
+          dedupe: true
+          storageDriver:
+            name: s3
+            regionendpoint: minio-app.minio.svc.cluster.local:9000
+            forcepathstyle: true
+            region: us-east-1
+            bucket: zot
+            secure: false
+
+persistence:
+  config:
+    enabled: true
+    type: configMap
+    name: zot-config
+    globalMounts:
+      - path: /etc/zot
+
+ingress:
+  nginx:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    hosts:
+      - host: zot.mcswain.dev
+        paths:
+          - path: /
+            service:
+              identifier: zot
+              port: http
+    tls:
+      - hosts:
+          - zot.mcswain.dev
+        secretName: zot-mcswain-dev
