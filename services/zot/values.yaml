@@ -58,7 +58,7 @@ configMaps:
           level: debug
         storage:
           rootDirectory: /tmp/zot
-          dedupe: true
+          dedupe: false
           storageDriver:
             name: s3
             regionendpoint: minio-app.minio.svc.cluster.local:9000
