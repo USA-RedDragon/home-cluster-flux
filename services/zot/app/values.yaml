@@ -80,6 +80,8 @@ configMaps:
             enable: true
           search:
             enable: true
+            cve:
+              updateInterval: 2h
           metrics:
             enable: true
             prometheus:
