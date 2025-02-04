@@ -16,7 +16,7 @@ controllers:
         - serve
         - /etc/zot/config.yaml
         image:
-          repository: ghcr.io/project-zot/zot
+          repository: zot.mcswain.dev/pub/zot
           tag: v2.1.3-rc2
           pullPolicy: IfNotPresent
         securityContext:
@@ -57,18 +57,15 @@ configMaps:
           externalUrl: https://zot.mcswain.dev
           compat: [docker2s2]
           accessControl:
-            groups:
-              trusted: {}
             adminPolicy:
               groups: [trusted]
-              actions: [create, read, update, delete]
+              actions: [create, read, update, delete, detectManifestCollision]
             repositories:
               "**":
-                anonymousPolicy: []
-                defaultPolicy: []
-              pub/**:
-                anonymousPolicy: [read]
                 defaultPolicy: [read]
+              "pub/**":
+                defaultPolicy: [read]
+                anonymousPolicy: [read]
           auth:
             failDelay: 3
             sessionKeysFile: /etc/zot/sessionkeys.json
