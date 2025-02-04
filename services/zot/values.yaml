@@ -6,6 +6,10 @@ controllers:
     replicas: 2
     pod:
       priorityClassName: system-cluster-critical
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
     containers:
       zot:
         args:
@@ -15,6 +19,8 @@ controllers:
           repository: ghcr.io/project-zot/zot
           tag: v2.1.2
           pullPolicy: IfNotPresent
+        securityContext:
+          readOnlyRootFilesystem: true
         probes:
           liveness:
             enabled: true
@@ -68,6 +74,11 @@ persistence:
     name: zot-config
     globalMounts:
       - path: /etc/zot
+  tmp-zot:
+    enabled: true
+    type: emptyDir
+    globalMounts:
+      - path: /tmp/zot
 
 ingress:
   nginx:
