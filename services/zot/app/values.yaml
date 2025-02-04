@@ -58,7 +58,6 @@ configMaps:
           compat: [docker2s2]
           auth:
             failDelay: 3
-          accessControl:
             openid:
               providers:
                 oidc:
