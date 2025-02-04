@@ -3,7 +3,7 @@
 controllers:
   zot:
     strategy: RollingUpdate
-    replicas: 2
+    replicas: 1
     pod:
       priorityClassName: system-cluster-critical
       securityContext:
