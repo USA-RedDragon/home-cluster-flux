@@ -6,6 +6,8 @@ controllers:
     pod:
       imagePullSecrets:
         - name: registry-docker-hub
+      nodeSelector:
+        nvidia.com/gpu.product: NVIDIA-GeForce-GTX-1060-3GB
       runtimeClassName: nvidia
       securityContext:
         runAsNonRoot: true
