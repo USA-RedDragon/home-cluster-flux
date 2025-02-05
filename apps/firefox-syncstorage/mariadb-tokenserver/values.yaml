@@ -13,3 +13,5 @@ primary:
       memory: 256Mi
       cpu: 40m
     limits: {}
+
+fullnameOverride: mariadb-tokenserver
