@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  syncstorage:
+    replicas: 1
+    pod:
+      imagePullSecrets:
+        - name: registry-docker-hub
+    containers:
+      syncstorage:
+        image:
+          repository: mozilla/syncstorage-rs
+          tag: 0.18.2
+          pullPolicy: IfNotPresent
+        resources: {}
+        env:
+          - name: SYNC_HOST
+            value: 0.0.0.0
+          - name: SYNC_TOKENSERVER__RUN_MIGRATIONS
+            value: "true"
+          - name: MARIADB_SYNCSTORAGE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mariadb-syncstorage
+                key: mariadb-root-password
+          - name: MARIADB_TOKENSERVER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mariadb-tokenserver
+                key: mariadb-root-password
+          - name: SYNC_SYNCSTORAGE__DATABASE_URL
+            value: mysql://root:$(MARIADB_SYNCSTORAGE_PASSWORD)@mariadb-syncstorage:3306/syncstorage
+          - name: SYNC_TOKENSERVER__DATABASE_URL
+            value: mysql://root:$(MARIADB_TOKENSERVER_PASSWORD)@mariadb-tokenserver:3306/tokenserver
+          - name: SYNC_MASTER_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: secret
+                key: secret
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+service:
+  syncstorage:
+    controller: syncstorage
+    ports:
+      http:
+        port: 8000
+
+ingress:
+  nginx:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+      - host: mozilla.mcswain.dev
+        paths:
+          - path: /
+            service:
+              identifier: syncstorage
+              port: http
+    tls:
+      - hosts:
+          - mozilla.mcswain.dev
+        secretName: mozilla-mcswain-dev-tls
