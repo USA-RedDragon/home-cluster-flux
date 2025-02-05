@@ -1,0 +1,22 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mariadb-syncstorage
+spec:
+  interval: 60m0s
+  driftDetection:
+    mode: enabled
+  releaseName: mariadb
+  chart:
+    spec:
+      chart: mariadb
+      sourceRef:
+        kind: HelmRepository
+        namespace: flux-system
+        name: bitnami
+      version: '20.2.2'
+      interval: 60m0s
+  valuesFrom:
+    - kind: ConfigMap
+      name: chart-values
