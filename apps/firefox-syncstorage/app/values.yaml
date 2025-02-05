@@ -10,7 +10,7 @@ controllers:
       syncstorage:
         image:
           repository: mozilla/syncstorage-rs
-          tag: 0.18.2
+          tag: 0.13.7
           pullPolicy: IfNotPresent
         resources: {}
         env:
