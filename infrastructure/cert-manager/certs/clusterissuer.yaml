@@ -30,6 +30,7 @@ spec:
         - dmrhub.org
         - dmrhub.net
         - dmrhub.network
+        - jacob.pub
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
