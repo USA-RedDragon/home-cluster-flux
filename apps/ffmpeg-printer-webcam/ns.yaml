@@ -2,4 +2,4 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ffmpeg-printer-webcam 
+  name: ffmpeg-printer-webcam

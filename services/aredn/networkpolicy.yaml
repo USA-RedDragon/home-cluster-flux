@@ -5,7 +5,7 @@ metadata:
   namespace: aredn
 spec:
   endpointSelector:
-    matchLabels: 
+    matchLabels:
       app.kubernetes.io/instance: wireguard-tunnel
   egress:
   - toEndpoints:
