@@ -1,0 +1,32 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: allowlist-registries
+spec:
+  rules:
+  - name: allowlist-registries
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    validate:
+      failureAction: Audit
+      message: This Pod names an image that is not from an approved registry.
+      foreach:
+      # Create a flattened array of all containers in the Pod.
+      - list: "images.containers.*.registry"
+        deny:
+          conditions:
+            all:
+              - key: "{{element}}"
+                operator: AnyNotIn
+                value:
+                - ghcr.io
+                - quay.io
+                - docker.io
+                - registry.k8s.io
+                - lscr.io
+                - images.releases.hashicorp.com
+                - nvcr.io
+                - jacob.pub
