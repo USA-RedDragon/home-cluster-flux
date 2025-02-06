@@ -1,0 +1,54 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-dropped-capabilities
+spec:
+  rules:
+    - name: require-drop-all
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      preconditions:
+        all:
+        - key: "{{ request.operation || 'BACKGROUND' }}"
+          operator: NotEquals
+          value: DELETE
+      validate:
+        failureAction: Audit
+        message: >-
+          Containers must drop `ALL` capabilities.
+        foreach:
+          - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+            deny:
+              conditions:
+                all:
+                - key: ALL
+                  operator: AnyNotIn
+                  value: "{{ element.securityContext.capabilities.drop[] || `[]` }}"
+    - name: adding-capabilities-strict
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      preconditions:
+        all:
+        - key: "{{ request.operation || 'BACKGROUND' }}"
+          operator: NotEquals
+          value: DELETE
+      validate:
+        failureAction: Audit
+        message: >-
+          Any capabilities added other than NET_ADMIN are disallowed.
+        foreach:
+          - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+            deny:
+              conditions:
+                all:
+                - key: "{{ element.securityContext.capabilities.add[] || `[]` }}"
+                  operator: AnyNotIn
+                  value:
+                  - NET_ADMIN
+                  - ''
