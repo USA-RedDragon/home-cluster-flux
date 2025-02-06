@@ -54,7 +54,7 @@ configMaps:
         http:
           address: 0.0.0.0
           port: 5000
-          externalUrl: https://zot.mcswain.dev
+          externalUrl: https://jacob.pub
           compat: [docker2s2]
           accessControl:
             adminPolicy:
@@ -135,7 +135,7 @@ ingress:
       nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
       nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
     hosts:
-      - host: zot.mcswain.dev
+      - host: jacob.pub
         paths:
           - path: /
             service:
@@ -143,8 +143,8 @@ ingress:
               port: http
     tls:
       - hosts:
-          - zot.mcswain.dev
-        secretName: zot-mcswain-dev
+          - jacob.pub
+        secretName: jacob-pub
   block-metrics:
     enabled: true
     className: nginx
@@ -152,9 +152,9 @@ ingress:
       kubernetes.io/tls-acme: "true"
       cert-manager.io/cluster-issuer: cloudflare
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/temporal-redirect: https://zot.mcswain.dev/
+      nginx.ingress.kubernetes.io/temporal-redirect: https://jacob.pub/
     hosts:
-      - host: zot.mcswain.dev
+      - host: jacob.pub
         paths:
           - path: /metrics
             pathType: Exact
@@ -163,5 +163,5 @@ ingress:
               port: http
     tls:
       - hosts:
-          - zot.mcswain.dev
-        secretName: zot-mcswain-dev
+          - jacob.pub
+        secretName: jacob-pub
