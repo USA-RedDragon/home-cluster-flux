@@ -4,7 +4,7 @@ metadata:
   name: minio
 spec:
   endpointSelector:
-    matchLabels: 
+    matchLabels:
       app.kubernetes.io/instance: minio
   ingress:
     - fromEntities:

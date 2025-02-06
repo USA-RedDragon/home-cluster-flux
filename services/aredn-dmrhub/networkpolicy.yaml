@@ -5,7 +5,7 @@ metadata:
   namespace: aredn-dmrhub
 spec:
   endpointSelector:
-    matchLabels: 
+    matchLabels:
       app.kubernetes.io/instance: aredn-dmrhub
   egress:
     - toEndpoints:

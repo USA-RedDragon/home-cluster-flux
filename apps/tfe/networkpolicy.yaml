@@ -5,7 +5,7 @@ metadata:
   namespace: tfe-agents
 spec:
   endpointSelector:
-    matchLabels: 
+    matchLabels:
       app: terraform-enterprise
   egress:
     - toEndpoints:
