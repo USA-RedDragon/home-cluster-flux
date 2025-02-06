@@ -12,9 +12,8 @@ spec:
           - Pod
     validate:
       failureAction: Audit
-      message: This Pod names an image that is not from an approved registry.
+      message: This resource contains an image that is not from an approved registry.
       foreach:
-      # Create a flattened array of all containers in the Pod.
       - list: "images.containers.*.registry"
         deny:
           conditions:
