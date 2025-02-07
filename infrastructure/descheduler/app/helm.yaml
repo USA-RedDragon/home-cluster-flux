@@ -32,6 +32,61 @@ spec:
     podLabels:
       policy.mcswain.dev/egress-coredns: "true"
       policy.mcswain.dev/egress-kubeapi: "true"
+    deschedulerPolicy:
+      maxNoOfPodsToEvictPerNamespace: 1
+      metricsCollector:
+        enabled: true
+      profiles:
+        - name: default
+          pluginConfig:
+            - name: DefaultEvictor
+              args:
+                ignorePvcPods: false
+                evictLocalStoragePods: false
+                evictSystemCriticalPods: false
+                evictDaemonSetPods: false
+                evictFailedBarePods: true
+            - name: RemoveDuplicates
+            - name: RemovePodsHavingTooManyRestarts
+              args:
+                podRestartThreshold: 3
+                includingInitContainers: true
+            - name: RemovePodsViolatingNodeAffinity
+              args:
+                nodeAffinityType:
+                - requiredDuringSchedulingIgnoredDuringExecution
+            - name: RemovePodsViolatingNodeTaints
+            - name: RemovePodsViolatingInterPodAntiAffinity
+            - name: RemovePodsViolatingTopologySpreadConstraint
+            - name: LowNodeUtilization
+              args:
+                thresholds:
+                  cpu: 20
+                  memory: 20
+                  pods: 20
+                targetThresholds:
+                  cpu: 70
+                  memory: 70
+                  pods: 90
+            - name: HighNodeUtilization
+              args:
+                thresholds:
+                  cpu: 90
+                  memory: 90
+                  pods: 100
+          plugins:
+            balance:
+              enabled:
+                - RemoveDuplicates
+                - RemovePodsViolatingTopologySpreadConstraint
+                - HighNodeUtilization
+                - LowNodeUtilization
+            deschedule:
+              enabled:
+                - RemovePodsHavingTooManyRestarts
+                - RemovePodsViolatingNodeTaints
+                - RemovePodsViolatingNodeAffinity
+                - RemovePodsViolatingInterPodAntiAffinity
   postRenderers:
     - kustomize:
         patches:
