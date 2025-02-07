@@ -68,18 +68,11 @@ spec:
                   cpu: 70
                   memory: 70
                   pods: 90
-            - name: HighNodeUtilization
-              args:
-                thresholds:
-                  cpu: 90
-                  memory: 90
-                  pods: 100
           plugins:
             balance:
               enabled:
                 - RemoveDuplicates
                 - RemovePodsViolatingTopologySpreadConstraint
-                - HighNodeUtilization
                 - LowNodeUtilization
             deschedule:
               enabled:
