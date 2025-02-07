@@ -166,11 +166,6 @@ renovateServer:
       secretKeyRef:
         name: postgresql-app
         key: username
-  - name: PGPASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-app
-        key: password
   - name: MEND_RNV_REPORTING_ENABLED
     value: 'true'
 
