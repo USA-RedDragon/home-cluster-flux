@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/minio
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: RELEASE.2025-02-03T21-03-04Z
+  tag: RELEASE.2025-02-07T23-21-09Z
 
 imagePullSecrets:
 - name: registry-docker-hub
