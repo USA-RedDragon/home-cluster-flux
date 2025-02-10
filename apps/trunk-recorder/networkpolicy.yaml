@@ -12,4 +12,3 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: rdio-scanner
             app.kubernetes.io/instance: rdio-scanner
-
