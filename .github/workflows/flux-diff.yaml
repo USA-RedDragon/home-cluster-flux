@@ -1,0 +1,116 @@
+name: Flux Diff
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flux-diff:
+    name: Flux Diff
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        resource: [HelmRelease, Kustomization]
+        cluster: [clevyrhub, clevyrnetes, fennec, management]
+        sources: [flux-system]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: pull
+
+      - name: Checkout Default Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: default
+
+      - id: resource
+        env:
+          RESOURCE: ${{ matrix.resource }}
+        run: echo "resource=${RESOURCE@L}" >> $GITHUB_OUTPUT
+
+      - name: Remove non-manifest files
+        run: find . -name .sops.yaml -delete
+
+      - name: Diff Resources
+        uses: docker://ghcr.io/allenporter/flux-local:v7.0.0
+        with:
+          args: >-
+            diff ${{ steps.resource.outputs.resource }}
+            --unified=6
+            --path=/github/workspace/pull/clusters/${{ matrix.cluster }}
+            --path-orig=/github/workspace/default/clusters/${{ matrix.cluster }}
+            --strip-attrs=helm.sh/chart,checksum/config,app.kubernetes.io/version,chart
+            --limit-bytes=10000
+            --all-namespaces
+            --sources=${{ matrix.sources }}
+            --output-file=diff.patch
+
+      - name: Generate Diff
+        id: diff
+        run: |
+          cat diff.patch
+          echo "diff<<EOF" >> $GITHUB_OUTPUT
+          cat diff.patch >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "added=$(grep -c '^+[^+]' diff.patch)" >> $GITHUB_OUTPUT
+          echo "removed=$(grep -c '^-[^-]' diff.patch)" >> $GITHUB_OUTPUT
+
+      - if: ${{ steps.diff.outputs.diff != '' || failure() }}
+        name: Add comment
+        uses: mshick/add-pr-comment@v2
+        with:
+          message-id: ${{ github.event.pull_request.number }}/${{ matrix.cluster }}/${{ steps.resource.outputs.resource }}
+          message-failure: |
+            ## ${{ matrix.resource }} Diff
+
+            <table>
+              <tr>
+                <td><b>Cluster</b></td>
+                <td><code>${{ matrix.cluster }}</code></td>
+              </tr>
+            </table>
+
+            > [!CAUTION]
+            > Failed to create diff. [View log.](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          message: |
+            ## ${{ matrix.resource }} Diff
+
+            <table>
+              <tr>
+                <td><b>Cluster</b></td>
+                <td><code>${{ matrix.cluster }}</code></td>
+              </tr>
+              <tr>
+                <td><b>Changes</b></td>
+                <td>${\tt\large\color{green}+${{ steps.diff.outputs.added }}\enspace\color{red}-\negthinspace${{ steps.diff.outputs.removed }}}$</td>
+              </tr>
+            </table>
+
+            <details>
+              <summary>Click to expand</summary>
+
+            ```diff
+            ${{ steps.diff.outputs.diff }}
+            ```
+            </details>
+
+  # Summarize matrix https://github.community/t/status-check-for-a-matrix-jobs/127354/7
+  flux-diff-success:
+    name: Flux Diff Successful
+    runs-on: ubuntu-24.04
+    needs: [flux-diff]
+    if: ${{ always() }}
+    steps:
+      - if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        name: Check matrix status
+        run: exit 1
