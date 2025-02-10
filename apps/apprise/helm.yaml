@@ -10,7 +10,7 @@ spec:
   releaseName: apprise
   chart:
     spec:
-      chart: app
+      chart: app-template
       sourceRef:
         kind: HelmRepository
         name: bjw-s
