@@ -63,10 +63,10 @@ controllers:
             enabled: true
         resources:
           limits:
-            memory: 178Mi
+            memory: 300Mi
           requests:
             cpu: 74m
-            memory: 178Mi
+            memory: 200Mi
 
 service:
   meshmap:
