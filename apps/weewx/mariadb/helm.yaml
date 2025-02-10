@@ -1,14 +1,3 @@
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: OCIRepository
-metadata:
-  name: bitnami-mariadb
-  namespace: weewx
-spec:
-  interval: 10m
-  url: oci://registry-1.docker.io/bitnamicharts/mariadb
-  ref:
-    semver: "20.1.0"
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -19,9 +8,14 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: mariadb
-  chartRef:
-    kind: OCIRepository
-    name: bitnami-mariadb
+  chart:
+    spec:
+      chart: mariadb
+      version: 20.1.0
+      sourceRef:
+        kind: HelmRepository
+        namespace: flux-system
+        name: bitnami
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
