@@ -19,7 +19,6 @@ jobs:
       fail-fast: false
       matrix:
         resource: [HelmRelease, Kustomization]
-        cluster: [clevyrhub, clevyrnetes, fennec, management]
         sources: [flux-system]
     steps:
       - name: Checkout
@@ -47,8 +46,8 @@ jobs:
           args: >-
             diff ${{ steps.resource.outputs.resource }}
             --unified=6
-            --path=/github/workspace/pull/clusters/${{ matrix.cluster }}
-            --path-orig=/github/workspace/default/clusters/${{ matrix.cluster }}
+            --path=/github/workspace/pull/clusters/home
+            --path-orig=/github/workspace/default/clusters/home
             --strip-attrs=helm.sh/chart,checksum/config,app.kubernetes.io/version,chart
             --limit-bytes=10000
             --all-namespaces
@@ -69,16 +68,9 @@ jobs:
         name: Add comment
         uses: mshick/add-pr-comment@v2
         with:
-          message-id: ${{ github.event.pull_request.number }}/${{ matrix.cluster }}/${{ steps.resource.outputs.resource }}
+          message-id: ${{ github.event.pull_request.number }}/${{ steps.resource.outputs.resource }}
           message-failure: |
             ## ${{ matrix.resource }} Diff
-
-            <table>
-              <tr>
-                <td><b>Cluster</b></td>
-                <td><code>${{ matrix.cluster }}</code></td>
-              </tr>
-            </table>
 
             > [!CAUTION]
             > Failed to create diff. [View log.](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
@@ -86,10 +78,6 @@ jobs:
             ## ${{ matrix.resource }} Diff
 
             <table>
-              <tr>
-                <td><b>Cluster</b></td>
-                <td><code>${{ matrix.cluster }}</code></td>
-              </tr>
               <tr>
                 <td><b>Changes</b></td>
                 <td>${\tt\large\color{green}+${{ steps.diff.outputs.added }}\enspace\color{red}-\negthinspace${{ steps.diff.outputs.removed }}}$</td>
