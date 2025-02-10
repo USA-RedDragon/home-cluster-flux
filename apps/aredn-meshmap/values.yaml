@@ -1,209 +1,120 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 1
-
-image:
-  repository: ghcr.io/usa-reddragon/meshmap
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "k8s@sha256:fc8711fcbb4ab4c29b99a034d96eb6b912778370e53fa54b9c21f23dcd278136"
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-podLabels: {}
-
-command: []
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - secretRef:
-#     name: app-creds
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: RETRIES
-  value: "5"
-- name: TIMEOUT
-  value: "60"
-- name: CONCURRENCY
-  value: "100"
-- name: STARTING_NODE
-  value: "KI5VMF-CLOUD-TUNNEL-supernode"
-- name: APP_CONFIG
-  value: '{"name":"Oklahoma AREDN","mapSettings":{"zoom":"10","mapCenter":{"node":"KP4DJT-HAP","lat":"35.4704","lon":"-97.5147"},"servers":[{"test":"https://c.tile.openstreetmap.org/10/162/395.png","url":"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]},"contactInfo":{"callsign":"KI5VMF","name":"Jacob McSwain","email":"aredn-mesh-map@mcswain.dev"},"nodesFilter":"[a-zA-z]+[0-9][a-zA-Z]+","offline":true}'
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext:
-  sysctls:
-  - name: net.ipv4.conf.all.src_valid_mark
-    value: "1"
+controllers:
+  meshmap:
+    replicas: 1
+    pod:
+      securityContext:
+        sysctls:
+        - name: net.ipv4.conf.all.src_valid_mark
+          value: "1"
+    initContainers:
+      wireguard-init:
+        image:
+          repository: ghcr.io/usa-reddragon/wireguard
+          tag: main@sha256:94d9a2f55a41983bd725c48a770caf11f93d577aa687b629b0b728fe0c54d0e3
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+            - NET_ADMIN
+        command:
+        - /bin/sh
+        - -c
+        - |
+          export GW=$(ip r list match default | awk '{ print $3 }') && \
+          wg-quick down wg0 || true && \
+          ip link del wg0 || true && \
+          wg-quick up /etc/wireguard/wg0.conf && \
+          iptables -P OUTPUT DROP && \
+          iptables -I OUTPUT 1 -d 127.0.0.1/32 -j ACCEPT && \
+          iptables -I OUTPUT 1 -d $GW/32 -j ACCEPT && \
+          iptables -I OUTPUT 1 -d 172.27.1.0/24 -j ACCEPT && \
+          iptables -I OUTPUT 1 -d 172.17.0.0/16 -j ACCEPT && \
+          iptables -I OUTPUT 1 -d 172.18.0.0/16 -j ACCEPT && \
+          iptables -I OUTPUT 1 -d 10.0.0.0/8 -j ACCEPT && \
+          iptables -I OUTPUT 1 -o wg0 -j ACCEPT && \
+          ip r del default && \
+          ip r add default via 172.27.1.1 dev wg0 && \
+          ip r add 172.17.0.0/16 via $GW dev eth0 && \
+          ip r add 172.18.0.0/16 via $GW dev eth0
+    containers:
+      monitor:
+        image:
+          repository: ghcr.io/usa-reddragon/wireguard
+          tag: main@sha256:94d9a2f55a41983bd725c48a770caf11f93d577aa687b629b0b728fe0c54d0e3
+      meshmap:
+        image:
+          repository: ghcr.io/usa-reddragon/meshmap
+          tag: k8s@sha256:fc8711fcbb4ab4c29b99a034d96eb6b912778370e53fa54b9c21f23dcd278136
+        env:
+        - name: RETRIES
+          value: "5"
+        - name: TIMEOUT
+          value: "60"
+        - name: CONCURRENCY
+          value: "100"
+        - name: STARTING_NODE
+          value: "KI5VMF-CLOUD-TUNNEL-supernode"
+        - name: APP_CONFIG
+          value: '{"name":"Oklahoma AREDN","mapSettings":{"zoom":"10","mapCenter":{"node":"KP4DJT-HAP","lat":"35.4704","lon":"-97.5147"},"servers":[{"test":"https://c.tile.openstreetmap.org/10/162/395.png","url":"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]},"contactInfo":{"callsign":"KI5VMF","name":"Jacob McSwain","email":"aredn-mesh-map@mcswain.dev"},"nodesFilter":"[a-zA-z]+[0-9][a-zA-Z]+","offline":true}'
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        resources:
+          limits:
+            memory: 178Mi
+          requests:
+            cpu: 74m
+            memory: 178Mi
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 80
+  meshmap:
+    controller: meshmap
+    ports:
+      http:
+        port: 80
 
-persistentVolumes:
-- name: mesh-data
-  mountPath: /usr/share/nginx/html/data
-  size: 1Gi
-  persistentVolumeClaim:
-    name: mesh-data
+persistence:
+  mesh-data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
     storageClass: longhorn-ssd
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
-
-extraVolumes:
-- name: wireguard-config
-  secret:
-    secretName: meshmap-wireguard-config
+    advancedMounts:
+      meshmap:
+        meshmap:
+          - path: /usr/share/nginx/html/data
+  wireguard-config:
+    enabled: true
+    type: secret
+    name: meshmap-wireguard-config
+    advancedMounts:
+      meshmap:
+        wireguard-init:
+          - path: /etc/wireguard
 
 ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    # nginx.ingress.kubernetes.io/configuration-snippet: |
-    #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-    #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-  ingressClassName: nginx
-  hosts:
-  - host: meshmap.aredn.mcswain.dev
-    paths:
-    - port: 80
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: meshmap-aredn-mcswain-dev-tls
+  bot:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
     hosts:
-      - meshmap.aredn.mcswain.dev
-
-probes: {}
-  # liveness:
-  #   httpGet:
-  #     path: /health
-  #     port: 81
-  # readiness:
-  #   httpGet:
-  #     path: /health
-  #     port: 81
-
-# Why all the memory? Well we have a cron job that builds a large JSON file out of 2000+ network nodes.
-resources:
-  limits:
-    memory: 178Mi
-  requests:
-    cpu: 74m
-    memory: 178Mi
-
-initContainers:
-- image: ghcr.io/usa-reddragon/wireguard:main@sha256:94d9a2f55a41983bd725c48a770caf11f93d577aa687b629b0b728fe0c54d0e3
-  name: wireguard-init
-  command:
-  - /bin/sh
-  - -c
-  - |
-    export GW=$(ip r list match default | awk '{ print $3 }') && \
-    wg-quick down wg0 || true && \
-    ip link del wg0 || true && \
-    wg-quick up /etc/wireguard/wg0.conf && \
-    iptables -P OUTPUT DROP && \
-    iptables -I OUTPUT 1 -d 127.0.0.1/32 -j ACCEPT && \
-    iptables -I OUTPUT 1 -d $GW/32 -j ACCEPT && \
-    iptables -I OUTPUT 1 -d 172.27.1.0/24 -j ACCEPT && \
-    iptables -I OUTPUT 1 -d 172.17.0.0/16 -j ACCEPT && \
-    iptables -I OUTPUT 1 -d 172.18.0.0/16 -j ACCEPT && \
-    iptables -I OUTPUT 1 -d 10.0.0.0/8 -j ACCEPT && \
-    iptables -I OUTPUT 1 -o wg0 -j ACCEPT && \
-    ip r del default && \
-    ip r add default via 172.27.1.1 dev wg0 && \
-    ip r add 172.17.0.0/16 via $GW dev eth0 && \
-    ip r add 172.18.0.0/16 via $GW dev eth0
-  securityContext:
-    privileged: true
-    capabilities:
-      add:
-      - NET_ADMIN
-  volumeMounts:
-  - mountPath: /etc/wireguard
-    name: wireguard-config
-  imagePullPolicy: IfNotPresent
-
-extraContainers:
-- image: ghcr.io/usa-reddragon/wireguard:main@sha256:94d9a2f55a41983bd725c48a770caf11f93d577aa687b629b0b728fe0c54d0e3
-  imagePullPolicy: IfNotPresent
-  command:
-  - /bin/sh
-  - -c
-  - exec sleep infinity
-  name: sidecar-monitor
-  securityContext:
-    privileged: true
-    capabilities:
-      add:
-      - NET_ADMIN
-  resources: {}
-  volumeMounts:
-  - mountPath: /etc/wireguard
-    name: wireguard-config
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+      - host: meshmap.aredn.mcswain.dev
+        paths:
+          - path: /
+            service:
+              identifier: bot
+              port: http
+    tls:
+      - hosts:
+          - meshmap.aredn.mcswain.dev
+        secretName: meshmap.aredn.mcswain.dev-tls
