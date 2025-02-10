@@ -1,150 +1,36 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 1
-
-image:
-  repository: lscr.io/linuxserver/apprise-api
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.1.8"
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - secretRef:
-#     name: app-creds
-# - configMapRef:
-#     name: app-config
-
-env: {}
-
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+controllers:
+  apprise:
+    replicas: 1
+    containers:
+      apprise:
+        image:
+          repository: lscr.io/linuxserver/apprise-api
+          tag: 1.1.8
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        resources:
+          limits:
+            memory: 120Mi
+          requests:
+            cpu: 10m
+            memory: 80Mi
 
 service:
-  type: ClusterIP
-  ports:
-  - name: apprise
-    port: 8000
+  apprise:
+    controller: apprise
+    ports:
+      http:
+        port: 8000
 
-persistentVolumes:
-- name: config
-  mountPath: /config
-  emptyDir: {}
-# - name: data
-#   mountPath: /var/lib/postgresql/data
-#   subPath: pg
-#   size: 10Gi
-#   persistentVolumeClaim:
-#     name: data
-#     storageClass: longhorn-nvme
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
-
-ingress:
-  enabled: false
-  annotations: {}
-    # kubernetes.io/tls-acme: "true"
-    # cert-manager.io/cluster-issuer: cloudflare
-    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    # nginx.ingress.kubernetes.io/configuration-snippet: |
-    #   proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-    #   grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-  # ingressClassName: nginx
-  hosts:
-  - host: example.mcswain.dev
-    paths:
-    - port: 80
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: example-mcswain-dev-tls
-    hosts:
-      - example.mcswain.dev
-
-probes:
-  liveness:
-    tcpSocket:
-      port: 8000
-  readiness:
-    tcpSocket:
-      port: 8000
-
-resources:
-  limits:
-    memory: 120Mi
-  requests:
-    cpu: 10m
-    memory: 80Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+persistence:
+  config:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 1Gi
