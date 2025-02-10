@@ -3,6 +3,9 @@
     "extends": [
         "local>USA-RedDragon/renovate-configs"
     ],
+    "gitIgnoredAuthors": [
+        "198527162+github-actions[bot]@users.noreply.github.com"
+    ],
     "rebaseWhen": "auto",
     "flux": {
         "enabled": true,
