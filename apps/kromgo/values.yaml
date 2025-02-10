@@ -184,4 +184,3 @@ lifecycle: {}
   #       - /bin/sh
   #       - -c
   #       - cp /tmp/file /var/app/file
-
