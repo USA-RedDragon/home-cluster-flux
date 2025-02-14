@@ -14,7 +14,7 @@ spec:
       source: postgresql
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/authentik-2"
+      destinationPath: "s3://cnpg/authentik"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -28,7 +28,7 @@ spec:
     retentionPolicy: "4w"
   externalClusters:
   - barmanObjectStore:
-      destinationPath: s3://cnpg/authentik-1
+      destinationPath: s3://cnpg/authentik-2
       endpointURL: https://s3.mcswain.dev
       s3Credentials:
         accessKeyId:
