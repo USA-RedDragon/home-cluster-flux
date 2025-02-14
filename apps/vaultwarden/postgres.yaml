@@ -8,12 +8,13 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1-12
   enableSuperuserAccess: true
   bootstrap:
-    initdb:
+    recovery:
       database: vaultwarden
       owner: vaultwarden
+      source: postgresql
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/vaultwarden"
+      destinationPath: "s3://cnpg/vaultwarden-1"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -25,6 +26,20 @@ spec:
       wal:
         compression: gzip
     retentionPolicy: "4w"
+  externalClusters:
+  - barmanObjectStore:
+      destinationPath: s3://cnpg/vaultwarden
+      endpointURL: https://s3.mcswain.dev
+      s3Credentials:
+        accessKeyId:
+          key: AWS_ACCESS_KEY_ID
+          name: cnpg-minio
+        secretAccessKey:
+          key: AWS_SECRET_ACCESS_KEY
+          name: cnpg-minio
+      wal:
+        compression: gzip
+    name: postgresql
   monitoring:
     enablePodMonitor: true
   storage:
