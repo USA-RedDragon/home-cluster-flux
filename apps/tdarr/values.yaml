@@ -8,7 +8,7 @@ controllers:
         nvidia.com/gpu.product: NVIDIA-GeForce-RTX-2070
       runtimeClassName: nvidia
       securityContext:
-        fsGroup: 568
+        fsGroup: 1000
     containers:
       tdarr:
         image:
@@ -55,19 +55,13 @@ controllers:
           - name: ffmepgVersion
             value: '7'
           - name: PUID
-            value: '568'
+            value: '1000'
           - name: PGID
-            value: '568'
+            value: '1000'
           - name: nodeName
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-        securityContext:
-          fsGroup: 568
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop:
-              - ALL
 
 service:
   tdarr:
@@ -91,11 +85,6 @@ persistence:
     sizeLimit: 30Gi
     globalMounts:
       - path: /temp
-  run:
-    enabled: true
-    type: emptyDir
-    sizeLimit: 3Gi
-    medium: Memory
   configs:
     enabled: true
     type: persistentVolumeClaim
