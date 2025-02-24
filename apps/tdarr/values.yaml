@@ -8,7 +8,6 @@ controllers:
         nvidia.com/gpu.product: NVIDIA-GeForce-RTX-2070
       runtimeClassName: nvidia
       securityContext:
-        runAsGroup: 568
         fsGroup: 568
     containers:
       tdarr:
