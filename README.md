@@ -81,6 +81,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#split-dns">split-dns</a></li>
   <li><a href="#tailscale-operator">tailscale-operator</a></li>
   <li><a href="#tandoor">tandoor</a></li>
+  <li><a href="#tdarr">tdarr</a></li>
   <li><a href="#tfe">tfe</a></li>
   <li><a href="#trunk-recorder">trunk-recorder</a></li>
   <li><a href="#uptime-kuma">uptime-kuma</a></li>
@@ -1069,6 +1070,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/tandoor/helm.yaml">tandoor</a></td>
     <td><a href="apps/tandoor/postgres.yaml">postgresql</a></td>
+  </tr>
+</table>
+
+<h4>tdarr</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>tdarr</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/tdarr/helm.yaml">tdarr</a></td>
+    <td></td>
   </tr>
 </table>
 
