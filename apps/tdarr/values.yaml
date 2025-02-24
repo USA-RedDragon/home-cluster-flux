@@ -91,6 +91,11 @@ persistence:
     sizeLimit: 30Gi
     globalMounts:
       - path: /temp
+  run:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 3Gi
+    medium: Memory
   configs:
     enabled: true
     type: persistentVolumeClaim
