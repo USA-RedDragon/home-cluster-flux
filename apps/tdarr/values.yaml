@@ -1,0 +1,140 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  tdarr:
+    replicas: 1
+    pod:
+      nodeSelector:
+        nvidia.com/gpu.product: NVIDIA-GeForce-RTX-2070
+      runtimeClassName: nvidia
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+    containers:
+      tdarr:
+        image:
+          repository: ghcr.io/haveagitgat/tdarr
+          tag: 2.33.01
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: '1'
+            memory: 1Gi
+          limits:
+            memory: 2Gi
+            nvidia.com/gpu: 1
+        probes:
+          liveness:
+            enabled: true
+            spec:
+              initialDelaySeconds: 20
+          readiness:
+            enabled: true
+            spec:
+              initialDelaySeconds: 20
+          startup:
+            enabled: true
+            spec:
+              initialDelaySeconds: 20
+        env:
+          - name: NVIDIA_VISIBLE_DEVICES
+            value: all
+          - name: NVIDIA_DRIVER_CAPABILITIES
+            value: all
+          - name: TZ
+            value: America/Chicago
+          - name: serverIP
+            value: 0.0.0.0
+          - name: serverPort
+            value: '8266'
+          - name: webUIPort
+            value: '8265'
+          - name: internalNode
+            value: 'true'
+          - name: inContainer
+            value: 'true'
+          - name: ffmepgVersion
+            value: '7'
+          - name: PUID
+            value: '568'
+          - name: PGID
+            value: '568'
+          - name: nodeName
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        securityContext:
+          fsGroup: 568
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+
+service:
+  tdarr:
+    controller: tdarr
+    ports:
+      webui:
+        port: 8265
+      server:
+        port: 8266
+
+persistence:
+  logs:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 30Gi
+    globalMounts:
+      - path: /app/logs
+  transcode-cache:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 30Gi
+    globalMounts:
+      - path: /temp
+  configs:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    globalMounts:
+      - path: /app/configs
+  media-anime:
+    enabled: true
+    type: nfs
+    path: /mnt/data/media/Anime
+    server: 192.168.1.135
+    globalMounts:
+      - path: /media/anime
+  media-movies:
+    enabled: true
+    type: nfs
+    path: /mnt/data/media/Movies
+    server: 192.168.1.135
+    globalMounts:
+      - path: /media/movies
+  media-tv:
+    enabled: true
+    type: nfs
+    path: /mnt/data/media/TV
+    server: 192.168.1.135
+    globalMounts:
+      - path: /media/tv
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: tdarr
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: tdarr
+              port: webui
+    tls:
+      - hosts:
+          - tdarr
