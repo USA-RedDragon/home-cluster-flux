@@ -85,6 +85,7 @@ persistence:
     enabled: true
     type: persistentVolumeClaim
     size: 3Gi
+    accessMode: ReadWriteOnce
     globalMounts:
       - path: /app/server
   node-plugins:
