@@ -81,6 +81,12 @@ persistence:
     sizeLimit: 30Gi
     globalMounts:
       - path: /temp
+  app-server:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 3Gi
+    globalMounts:
+      - path: /app/server
   configs:
     enabled: true
     type: persistentVolumeClaim
