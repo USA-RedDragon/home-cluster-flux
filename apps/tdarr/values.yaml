@@ -8,7 +8,7 @@ controllers:
         nvidia.com/gpu.product: NVIDIA-GeForce-RTX-2070
       runtimeClassName: nvidia
       securityContext:
-        fsGroup: 582
+        fsGroup: 568
     containers:
       tdarr:
         image:
@@ -52,8 +52,8 @@ controllers:
                 fieldPath: spec.nodeName
         securityContext:
           readOnlyRootFilesystem: true
-          runAsGroup: 582
-          runAsUser: 582
+          runAsGroup: 568
+          runAsUser: 568
           allowPrivilegeEscalation: false
           capabilities:
             drop:
