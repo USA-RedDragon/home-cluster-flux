@@ -83,8 +83,8 @@ persistence:
       - path: /temp
   app-server:
     enabled: true
-    type: emptyDir
-    sizeLimit: 3Gi
+    type: persistentVolumeClaim
+    size: 3Gi
     globalMounts:
       - path: /app/server
   node-plugins:
