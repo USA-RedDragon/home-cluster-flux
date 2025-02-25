@@ -8,11 +8,11 @@ controllers:
         nvidia.com/gpu.product: NVIDIA-GeForce-RTX-2070
       runtimeClassName: nvidia
       securityContext:
-        fsGroup: 1000
+        fsGroup: 582
     containers:
       tdarr:
         image:
-          repository: ghcr.io/haveagitgat/tdarr
+          repository: ghcr.io/usa-reddragon/tdarr
           tag: 2.33.01
           pullPolicy: IfNotPresent
         resources:
@@ -42,26 +42,22 @@ controllers:
             value: all
           - name: TZ
             value: America/Chicago
-          - name: serverIP
-            value: 0.0.0.0
-          - name: serverPort
-            value: '8266'
-          - name: webUIPort
-            value: '8265'
           - name: internalNode
-            value: 'true'
-          - name: inContainer
             value: 'true'
           - name: ffmepgVersion
             value: '7'
-          - name: PUID
-            value: '1000'
-          - name: PGID
-            value: '1000'
           - name: nodeName
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsGroup: 582
+          runAsUser: 582
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
 
 service:
   tdarr:
