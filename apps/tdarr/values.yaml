@@ -87,6 +87,12 @@ persistence:
     sizeLimit: 3Gi
     globalMounts:
       - path: /app/server
+  node-plugins:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 3Gi
+    globalMounts:
+      - path: /app/Tdarr_Node/assets/app/plugins
   configs:
     enabled: true
     type: persistentVolumeClaim
