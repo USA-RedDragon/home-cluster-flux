@@ -70,9 +70,7 @@ env:
     TFE_OBJECT_STORAGE_S3_BUCKET: tfe
     TFE_OBJECT_STORAGE_S3_ENDPOINT: https://s3.mcswain.dev
     TFE_OBJECT_STORAGE_S3_REGION: us-east-1
-    TFE_REDIS_HOST: tfe-jacob-test.redis.cache.windows.net:6380
-    TFE_REDIS_USE_TLS: "true"
-    TFE_REDIS_USE_AUTH: "true"
+    TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
 
 openshift:
   enabled: true
