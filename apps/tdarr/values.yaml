@@ -18,9 +18,9 @@ controllers:
         resources:
           requests:
             cpu: '4'
-            memory: 4Gi
+            memory: 8Gi
           limits:
-            memory: 6Gi
+            memory: 12Gi
             nvidia.com/gpu: 1
         probes:
           liveness:
@@ -78,7 +78,7 @@ persistence:
   transcode-cache:
     enabled: true
     type: emptyDir
-    sizeLimit: 30Gi
+    sizeLimit: 60Gi
     globalMounts:
       - path: /temp
   app-server:
