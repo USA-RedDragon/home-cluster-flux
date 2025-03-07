@@ -34,11 +34,6 @@ controllers:
             value: America/Chicago
           - name: NO_DECOR
             value: 'true'
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
 
 service:
   calibre:
