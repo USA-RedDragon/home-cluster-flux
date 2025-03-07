@@ -3,6 +3,9 @@
 controllers:
   calibre:
     replicas: 1
+    pod:
+      securityContext:
+        fsGroup: 911
     containers:
       calibre:
         image:
@@ -33,6 +36,8 @@ controllers:
             value: 'true'
         securityContext:
           allowPrivilegeEscalation: false
+          runAsGroup: 911
+          runAsUser: 911
           capabilities:
             drop:
               - ALL
