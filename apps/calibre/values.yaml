@@ -55,6 +55,11 @@ persistence:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 10Gi
+  run:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
   media-books:
     enabled: true
     type: nfs
