@@ -56,6 +56,30 @@ persistence:
     type: emptyDir
     medium: Memory
     sizeLimit: 1Gi
+  nginx-body:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 7Gi
+    globalMounts:
+      - path: /var/lib/nginx/body
+  kasmvnc:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 1Gi
+    globalMounts:
+      - /usr/local/etc/kasmvnc
+  openbox:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 1Gi
+    globalMounts:
+      - /etc/xdg/openbox
+  nginx-sites:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 1Gi
+    globalMounts:
+      - path: /etc/nginx/sites-available
   media-books:
     enabled: true
     type: nfs
