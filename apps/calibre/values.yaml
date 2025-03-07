@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  calibre:
+    replicas: 1
+    containers:
+      calibre:
+        image:
+          repository: lscr.io/linuxserver/calibre
+          tag: v7.26.0@sha256:13c4fe0bce1367cb309f74be422d6e38480dee4742a6c3b6c976c3aed3cdad1e
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: '1'
+            memory: 2Gi
+        probes:
+          liveness:
+            enabled: true
+            spec:
+              initialDelaySeconds: 20
+          readiness:
+            enabled: true
+            spec:
+              initialDelaySeconds: 20
+          startup:
+            enabled: true
+            spec:
+              initialDelaySeconds: 20
+        env:
+          - name: TZ
+            value: America/Chicago
+          - name: NO_DECOR
+            value: 'true'
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+
+service:
+  calibre:
+    controller: calibre
+    ports:
+      http:
+        port: 8080
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+  media-books:
+    enabled: true
+    type: nfs
+    path: /mnt/data/media/Books
+    server: 192.168.1.135
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: calibre
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: calibre
+              port: http
+    tls:
+      - hosts:
+          - calibre
