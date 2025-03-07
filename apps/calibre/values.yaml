@@ -79,4 +79,4 @@ ingress:
               port: content
     tls:
       - hosts:
-          - calibre-vnc
+          - calibre
