@@ -39,10 +39,10 @@ service:
   calibre:
     controller: calibre
     ports:
-      vnc:
-        port: 8080
       content:
         port: 8081
+      vnc:
+        port: 8080
 
 persistence:
   config:
