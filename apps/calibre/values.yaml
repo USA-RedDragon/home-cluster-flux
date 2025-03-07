@@ -43,6 +43,7 @@ service:
         port: 8081
       vnc:
         port: 8080
+        primary: true
 
 persistence:
   config:
