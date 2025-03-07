@@ -32,6 +32,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#aredn-scanner">aredn-scanner</a></li>
   <li><a href="#atuin">atuin</a></li>
   <li><a href="#authentik">authentik</a></li>
+  <li><a href="#calibre">calibre</a></li>
   <li><a href="#cert-manager">cert-manager</a></li>
   <li><a href="#changedetection">changedetection</a></li>
   <li><a href="#cnpg">cnpg</a></li>
@@ -238,6 +239,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/authentik/helm.yaml">authentik-workers</a></td>
+  </tr>
+</table>
+
+<h4>calibre</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>calibre</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/calibre/helm.yaml">calibre</a></td>
+    <td></td>
   </tr>
 </table>
 
