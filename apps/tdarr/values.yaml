@@ -18,9 +18,9 @@ controllers:
         resources:
           requests:
             cpu: '4'
-            memory: 12Gi
+            memory: 22Gi
           limits:
-            memory: 20Gi
+            memory: 40Gi
             nvidia.com/gpu: 1
         probes:
           liveness:
