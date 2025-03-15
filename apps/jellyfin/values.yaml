@@ -7,7 +7,7 @@ controllers:
       imagePullSecrets:
         - name: registry-docker-hub
       nodeSelector:
-        nvidia.com/gpu.product: NVIDIA-GeForce-GTX-1060-3GB
+        nvidia.com/gpu.product: NVIDIA-GeForce-RTX-2070
       runtimeClassName: nvidia
       securityContext:
         runAsNonRoot: true
@@ -22,7 +22,7 @@ controllers:
           pullPolicy: IfNotPresent
         resources:
           requests:
-            cpu: '1.04'
+            cpu: '2'
             memory: 10Gi
           limits:
             memory: 12Gi
