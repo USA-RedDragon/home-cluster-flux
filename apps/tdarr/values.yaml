@@ -5,7 +5,7 @@ controllers:
     replicas: 1
     pod:
       nodeSelector:
-        nvidia.com/gpu.product: NVIDIA-GeForce-RTX-2070
+        nvidia.com/gpu.product: NVIDIA-GeForce-GTX-1060-3GB
       runtimeClassName: nvidia
       securityContext:
         fsGroup: 568
