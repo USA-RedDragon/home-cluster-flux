@@ -68,6 +68,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#palworld">palworld</a></li>
   <li><a href="#paperless-ngx">paperless-ngx</a></li>
   <li><a href="#piaware">piaware</a></li>
+  <li><a href="#ping-exporter">ping-exporter</a></li>
   <li><a href="#prometheus">prometheus</a></li>
   <li><a href="#rdio-scanner">rdio-scanner</a></li>
   <li><a href="#readsb">readsb</a></li>
@@ -850,6 +851,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>piaware</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/piaware/helm.yaml">piaware</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>ping-exporter</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>ping-exporter</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/ping-exporter/app/helm.yaml">ping-exporter</a></td>
     <td></td>
   </tr>
 </table>
