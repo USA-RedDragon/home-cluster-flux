@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  ping-exporter:
+    type: daemonset
+    pod:
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      imagePullSecrets:
+        - name: registry-docker-hub
+    containers:
+      ping-exporter:
+        image:
+          repository: czerwonk/ping_exporter
+          tag: v1.1.3@sha256:94f51e1ef1e2be40cb4fc17d743532de6f2751898affa1d8f90b0ad6821e88d5
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
