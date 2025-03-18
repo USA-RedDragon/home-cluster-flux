@@ -65,5 +65,5 @@ serviceMonitor:
       - port: http
         scheme: http
         path: /metrics
-        interval: 5s
-        scrapeTimeout: 5s
+        interval: 3s
+        scrapeTimeout: 3s
