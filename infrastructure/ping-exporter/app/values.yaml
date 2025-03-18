@@ -11,10 +11,10 @@ controllers:
       imagePullSecrets:
         - name: registry-docker-hub
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
         fsGroup: 1000
+        sysctls:
+        - name: net.ipv4.ping_group_range
+          value: "1000 1000"
     containers:
       ping-exporter:
         image:
@@ -28,6 +28,9 @@ controllers:
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
           capabilities:
             drop:
               - ALL
