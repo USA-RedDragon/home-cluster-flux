@@ -31,3 +31,20 @@ controllers:
               - ALL
             add:
               - NET_RAW
+
+persistence:
+  config:
+    enabled: true
+    type: configMap
+    name: ping-exporter-config
+
+configMaps:
+  config:
+    data:
+      config.yaml: |
+        targets:
+          - 192.168.1.1
+          - 1.1.1.1
+          - 8.8.8.8
+        options:
+          disableIPv6: true
