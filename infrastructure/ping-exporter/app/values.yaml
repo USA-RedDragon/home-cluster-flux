@@ -34,6 +34,12 @@ controllers:
             add:
               - NET_RAW
 
+persistence:
+  config:
+    enabled: true
+    type: configMap
+    name: ping-exporter-config
+
 configMaps:
   config:
     data:
