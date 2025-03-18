@@ -49,6 +49,9 @@ configMaps:
           - 8.8.8.8
         options:
           disableIPv6: true
+        ping:
+          interval: 1s
+          timeout: 1s
 
 service:
   ping-exporter:
