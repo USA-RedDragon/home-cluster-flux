@@ -25,3 +25,5 @@ controllers:
           capabilities:
             drop:
               - ALL
+            add:
+              - NET_RAW
