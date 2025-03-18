@@ -43,7 +43,7 @@ persistence:
 configMaps:
   config:
     data:
-      config.yaml: |
+      config.yml: |
         targets:
           - 192.168.1.1
           - 1.1.1.1
