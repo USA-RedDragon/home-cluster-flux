@@ -27,17 +27,12 @@ controllers:
             memory: 50Mi
         securityContext:
           readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
           capabilities:
             drop:
               - ALL
             add:
               - NET_RAW
-
-persistence:
-  config:
-    enabled: true
-    type: configMap
-    name: ping-exporter-config
 
 configMaps:
   config:
