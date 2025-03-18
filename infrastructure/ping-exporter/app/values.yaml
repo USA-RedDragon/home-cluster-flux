@@ -49,3 +49,21 @@ configMaps:
           - 8.8.8.8
         options:
           disableIPv6: true
+
+service:
+  ping-exporter:
+    controller: ping-exporter
+    ports:
+      http:
+        port: 9427
+
+serviceMonitor:
+  ping-exporter:
+    enabled: true
+    serviceName: ping-exporter
+    endpoints:
+      - port: http
+        scheme: http
+        path: /metrics
+        interval: 5s
+        scrapeTimeout: 5s
