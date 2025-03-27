@@ -34,7 +34,7 @@ spec:
     container:
       image:
         repository: nats
-        tag: 2.10.26-alpine
+        tag: 2.11.0-alpine
       env:
         TOKEN:
           valueFrom:
