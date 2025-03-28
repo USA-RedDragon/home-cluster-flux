@@ -32,6 +32,8 @@ spec:
   values:
     controller:
       replicaCount: 2
+      config:
+        annotations-risk-level: Critical
       updateStrategy:
         rollingUpdate:
           maxUnavailable: 1
