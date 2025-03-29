@@ -10,7 +10,7 @@ image:
   repository: manuc66/node-hp-scan-to
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest@sha256:b56f97be32d41f6276b6b3c99fc8b32b7bfab86032161fe8d51afc0e50aded5b"
+  tag: "latest@sha256:a2428dd8016dd31aa71800d7626688674a96a35b861dd33782c41bc8567eee62"
 
 imagePullSecrets:
 - name: registry-docker-hub
