@@ -61,6 +61,19 @@ agentWorkerPodTemplate:
 env:
   secretRefs:
     - name: tfe-secrets
+  secretKeyRefs:
+    - name: TFE_DATABASE_HOST
+      key: host
+      secretName: postgresql-app
+    - name: TFE_DATABASE_NAME
+      key: dbname
+      secretName: postgresql-app
+    - name: TFE_DATABASE_USER
+      key: user
+      secretName: postgresql-app
+    - name: TFE_DATABASE_PASSWORD
+      key: password
+      secretName: postgresql-app
   variables:
     TFE_OPERATIONAL_MODE: external
     TFE_DATABASE_PARAMETERS: sslmode=require
