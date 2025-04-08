@@ -68,7 +68,7 @@ persistence:
     enabled: true
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
-    size: 20Gi
+    size: 40Gi
     storageClass: longhorn-ssd
   cache:
     enabled: true
