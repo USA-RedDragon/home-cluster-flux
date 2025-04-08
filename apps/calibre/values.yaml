@@ -39,6 +39,7 @@ service:
     annotations:
       tailscale.com/expose: "true"
       tailscale.com/hostname: "calibre"
+      tailscale.com/tailnet-ip: 100.119.235.18
     ports:
       wireless:
         port: 9090
