@@ -65,7 +65,7 @@ ingress:
         - path: /
           pathType: Prefix
           service:
-              identifier: calibre-vnc
+              identifier: vnc
               port: vnc
     tls:
       - hosts:
