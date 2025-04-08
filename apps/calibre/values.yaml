@@ -34,9 +34,9 @@ service:
     ports:
       vnc:
         port: 8080
-        primary: true
   calibre:
     controller: calibre
+    primary: false
     annotations:
       tailscale.com/expose: "true"
       tailscale.com/hostname: "calibre"
