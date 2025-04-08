@@ -28,13 +28,13 @@ controllers:
             value: America/Chicago
 
 service:
-  vnc:
+  calibre:
     controller: calibre
     primary: true
     ports:
       vnc:
         port: 8080
-  calibre:
+  mobile:
     controller: calibre
     primary: false
     annotations:
@@ -67,7 +67,7 @@ ingress:
         - path: /
           pathType: Prefix
           service:
-              identifier: vnc
+              identifier: calibre
               port: vnc
     tls:
       - hosts:
