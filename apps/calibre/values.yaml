@@ -31,8 +31,8 @@ service:
   calibre:
     controller: calibre
     ports:
-      content:
-        port: 8081
+      wireless:
+        port: 9090
       vnc:
         port: 8080
         primary: true
@@ -74,7 +74,7 @@ ingress:
           pathType: Prefix
           service:
               identifier: calibre
-              port: content
+              port: wireless
     tls:
       - hosts:
           - calibre
