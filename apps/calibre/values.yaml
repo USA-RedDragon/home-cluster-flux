@@ -36,7 +36,6 @@ service:
         port: 8080
   calibre:
     controller: calibre
-    primary: false
     annotations:
       tailscale.com/expose: "true"
       tailscale.com/hostname: "calibre"
