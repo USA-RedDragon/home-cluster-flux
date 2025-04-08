@@ -28,7 +28,7 @@ controllers:
             value: America/Chicago
 
 service:
-  calibre-vnc:
+  vnc:
     controller: calibre
     ports:
       vnc:
