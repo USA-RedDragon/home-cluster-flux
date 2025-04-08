@@ -28,14 +28,20 @@ controllers:
             value: America/Chicago
 
 service:
-  calibre:
+  calibre-vnc:
     controller: calibre
     ports:
-      wireless:
-        port: 9090
       vnc:
         port: 8080
         primary: true
+  calibre:
+    controller: calibre
+    annotations:
+      tailscale.com/expose: "true"
+      tailscale.com/hostname: "calibre"
+    ports:
+      wireless:
+        port: 9090
 
 persistence:
   config:
@@ -59,22 +65,8 @@ ingress:
         - path: /
           pathType: Prefix
           service:
-              identifier: calibre
+              identifier: calibre-vnc
               port: vnc
     tls:
       - hosts:
           - calibre-vnc
-  tailscale:
-    enabled: true
-    className: tailscale
-    hosts:
-      - host: calibre
-        paths:
-        - path: /
-          pathType: Prefix
-          service:
-              identifier: calibre
-              port: wireless
-    tls:
-      - hosts:
-          - calibre
