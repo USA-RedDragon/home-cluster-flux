@@ -30,6 +30,7 @@ controllers:
 service:
   vnc:
     controller: calibre
+    primary: true
     ports:
       vnc:
         port: 8080
