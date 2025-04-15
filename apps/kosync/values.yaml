@@ -6,11 +6,6 @@ controllers:
     pod:
       imagePullSecrets:
         - name: registry-docker-hub
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 568
-        runAsGroup: 568
-        fsGroup: 568
     containers:
       kosync:
         image:
@@ -28,8 +23,6 @@ controllers:
           startup:
             enabled: true
         securityContext:
-          fsGroup: 568
-          readOnlyRootFilesystem: true
           capabilities:
             drop:
               - ALL
