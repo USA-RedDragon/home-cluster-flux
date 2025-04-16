@@ -13,7 +13,7 @@ controllers:
       kosync:
         image:
           repository: ghcr.io/usa-reddragon/kosync
-          tag: v0.0.3
+          tag: v0.0.5
           pullPolicy: IfNotPresent
         resources:
           requests: {}
@@ -39,6 +39,10 @@ controllers:
             secretKeyRef:
               name: postgresql-app
               key: dbname
+          AUTH_SALT:
+            secretKeyRef:
+              name: kosync
+              key: salt
           STORAGE_TYPE:
             value: "postgres"
           STORAGE_DSN:
