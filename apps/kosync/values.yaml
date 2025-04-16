@@ -46,6 +46,8 @@ controllers:
             dependsOn: [DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME]
           METRICS_ENABLED:
             value: "true"
+          LOG_LEVEL:
+            value: "debug"
         probes:
           liveness:
             enabled: true
