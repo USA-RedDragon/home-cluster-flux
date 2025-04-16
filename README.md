@@ -588,7 +588,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>kosync</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/kosync/helm.yaml">kosync</a></td>
-    <td></td>
+    <td><a href="apps/kosync/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
