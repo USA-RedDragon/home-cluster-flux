@@ -39,6 +39,8 @@ controllers:
             secretKeyRef:
               name: postgresql-app
               key: dbname
+          STORAGE_TYPE:
+            value: "postgres"
           STORAGE_DSN:
             value: host=$(DB_HOST) user=$(DB_USER) password=$(DB_PASS) dbname=$(DB_NAME) port=$(DB_PORT) sslmode=disable
             dependsOn: [DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME]
