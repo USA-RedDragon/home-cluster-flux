@@ -24,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: mattermost
-      version: 2.6.71
+      version: 2.6.72
       interval: 1m0s
   valuesFrom:
     - kind: ConfigMap
