@@ -13,11 +13,37 @@ controllers:
       kosync:
         image:
           repository: ghcr.io/usa-reddragon/kosync
-          tag: v0.0.0
+          tag: v0.0.1
           pullPolicy: IfNotPresent
         resources:
           requests: {}
           limits: {}
+        env:
+          DB_USER:
+            secretKeyRef:
+              name: postgresql-app
+              key: user
+          DB_PASS:
+            secretKeyRef:
+              name: postgresql-app
+              key: password
+          DB_HOST:
+            secretKeyRef:
+              name: postgresql-app
+              key: host
+          DB_PORT:
+            secretKeyRef:
+              name: postgresql-app
+              key: port
+          DB_NAME:
+            secretKeyRef:
+              name: postgresql-app
+              key: dbname
+          STORAGE_DSN:
+            value: host=$(DB_HOST) user=$(DB_USER) password=$(DB_PASS) dbname=$(DB_NAME) port=$(DB_PORT) sslmode=disable
+            dependsOn: [DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME]
+          METRICS_ENABLED:
+            value: "true"
         probes:
           liveness:
             enabled: true
@@ -78,3 +104,14 @@ ingress:
     tls:
       - hosts:
           - kosync
+
+serviceMonitor:
+  kosync:
+    enabled: true
+    serviceName: kosync
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
