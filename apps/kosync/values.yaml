@@ -13,7 +13,7 @@ controllers:
       kosync:
         image:
           repository: ghcr.io/usa-reddragon/kosync
-          tag: v0.0.8
+          tag: v0.0.9
           pullPolicy: IfNotPresent
         resources:
           requests: {}
