@@ -34,6 +34,13 @@ service:
     ports:
       vnc:
         port: 8080
+  content:
+    controller: calibre
+    primary: false
+    annotations:
+      tailscale.com/expose: "true"
+      tailscale.com/hostname: "calibre"
+    ports:
       content:
         port: 8081
 
@@ -64,17 +71,3 @@ ingress:
     tls:
       - hosts:
           - calibre-vnc
-  tailscale-content:
-    enabled: true
-    className: tailscale
-    hosts:
-      - host: calibre
-        paths:
-        - path: /
-          pathType: Prefix
-          service:
-              identifier: calibre
-              port: content
-    tls:
-      - hosts:
-          - calibre
