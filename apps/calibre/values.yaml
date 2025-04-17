@@ -34,16 +34,8 @@ service:
     ports:
       vnc:
         port: 8080
-  mobile:
-    controller: calibre
-    primary: false
-    annotations:
-      tailscale.com/expose: "true"
-      tailscale.com/hostname: "calibre"
-      tailscale.com/tailnet-ip: 100.119.235.18
-    ports:
-      wireless:
-        port: 9090
+      content:
+        port: 8081
 
 persistence:
   config:
@@ -72,3 +64,17 @@ ingress:
     tls:
       - hosts:
           - calibre-vnc
+  tailscale-content:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: calibre
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: calibre
+              port: content
+    tls:
+      - hosts:
+          - calibre
