@@ -79,18 +79,6 @@ env:
 openshift:
   enabled: true
 
-container:
-  securityContext:
-    runAsUser: 2000
-    seccompProfile:
-      type: RuntimeDefault
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
-    runAsNonRoot: true
-    readOnlyRootFilesystem: true
-
 extraVolumes:
   - emptyDir:
       medium: Memory
