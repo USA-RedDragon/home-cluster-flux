@@ -34,3 +34,19 @@ persistence:
     enabled: true
     type: emptyDir
     sizeLimit: 1Gi
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: apprise
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: apprise
+              port: http
+    tls:
+      - hosts:
+          - apprise
