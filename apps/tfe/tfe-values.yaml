@@ -77,7 +77,7 @@ env:
     TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
 
 openshift:
-  enabled: true
+  enabled: false
 
 extraVolumes:
   - emptyDir:
