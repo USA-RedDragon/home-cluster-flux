@@ -75,6 +75,9 @@ spec:
   instances: 3
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1-12
   enableSuperuserAccess: true
+  postgresql:
+    pg_hba:
+      - hostssl smartmetrix smartmetrix all scram-sha-256
   bootstrap:
     initdb:
       database: tfe
@@ -82,6 +85,15 @@ spec:
   certificates:
     serverTLSSecret: smartmetrix-cert
     serverCASecret: smartmetrix-cert
+  managed:
+    roles:
+      - name: smartmetrix
+        ensure: present
+        login: true
+        passwordSecret:
+          name: postgresql-smartmetrix
+        inRoles:
+          - pg_read_all_data
   backup:
     barmanObjectStore:
       destinationPath: "s3://cnpg/tfe"
