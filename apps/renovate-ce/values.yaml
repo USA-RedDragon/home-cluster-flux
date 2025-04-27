@@ -139,7 +139,7 @@ renovateWorker:
 renovateServer:
   image:
     repository: ghcr.io/usa-reddragon/renovate-ee
-    version: 9.4.0
+    version: 9.6.0
 
   replicas: 2
 
