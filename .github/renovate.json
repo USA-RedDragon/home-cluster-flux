@@ -163,6 +163,15 @@
             ],
             "automerge": false,
             "matchPackageNames": [
+                "/^ghcr.io\\/cloudnative-pg\\/postgresql$/"
+            ]
+        },
+        {
+            "matchUpdateTypes": [
+                "minor"
+            ],
+            "automerge": false,
+            "matchPackageNames": [
                 "/^lscr.io\\/linuxserver\\/ffmpeg$/"
             ]
         },
