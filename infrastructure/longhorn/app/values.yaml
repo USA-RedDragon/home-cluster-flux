@@ -27,25 +27,25 @@ image:
   longhorn:
     engine:
       repository: longhornio/longhorn-engine
-      tag: v1.8.0
+      tag: v1.8.1
     manager:
       repository: longhornio/longhorn-manager
-      tag: v1.8.0
+      tag: v1.8.1
     ui:
       repository: longhornio/longhorn-ui
-      tag: v1.8.0
+      tag: v1.8.1
     instanceManager:
       repository: longhornio/longhorn-instance-manager
       tag: v1.8.1
     shareManager:
       repository: longhornio/longhorn-share-manager
-      tag: v1.8.0
+      tag: v1.8.1
     backingImageManager:
       repository: longhornio/backing-image-manager
       tag: v1.8.1
     supportBundleKit:
       repository: longhornio/support-bundle-kit
-      tag: v0.0.52
+      tag: v0.0.54
   csi:
     attacher:
       repository: longhornio/csi-attacher
