@@ -160,7 +160,7 @@
             ],
             "automerge": false,
             "matchPackageNames": [
-                "/^ghcr.io\\/goauthentik\\/dev-server$/"
+                "/^ghcr.io\\/goauthentik\\/server$/"
             ]
         },
         {
