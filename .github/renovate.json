@@ -182,15 +182,6 @@
             ]
         },
         {
-            "matchDatasources": [
-                "docker"
-            ],
-            "versioning": "regex:gh-version-(?<major>\\d+).(?<minor>\\d+)",
-            "matchPackageNames": [
-                "/^ghcr.io\\/goauthentik\\/dev-server$/"
-            ]
-        },
-        {
             "schedule": [
                 "after 4:00am, before 7:00am"
             ],
