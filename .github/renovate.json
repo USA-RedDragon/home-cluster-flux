@@ -35,6 +35,18 @@
         {
             "customType": "regex",
             "fileMatch": [
+                "\\.ya?ml$"
+            ],
+            "matchStrings": [
+                "^\\s+imageName:\\s+ghcr\\.io\\/cloudnative-pg\\/postgresql:(?<currentValue>.*)$"
+            ],
+            "depNameTemplate": "ghcr.io/cloudnative-pg/postgresql",
+            "datasourceTemplate": "docker",
+            "versioningTemplate": "regex:^(?<major>\\d+).(?<minor>\\d+)-(?<patch>\\d+)$"
+        },
+        {
+            "customType": "regex",
+            "fileMatch": [
                 "(^|/)infrastructure\\/longhorn\\/app\\/values\\.yaml"
             ],
             "matchStrings": [
