@@ -146,6 +146,24 @@
             ]
         },
         {
+            "matchUpdateTypes": [
+                "minor"
+            ],
+            "automerge": false,
+            "matchPackageNames": [
+                "/^lscr.io\\/linuxserver\\/ffmpeg$/"
+            ]
+        },
+        {
+            "matchUpdateTypes": [
+                "minor"
+            ],
+            "automerge": false,
+            "matchPackageNames": [
+                "/^ghcr.io\\/goauthentik\\/dev-server$/"
+            ]
+        },
+        {
             "matchDatasources": [
                 "docker"
             ],
