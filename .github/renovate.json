@@ -38,7 +38,7 @@
                 "\\.ya?ml$"
             ],
             "matchStrings": [
-                "^\\s+imageName:\\s+ghcr\\.io\\/cloudnative-pg\\/postgresql:(?<currentValue>.*)$"
+                "imageName:\\s+ghcr\\.io\\/cloudnative-pg\\/postgresql:(?<currentValue>.*)$"
             ],
             "depNameTemplate": "ghcr.io/cloudnative-pg/postgresql",
             "datasourceTemplate": "docker",
