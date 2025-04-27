@@ -155,6 +155,15 @@
             ]
         },
         {
+            "matchDatasources": [
+                "docker"
+            ],
+            "versioning": "regex:^version-(?<major>\\d+).(?<minor>\\d+)-cli$",
+            "matchPackageNames": [
+                "/^lscr.io\\/linuxserver\\/ffmpeg$/"
+            ]
+        },
+        {
             "schedule": [
                 "after 4:00am, before 7:00am"
             ],
