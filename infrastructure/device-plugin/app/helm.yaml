@@ -27,7 +27,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: device-plugin
-      version: '>=0.1.3 <1.0.0'
+      version: '0.1.3'
       interval: 1m0s
   values:
     image:
