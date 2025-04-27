@@ -8,7 +8,7 @@ image:
   repository: lscr.io/linuxserver/ffmpeg
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "version-6.1-cli"
+  tag: "version-7.1-cli"
 
 imagePullSecrets: []
 nameOverride: ""
