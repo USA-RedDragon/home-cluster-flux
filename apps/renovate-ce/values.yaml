@@ -5,7 +5,7 @@ license:
 renovateWorker:
   image:
     repository: ghcr.io/usa-reddragon/renovate-ee-worker
-    version: v9.5.0
+    version: 9.8.0
 
   existingSecret: renovate-secrets
   replicas: 2
@@ -139,7 +139,7 @@ renovateWorker:
 renovateServer:
   image:
     repository: ghcr.io/usa-reddragon/renovate-ee
-    version: 9.6.0
+    version: v9.8.0
 
   replicas: 2
 
