@@ -5,7 +5,7 @@ metadata:
   namespace: dmrhub
 spec:
   instances: 3
-  imageName: ghcr.io/cloudnative-pg/postgresql:16.8-11
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.8-12
   enableSuperuserAccess: true
   backup:
     barmanObjectStore:
