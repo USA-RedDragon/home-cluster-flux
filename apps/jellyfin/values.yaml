@@ -89,27 +89,11 @@ persistence:
     sizeLimit: 30Gi
     globalMounts:
       - path: /tmp/jellyfin
-  media-anime:
+  media:
     enabled: true
     type: nfs
-    path: /mnt/data/media/Anime
+    path: /mnt/data/media
     server: 192.168.1.135
-    globalMounts:
-      - path: /media/anime
-  media-movies:
-    enabled: true
-    type: nfs
-    path: /mnt/data/media/Movies
-    server: 192.168.1.135
-    globalMounts:
-      - path: /media/movies
-  media-tv:
-    enabled: true
-    type: nfs
-    path: /mnt/data/media/TV
-    server: 192.168.1.135
-    globalMounts:
-      - path: /media/tv
 
 ingress:
   jellyfin:
