@@ -99,6 +99,8 @@ extraVolumes:
     name: var-run
   - emptyDir: {}
     name: logs
+  - emptyDir: {}
+    name: tfe-task-worker-cache
 
 extraVolumeMounts:
   - mountPath: /var/run
@@ -107,3 +109,5 @@ extraVolumeMounts:
     name: tmp
   - mountPath: /var/log/terraform-enterprise
     name: logs
+  - mountPath: /var/cache/tfe-task-worker
+    name: tfe-task-worker-cache
