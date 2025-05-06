@@ -77,7 +77,19 @@ env:
     TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
 
 openshift:
-  enabled: false
+  enabled: true
+
+container:
+  securityContext:
+    runAsUser: 2000
+    seccompProfile:
+      type: RuntimeDefault
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
 
 extraVolumes:
   - emptyDir:
