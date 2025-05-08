@@ -144,28 +144,6 @@ renovateServer:
   replicas: 2
 
   extraEnvVars:
-  - name: MEND_RNV_DATA_HANDLER_TYPE
-    value: "postgresql"
-  - name: PGDATABASE
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-app
-        key: dbname
-  - name: PGHOST
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-app
-        key: host
-  - name: PGPORT
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-app
-        key: port
-  - name: PGUSER
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-app
-        key: username
   - name: MEND_RNV_REPORTING_ENABLED
     value: 'true'
 
