@@ -963,7 +963,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>renovate-ce</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/renovate-ce/helm.yaml">renovate-ce</a></td>
-    <td><a href="apps/renovate-ce/postgres.yaml">postgresql</a></td>
+    <td></td>
   </tr>
 </table>
 
