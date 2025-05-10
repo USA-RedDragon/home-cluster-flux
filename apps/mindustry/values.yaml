@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  mindustry:
+    replicas: 1
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65535
+        fsGroup: 65535
+    containers:
+      mindustry:
+        image:
+          repository: ghcr.io/usa-reddragon/mindustry
+          tag: v146@sha256:64822048eb9f32c3eb636bb9e94206b47e262e58011ecad92ed959b9a17787fe 
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: '1'
+            memory: 1Gi
+        probes:
+          liveness:
+            enabled: true
+            spec:
+              initialDelaySeconds: 20
+          readiness:
+            enabled: true
+            spec:
+              initialDelaySeconds: 20
+          startup:
+            enabled: true
+            spec:
+              initialDelaySeconds: 20
+        env:
+          - name: MINDUSTRY_NAME
+            value: DragonMind
+          - name: MINDUSTRY_DESC
+            value: "USA-RedDragon's Mindustry Server"
+          - name: MINDUSTRY_ENABLE_VOTEKICK
+            value: "false"
+          - name: MINDUSTRY_LOGGING
+            value: "false"
+          - name: MINDUSTRY_MOTD
+            value: "Welcome to USA-RedDragon's Mindustry Server!"
+          - name: MINDUSTRY_AUTOSAVE_AMOUNT
+            value: "120"
+          - name: MINDUSTRY_AUTOSAVE_SPACING
+            value: "60"
+          - name: MINDUSTRY_AUTO_PAUSE
+            value: "true"
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+
+service:
+  mindustry:
+    controller: mindustry
+    annotations:
+      tailscale.com/expose: "true"
+      tailscale.com/hostname: "mindustry"
+    ports:
+      game-tcp:
+        port: 8096
+      game-udp:
+        port: 8096
+        protocol: UDP
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 8Gi
+    storageClass: longhorn-ssd
