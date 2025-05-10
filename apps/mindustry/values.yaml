@@ -43,6 +43,8 @@ controllers:
             value: "60"
           - name: MINDUSTRY_AUTO_PAUSE
             value: "true"
+          - name: MINDUSTRY_START_COMMANDS
+            value: "host Archipelago"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
