@@ -9,7 +9,6 @@ controllers:
         runAsUser: 65534
         runAsGroup: 65535
         fsGroup: 65535
-        allowPrivilegeEscalation: false
     containers:
       mindustry:
         image:
@@ -46,6 +45,7 @@ controllers:
             value: "true"
         securityContext:
           readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
           capabilities:
             drop:
               - ALL
