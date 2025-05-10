@@ -13,7 +13,7 @@ controllers:
       mindustry:
         image:
           repository: ghcr.io/usa-reddragon/mindustry
-          tag: v146@sha256:64822048eb9f32c3eb636bb9e94206b47e262e58011ecad92ed959b9a17787fe 
+          tag: v146@sha256:64822048eb9f32c3eb636bb9e94206b47e262e58011ecad92ed959b9a17787fe
           pullPolicy: IfNotPresent
         resources:
           requests:
