@@ -79,3 +79,23 @@ persistence:
     accessMode: ReadWriteOnce
     size: 8Gi
     storageClass: longhorn-ssd
+
+networkpolicies:
+  mindustry:
+    enabled: true
+    controller: mindustry
+    policyTypes: [Ingress, Egress]
+    rules:
+      ingress:
+        - from:
+          - namespaceSelector: {}
+      egress:
+        - to:
+          - namespaceSelector: {}
+        - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: kube-system
+            podSelector:
+              matchLabels:
+                k8s-app: kube-dns
