@@ -58,6 +58,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#kyverno">kyverno</a></li>
   <li><a href="#longhorn">longhorn</a></li>
   <li><a href="#mattermost">mattermost</a></li>
+  <li><a href="#mindustry">mindustry</a></li>
   <li><a href="#minecraft">minecraft</a></li>
   <li><a href="#minio">minio</a></li>
   <li><a href="#minio-operator">minio-operator</a></li>
@@ -676,6 +677,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/mattermost/app/push-proxy-helm.yaml">push-proxy</a></td>
+  </tr>
+</table>
+
+<h4>mindustry</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>mindustry</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/mindustry/helm.yaml">mindustry</a></td>
+    <td></td>
   </tr>
 </table>
 
