@@ -2,7 +2,10 @@
 
 controllers:
   ephemeris:
-    replicas: 1
+    type: cronjob
+    cronjob:
+      schedule: "*/5 * * * *"
+      concurrencyPolicy: Forbid
     pod:
       imagePullSecrets:
         - name: registry-docker-hub
@@ -17,10 +20,6 @@ controllers:
             - ALL
     initContainers:
       ephemeris:
-        type: cronjob
-        cronjob:
-          schedule: "*/5 * * * *"
-          concurrencyPolicy: Forbid
         image:
           repository: ghcr.io/rmitchellscott/ephemeris
           tag: v1.1.1@sha256:19ee8566b55b040f45bcebfb88e96e6d3ef12bd82b579874f6d1ca82431cbb63
