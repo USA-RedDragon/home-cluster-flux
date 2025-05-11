@@ -24,7 +24,7 @@ controllers:
           TIME_DISPLAY_START: 8
           DOC_MINICAL_MODE: current
           DOC_ALLDAY_BOUNDARY: margin
-          DOC_EVENT_FILL_COLOR: #ffffff
+          DOC_EVENT_FILL_COLOR: "#ffffff"
           TIME_DISPLAY_END: 18
           APP_OUTPUT_FORMAT: png
           APP_META_FILE_PATH: /meta/feeds_meta.yaml
