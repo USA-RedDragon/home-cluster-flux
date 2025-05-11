@@ -31,6 +31,8 @@ controllers:
           APP_OUTPUT_FORMAT: png
           APP_META_FILE_PATH: /tmp/feeds_meta.yaml
           TIME_FORMAT: 12
+          DOC_FOOTER_TEXT: updatedat
+          DOC_FOOTER_COLOR: black
         securityContext:
           runAsNonRoot: true
           runAsUser: 65534
