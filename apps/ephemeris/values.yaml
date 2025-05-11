@@ -33,6 +33,8 @@ controllers:
           TIME_FORMAT: 12
           DOC_FOOTER_TEXT: updatedat
           DOC_FOOTER_COLOR: black
+          DOC_EVENT_BORDER_COLOR: black
+          DOC_GRID_LINE_COLOR: black
         securityContext:
           runAsNonRoot: true
           runAsUser: 65534
