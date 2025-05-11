@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  ephemeris:
+    replicas: 1
+    pod:
+      imagePullSecrets:
+        - name: registry-docker-hub
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65535
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+    initContainers:
+      ephemeris:
+        type: cronjob
+        cronjob:
+          schedule: "*/5 * * * *"
+          concurrencyPolicy: Forbid
+        image:
+          repository: ghcr.io/rmitchellscott/ephemeris
+          tag: v1.1.1@sha256:19ee8566b55b040f45bcebfb88e96e6d3ef12bd82b579874f6d1ca82431cbb63
+          pullPolicy: IfNotPresent
+        env:
+          TIME_ZONE: America/Chicago
+          TZ: America/Chicago
+          DOC_PAGE_DIMENSIONS: 480x800
+          DOC_PAGE_DPI: 125
+          DOC_COVER_ENABLED: false
+          TIME_DISPLAY_START: 8
+          DOC_MINICAL_MODE: current
+          DOC_ALLDAY_BOUNDARY: margin
+          DOC_EVENT_FILL_COLOR: #ffffff
+          TIME_DISPLAY_END: 18
+          APP_OUTPUT_FORMAT: png
+    containers:
+      process-and-upload:
+        image:
+          repository: alpine
+          tag: 3.21.3
+          pullPolicy: IfNotPresent
+        securityContext:
+          readOnlyRootFilesystem: false
+        envFrom:
+          - secretRef:
+              name: ephemeris-s3
+        command:
+          - /bin/sh
+          - -c
+          # magick /app/output/png/ephemeris_2025-05-15.png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > test-ephemeris-1bit.bmp
+          - |
+            apk add --no-cache aws-cli imagemagick netpbm
+            aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/ s3://ephemeris/
+
+persistence:
+  output:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 1Gi
+    globalMounts:
+      - path: /app/output
+  config:
+    enabled: true
+    type: secret
+    name: ephemeris-config
+    items:
+      - key: config.yaml
+        path: config.yaml
+    globalMounts:
+      - path: /app/config.yaml
