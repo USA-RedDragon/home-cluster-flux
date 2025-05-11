@@ -63,6 +63,13 @@ persistence:
     sizeLimit: 1Gi
     globalMounts:
       - path: /app/output
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
+    globalMounts:
+      - path: /tmp
   config:
     enabled: true
     type: secret
