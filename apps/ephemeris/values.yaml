@@ -54,11 +54,11 @@ controllers:
         command:
           - /bin/sh
           - -c
-          # magick /app/output/png/ephemeris_2025-05-15.png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > test-ephemeris-1bit.bmp
           - |
-            ls -lah /app/output/png
             apk add --no-cache aws-cli imagemagick netpbm
-            aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/ s3://ephemeris/
+            magick /app/output/png/ephemeris_$(date +%F).png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > /tmp/ephemeris.bmp
+            aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/ephemeris.bmp s3://ephemeris/ephemeris.bmp
+            aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/png/ephemeris_$(date +%F).png s3://ephemeris/
 
 persistence:
   output:
