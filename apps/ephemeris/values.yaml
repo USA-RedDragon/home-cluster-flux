@@ -9,15 +9,6 @@ controllers:
     pod:
       imagePullSecrets:
         - name: registry-docker-hub
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65534
-        runAsGroup: 65535
-        readOnlyRootFilesystem: true
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop:
-            - ALL
     initContainers:
       ephemeris:
         image:
@@ -36,6 +27,14 @@ controllers:
           DOC_EVENT_FILL_COLOR: #ffffff
           TIME_DISPLAY_END: 18
           APP_OUTPUT_FORMAT: png
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          runAsGroup: 65535
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
     containers:
       process-and-upload:
         image:
@@ -43,7 +42,9 @@ controllers:
           tag: 3.21.3
           pullPolicy: IfNotPresent
         securityContext:
-          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+              - ALL
         envFrom:
           - secretRef:
               name: ephemeris-s3
