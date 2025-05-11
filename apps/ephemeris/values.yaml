@@ -9,6 +9,8 @@ controllers:
     pod:
       imagePullSecrets:
         - name: registry-docker-hub
+      securityContext:
+        fsGroup: 65535
     initContainers:
       ephemeris:
         image:
@@ -32,7 +34,6 @@ controllers:
           runAsNonRoot: true
           runAsUser: 65534
           runAsGroup: 65535
-          fsGroup: 65535
           readOnlyRootFilesystem: true
           capabilities:
             drop:
