@@ -27,6 +27,7 @@ controllers:
           DOC_EVENT_FILL_COLOR: #ffffff
           TIME_DISPLAY_END: 18
           APP_OUTPUT_FORMAT: png
+          APP_META_FILE_PATH: /meta/feeds_meta.yaml
         securityContext:
           runAsNonRoot: true
           runAsUser: 65534
@@ -70,6 +71,11 @@ persistence:
     sizeLimit: 1Gi
     globalMounts:
       - path: /tmp
+  meta:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    sizeLimit: 1Gi
   config:
     enabled: true
     type: secret
