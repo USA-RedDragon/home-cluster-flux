@@ -32,6 +32,7 @@ controllers:
           runAsNonRoot: true
           runAsUser: 65534
           runAsGroup: 65535
+          fsGroup: 65535
           readOnlyRootFilesystem: true
           capabilities:
             drop:
