@@ -23,7 +23,7 @@ controllers:
           concurrencyPolicy: Forbid
         image:
           repository: ghcr.io/rmitchellscott/ephemeris
-          tag: v1.1.1@sha256:19ee8566b55b040f45bcebfb88e96e6d3ef12bd82b579874f6d1ca82431cbb63
+          tag: v1.1.1@sha256:fb05c511db5573de7da8d0268992d6be58eeb59f3be882676556430610fdbd0c
           pullPolicy: IfNotPresent
         env:
           TIME_ZONE: America/Chicago
