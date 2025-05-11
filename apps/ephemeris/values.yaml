@@ -71,4 +71,5 @@ persistence:
       - key: config.yaml
         path: config.yaml
     globalMounts:
-      - path: /app
+      - path: /app/config.yaml
+        subPath: config.yaml
