@@ -75,8 +75,8 @@ persistence:
   meta:
     enabled: true
     type: persistentVolumeClaim
+    size: 1Gi
     accessMode: ReadWriteOnce
-    sizeLimit: 1Gi
   config:
     enabled: true
     type: secret
