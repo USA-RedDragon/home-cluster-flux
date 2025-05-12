@@ -15,7 +15,7 @@ controllers:
       ephemeris:
         image:
           repository: ghcr.io/rmitchellscott/ephemeris
-          tag: v1.2.0@sha256:c6689dec878e3b03761448ca8315feb3ee0b877d68485b18e2addc56013587e4
+          tag: v1.2.1@sha256:e1ceb3043417f29a96115183502fdb686b48c878b164628ef9992501e05f0a8c
           pullPolicy: IfNotPresent
         env:
           TIME_ZONE: America/Chicago
