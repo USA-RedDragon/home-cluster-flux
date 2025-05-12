@@ -14,8 +14,8 @@ controllers:
     initContainers:
       ephemeris:
         image:
-          repository: ghcr.io/usa-reddragon/ephemeris
-          tag: v1.1.4@sha256:3f79ce63199083ddb6f4c07f80ba1369dd467530e2c0e6ad91eab5c37afbc7ce
+          repository: ghcr.io/rmitchellscott/ephemeris
+          tag: v1.2.0@sha256:c6689dec878e3b03761448ca8315feb3ee0b877d68485b18e2addc56013587e4
           pullPolicy: IfNotPresent
         env:
           TIME_ZONE: America/Chicago
