@@ -1,10 +1,11 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
 controllers:
-  ephemeris:
+  ephemeris-day:
     type: cronjob
     cronjob:
-      schedule: "*/5 * * * *"
+      schedule: "*/5 0-18 * * 0-5" # S-F 12am-6pm
+      timeZone: America/Chicago
       concurrencyPolicy: Forbid
     pod:
       imagePullSecrets:
@@ -67,6 +68,141 @@ controllers:
             magick /app/output/png/ephemeris_$(date +%F).png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > /tmp/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/ephemeris.bmp s3://ephemeris/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/png/ephemeris_$(date +%F).png s3://ephemeris/
+  ephemeris-saturday:
+    type: cronjob
+    cronjob:
+      schedule: "*/5 * * * 6" # All day Saturday
+      timeZone: America/Chicago
+      concurrencyPolicy: Forbid
+    pod:
+      imagePullSecrets:
+        - name: registry-docker-hub
+      securityContext:
+        fsGroup: 65535
+    initContainers:
+      ephemeris:
+        image:
+          repository: ghcr.io/rmitchellscott/ephemeris
+          tag: v1.2.0@sha256:c6689dec878e3b03761448ca8315feb3ee0b877d68485b18e2addc56013587e4
+          pullPolicy: IfNotPresent
+        env:
+          TIME_ZONE: America/Chicago
+          TZ: America/Chicago
+          DOC_PAGE_DIMENSIONS: 480x800
+          DOC_PAGE_DPI: '125'
+          DOC_COVER_ENABLED: false
+          TIME_DISPLAY_START: '8'
+          DOC_MINICAL_MODE: current
+          DOC_ALLDAY_BOUNDARY: margin
+          DOC_EVENT_FILL_COLOR: "#ffffff"
+          TIME_DISPLAY_END: '18'
+          APP_OUTPUT_FORMAT: png
+          APP_META_FILE_PATH: /tmp/feeds_meta.yaml
+          TIME_FORMAT: '12'
+          DOC_FOOTER_TEXT: updatedat
+          DOC_FOOTER_COLOR: black
+          DOC_EVENT_BORDER_COLOR: black
+          DOC_GRID_LINE_COLOR: black
+          DOC_MONOCHROME: 'true'
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          runAsGroup: 65535
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+    containers:
+      process-and-upload:
+        image:
+          repository: alpine
+          tag: 3.21.3
+          pullPolicy: IfNotPresent
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+        env:
+          TZ: America/Chicago
+        envFrom:
+          - secretRef:
+              name: ephemeris-s3
+        command:
+          - /bin/sh
+          - -c
+          - |
+            apk add --no-cache aws-cli imagemagick netpbm tzdata
+            magick /app/output/png/ephemeris_$(date +%F).png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > /tmp/ephemeris.bmp
+            aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/ephemeris.bmp s3://ephemeris/ephemeris.bmp
+            aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/png/ephemeris_$(date +%F).png s3://ephemeris/
+  ephemeris-night:
+    type: cronjob
+    cronjob:
+      schedule: "*/5 18-23 * * 0-5" # S-F 6pm-12am
+      timeZone: America/Chicago
+      concurrencyPolicy: Forbid
+    pod:
+      imagePullSecrets:
+        - name: registry-docker-hub
+      securityContext:
+        fsGroup: 65535
+    initContainers:
+      ephemeris:
+        image:
+          repository: ghcr.io/rmitchellscott/ephemeris
+          tag: v1.2.0@sha256:c6689dec878e3b03761448ca8315feb3ee0b877d68485b18e2addc56013587e4
+          pullPolicy: IfNotPresent
+        env:
+          TIME_ZONE: America/Chicago
+          TZ: America/Chicago
+          DOC_PAGE_DIMENSIONS: 480x800
+          DOC_PAGE_DPI: '125'
+          DOC_COVER_ENABLED: false
+          TIME_DISPLAY_START: '8'
+          DOC_MINICAL_MODE: current
+          DOC_ALLDAY_BOUNDARY: margin
+          DOC_EVENT_FILL_COLOR: "#ffffff"
+          TIME_DISPLAY_END: '18'
+          APP_OUTPUT_FORMAT: png
+          TIME_DATE_RANGE: 'tomorrow'
+          APP_META_FILE_PATH: /tmp/feeds_meta.yaml
+          TIME_FORMAT: '12'
+          DOC_FOOTER_TEXT: updatedat
+          DOC_FOOTER_COLOR: black
+          DOC_EVENT_BORDER_COLOR: black
+          DOC_GRID_LINE_COLOR: black
+          DOC_MONOCHROME: 'true'
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          runAsGroup: 65535
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+    containers:
+      process-and-upload:
+        image:
+          repository: alpine
+          tag: 3.21.3
+          pullPolicy: IfNotPresent
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+        env:
+          TZ: America/Chicago
+        envFrom:
+          - secretRef:
+              name: ephemeris-s3
+        command:
+          - /bin/sh
+          - -c
+          - |
+            apk add --no-cache aws-cli imagemagick netpbm tzdata
+            magick /app/output/png/ephemeris_$(date -d "+1 day" +%F).png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > /tmp/ephemeris.bmp
+            aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/ephemeris.bmp s3://ephemeris/ephemeris.bmp
+            aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/png/ephemeris_$(date -d "+1 day" +%F).png s3://ephemeris/
 
 persistence:
   output:
