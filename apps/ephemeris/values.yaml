@@ -67,7 +67,7 @@ controllers:
           - /bin/sh
           - -c
           - |
-            apk add --no-cache aws-cli imagemagick netpbm tzdata
+            apk add --no-cache aws-cli imagemagick netpbm tzdata coreutils
             magick /app/output/png/ephemeris_$(date +%F).png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > /tmp/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/ephemeris.bmp s3://ephemeris/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/png/ephemeris_$(date +%F).png s3://ephemeris/
@@ -118,7 +118,7 @@ controllers:
           - /bin/sh
           - -c
           - |
-            apk add --no-cache aws-cli imagemagick netpbm tzdata
+            apk add --no-cache aws-cli imagemagick netpbm tzdata coreutils
             magick /app/output/png/ephemeris_$(date +%F).png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > /tmp/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/ephemeris.bmp s3://ephemeris/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/png/ephemeris_$(date +%F).png s3://ephemeris/
@@ -168,7 +168,7 @@ controllers:
           - /bin/sh
           - -c
           - |
-            apk add --no-cache aws-cli imagemagick netpbm tzdata
+            apk add --no-cache aws-cli imagemagick netpbm tzdata coreutils
             magick /app/output/png/ephemeris_$(date -d "+1 day" +%F).png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > /tmp/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/ephemeris.bmp s3://ephemeris/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/png/ephemeris_$(date -d "+1 day" +%F).png s3://ephemeris/
