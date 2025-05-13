@@ -83,7 +83,7 @@ controllers:
       ephemeris:
         image:
           repository: ghcr.io/rmitchellscott/ephemeris
-          tag: v1.2.0@sha256:c6689dec878e3b03761448ca8315feb3ee0b877d68485b18e2addc56013587e4
+          tag: v1.3.0@sha256:10215cf6b25d4b6e65c6240ff5003b3596851a432c3a418ca75c3f6e547e5727
           pullPolicy: IfNotPresent
         env:
           TIME_ZONE: America/Chicago
@@ -150,7 +150,7 @@ controllers:
       ephemeris:
         image:
           repository: ghcr.io/rmitchellscott/ephemeris
-          tag: v1.2.0@sha256:c6689dec878e3b03761448ca8315feb3ee0b877d68485b18e2addc56013587e4
+          tag: v1.3.0@sha256:10215cf6b25d4b6e65c6240ff5003b3596851a432c3a418ca75c3f6e547e5727
           pullPolicy: IfNotPresent
         env:
           TIME_ZONE: America/Chicago
