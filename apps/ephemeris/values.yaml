@@ -20,6 +20,15 @@ x-ephemeris-envs: &ephemeris-envs
   DOC_GRID_LINE_COLOR: black
   DOC_MONOCHROME: 'true'
 
+x-security-context: &security-context
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65535
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
 controllers:
   ephemeris-day:
     type: cronjob
@@ -41,23 +50,15 @@ controllers:
         env:
           <<: *ephemeris-envs
         securityContext:
-          runAsNonRoot: true
-          runAsUser: 65534
-          runAsGroup: 65535
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop:
-              - ALL
+          <<: *security-context
     containers:
       process-and-upload:
         image:
-          repository: alpine
-          tag: 3.21.3
+          repository: ghcr.io/usa-reddragon/magick-s3
+          tag: 7.1.1.41@sha256:37c97b83eaab42ae5993dbdb51b908d926a9816b8fc1c29b995d8e8871e1df4b
           pullPolicy: IfNotPresent
         securityContext:
-          capabilities:
-            drop:
-              - ALL
+          <<: *security-context
         env:
           TZ: America/Chicago
         envFrom:
@@ -68,7 +69,6 @@ controllers:
           - -c
           - |
             set -e
-            apk add --no-cache aws-cli imagemagick netpbm tzdata
             magick /app/output/png/ephemeris_$(date +%F).png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > /tmp/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/ephemeris.bmp s3://ephemeris/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/png/ephemeris_$(date +%F).png s3://ephemeris/
@@ -92,23 +92,15 @@ controllers:
         env:
           <<: *ephemeris-envs
         securityContext:
-          runAsNonRoot: true
-          runAsUser: 65534
-          runAsGroup: 65535
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop:
-              - ALL
+          <<: *security-context
     containers:
       process-and-upload:
         image:
-          repository: alpine
-          tag: 3.21.3
+          repository: ghcr.io/usa-reddragon/magick-s3
+          tag: 7.1.1.41@sha256:37c97b83eaab42ae5993dbdb51b908d926a9816b8fc1c29b995d8e8871e1df4b
           pullPolicy: IfNotPresent
         securityContext:
-          capabilities:
-            drop:
-              - ALL
+          <<: *security-context
         env:
           TZ: America/Chicago
         envFrom:
@@ -119,7 +111,6 @@ controllers:
           - -c
           - |
             set -e
-            apk add --no-cache aws-cli imagemagick netpbm tzdata
             magick /app/output/png/ephemeris_$(date +%F).png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > /tmp/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/ephemeris.bmp s3://ephemeris/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/png/ephemeris_$(date +%F).png s3://ephemeris/
@@ -144,23 +135,15 @@ controllers:
           <<: *ephemeris-envs
           TIME_DATE_RANGE: 'tomorrow'
         securityContext:
-          runAsNonRoot: true
-          runAsUser: 65534
-          runAsGroup: 65535
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop:
-              - ALL
+          <<: *security-context
     containers:
       process-and-upload:
         image:
-          repository: alpine
-          tag: 3.21.3
+          repository: ghcr.io/usa-reddragon/magick-s3
+          tag: 7.1.1.41@sha256:37c97b83eaab42ae5993dbdb51b908d926a9816b8fc1c29b995d8e8871e1df4b
           pullPolicy: IfNotPresent
         securityContext:
-          capabilities:
-            drop:
-              - ALL
+          <<: *security-context
         env:
           TZ: America/Chicago
         envFrom:
@@ -171,7 +154,6 @@ controllers:
           - -c
           - |
             set -e
-            apk add --no-cache aws-cli imagemagick netpbm tzdata coreutils
             magick /app/output/png/ephemeris_$(date -d "+1 day" +%F).png -colors 2 -depth 1 -strip pbm:- | ppmtobmp -bpp 1 > /tmp/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/ephemeris.bmp s3://ephemeris/ephemeris.bmp
             aws s3 --endpoint-url https://s3.mcswain.dev cp /app/output/png/ephemeris_$(date -d "+1 day" +%F).png s3://ephemeris/
