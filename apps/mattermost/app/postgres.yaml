@@ -8,10 +8,9 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16.8-14
   enableSuperuserAccess: true
   bootstrap:
-    recovery:
+    initdb:
       database: mattermost
       owner: mattermost
-      source: postgresql
   backup:
     barmanObjectStore:
       destinationPath: "s3://cnpg/mattermost-1"
@@ -26,20 +25,6 @@ spec:
       wal:
         compression: gzip
     retentionPolicy: "4w"
-  externalClusters:
-  - barmanObjectStore:
-      destinationPath: s3://cnpg/mattermost
-      endpointURL: https://s3.mcswain.dev
-      s3Credentials:
-        accessKeyId:
-          key: AWS_ACCESS_KEY_ID
-          name: cnpg-minio
-        secretAccessKey:
-          key: AWS_SECRET_ACCESS_KEY
-          name: cnpg-minio
-      wal:
-        compression: gzip
-    name: postgresql
   storage:
     size: 80Gi
   monitoring:
