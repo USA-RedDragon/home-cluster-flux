@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  astroframe:
+    type: cronjob
+    cronjob:
+      schedule: "*/15 * * * *"
+      concurrencyPolicy: Forbid
+    pod:
+      securityContext:
+        fsGroup: 65535
+    containers:
+      process-and-upload:
+        image:
+          repository: ghcr.io/usa-reddragon/magick-s3
+          tag: 7.1.1.41@sha256:37c97b83eaab42ae5993dbdb51b908d926a9816b8fc1c29b995d8e8871e1df4b
+          pullPolicy: IfNotPresent
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          runAsGroup: 65535
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        envFrom:
+          - secretRef:
+              name: astroframe-s3
+        command:
+          - /bin/sh
+          - -c
+          - |
+            set -euo pipefail
+            RESP=$(curl -fSsL https://wheresmyscope.mcswain.dev/)
+            IMAGE_URL=$(echo "$RESP" | jq -r '.image_url')
+            curl -fSsL -o /tmp/in.png "$IMAGE_URL"
+            magick /tmp/in.png -grayscale average -colors 16 -dither FloydSteinberg -depth 2 -strip png:/tmp/out.png
+            aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/out.png s3://astroframe/frame.png
+
+persistence:
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
+    globalMounts:
+      - path: /tmp
