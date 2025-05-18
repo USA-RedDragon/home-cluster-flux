@@ -13,7 +13,7 @@ controllers:
       wheresmyscope:
         image:
           repository: ghcr.io/usa-reddragon/wheresmyscope
-          tag: v0.0.1@sha256:cb26be0635993aab2042851c0c36a1c67453742422a4b14715cf00582e327938
+          tag: v0.0.3@sha256:90f2beca2a6090072e9c735192ce7aa9f9f9d9a11a5002fa0d9ebaaa268bd95b
           pullPolicy: IfNotPresent
         resources:
           requests:
