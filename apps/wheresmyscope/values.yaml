@@ -3,6 +3,10 @@
 controllers:
   wheresmyscope:
     replicas: 3
+    strategy: RollingUpdate
+    rollingUpdate:
+      unavailable: 1
+      surge: 25%
     pod:
       securityContext:
         runAsNonRoot: true
@@ -13,7 +17,7 @@ controllers:
       wheresmyscope:
         image:
           repository: ghcr.io/usa-reddragon/wheresmyscope
-          tag: v0.0.4@sha256:39f8ed2d454083e35cabe8f9d0de1411ad251f0075c28c0fee2275d4ee9a994a
+          tag: v0.0.5@sha256:630b26e19f30a71543f2383e2a208386b4958580a0aca219b094d3ed6410b06d
           pullPolicy: IfNotPresent
         resources:
           requests:
