@@ -2,7 +2,7 @@
 
 controllers:
   wheresmyscope:
-    replicas: 1
+    replicas: 3
     pod:
       securityContext:
         runAsNonRoot: true
@@ -17,8 +17,11 @@ controllers:
           pullPolicy: IfNotPresent
         resources:
           requests:
-            cpu: 25m
-            memory: 40Mi
+            cpu: 5m
+            memory: 5Mi
+          limits:
+            cpu: 10m
+            memory: 10Mi
         probes:
           liveness:
             enabled: true
