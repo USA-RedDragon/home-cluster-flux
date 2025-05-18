@@ -34,7 +34,7 @@ controllers:
             RESP=$(curl -fSsL https://wheresmyscope.mcswain.dev/)
             IMAGE_URL=$(echo "$RESP" | jq -r '.image_url')
             curl -fSsL -o /tmp/in.png "$IMAGE_URL"
-            magick /tmp/in.png -grayscale average -colors 16 -dither FloydSteinberg -depth 2 -strip png:/tmp/out.png
+            magick /tmp/in.png'[800x480]' -grayscale average -colors 16 -dither FloydSteinberg -depth 2 -strip png:/tmp/out.png
             aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/out.png s3://astroframe/frame.png
 
 persistence:
