@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  wheresmyscope:
+    replicas: 1
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65535
+        fsGroup: 65535
+    containers:
+      wheresmyscope:
+        image:
+          repository: ghcr.io/usa-reddragon/wheresmyscope
+          tag: v0.0.0@sha256:694d66df03371f7ae5906484bc41fed59214bd60e365085785462c08e9f081d2
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 25m
+            memory: 40Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          - name: MQTT_PREFIX
+            value: observatory/mercury/target
+          - name: MQTT_BROKER
+            value: mqtt://192.168.1.19:1883
+          - name: MQTT_USERNAME
+            value: wheresmyscope
+        envFrom:
+          - secretRef:
+              name: wheresmyscope
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+
+service:
+  wheresmyscope:
+    controller: wheresmyscope
+    ports:
+      http:
+        port: 8080
+
+networkpolicies:
+  wheresmyscope:
+    enabled: true
+    controller: wheresmyscope
+    policyTypes: [Ingress, Egress]
+    rules:
+      ingress:
+        - from:
+          - namespaceSelector: {}
+      egress:
+        - to:
+          - namespaceSelector: {}
+        - to:
+          - ipBlock:
+              cidr: 192.168.1.19/32
+            port: 1883
+        - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: kube-system
+            podSelector:
+              matchLabels:
+                k8s-app: kube-dns
