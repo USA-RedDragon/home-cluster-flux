@@ -92,6 +92,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#vaultwarden">vaultwarden</a></li>
   <li><a href="#weave-gitops">weave-gitops</a></li>
   <li><a href="#weewx">weewx</a></li>
+  <li><a href="#wheresmyscope">wheresmyscope</a></li>
   <li><a href="#zot">zot</a></li>
 </ul>
 
@@ -1254,6 +1255,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/weewx/mariadb/helm.yaml">weewx-mariadb</a></td>
+  </tr>
+</table>
+
+<h4>wheresmyscope</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>wheresmyscope</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/wheresmyscope/helm.yaml">wheresmyscope</a></td>
+    <td></td>
   </tr>
 </table>
 
