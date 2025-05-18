@@ -13,7 +13,7 @@ controllers:
       process-and-upload:
         image:
           repository: ghcr.io/usa-reddragon/magick-s3
-          tag: 7.1.1.41@sha256:37c97b83eaab42ae5993dbdb51b908d926a9816b8fc1c29b995d8e8871e1df4b
+          tag: 7.1.1.41@sha256:b29e651570230f8bbfd6060f654d147cc60ef4738018615d63417fa50c7f45c5
           pullPolicy: IfNotPresent
         securityContext:
           runAsNonRoot: true
