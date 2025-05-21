@@ -18,7 +18,7 @@ spec:
         kind: HelmRepository
         name: prometheus-community
         namespace: flux-system
-      version: '72.5.2'
+      version: '72.5.3'
       interval: 1m0s
   valuesFrom:
     - kind: ConfigMap
