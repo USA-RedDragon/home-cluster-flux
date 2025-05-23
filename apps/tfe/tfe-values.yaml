@@ -41,10 +41,19 @@ ingress:
         serviceName: "terraform-enterprise"
         path: /
         pathType: Prefix
+    - host: tfe-external.mcswain.dev
+      paths:
+      - portNumber: 443
+        serviceName: "terraform-enterprise"
+        path: /
+        pathType: Prefix
   tls:
     - hosts:
       - tfe.mcswain.dev
       secretName: tfe-mcswain-dev-tls
+    - hosts:
+      - tfe-external.mcswain.dev
+      secretName: tfe-external-mcswain-dev-tls
 
 # Injector service specific configurations
 service:
@@ -77,6 +86,8 @@ env:
     TFE_OBJECT_STORAGE_S3_ENDPOINT: https://s3.mcswain.dev
     TFE_OBJECT_STORAGE_S3_REGION: us-east-1
     TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
+    TFE_TLS_KEY_FILE_SECONDARY: /etc/secondary-certs/tls.key
+    TFE_TLS_CERT_FILE_SECONDARY: /etc/secondary-certs/tls.crt
 
 openshift:
   enabled: true
@@ -103,6 +114,9 @@ extraVolumes:
     name: logs
   - emptyDir: {}
     name: tfe-task-worker-cache
+  - name: secondary-certs
+    secret:
+      secretName: tfe-external-mcswain-dev-tls
 
 extraVolumeMounts:
   - mountPath: /var/run
@@ -113,3 +127,5 @@ extraVolumeMounts:
     name: logs
   - mountPath: /var/cache/tfe-task-worker
     name: tfe-task-worker-cache
+  - mountPath: /etc/secondary-certs
+    name: secondary-certs
