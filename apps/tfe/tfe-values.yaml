@@ -69,6 +69,8 @@ env:
   variables:
     TFE_OPERATIONAL_MODE: external
     TFE_HOSTNAME: tfe.mcswain.dev
+    TFE_HOSTNAME_SECONDARY: tfe-external.mcswain.dev
+    TFE_OIDC_HOSTNAME_CHOICE: secondary
     TFE_OBJECT_STORAGE_TYPE: "s3"
     TFE_OBJECT_STORAGE_S3_ACCESS_KEY_ID: LgUhs4wSxp2eVT7AtJvN
     TFE_OBJECT_STORAGE_S3_BUCKET: tfe
