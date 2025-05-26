@@ -63,6 +63,9 @@ configMaps:
             repositories:
               "**":
                 defaultPolicy: [read]
+              "pub/**":
+                defaultPolicy: [read]
+                anonymousPolicy: [read]
           auth:
             failDelay: 3
             sessionKeysFile: /etc/zot/sessionkeys.json
