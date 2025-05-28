@@ -197,7 +197,7 @@
             "matchPackageNames": [
                 "/minio/"
             ],
-            "allowedVersions": "<=2025.4.22"
+            "allowedVersions": "<=RELEASE.2025-04-22T22-12-26Z"
         },
         {
             "matchDatasources": [
