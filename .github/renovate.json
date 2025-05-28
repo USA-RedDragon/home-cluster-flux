@@ -196,7 +196,8 @@
             "versioning": "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z$",
             "matchPackageNames": [
                 "/minio/"
-            ]
+            ],
+            "allowedVersions": "<=2025.4.22"
         },
         {
             "matchDatasources": [
