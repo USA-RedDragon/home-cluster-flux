@@ -14,7 +14,7 @@ controllers:
       viewer:
         image:
           repository: ghcr.io/usa-reddragon/allsky-timelapse-viewer
-          tag: v0.0.0@sha256:ba563e816c93d38a3e49437212b5d0dda0ef6bc5b249afdf84eb97bdc18667a0
+          tag: v0.0.1@sha256:a55a3ee64ecdb93172c4c6f14d0556f27f6e8c058b73e08302f824f1fc5f0bce
           pullPolicy: IfNotPresent
         resources:
           requests:

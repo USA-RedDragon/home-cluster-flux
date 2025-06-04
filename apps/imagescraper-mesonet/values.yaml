@@ -48,7 +48,7 @@ controllers:
       viewer:
         image:
           repository: ghcr.io/usa-reddragon/mesonet-timelapse-viewer
-          tag: v0.0.2@sha256:7c9c7ea139cf4ace6098834966420f280fd851c776018da2c1461267d1856221
+          tag: v0.0.3@sha256:1d95c21f2f38466fbeab33c32ab7c5c0e5436223e9ee857aef7649b0cf9e714d
           pullPolicy: IfNotPresent
         resources:
           requests:
