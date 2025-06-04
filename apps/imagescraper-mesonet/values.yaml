@@ -9,7 +9,7 @@ x-scrape-job: &scrapejob
     securityContext:
       fsGroup: 65535
   containers:
-    process-and-upload:
+    process-and-upload: &scrapejob-container
       image:
         repository: ghcr.io/usa-reddragon/magick-s3
         tag: 7.1.1.41@sha256:b29e651570230f8bbfd6060f654d147cc60ef4738018615d63417fa50c7f45c5
@@ -39,6 +39,7 @@ controllers:
     <<: *scrapejob
     containers:
       process-and-upload:
+        <<: *scrapejob-container
         envFrom:
           - secretRef:
               name: mesonet-tdew-s3
@@ -50,6 +51,7 @@ controllers:
     <<: *scrapejob
     containers:
       process-and-upload:
+        <<: *scrapejob-container
         envFrom:
           - secretRef:
               name: mesonet-relh-s3
@@ -61,6 +63,7 @@ controllers:
     <<: *scrapejob
     containers:
       process-and-upload:
+        <<: *scrapejob-container
         envFrom:
           - secretRef:
               name: mesonet-dewd-s3
@@ -72,6 +75,7 @@ controllers:
     <<: *scrapejob
     containers:
       process-and-upload:
+        <<: *scrapejob-container
         envFrom:
           - secretRef:
               name: mesonet-qdiv-s3
@@ -83,6 +87,7 @@ controllers:
     <<: *scrapejob
     containers:
       process-and-upload:
+        <<: *scrapejob-container
         envFrom:
           - secretRef:
               name: mesonet-tair-s3
@@ -94,6 +99,7 @@ controllers:
     <<: *scrapejob
     containers:
       process-and-upload:
+        <<: *scrapejob-container
         envFrom:
           - secretRef:
               name: mesonet-ta9m-s3
@@ -105,6 +111,7 @@ controllers:
     <<: *scrapejob
     containers:
       process-and-upload:
+        <<: *scrapejob-container
         envFrom:
           - secretRef:
               name: mesonet-thte-s3
