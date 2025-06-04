@@ -49,6 +49,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#golink">golink</a></li>
   <li><a href="#healthchecks">healthchecks</a></li>
   <li><a href="#hp-scan-to">hp-scan-to</a></li>
+  <li><a href="#imagescraper-mesonet">imagescraper-mesonet</a></li>
   <li><a href="#immich">immich</a></li>
   <li><a href="#indi-allsky">indi-allsky</a></li>
   <li><a href="#ingress-nginx">ingress-nginx</a></li>
@@ -519,6 +520,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>hp-scan-to</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/hp-scan-to/helm.yaml">hp-scan-to</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>imagescraper-mesonet</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>imagescraper-mesonet</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/imagescraper-mesonet/helm.yaml">imagescraper-mesonet</a></td>
     <td></td>
   </tr>
 </table>
