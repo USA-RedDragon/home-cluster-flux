@@ -37,6 +37,10 @@ x-scrape-job: &scrapejob
 controllers:
   viewer:
     replicas: 3
+    strategy: RollingUpdate
+    rollingUpdate:
+      unavailable: 1
+      surge: 25%
     pod:
       securityContext:
         fsGroup: 65535
