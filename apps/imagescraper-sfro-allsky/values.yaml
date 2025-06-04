@@ -1,6 +1,43 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
 controllers:
+  viewer:
+    replicas: 3
+    strategy: RollingUpdate
+    rollingUpdate:
+      unavailable: 1
+      surge: 25%
+    pod:
+      securityContext:
+        fsGroup: 65535
+    containers:
+      viewer:
+        image:
+          repository: ghcr.io/usa-reddragon/allsky-timelapse-viewer
+          tag: v0.0.0@sha256:ba563e816c93d38a3e49437212b5d0dda0ef6bc5b249afdf84eb97bdc18667a0
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 20m
+            memory: 15Mi
+          limits:
+            memory: 30Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          runAsGroup: 65535
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+
   scrape-sfro-allsky:
     type: cronjob
     cronjob:
@@ -38,6 +75,13 @@ controllers:
             echo "${TS}.jpg" >> /tmp/list.txt
             aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/list.txt "s3://sfro-allsky/list.txt"
 
+service:
+  viewer:
+    controller: viewer
+    ports:
+      http:
+        port: 80
+
 persistence:
   tmp:
     enabled: true
@@ -46,3 +90,23 @@ persistence:
     sizeLimit: 1Gi
     globalMounts:
       - path: /tmp
+
+ingress:
+  viewer:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+      - host: sfro-allsky.mcswain.dev
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: viewer
+              port: http
+    tls:
+      - hosts:
+          - sfro-allsky.mcswain.dev
+        secretName: sfro-allsky-mcswain-dev
