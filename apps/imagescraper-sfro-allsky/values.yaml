@@ -3,40 +3,40 @@
 controllers:
   scrape-sfro-allsky:
     type: cronjob
-  cronjob:
-    schedule: "*/5 * * * *"
-    concurrencyPolicy: Forbid
-  pod:
-    securityContext:
-      fsGroup: 65535
-  containers:
-    process-and-upload:
-      image:
-        repository: ghcr.io/usa-reddragon/magick-s3
-        tag: 7.1.1.41@sha256:b29e651570230f8bbfd6060f654d147cc60ef4738018615d63417fa50c7f45c5
-        pullPolicy: IfNotPresent
+    cronjob:
+      schedule: "*/5 * * * *"
+      concurrencyPolicy: Forbid
+    pod:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 65534
-        runAsGroup: 65535
-        readOnlyRootFilesystem: true
-        capabilities:
-          drop:
-            - ALL
-      envFrom:
-        - secretRef:
-            name: sfro-allsky-s3
-      command:
-        - /bin/sh
-        - -c
-        - |
-          set -euo pipefail
-          TS=$(date +%s)
-          curl -fSsL -o "/tmp/${TS}.jpg" "https://zyssufjepmbhqznfuwcw.supabase.co/storage/v1/object/public/status-assets-public/building-0009/allsky/images/image.jpg?cache_bust=${TS}"
-          aws s3 --endpoint-url https://s3.mcswain.dev cp "/tmp/${TS}.jpg" "s3://sfro-allsky/${TS}.jpg"
-          aws s3 --endpoint-url https://s3.mcswain.dev cp "s3://sfro-allsky/list.txt" /tmp/list.txt || true
-          echo "${TS}.jpg" >> /tmp/list.txt
-          aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/list.txt "s3://sfro-allsky/list.txt"
+        fsGroup: 65535
+    containers:
+      process-and-upload:
+        image:
+          repository: ghcr.io/usa-reddragon/magick-s3
+          tag: 7.1.1.41@sha256:b29e651570230f8bbfd6060f654d147cc60ef4738018615d63417fa50c7f45c5
+          pullPolicy: IfNotPresent
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          runAsGroup: 65535
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        envFrom:
+          - secretRef:
+              name: sfro-allsky-s3
+        command:
+          - /bin/sh
+          - -c
+          - |
+            set -euo pipefail
+            TS=$(date +%s)
+            curl -fSsL -o "/tmp/${TS}.jpg" "https://zyssufjepmbhqznfuwcw.supabase.co/storage/v1/object/public/status-assets-public/building-0009/allsky/images/image.jpg?cache_bust=${TS}"
+            aws s3 --endpoint-url https://s3.mcswain.dev cp "/tmp/${TS}.jpg" "s3://sfro-allsky/${TS}.jpg"
+            aws s3 --endpoint-url https://s3.mcswain.dev cp "s3://sfro-allsky/list.txt" /tmp/list.txt || true
+            echo "${TS}.jpg" >> /tmp/list.txt
+            aws s3 --endpoint-url https://s3.mcswain.dev cp /tmp/list.txt "s3://sfro-allsky/list.txt"
 
 persistence:
   tmp:
