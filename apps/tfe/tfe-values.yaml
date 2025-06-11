@@ -94,8 +94,9 @@ securityContext:
   runAsUser: 1000
   fsGroup: 1012
 
-podSecurityContext:
-  readOnlyRootFilesystem: true
+container:
+  securityContext:
+    readOnlyRootFilesystem: true
 
 extraVolumes:
   - name: tmp
