@@ -89,36 +89,16 @@ env:
     TFE_TLS_KEY_FILE_SECONDARY: /etc/secondary-certs/tls.key
     TFE_TLS_CERT_FILE_SECONDARY: /etc/secondary-certs/tls.crt
 
-# openshift:
-#   enabled: true
-
 securityContext:
-  # fsGroup: 1000620000
   runAsNonRoot: true
   runAsUser: 1000
   runAsGroup: 1012
 
-# container:
-#   securityContext:
-#     runAsUser: 1000620000
-#     seccompProfile:
-#       type: RuntimeDefault
-#     allowPrivilegeEscalation: false
-#     capabilities:
-#       drop:
-#         - ALL
-#     runAsNonRoot: true
-#     readOnlyRootFilesystem: true
-
 extraVolumes:
-  - emptyDir: {}
-    name: logs
   - name: secondary-certs
     secret:
       secretName: tfe-external-mcswain-dev-tls
 
 extraVolumeMounts:
-  - mountPath: /var/log/terraform-enterprise
-    name: logs
   - mountPath: /etc/secondary-certs
     name: secondary-certs
