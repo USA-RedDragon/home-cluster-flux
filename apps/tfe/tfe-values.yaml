@@ -94,7 +94,7 @@ openshift:
 
 container:
   securityContext:
-    runAsUser: 2000
+    runAsUser: 1000
     seccompProfile:
       type: RuntimeDefault
     allowPrivilegeEscalation: false
