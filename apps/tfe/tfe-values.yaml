@@ -93,6 +93,7 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 1012
+  readOnlyRootFilesystem: true
 
 extraVolumes:
   - name: secondary-certs
