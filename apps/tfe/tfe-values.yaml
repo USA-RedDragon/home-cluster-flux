@@ -92,17 +92,13 @@ env:
 securityContext:
   runAsNonRoot: true
   runAsUser: 1000
-  runAsGroup: 1012
+  fsGroup: 1012
 
 extraVolumes:
-  - emptyDir: {}
-    name: logs
   - name: secondary-certs
     secret:
       secretName: tfe-external-mcswain-dev-tls
 
 extraVolumeMounts:
-  - mountPath: /var/log/terraform-enterprise
-    name: logs
   - mountPath: /etc/secondary-certs
     name: secondary-certs
