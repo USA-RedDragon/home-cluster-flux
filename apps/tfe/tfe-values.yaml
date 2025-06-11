@@ -92,9 +92,12 @@ env:
 openshift:
   enabled: true
 
+securityContext:
+  fsGroup: 1000620000
+
 container:
   securityContext:
-    runAsUser: 1000
+    runAsUser: 1000620000
     seccompProfile:
       type: RuntimeDefault
     allowPrivilegeEscalation: false
