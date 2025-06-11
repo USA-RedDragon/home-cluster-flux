@@ -104,6 +104,7 @@ container:
       drop:
         - ALL
       add:
+        - CAP_SETGID
         - CAP_SETUID
 
 extraVolumes:
