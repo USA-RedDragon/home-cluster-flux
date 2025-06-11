@@ -114,8 +114,9 @@ extraVolumes:
     name: logs
   - emptyDir: {}
     name: tfe-task-worker-cache
-  - mountPath: /etc/secondary-certs
-    name: secondary-certs
+  - name: secondary-certs
+    secret:
+      secretName: tfe-external-mcswain-dev-tls
 
 extraVolumeMounts:
   - mountPath: /var/run
@@ -128,5 +129,3 @@ extraVolumeMounts:
     name: tfe-task-worker-cache
   - mountPath: /etc/secondary-certs
     name: secondary-certs
-    secret:
-      secretName: tfe-external-mcswain-dev-tls
