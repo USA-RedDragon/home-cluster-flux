@@ -93,13 +93,20 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 1012
+
+podSecurityContext:
   readOnlyRootFilesystem: true
 
 extraVolumes:
+  - name: tmp
+    emptyDir:
+      medium: Memory
   - name: secondary-certs
     secret:
       secretName: tfe-external-mcswain-dev-tls
 
 extraVolumeMounts:
+  - mountPath: /tmp
+    name: tmp
   - mountPath: /etc/secondary-certs
     name: secondary-certs
