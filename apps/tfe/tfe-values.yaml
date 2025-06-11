@@ -111,10 +111,14 @@ securityContext:
 #     readOnlyRootFilesystem: true
 
 extraVolumes:
+  - emptyDir: {}
+    name: logs
   - name: secondary-certs
     secret:
       secretName: tfe-external-mcswain-dev-tls
 
 extraVolumeMounts:
+  - mountPath: /var/log/terraform-enterprise
+    name: logs
   - mountPath: /etc/secondary-certs
     name: secondary-certs
