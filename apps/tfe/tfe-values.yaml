@@ -94,9 +94,6 @@ openshift:
 
 container:
   securityContext:
-    runAsUser: 65534
-    runAsGroup: 65535
-    fsGroup: 65535
     seccompProfile:
       type: RuntimeDefault
     allowPrivilegeEscalation: false
