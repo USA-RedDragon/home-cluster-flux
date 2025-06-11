@@ -93,16 +93,16 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 1012
-  seccompProfile:
-    type: RuntimeDefault
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop:
-      - ALL
 
 container:
   securityContext:
     readOnlyRootFilesystem: true
+    seccompProfile:
+      type: RuntimeDefault
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
 
 extraVolumes:
   - emptyDir:
