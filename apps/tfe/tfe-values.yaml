@@ -111,27 +111,10 @@ securityContext:
 #     readOnlyRootFilesystem: true
 
 extraVolumes:
-  - emptyDir:
-      medium: Memory
-    name: tmp
-  - emptyDir: {}
-    name: var-run
-  - emptyDir: {}
-    name: logs
-  - emptyDir: {}
-    name: tfe-task-worker-cache
   - name: secondary-certs
     secret:
       secretName: tfe-external-mcswain-dev-tls
 
 extraVolumeMounts:
-  - mountPath: /var/run
-    name: var-run
-  - mountPath: /tmp
-    name: tmp
-  - mountPath: /var/log/terraform-enterprise
-    name: logs
-  - mountPath: /var/cache/tfe-task-worker
-    name: tfe-task-worker-cache
   - mountPath: /etc/secondary-certs
     name: secondary-certs
