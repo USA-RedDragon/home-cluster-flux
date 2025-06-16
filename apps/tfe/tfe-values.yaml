@@ -100,12 +100,9 @@ container:
     seccompProfile:
       type: RuntimeDefault
     # allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
-      add:
-        - CAP_SETGID
-        - CAP_SETUID
+    # capabilities:
+    #   drop:
+    #     - ALL
 
 extraVolumes:
   - emptyDir:
