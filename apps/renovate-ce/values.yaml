@@ -13,10 +13,12 @@ renovateWorker:
   extraEnvVars:
   - name: RENOVATE_REPOSITORY_CACHE
     value: 'enabled'
+  - name: LOG_LEVEL
+    value: debug
   - name: RENOVATE_PAGINATE_ALL
     value: 'true'
   - name: RENOVATE_PERSIST_REPO_DATA
-    value: 'true'
+    value: 'false'
   - name: RENOVATE_PLATFORM_COMMIT
     value: 'true'
   - name: RENOVATE_REPOSITORY_CACHE_TYPE
