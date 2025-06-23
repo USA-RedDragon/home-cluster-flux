@@ -75,6 +75,8 @@ env:
     - name: TFE_DATABASE_PASSWORD
       key: password
       secretName: postgresql-app
+    - name: TFE_CAPACITY_CPU
+      value: '800000000'
   variables:
     TFE_OPERATIONAL_MODE: external
     TFE_HOSTNAME: tfe.mcswain.dev
