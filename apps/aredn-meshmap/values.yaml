@@ -12,7 +12,7 @@ controllers:
       wireguard-init:
         image:
           repository: ghcr.io/usa-reddragon/wireguard
-          tag: main@sha256:94d9a2f55a41983bd725c48a770caf11f93d577aa687b629b0b728fe0c54d0e3
+          tag: main@sha256:6d86b930741f302fbc98e2cd8a478d898bdf0e22c5850c03286dac4f3877fa98
         securityContext:
           privileged: true
           capabilities:
