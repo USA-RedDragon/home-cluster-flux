@@ -13,9 +13,9 @@ spec:
   storageClassName: minio-data
   mountOptions:
     - hard
-    - nfsvers=4.1
-    - rsize=1048576
-    - wsize=1048576
+    - nfsvers=4.2
+    - rsize=131072
+    - wsize=131072
     - lookupcache=positive
   nfs:
     path: /mnt/data/K8S/minio
