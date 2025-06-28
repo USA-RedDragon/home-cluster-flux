@@ -91,7 +91,7 @@
             ],
             "automerge": true,
             "matchPackageNames": [
-                "/^ghcr.io\\/usa-reddragon\\/aredn-base$/"
+                "/^ghcr.io\\/usa-reddragon\\/mesh-base$/"
             ]
         },
         {
