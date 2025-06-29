@@ -53,7 +53,7 @@ controllers:
         - name: STARTING_NODE
           value: "KI5VMF-CLOUD-TUNNEL-supernode"
         - name: APP_CONFIG
-          value: '{"name":"Oklahoma AREDN","mapSettings":{"zoom":"10","mapCenter":{"node":"KP4DJT-HAP","lat":"35.4704","lon":"-97.5147"},"servers":[{"test":"https://c.tile.openstreetmap.org/10/162/395.png","url":"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]},"contactInfo":{"callsign":"KI5VMF","name":"Jacob McSwain","email":"aredn-mesh-map@mcswain.dev"},"nodesFilter":"[a-zA-z]+[0-9][a-zA-Z]+","offline":true}'
+          value: '{"name":"Oklahoma Mesh","mapSettings":{"zoom":"10","mapCenter":{"node":"KP4DJT-HAP","lat":"35.4704","lon":"-97.5147"},"servers":[{"test":"https://c.tile.openstreetmap.org/10/162/395.png","url":"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]},"contactInfo":{"callsign":"KI5VMF","name":"Jacob McSwain","email":"mesh-map@mcswain.dev"},"nodesFilter":"[a-zA-z]+[0-9][a-zA-Z]+","offline":true}'
         probes:
           liveness:
             enabled: true
