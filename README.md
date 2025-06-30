@@ -65,8 +65,8 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#mindustry">mindustry</a></li>
   <li><a href="#minecraft">minecraft</a></li>
   <li><a href="#minio">minio</a></li>
-  <li><a href="#minio-operator">minio-operator</a></li>
   <li><a href="#monitoring">monitoring</a></li>
+  <li><a href="#mosquitto">mosquitto</a></li>
   <li><a href="#mqtt-wx">mqtt-wx</a></li>
   <li><a href="#nginx-rtmp">nginx-rtmp</a></li>
   <li><a href="#nvidia-device-plugin">nvidia-device-plugin</a></li>
@@ -801,22 +801,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
 </table>
 
-<h4>minio-operator</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>minio-operator</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/minio-operator/app/helm.yaml">minio</a></td>
-    <td></td>
-  </tr>
-</table>
-
 <h4>monitoring</h2>
 <table>
   <tr>
@@ -842,6 +826,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/helm.yaml">thanos-querier</a></td>
+  </tr>
+</table>
+
+<h4>mosquitto</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>mosquitto</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/mosquitto/app/helm.yaml">mosquitto</a></td>
+    <td></td>
   </tr>
 </table>
 
