@@ -1,0 +1,21 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mosquitto
+  namespace: mosquitto
+spec:
+  interval: 1h
+  targetNamespace: mosquitto
+  path: ./services/mosquitto/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: mosquitto
+  dependsOn:
+    - name: secrets
+      namespace: flux-system

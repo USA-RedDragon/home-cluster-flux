@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  mosquitto:
+    strategy: Recreate
+    replicas: 1
+    pod:
+      imagePullSecrets:
+        - name: registry-docker-hub
+      priorityClassName: system-cluster-critical
+      securityContext:
+        fsGroup: 1883
+    containers:
+      mosquitto:
+        image:
+          repository: eclipse-mosquitto
+          tag: 2.0.21@sha256:94f5a3d7deafa59fa3440d227ddad558f59d293c612138de841eec61bfa4d353
+          pullPolicy: IfNotPresent
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1883
+          runAsGroup: 1883
+          capabilities:
+            drop:
+              - ALL
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+service:
+  mosquitto:
+    controller: mosquitto
+    ports:
+      mqtt:
+        port: 1883
+        primary: true
+      mqtts:
+        port: 8883
+
+configMaps:
+  config:
+    data:
+      mosquitto.conf: |
+        per_listener_settings false
+        listener 1883
+        allow_anonymous false
+        persistence true
+        persistence_location /mosquitto/data
+        autosave_interval 1800
+        log_dest stderr
+        log_type error
+        log_type warning
+
+        # password_file /mosquitto/config/passwd
+        # acl_file /mosquitto/config/acl
+
+        # listener 8883
+        # cafile /tls/ca/tls-1.crt
+        # certfile /tls/ca/tls-0.crt
+        # keyfile /tls/tls.key
+
+persistence:
+  config:
+    enabled: true
+    type: configMap
+    name: mosquitto-config
+    globalMounts:
+      - path: /mosquitto/config/mosquitto.conf
+        subPath: mosquitto.conf
