@@ -35,6 +35,15 @@ controllers:
 service:
   mosquitto:
     controller: mosquitto
+    type: LoadBalancer
+    externalTrafficPolicy: Local
+    loadBalancerIP: 192.168.254.11
+    annotations:
+      tailscale.com/expose: "true"
+      tailscale.com/hostname: "mqtt"
+      tailscale.com/tags: "tag:mqtt,tag:k8s"
+    labels:
+      tailscale.com/proxy-class: "tailscale"
     ports:
       mqtt:
         port: 1883
@@ -55,6 +64,7 @@ configMaps:
         log_dest stderr
         log_type error
         log_type warning
+        log_type info
 
         # password_file /mosquitto/config/passwd
         # acl_file /mosquitto/config/acl
