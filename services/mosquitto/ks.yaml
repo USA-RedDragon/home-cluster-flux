@@ -12,10 +12,6 @@ spec:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
-  postBuild:
-    substituteFrom:
-      - kind: Secret
-        name: mosquitto
   dependsOn:
     - name: secrets
       namespace: flux-system
