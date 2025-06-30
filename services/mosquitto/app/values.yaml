@@ -64,7 +64,9 @@ configMaps:
         log_dest stderr
         log_type error
         log_type warning
-        log_type info
+        log_type notice
+        log_type information
+        # log_type debug
 
         # password_file /mosquitto/config/passwd
         # acl_file /mosquitto/config/acl
