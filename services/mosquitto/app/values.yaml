@@ -19,6 +19,7 @@ controllers:
         securityContext:
           readOnlyRootFilesystem: true
           runAsNonRoot: true
+          allowPrivilegeEscalation: false
           runAsUser: 1883
           runAsGroup: 1883
           capabilities:
@@ -65,8 +66,6 @@ configMaps:
         log_type error
         log_type warning
         log_type notice
-        # log_type information
-        # log_type debug
 
         # password_file /mosquitto/config/passwd
         # acl_file /mosquitto/config/acl
@@ -81,6 +80,17 @@ persistence:
     enabled: true
     type: configMap
     name: mosquitto-config
-    globalMounts:
-      - path: /mosquitto/config/mosquitto.conf
-        subPath: mosquitto.conf
+    advancedMounts:
+      mosquitto:
+        mosquitto:
+        - path: /mosquitto/config/mosquitto.conf
+          subPath: mosquitto.conf
+  data:
+    enabled: true
+    storageClass: longhorn-nvme-no-replicas
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    advancedMounts:
+      mosquitto:
+        mosquitto:
+        - path: /mosquitto/data
