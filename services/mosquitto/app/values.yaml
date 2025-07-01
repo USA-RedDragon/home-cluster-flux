@@ -67,8 +67,8 @@ configMaps:
         log_type warning
         log_type notice
 
-        # password_file /mosquitto/config/passwd
-        # acl_file /mosquitto/config/acl
+        password_file /mosquitto/config/passwd
+        acl_file /mosquitto/config/acl
 
         # listener 8883
         # cafile /tls/ca/tls-1.crt
@@ -94,3 +94,14 @@ persistence:
       mosquitto:
         mosquitto:
         - path: /mosquitto/data
+  auth:
+    enabled: true
+    type: secret
+    name: mosquitto-auth
+    advancedMounts:
+      mosquitto:
+        app:
+          - path: /mosquitto/config/passwd
+            subPath: passwd
+          - path: /mosquitto/config/acl
+            subPath: acl
