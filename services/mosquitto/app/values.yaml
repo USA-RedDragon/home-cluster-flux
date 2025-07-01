@@ -37,9 +37,10 @@ service:
   mosquitto:
     controller: mosquitto
     type: LoadBalancer
+    loadBalancerClass: metallb
     externalTrafficPolicy: Local
-    loadBalancerIP: 192.168.254.11
     annotations:
+      metallb.universe.tf/loadBalancerIPs: 192.168.254.11
       tailscale.com/expose: "true"
       tailscale.com/hostname: "mqtt"
       tailscale.com/tags: "tag:mqtt,tag:k8s"
