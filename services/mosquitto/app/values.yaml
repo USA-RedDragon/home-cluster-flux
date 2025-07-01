@@ -98,6 +98,7 @@ persistence:
     enabled: true
     type: secret
     name: mosquitto-auth
+    defaultMode: 0440
     advancedMounts:
       mosquitto:
         mosquitto:
