@@ -100,7 +100,7 @@ persistence:
     name: mosquitto-auth
     advancedMounts:
       mosquitto:
-        app:
+        mosquitto:
           - path: /mosquitto/config/passwd
             subPath: passwd
           - path: /mosquitto/config/acl
