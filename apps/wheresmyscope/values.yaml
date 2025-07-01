@@ -37,7 +37,7 @@ controllers:
           - name: MQTT_PREFIX
             value: observatory/mercury/target
           - name: MQTT_BROKER
-            value: mqtt://192.168.1.19:1883
+            value: mqtt://192.168.254.11:1883
           - name: MQTT_USERNAME
             value: wheresmyscope
         envFrom:
@@ -91,7 +91,7 @@ networkpolicies:
           - namespaceSelector: {}
         - to:
           - ipBlock:
-              cidr: 192.168.1.19/32
+              cidr: 192.168.254.11/32
             port: 1883
         - to:
           - namespaceSelector:

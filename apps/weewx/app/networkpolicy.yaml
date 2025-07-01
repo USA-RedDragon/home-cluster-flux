@@ -9,7 +9,7 @@ spec:
       app.kubernetes.io/instance: weewx
   egress:
     - toCIDR:
-        - 192.168.1.19/32
+        - 192.168.1.254.11/32
       toPorts:
       - ports:
           - port: "1883"
