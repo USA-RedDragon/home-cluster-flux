@@ -29,9 +29,6 @@ controllers:
               secretKeyRef:
                 name: feeder
                 key: FEEDER_ID
-        envFrom:
-          - secretRef:
-              name: location
         resources:
           limits:
             memory: 130Mi
