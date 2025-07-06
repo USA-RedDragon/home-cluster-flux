@@ -23,7 +23,7 @@ controllers:
           READSB_RTLSDR_DEVICE: 00001090
           ULTRAFEEDER_CONFIG: |
             adsb,dump978.dump978,30978,uat_in;
-          #   mlathub,piaware,30105,beast_in;
+            mlathub,piaware.piaware,30105,beast_in;
         envFrom:
           - secretRef:
               name: location
