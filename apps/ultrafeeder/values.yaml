@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  ultrafeeder:
+    replicas: 1
+    containers:
+      ultrafeeder:
+        image:
+          repository: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder
+          tag: telegraf-build-757
+        command:
+          - /scripts/estimate_rtlsdr_ppm.sh
+        # probes:
+        #   liveness:
+        #     enabled: true
+        #   readiness:
+        #     enabled: true
+        #   startup:
+        #     enabled: true
+        env:
+          TZ: America/Chicago
+          PROMETHEUS_ENABLE: "true"
+          READSB_DEVICE_TYPE: rtlsdr
+          READSB_GAIN: auto
+          READSB_RTLSDR_DEVICE: 00001090
+          READSB_RTLSDR_PPM: ${ADSB_SDR_PPM}
+          ULTRAFEEDER_CONFIG: |
+            adsb,dump978,30978,uat_in;
+            mlathub,piaware,30105,beast_in;
+        resources:
+          requests:
+            cpu: 10m
+            memory: 80Mi
+          limits:
+            squat.ai/rtl-sdr-ads-b: 1
+
+service:
+  ultrafeeder:
+    controller: ultrafeeder
+    ports:
+      http:
+        port: 80
+        primary: true
+      metrics:
+        port: 9273
+      beast:
+        port: 30005
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: ultrafeeder
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: ultrafeeder
+              port: http
+    tls:
+      - hosts:
+          - ultrafeeder
+
+serviceMonitor:
+  ultrafeeder:
+    enabled: true
+    serviceName: ultrafeeder
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s

@@ -1,9 +1,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: readsb
+  name: ultrafeeder
   labels:
-    app.kubernetes.io/instance: readsb
+    app.kubernetes.io/instance: ultrafeeder
     app.kubernetes.io/name: app
 spec:
   endpoints:
@@ -12,5 +12,5 @@ spec:
       interval: 10s
   selector:
     matchLabels:
-      app.kubernetes.io/instance: readsb
+      app.kubernetes.io/instance: ultrafeeder
       app.kubernetes.io/name: app

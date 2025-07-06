@@ -56,7 +56,7 @@ env:
 - name: RECEIVER_TYPE
   value: relay
 - name: BEASTHOST
-  value: readsb-app.readsb.svc.cluster.local
+  value: ultrafeeder.ultrafeeder.svc.cluster.local
 - name: BEASTPORT
   value: "30005"
 - name: FEEDER_ID
