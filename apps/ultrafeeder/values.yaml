@@ -8,8 +8,6 @@ controllers:
         image:
           repository: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder
           tag: telegraf-build-757
-        command:
-          - /scripts/estimate_rtlsdr_ppm.sh
         probes:
           liveness:
             enabled: true
