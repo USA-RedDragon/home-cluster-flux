@@ -1,159 +1,83 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 1
-
-image:
-  repository: ghcr.io/sdr-enthusiasts/docker-dump978
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "telegraf@sha256:c180bc0f97a8b0d962f08c5810295e5abbaa382964c0d14cf82b540dd4379f6d"
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-# command:
-# - /scripts/estimate_rtlsdr_ppm.sh
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom:
-- secretRef:
-    name: location
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: TZ
-  value: America/Chicago
-- name: DUMP978_DEVICE_TYPE
-  value: rtlsdr
-- name: DUMP978_SDR_GAIN
-  value: "15.7"
-- name: DUMP978_RTLSDR_DEVICE
-  value: "00000978"
-- name: ENABLE_PROMETHEUS
-  value: "true"
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 999
-
-securityContext:
-  sysctls:
-  - name: "net.ipv4.ip_unprivileged_port_start"
-    value: "0"
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 999
-  # runAsGroup: 999
-  # fsGroup: 999
+controllers:
+  dump978:
+    replicas: 1
+    containers:
+      dump978:
+        image:
+          repository: ghcr.io/sdr-enthusiasts/docker-dump978
+          tag: telegraf-build-762
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          TZ: America/Chicago
+          PROMETHEUS_ENABLE: "true"
+          DUMP978_DEVICE_TYPE: rtlsdr
+          DUMP978_SDR_GAIN: "15.7"
+          DUMP978_RTLSDR_DEVICE: "00000978"
+        envFrom:
+          - secretRef:
+              name: location
+        resources:
+          limits:
+            memory: 150Mi
+            squat.ai/rtl-sdr-uat: 1
+          requests:
+            cpu: 20m
+            memory: 100Mi
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 80
-  - name: uat
-    port: 30978
-  - name: metrics
-    port: 9273
+  dump978:
+    controller: dump978
+    ports:
+      http:
+        port: 80
+        primary: true
+      uat:
+        port: 30978
+      metrics:
+        port: 9273
 
-persistentVolumes:
-- name: autogain
-  mountPath: /var/globe_history
-  subPath: autogain
-  size: 1Gi
-  persistentVolumeClaim:
-    name: autogain
+persistence:
+  autogain:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
     storageClass: longhorn-ssd
+    globalMounts:
+      - path: /var/globe_history
+        subPath: autogain
 
 ingress:
-  enabled: true
-  ingressClassName: tailscale
-  hosts:
-  - host: dump978
-    paths:
-    - port: 80
-      path: /
-      pathType: Prefix
-  tls:
-  - hosts:
-      - dump978
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: dump978
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: dump978
+              port: http
+    tls:
+      - hosts:
+          - dump978
 
-probes:
-  liveness:
-    httpGet:
-      path: /health
-      port: http
-    initialDelaySeconds: 30
-    periodSeconds: 30
-    timeoutSeconds: 5
-    failureThreshold: 3
-  readiness:
-    httpGet:
-      path: /health
-      port: http
-    initialDelaySeconds: 30
-    periodSeconds: 30
-    timeoutSeconds: 5
-    failureThreshold: 3
-
-resources:
-  limits:
-    memory: 150Mi
-    squat.ai/rtl-sdr-uat: 1
-  requests:
-    cpu: 20m
-    memory: 100Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+serviceMonitor:
+  dump978:
+    enabled: true
+    serviceName: dump978
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
