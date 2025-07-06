@@ -10,12 +10,12 @@ spec:
   releaseName: dump978
   chart:
     spec:
-      chart: app
+      chart: app-template
       sourceRef:
         kind: HelmRepository
-        name: usa-reddragon
+        name: bjw-s
         namespace: flux-system
-      version: '0.1.30'
+      version: '3.7.3'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
