@@ -24,6 +24,9 @@ controllers:
           # ULTRAFEEDER_CONFIG: |
           #   adsb,dump978,30978,uat_in;
           #   mlathub,piaware,30105,beast_in;
+        envFrom:
+          - secretRef:
+              name: location
         resources:
           requests:
             cpu: 10m
