@@ -42,6 +42,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#descheduler">descheduler</a></li>
   <li><a href="#device-plugin">device-plugin</a></li>
   <li><a href="#dmrhub">dmrhub</a></li>
+  <li><a href="#dump978">dump978</a></li>
   <li><a href="#ephemeris">ephemeris</a></li>
   <li><a href="#ffmpeg-printer-webcam">ffmpeg-printer-webcam</a></li>
   <li><a href="#gittea">gittea</a></li>
@@ -406,6 +407,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/dmrhub/helm.yaml">dmrhub</a></td>
     <td><a href="apps/dmrhub/postgres.yaml">postgresql</a>, <a href="apps/dmrhub/redis-helm.yaml">redis</a></td>
+  </tr>
+</table>
+
+<h4>dump978</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>dump978</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/dump978/helm.yaml">dump978</a></td>
+    <td></td>
   </tr>
 </table>
 
