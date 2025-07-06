@@ -38,7 +38,7 @@ service:
     controller: ultrafeeder
     ports:
       http:
-        port: 80
+        port: 8080
         primary: true
       metrics:
         port: 9273
