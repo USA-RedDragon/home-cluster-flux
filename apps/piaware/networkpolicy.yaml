@@ -10,8 +10,8 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: readsb
-            app.kubernetes.io/instance: readsb
+            io.kubernetes.pod.namespace: ultrafeeder
+            app.kubernetes.io/instance: ultrafeeder
       toPorts:
         - ports:
             - port: "30005"
