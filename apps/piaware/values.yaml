@@ -25,7 +25,7 @@ controllers:
           BEASTHOST: ultrafeeder.ultrafeeder.svc.cluster.local
           BEASTPORT: "30005"
           UAT_RECEIVER_TYPE: "relay"
-          UAT_RECEIVER_HOST: ultrafeeder.ultrafeeder.svc.cluster.local
+          UAT_RECEIVER_HOST: dump978.dump978.svc.cluster.local
           UAT_RECEIVER_PORT: "30978"
           FEEDER_ID:
             valueFrom:

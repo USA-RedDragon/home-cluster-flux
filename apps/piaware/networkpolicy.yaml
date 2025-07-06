@@ -16,6 +16,14 @@ spec:
         - ports:
             - port: "30005"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dump978
+            app.kubernetes.io/instance: dump978
+      toPorts:
+        - ports:
+            - port: "30978"
+              protocol: TCP
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
