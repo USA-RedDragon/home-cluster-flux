@@ -76,7 +76,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#ping-exporter">ping-exporter</a></li>
   <li><a href="#prometheus">prometheus</a></li>
   <li><a href="#rdio-scanner">rdio-scanner</a></li>
-  <li><a href="#readsb">readsb</a></li>
   <li><a href="#redis">redis</a></li>
   <li><a href="#reflector">reflector</a></li>
   <li><a href="#renovate-ce">renovate-ce</a></li>
@@ -91,6 +90,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#tdarr">tdarr</a></li>
   <li><a href="#tfe">tfe</a></li>
   <li><a href="#trunk-recorder">trunk-recorder</a></li>
+  <li><a href="#ultrafeeder">ultrafeeder</a></li>
   <li><a href="#uptime-kuma">uptime-kuma</a></li>
   <li><a href="#vaultwarden">vaultwarden</a></li>
   <li><a href="#weave-gitops">weave-gitops</a></li>
@@ -989,22 +989,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
 </table>
 
-<h4>readsb</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>readsb</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/readsb/helm.yaml">readsb</a></td>
-    <td></td>
-  </tr>
-</table>
-
 <h4>redis</h2>
 <table>
   <tr>
@@ -1237,6 +1221,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>trunk-recorder</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/trunk-recorder/helm.yaml">trunk-recorder</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>ultrafeeder</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>ultrafeeder</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/ultrafeeder/helm.yaml">readsb</a></td>
     <td></td>
   </tr>
 </table>
