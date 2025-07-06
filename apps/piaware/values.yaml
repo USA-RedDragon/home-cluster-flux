@@ -1,130 +1,72 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 1
-
-image:
-  repository: ghcr.io/sdr-enthusiasts/docker-piaware
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "v9.0"
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-podLabels:
-  policy.mcswain.dev/egress-coredns: "true"
-  policy.mcswain.dev/ingress-nginx: "true"
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: TZ
-  value: America/Chicago
-- name: RECEIVER_TYPE
-  value: relay
-- name: BEASTHOST
-  value: ultrafeeder.ultrafeeder.svc.cluster.local
-- name: BEASTPORT
-  value: "30005"
-- name: FEEDER_ID
-  valueFrom:
-    secretKeyRef:
-      name: feeder
-      key: FEEDER_ID
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 999
-
-securityContext:
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 999
-  # runAsGroup: 999
-  # fsGroup: 999
+controllers:
+  piaware:
+    replicas: 1
+    pod:
+      labels:
+        policy.mcswain.dev/egress-coredns: "true"
+        policy.mcswain.dev/ingress-nginx: "true"
+    containers:
+      piaware:
+        image:
+          repository: ghcr.io/sdr-enthusiasts/docker-piaware
+          tag: latest-build-628
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          TZ: America/Chicago
+          RECEIVER_TYPE: "relay"
+          BEASTHOST: ultrafeeder.ultrafeeder.svc.cluster.local
+          BEASTPORT: "30005"
+          FEEDER_ID:
+            valueFrom:
+              secretKeyRef:
+                name: feeder
+                key: FEEDER_ID
+        envFrom:
+          - secretRef:
+              name: location
+        resources:
+          limits:
+            memory: 130Mi
+          requests:
+            cpu: 20m
+            memory: 90Mi
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 80
-
-persistentVolumes: []
+  piaware:
+    controller: piaware
+    ports:
+      http:
+        port: 80
+        primary: true
+      mlat:
+        port: 30105
 
 ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/app-root: /skyaware
-  ingressClassName: nginx
-  hosts:
-  - host: flights.mcswain.dev
-    paths:
-    - port: 80
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: flights-mcswain-dev-tls
+  piaware:
+    enabled: true
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/app-root: /skyaware
+    className: nginx
     hosts:
-      - flights.mcswain.dev
-
-probes: {}
-
-resources:
-  limits:
-    memory: 130Mi
-  requests:
-    cpu: 20m
-    memory: 90Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+      - host: flights.mcswain.dev
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: piaware
+              port: http
+    tls:
+      - secretName: flights-mcswain-dev-tls
+        hosts:
+          - flights.mcswain.dev
