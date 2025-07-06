@@ -25,7 +25,8 @@ controllers:
             cpu: '2'
             memory: 10Gi
           limits:
-            memory: 12Gi
+            cpu: '4'
+            memory: 15Gi
             nvidia.com/gpu: 1
         probes:
           liveness:
