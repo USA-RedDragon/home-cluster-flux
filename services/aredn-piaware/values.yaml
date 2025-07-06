@@ -53,7 +53,7 @@ configs:
       }
       http {
         upstream app {
-          server piaware-app.piaware.svc.cluster.local:80;
+          server piaware.piaware.svc.cluster.local:80;
         }
         include mime.types;
         server {
