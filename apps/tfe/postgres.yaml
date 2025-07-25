@@ -1,71 +1,3 @@
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: selfsigned-issuer
-spec:
-  selfSigned: {}
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: smartmetrix-ca
-spec:
-  isCA: true
-  duration: 87600h # 10y
-  commonName: smartmetrix-ca
-  secretName: smartmetrix-ca-key-pair
-  privateKey:
-    algorithm: ECDSA
-    size: 256
-  issuerRef:
-    name: selfsigned-issuer
-    kind: Issuer
-    group: cert-manager.io
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: smartmetrix-ca-issuer
-spec:
-  ca:
-    secretName: smartmetrix-ca-key-pair
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: smartmetrix-cert
-  labels:
-    cnpg.io/reload: ""
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: smartmetrix-cert
-spec:
-  secretName: smartmetrix-cert
-  duration: 87600h # 10y
-  usages:
-    - server auth
-  dnsNames:
-    - postgres.mcswain.dev
-    - postgresql-rw
-    - postgresql-rw.tfe
-    - postgresql-rw.tfe.svc
-    - postgresql-r
-    - postgresql-r.tfe
-    - postgresql-r.tfe.svc
-    - postgresql-ro
-    - postgresql-ro.tfe
-    - postgresql-ro.tfe.svc
-    - smartmetrix-ro
-    - smartmetrix-ro.tfe
-    - smartmetrix-ro.tfe.svc
-  issuerRef:
-    name: smartmetrix-ca-issuer
-    kind: Issuer
-    group: cert-manager.io
----
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -73,27 +5,12 @@ metadata:
   namespace: tfe
 spec:
   instances: 3
-  imageName: ghcr.io/cloudnative-pg/postgresql:16.8-14
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.9-19
   enableSuperuserAccess: true
-  postgresql:
-    pg_hba:
-      - hostssl smartmetrix smartmetrix all scram-sha-256
   bootstrap:
     initdb:
       database: tfe
       owner: tfe
-  certificates:
-    serverTLSSecret: smartmetrix-cert
-    serverCASecret: smartmetrix-cert
-  managed:
-    roles:
-      - name: smartmetrix
-        ensure: present
-        login: true
-        passwordSecret:
-          name: postgresql-smartmetrix
-        inRoles:
-          - pg_read_all_data
   backup:
     barmanObjectStore:
       destinationPath: "s3://cnpg/tfe"
