@@ -4,7 +4,7 @@ metadata:
   name: dmr-udp-input
   namespace: dmrhub
   annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.254.1,fdeb:abba:237c:dead:0001::1
+    metallb.io/loadBalancerIPs: 192.168.254.1,fdeb:abba:237c:dead:0001::1
 spec:
   type: LoadBalancer
   loadBalancerClass: metallb

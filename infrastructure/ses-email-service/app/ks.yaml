@@ -15,7 +15,7 @@ spec:
   - patch: |
       # Request a specific IP
       - op: add
-        path: /metadata/annotations/metallb.universe.tf~1load-balancer-ips
+        path: /metadata/annotations/metallb.io~1load-balancer-ips
         value: 192.168.254.10,fdeb:abba:237c:dead:0001::10
       - op: add
         path: /spec/loadBalancerClass
