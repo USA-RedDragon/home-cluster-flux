@@ -5,8 +5,8 @@ ipam:
       - 172.17.0.0/16
     clusterPoolIPv4MaskSize: 24
     clusterPoolIPv6PodCIDRList:
-      - fdeb:fefe:237c::/108
-    clusterPoolIPv6MaskSize: 120
+      - fdeb:fefe:237c::/48
+    clusterPoolIPv6MaskSize: 64
 
 operator:
   replicas: 3
