@@ -4,11 +4,15 @@ metadata:
   name: go2rtc
   namespace: go2rtc
   annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.254.3
+    metallb.universe.tf/loadBalancerIPs: 192.168.254.3,fdeb:abba:237c:dead:0001::3
 spec:
   type: LoadBalancer
   internalTrafficPolicy: Cluster
   loadBalancerClass: metallb
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+    - IPv4
+    - IPv6
   selector:
     app.kubernetes.io/instance: go2rtc-real
   ports:

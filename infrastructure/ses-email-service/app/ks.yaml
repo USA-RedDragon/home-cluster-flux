@@ -16,10 +16,18 @@ spec:
       # Request a specific IP
       - op: add
         path: /metadata/annotations/metallb.universe.tf~1load-balancer-ips
-        value: 192.168.254.10
+        value: 192.168.254.10,fdeb:abba:237c:dead:0001::10
       - op: add
         path: /spec/loadBalancerClass
         value: metallb
+      - op: add
+        path: /spec/ipFamilyPolicy
+        value: PreferDualStack
+      - op: add
+        path: /spec/ipFamilies
+        value:
+          - IPv4
+          - IPv6
     target:
       kind: Service
       name: ses-email-service

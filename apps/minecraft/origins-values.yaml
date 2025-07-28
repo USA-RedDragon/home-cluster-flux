@@ -75,13 +75,17 @@ securityContext:
 service:
   type: LoadBalancer
   loadBalancerClass: metallb
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+    - IPv4
+    - IPv6
   ports:
   - name: game
     port: 25565
   - name: rcon
     port: 25575
   annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.254.4
+    metallb.universe.tf/loadBalancerIPs: 192.168.254.4,fdeb:abba:237c:dead:0001::4
 
 persistentVolumes:
 - name: data

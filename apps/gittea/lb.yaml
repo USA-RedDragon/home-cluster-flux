@@ -4,11 +4,15 @@ metadata:
   name: gitea-ssh
   namespace: gitea
   annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.254.2
+    metallb.universe.tf/loadBalancerIPs: 192.168.254.2,fdeb:abba:237c:dead:0001::2
 spec:
   type: LoadBalancer
   internalTrafficPolicy: Cluster
   loadBalancerClass: metallb
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+    - IPv4
+    - IPv6
   selector:
     app.kubernetes.io/instance: gitea
   ports:
