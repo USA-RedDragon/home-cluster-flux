@@ -39,8 +39,12 @@ service:
     type: LoadBalancer
     loadBalancerClass: metallb
     externalTrafficPolicy: Local
+    ipFamilyPolicy: PreferDualStack
+    ipFamilies:
+      - IPv4
+      - IPv6
     annotations:
-      metallb.universe.tf/loadBalancerIPs: 192.168.254.11
+      metallb.universe.tf/loadBalancerIPs: 192.168.254.11,fdeb:abba:237c:dead:0001::11
       tailscale.com/expose: "true"
       tailscale.com/hostname: "mqtt"
       tailscale.com/tags: "tag:mqtt,tag:k8s"

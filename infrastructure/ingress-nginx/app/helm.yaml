@@ -41,7 +41,7 @@ spec:
       allowSnippetAnnotations: true
       service:
         annotations:
-          metallb.universe.tf/loadBalancerIPs: 192.168.254.0
+          metallb.io/loadBalancerIPs: 192.168.254.0,fdeb:abba:237c:dead:0001::0
         loadBalancerClass: metallb
         ipFamilyPolicy: PreferDualStack
         ipFamilies:
