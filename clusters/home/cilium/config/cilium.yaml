@@ -1,0 +1,84 @@
+apiVersion: cilium.io/v2
+kind: CiliumNodeConfig
+metadata:
+  namespace: kube-system
+  name: alpha-mcast
+spec:
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/hostname: alpha
+  defaults:
+    ipv6-mcast-device: enp10s0
+---
+apiVersion: cilium.io/v2
+kind: CiliumNodeConfig
+metadata:
+  namespace: kube-system
+  name: beta-mcast
+spec:
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/hostname: beta
+  defaults:
+    ipv6-mcast-device: enp11s0
+---
+apiVersion: cilium.io/v2
+kind: CiliumNodeConfig
+metadata:
+  namespace: kube-system
+  name: gamma-mcast
+spec:
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/hostname: gamma
+  defaults:
+    ipv6-mcast-device: enp11s0
+---
+apiVersion: cilium.io/v2
+kind: CiliumNodeConfig
+metadata:
+  namespace: kube-system
+  name: delta-mcast
+spec:
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/hostname: delta
+  defaults:
+    ipv6-mcast-device: enp9s0f0
+---
+apiVersion: cilium.io/v2
+kind: CiliumNodeConfig
+metadata:
+  namespace: kube-system
+  name: chi-mcast
+spec:
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/hostname: chi
+  defaults:
+    ipv6-mcast-device: enp1s0
+---
+apiVersion: cilium.io/v2
+kind: CiliumNodeConfig
+metadata:
+  namespace: kube-system
+  name: psi-mcast
+spec:
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/hostname: psi
+  defaults:
+    ipv6-mcast-device: enp1s0
+---
+apiVersion: cilium.io/v2
+kind: CiliumNodeConfig
+metadata:
+  namespace: kube-system
+  name: omega-mcast
+spec:
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/hostname: omega
+  defaults:
+    ipv6-mcast-device: enp1s0
+---
