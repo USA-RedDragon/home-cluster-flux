@@ -45,7 +45,7 @@ ipv4:
 ipv6:
   enabled: true
 
-enableIPv6Masquerade: true
+enableIPv6Masquerade: false
 
 global:
   encryption:

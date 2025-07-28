@@ -20,7 +20,7 @@ spec:
     matchLabels:
       kubernetes.io/hostname: beta
   defaults:
-    ipv6-mcast-device: enp11s0
+    ipv6-mcast-device: enp10s0
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNodeConfig
@@ -32,7 +32,7 @@ spec:
     matchLabels:
       kubernetes.io/hostname: gamma
   defaults:
-    ipv6-mcast-device: enp11s0
+    ipv6-mcast-device: enp10s0
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNodeConfig
@@ -44,7 +44,7 @@ spec:
     matchLabels:
       kubernetes.io/hostname: delta
   defaults:
-    ipv6-mcast-device: enp9s0f0
+    ipv6-mcast-device: enp9s0
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNodeConfig
@@ -68,7 +68,7 @@ spec:
     matchLabels:
       kubernetes.io/hostname: psi
   defaults:
-    ipv6-mcast-device: enp1s0
+    ipv6-mcast-device: enp2s0
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNodeConfig
@@ -80,5 +80,5 @@ spec:
     matchLabels:
       kubernetes.io/hostname: omega
   defaults:
-    ipv6-mcast-device: enp1s0
+    ipv6-mcast-device: enp2s0
 ---
