@@ -1,0 +1,31 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cilium
+  namespace: kube-system
+spec:
+  interval: 1h
+  targetNamespace: kube-system
+  path: ./clusters/home/cilium/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cilium-config
+  namespace: kube-system
+spec:
+  interval: 1h
+  targetNamespace: kube-system
+  path: ./clusters/home/cilium/config
+  prune: true
+  dependsOn:
+    - name: cilium
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
