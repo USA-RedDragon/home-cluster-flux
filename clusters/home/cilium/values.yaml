@@ -9,7 +9,7 @@ ipam:
     clusterPoolIPv6MaskSize: 112
 
 extraConfig:
-  enable-ipv6-ndp: true
+  enable-ipv6-ndp: "true"
   ipv6-service-range: "fdeb:abba:237c:fefe:1::/112"
 
 operator:
