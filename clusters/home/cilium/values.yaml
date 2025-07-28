@@ -4,6 +4,9 @@ ipam:
     clusterPoolIPv4PodCIDRList:
       - 172.17.0.0/16
     clusterPoolIPv4MaskSize: 24
+    clusterPoolIPv6PodCIDRList:
+      - fdeb:fefe:237c::/108
+    clusterPoolIPv6MaskSize: 120
 
 operator:
   replicas: 3
@@ -31,6 +34,14 @@ cni:
 bpf:
   policyMapMax: 32768
   masquerade: true
+
+ipv4:
+  enabled: true
+
+ipv6:
+  enabled: true
+
+enableIPv6Masquerade: true
 
 global:
   encryption:
