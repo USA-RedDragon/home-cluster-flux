@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: etcd
-      version: 10.7.3
+      version: 11.3.6
       sourceRef:
         kind: HelmRepository
         namespace: flux-system
