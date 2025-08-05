@@ -40,6 +40,10 @@ controllers:
             value: mqtt://192.168.254.11:1883
           - name: MQTT_USERNAME
             value: wheresmyscope
+          - name: IMAGE_HEIGHT
+            value: "480"
+          - name: IMAGE_WIDTH
+            value: "800"
         envFrom:
           - secretRef:
               name: wheresmyscope
