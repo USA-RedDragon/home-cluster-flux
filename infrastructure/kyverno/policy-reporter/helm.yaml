@@ -42,6 +42,14 @@ spec:
         kyverno: true
       networkPolicy:
         enabled: true
+        egress:
+        - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: kube-system
+            podSelector:
+              matchLabels:
+                k8s-app: kube-dns
       ingress:
         enabled: true
         className: tailscale
