@@ -42,7 +42,7 @@ controllers:
       meshmap:
         image:
           repository: ghcr.io/usa-reddragon/meshmap
-          tag: k8s@sha256:07a0144b75af52da82f68f946fc05cd52739d13181e65278d62def7398818115
+          tag: k8s@sha256:3a99d595762cf22125c9c44e26e9aab833680b5bcd61aeaf48a9db0b36687e3a
         env:
         - name: RETRIES
           value: "5"
