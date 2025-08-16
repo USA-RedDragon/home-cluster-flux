@@ -63,6 +63,14 @@ spec:
               - kyverno
     networkPolicy:
       enabled: true
+      egress:
+        - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: kube-system
+            podSelector:
+              matchLabels:
+                k8s-app: kube-dns
     kyvernoPlugin:
       enabled: true
       networkPolicy:
