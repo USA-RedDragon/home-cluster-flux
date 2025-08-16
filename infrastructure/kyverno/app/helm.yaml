@@ -26,3 +26,11 @@ spec:
         name: kyverno
       version: '3.4.1'
       interval: 1m0s
+  values:
+    reportsController:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 200Mi
+        limits:
+          memory: 400Mi
