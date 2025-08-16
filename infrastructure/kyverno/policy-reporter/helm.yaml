@@ -35,6 +35,16 @@ spec:
         enabled: true
       plugins:
         kyverno: true
+    livenessProbe:
+      httpGet:
+        path: /ready
+        port: http
+        initialDelaySeconds: 60
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: http
+        initialDelaySeconds: 60
     ui:
       enabled: true
       displayMode: dark
