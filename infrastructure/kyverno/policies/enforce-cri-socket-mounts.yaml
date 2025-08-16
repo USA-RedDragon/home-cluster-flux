@@ -3,7 +3,6 @@ kind: ClusterPolicy
 metadata:
   name: cri-socket-mounts
 spec:
-  validationfailureAction: Audit
   rules:
   - name: validate-docker-sock-mount
     match:
@@ -12,6 +11,7 @@ spec:
           kinds:
           - Pod
     validate:
+      failureAction: Audit
       message: "Use of the Docker Unix socket is not allowed."
       pattern:
         spec:
@@ -25,6 +25,7 @@ spec:
           kinds:
           - Pod
     validate:
+      failureAction: Audit
       message: "Use of the Containerd Unix socket is not allowed."
       pattern:
         spec:
@@ -38,6 +39,7 @@ spec:
           kinds:
           - Pod
     validate:
+      failureAction: Audit
       message: "Use of the CRI-O Unix socket is not allowed."
       pattern:
         spec:
@@ -51,6 +53,7 @@ spec:
           kinds:
           - Pod
     validate:
+      failureAction: Audit
       message: "Use of the Docker CRI socket is not allowed."
       pattern:
         spec:
