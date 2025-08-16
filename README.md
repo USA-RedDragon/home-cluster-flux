@@ -723,10 +723,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>kyverno</td>
+    <td rowspan="2">kyverno</td>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/kyverno/app/helm.yaml">kyverno</a></td>
-    <td></td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/kyverno/policy-reporter/helm.yaml">kyverno-policy-reporter</a></td>
   </tr>
 </table>
 
