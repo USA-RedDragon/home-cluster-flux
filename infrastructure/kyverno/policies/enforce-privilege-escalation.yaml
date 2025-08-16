@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: deny-privilegeescalation
+  name: privilege-escalation
 spec:
   rules:
   - name: check-privilegeEscalation

@@ -1,0 +1,29 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: ingress-host-tls-match
+spec:
+  background: false
+  rules:
+  - name: host-match-tls
+    match:
+      any:
+      - resources:
+          kinds:
+          - Ingress
+    preconditions:
+      all:
+      - key: "{{request.operation || 'BACKGROUND'}}"
+        operator: AnyIn
+        value:
+        - CREATE
+        - UPDATE
+    validate:
+      failureAction: Audit
+      message: "The host(s) in spec.rules[].host must match those in spec.tls[].hosts[]."
+      deny:
+        conditions:
+          all:
+          - key: "{{ (request.object.spec.rules[].host || `[]`) | sort(@) }}"
+            operator: AnyNotIn
+            value: "{{ (request.object.spec.tls[].hosts[] || `[]`) | sort(@) }}"

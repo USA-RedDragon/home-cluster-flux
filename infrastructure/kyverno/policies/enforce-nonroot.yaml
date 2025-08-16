@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: require-runasnonroot
+  name: nonroot
 spec:
   rules:
   - name: check-runAsNonRoot

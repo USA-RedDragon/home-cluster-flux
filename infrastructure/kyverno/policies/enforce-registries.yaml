@@ -1,10 +1,10 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: allowlist-registries
+  name: registries
 spec:
   rules:
-  - name: allowlist-registries
+  - name: registries
     match:
       any:
       - resources:
