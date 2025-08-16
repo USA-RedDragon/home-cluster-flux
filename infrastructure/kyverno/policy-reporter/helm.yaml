@@ -1,0 +1,61 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: kyverno-policy-reporter
+  namespace: kyverno
+spec:
+  interval: 1m0s
+  url: https://kyverno.github.io/policy-reporter
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kyverno-policy-reporter
+  namespace: kyverno
+spec:
+  interval: 1m0s
+  driftDetection:
+    mode: enabled
+  releaseName: kyverno-policy-reporter
+  chart:
+    spec:
+      chart: policy-reporter
+      sourceRef:
+        kind: HelmRepository
+        name: kyverno-policy-reporter
+      version: '3.4.0'
+      interval: 1m0s
+  values:
+    metrics:
+      enabled: true
+    monitoring:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+      plugins:
+        kyverno: true
+    ui:
+      enabled: true
+      displayMode: dark
+      plugins:
+        kyverno: true
+      networkPolicy:
+        enabled: true
+      ingress:
+        enabled: true
+        className: tailscale
+        hosts:
+          - host: kyverno
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - kyverno
+    networkPolicy:
+      enabled: true
+    kyvernoPlugin:
+      enabled: true
+      networkPolicy:
+        enabled: true
