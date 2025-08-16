@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: deny-seccomp
+  name: seccomp
 spec:
   rules:
   - name: check-seccomp

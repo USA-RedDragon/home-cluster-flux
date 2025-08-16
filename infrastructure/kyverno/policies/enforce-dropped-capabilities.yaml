@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: require-dropped-capabilities
+  name: dropped-capabilities
 spec:
   rules:
     - name: require-drop-all
