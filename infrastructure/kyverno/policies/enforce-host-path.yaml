@@ -11,6 +11,23 @@ spec:
         - resources:
             kinds:
               - Pod
+      exclude:
+        any:
+        - resources:
+            kinds:
+              - Deployment
+            namespaces:
+              - monitoring
+            names:
+              - prometheus-stack-prometheus-node-exporter
+        - resources:
+            namespaces:
+              - kube-system
+              - device-plugin
+              - intel-device-plugin
+              - longhorn-system
+              - nvidia
+              - scrypted
       validate:
         failureAction: Audit
         message: >-
