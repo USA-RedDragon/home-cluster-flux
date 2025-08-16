@@ -29,3 +29,4 @@ spec:
                 - images.releases.hashicorp.com
                 - nvcr.io
                 - jacob.pub
+                - reg.kyverno.io
