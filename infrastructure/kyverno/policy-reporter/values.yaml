@@ -1,0 +1,48 @@
+metrics:
+  enabled: true
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+  plugins:
+    kyverno: true
+ui:
+  enabled: true
+  displayMode: dark
+  plugins:
+    kyverno: true
+  networkPolicy:
+    enabled: true
+    egress:
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+  ingress:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: kyverno
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - kyverno
+networkPolicy:
+  enabled: true
+  egress:
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+kyvernoPlugin:
+  enabled: true
+  networkPolicy:
+    enabled: true
