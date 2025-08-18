@@ -5,8 +5,15 @@ controllers:
     replicas: 1
     pod:
       priorityClassName: system-cluster-critical
-      nodeSelector:
-        google.feature.node.kubernetes.io/coral: "true"
+      nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+                - key: google.feature.node.kubernetes.io/coral
+                  operator: In
+                  values:
+                    - "true"
     containers:
       scrypted:
         securityContext:
