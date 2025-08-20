@@ -8,7 +8,7 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: ffmpeg-printer-webcam
-  suspend: true
+  suspend: false
   chart:
     spec:
       chart: app
