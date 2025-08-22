@@ -137,11 +137,11 @@ probes: {}
 
 resources:
   limits:
-    memory: 100Mi
+    memory: 300Mi
     squat.ai/printer-webcam: 1
   requests:
     cpu: 700m
-    memory: 45Mi
+    memory: 100Mi
 
 nodeSelector: {}
 
