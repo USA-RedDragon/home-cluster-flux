@@ -67,7 +67,7 @@ persistence:
   data:
     type: persistentVolumeClaim
     storageClass: longhorn-nvme
-    size: 2Gi
+    size: 10Gi
     accessMode: ReadWriteOnce
     advancedMounts:
       scrypted:
