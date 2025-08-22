@@ -63,7 +63,7 @@ spec:
           value: http://etcd-0.etcd-headless.split-dns:2379,http://etcd-1.etcd-headless.split-dns:2379,http://etcd-2.etcd-headless.split-dns:2379
         resources:
           limits:
-            memory: 200Mi
+            memory: 400Mi
           requests:
             cpu: 30m
-            memory: 100Mi
+            memory: 200Mi
