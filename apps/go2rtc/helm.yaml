@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 60m0s
   releaseName: go2rtc
-  suspend: true
+  suspend: false
   chart:
     spec:
       chart: app
