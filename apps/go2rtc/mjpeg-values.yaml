@@ -39,6 +39,7 @@ configs:
 
       api:
         listen: ":1984"
+        origin: "*"
 
       streams:
         webcam: ffmpeg:https://stream.mcswain.dev/hls/printer/index.m3u8#video=copy
