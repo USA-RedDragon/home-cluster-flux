@@ -122,10 +122,10 @@ env:
 
 podAnnotations: {}
 
-podSecurityContext:
+securityContext:
   fsGroup: 65534
 
-securityContext:
+podSecurityContext:
   runAsNonRoot: true
   runAsUser: 65534
   runAsGroup: 65534
