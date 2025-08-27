@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/usa-reddragon/dmrhub
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.65"
+  tag: "test"
 
 args: []
 imagePullSecrets: []
@@ -46,46 +46,52 @@ envFrom:
 #     name: app-config
 
 env:
-- name: CORS_HOSTS
+- name: HTTP_CORS_ENABLED
+  value: "true"
+- name: HTTP_CORS_EXTRA_HOSTS
   value: "http://10.54.25.5,http://ki5vmf-dmrhub.local.mesh,https://dmr.mcswain.dev,https://dmrhub.app,https://dmrhub.cloud,https://dmrhub.net,https://dmrhub.org,https://dmrhub.network,https://www.dmrhub.app,https://www.dmrhub.cloud,https://www.dmrhub.net,https://www.dmrhub.org,https://www.dmrhub.network,http://localhost:5173"
-- name: PG_DATABASE
+- name: DATABASE_DRIVER
+  value: "postgres"
+- name: DATABASE_DATABASE
   valueFrom:
     secretKeyRef:
       name: postgresql-app
       key: dbname
-- name: TRUSTED_PROXIES
+- name: HTTP_TRUSTED_PROXIES
   value: "172.17.0.0/16"
-- name: PG_HOST
+- name: DATABASE_HOST
   valueFrom:
     secretKeyRef:
       name: postgresql-app
       key: host
+- name: REDIS_ENABLED
+  value: "true"
 - name: REDIS_HOST
-  value: redis-app:6379
-- name: DEBUG
-  value: ""
+  value: redis-app
 - name: NETWORK_NAME
   value: "Official DMRHub"
-- name: ALLOW_SCRAPING
-  value: "1"
-# - name: OTLP_ENDPOINT
+- name: HTTP_ROBOTS_TXT_MODE
+  value: "allow"
+# - name: METRICS_OTLP_ENDPOINT
 #   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
-- name: OPENBRIDGE_PORT
+- name: DMR_OPENBRIDGE_PORT
   value: "62035"
+- name: METRICS_ENABLED
+  value: "true"
 - name: METRICS_PORT
   value: "9001"
-- name: PG_PASSWORD
+- name: DATABASE_PASSWORD
   valueFrom:
     secretKeyRef:
       name: postgresql-app
       key: password
-- name: PG_USER
+- name: DATABASE_USERNAME
   valueFrom:
     secretKeyRef:
       name: postgresql-app
       key: username
-- name: FEATURE_FLAGS
-  value: ""
+- name: SMTP_ENABLED
+  value: "true"
 - name: SMTP_HOST
   value: email.mcswain.dev
 - name: SMTP_PORT
@@ -94,16 +100,12 @@ env:
   value: dmrhub
 - name: SMTP_FROM
   value: dmrhub@mcswain.dev
+- name: SMTP_TLS
+  value: "implicit"
 - name: SMTP_AUTH_METHOD
-  value: "PLAIN"
-- name: ADMIN_EMAIL
-  value: jacob@mcswain.dev
-- name: ENABLE_EMAIL
-  value: "1"
-- name: CANONICAL_HOST
+  value: "plain"
+- name: HTTP_CANONICAL_HOST
   value: https://dmrhub.net
-- name: SMTP_IMPLICIT_TLS
-  value: "1"
 
 podAnnotations: {}
 
