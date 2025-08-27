@@ -64,6 +64,11 @@ env:
     secretKeyRef:
       name: postgresql-app
       key: host
+- name: DATABASE_PORT
+  valueFrom:
+    secretKeyRef:
+      name: postgresql-app
+      key: port
 - name: REDIS_ENABLED
   value: "true"
 - name: REDIS_HOST
