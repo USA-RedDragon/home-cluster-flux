@@ -64,6 +64,13 @@ command:
   # ip rule add pref 30270 lookup 22 && \
   ip rule add pref 30280 lookup 28 && \
   ip rule add pref 30290 lookup 31 && \
+  ip rule add pref 20030 iif tunnel lookup 30 && \
+  ip rule add pref 20040 iif tunnel lookup 21 && \
+  ip rule add pref 20050 iif tunnel lookup 22 && \
+  ip rule add pref 20060 iif tunnel lookup 28 && \
+  ip rule add pref 20070 iif tunnel lookup 31 && \
+  ip rule add pref 20099 iif tunnel unreachable && \
+  ip -6 addr add fe80::ac1f:bf09/64 dev tunnel && \
   mkdir -p /etc/meshlink && \
   echo "${NODE_IP} ${NODE_NAME}" >> /etc/meshlink/hosts && \
   echo "${NODE_IP} dtdlink.${NODE_NAME}.local.mesh" >> /etc/meshlink/hosts && \
@@ -119,6 +126,8 @@ configs:
     olsrd.conf: |
       DebugLevel 0
       AllowNoInt yes
+      RtTable '30'
+      RtTableDefault '31'
       IpVersion 4
       MainIp 10.54.25.4
       LinkQualityAlgorithm "etx_ffeth"
