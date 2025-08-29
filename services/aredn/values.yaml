@@ -78,7 +78,7 @@ command:
   echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf && \
   rm -rf /etc/s6/vtund && \
   cp /etc/babel/babel.conf /tmp/babel-generated.conf && \
-  sleep 10 && \
+  sleep 2 && \
   exec s6-svscan /etc/s6
 
 secrets: []
@@ -258,7 +258,6 @@ initContainers:
     ip l del tunnel 2>/dev/null || true && \
     wg-quick up /etc/wireguard/tunnel.conf && \
     ip6tables -P INPUT DROP && \
-    ip6tables -P OUTPUT DROP && \
     ip6tables -P FORWARD DROP && \
     iptables -P INPUT DROP && \
     iptables -P FORWARD DROP && \
@@ -266,9 +265,16 @@ initContainers:
     iptables -A INPUT -i tunnel -j ACCEPT && \
     iptables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
     iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    ip6tables -A INPUT -i lo -j ACCEPT && \
+    ip6tables -A INPUT -i tunnel -j ACCEPT && \
+    ip6tables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
+    ip6tables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     iptables -A FORWARD -i lan -o eth0 -j DROP && \
+    ip6tables -A FORWARD -i lan -o eth0 -j DROP && \
     iptables -A FORWARD -i lan -o tunnel -j ACCEPT && \
+    ip6tables -A FORWARD -i lan -o tunnel -j ACCEPT && \
     iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o tunnel -j SNAT --to-source 10.54.25.4 && \
     iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE
   volumeMounts:
