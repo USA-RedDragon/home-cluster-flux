@@ -81,7 +81,7 @@ command:
   echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf && \
   rm -rf /etc/s6/vtund && \
   cp /etc/babel/babel.conf /tmp/babel-generated.conf && \
-  sleep 2 && \
+  sleep 10 && \
   exec s6-svscan /etc/s6
 
 secrets: []
