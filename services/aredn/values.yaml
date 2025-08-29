@@ -269,6 +269,7 @@ initContainers:
     ip6tables -A INPUT -i tunnel -j ACCEPT && \
     ip6tables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
     ip6tables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    iptables -A INPUT -i lan -j ACCEPT && \
     iptables -A FORWARD -i lan -o eth0 -j DROP && \
     ip6tables -A FORWARD -i lan -o eth0 -j DROP && \
     iptables -A FORWARD -i lan -o tunnel -j ACCEPT && \
