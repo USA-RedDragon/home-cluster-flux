@@ -18,13 +18,61 @@ command:
 - /bin/sh
 - -c
 - |
-  ip addr add 10.54.25.4/32 dev eth0 \
-  && sysctl -w net.ipv4.ip_forward=1 \
-  && rsyslogd -n & \
-  cat /etc/resolv.conf > /tmp/resolv.conf.auto \
-  && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
-  && rm -rf /etc/s6/vtund \
-  && exec s6-svscan /etc/s6
+  NODE_IP=10.54.25.4 && \
+  NODE_NAME=KI5VMF-KUBERNETES && \
+  sysctl -w net.ipv4.ip_forward=1 && \
+  sysctl -w net.ipv6.conf.all.forwarding=1 && \
+  ip link add dev br-wan type bridge && \
+  ip link set dev eth0 master br-wan && \
+  ip link set br-wan up && \
+  GW=$(ip route list 0/0 | awk '{ print $3 }') && \
+  IP6_GW=$(ip -6 route list ::/0 | awk '{ print $3 }') && \
+  IPV4_ADDRS=$(ip address show eth0 | grep 'inet ' | awk '{ print $2 }') && \
+  for IPV4_ADDR in $IPV4_ADDRS; do \
+      ip address del dev eth0 $IPV4_ADDR && \
+      ip address add dev br-wan $IPV4_ADDR ; \
+  done && \
+  IPV6_ADDRS=$(ip address show eth0 | grep 'inet6 ' | awk '{ print $2 }') && \
+  for IPV6_ADDR in $IPV6_ADDRS; do \
+      if [[ $IPV6_ADDR == fe80:* ]]; then \
+          continue ; \
+      fi && \
+      ip address del dev eth0 $IPV6_ADDR && \
+      ip address add dev br-wan $IPV6_ADDR ; \
+  done && \
+  ip r add $GW dev br-wan scope link table 28  && \
+  ip route add default via $GW dev br-wan table 28 && \
+  ip -6 route del default via $IP6_GW dev eth0 && \
+  ip -6 route add $IP6_GW dev br-wan metric 1024 pref medium table 28 && \
+  ip -6 route add default via $IP6_GW dev br-wan table 28 && \
+  ip link add dev br-dtdlink type bridge && \
+  ip link set br-dtdlink up && \
+  ip addr add ${NODE_IP}/8 dev br-dtdlink && \
+  ip rule add pref 20010 iif br-dtdlink lookup 29 && \
+  ip rule add pref 20020 iif br-dtdlink lookup 20 && \
+  ip rule add pref 20030 iif br-dtdlink lookup 30 && \
+  ip rule add pref 20040 iif br-dtdlink lookup 21 && \
+  ip rule add pref 20050 iif br-dtdlink lookup 22 && \
+  ip rule add pref 20060 iif br-dtdlink lookup 28 && \
+  ip rule add pref 20070 iif br-dtdlink lookup 31 && \
+  ip rule add pref 20099 iif br-dtdlink unreachable && \
+  ip rule add pref 30210 lookup 29 && \
+  ip rule add pref 30220 lookup 20 && \
+  ip rule add pref 30230 lookup 30 && \
+  ip rule add pref 30240 lookup 21 && \
+  ip rule add pref 30260 lookup main && \
+  # ip rule add pref 30270 lookup 22 && \
+  ip rule add pref 30280 lookup 28 && \
+  ip rule add pref 30290 lookup 31 && \
+  mkdir -p /etc/meshlink && \
+  echo "${NODE_IP} ${NODE_NAME}" >> /etc/meshlink/hosts && \
+  echo "${NODE_IP} dtdlink.${NODE_NAME}.local.mesh" >> /etc/meshlink/hosts && \
+  rsyslogd -n & \
+  cat /etc/resolv.conf > /tmp/resolv.conf.auto && \
+  echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf && \
+  rm -rf /etc/s6/vtund && \
+  cp /etc/babel/babel.conf /tmp/babel-generated.conf && \
+  exec s6-svscan /etc/s6
 
 secrets: []
 # - name: app-creds
@@ -41,18 +89,73 @@ secrets: []
 #       multiline
 #       strings
 
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
+configs:
+- name: server-babel-config
+  data:
+    babel.conf: |
+      router-id 02:44:c0:a6:cb:05
+      interface br-dtdlink type wired
+      interface br-dtdlink rxcost 96
+      interface br-dtdlink split-horizon true
+      interface tunnel type tunnel
+      interface tunnel rxcost 206
+      interface tunnel hello-interval 10
+      interface tunnel rtt-min 10
+      interface tunnel rtt-max 400
+      interface tunnel max-rtt-penalty 400
+      redistribute anyproto if tunnel deny
+      redistribute anyproto ip 10.0.0.0/8 ge 24 allow
+      redistribute anyproto ip 44.0.0.0/8 ge 24 allow
+      redistribute anyproto ip 172.31.0.0/16 eq 32 deny
+      redistribute deny
+      install ip 10.0.0.0/8 eq 8 allow table 21
+      install ip 44.0.0.0/8 le 23 allow table 21
+      install ip 0.0.0.0/0 eq 0 allow table 22
+      install ip 10.0.0.0/8 ge 24 allow table 20
+      install ip 44.0.0.0/8 ge 24 allow table 20
+      install ip 0.0.0.0/0 ge 0 deny
+- name: server-olsr-config
+  data:
+    olsrd.conf: |
+      DebugLevel 0
+      AllowNoInt yes
+      IpVersion 4
+      MainIp 10.54.25.4
+      LinkQualityAlgorithm "etx_ffeth"
+
+      LoadPlugin "olsrd_arprefresh.so.0.1"
+      {
+      }
+      LoadPlugin "olsrd_txtinfo.so.1.1"
+      {
+        PlParam "accept" "0.0.0.0"
+      }
+      LoadPlugin "olsrd_jsoninfo.so.1.1"
+      {
+        PlParam "accept" "0.0.0.0"
+      }
+      LoadPlugin "olsrd_dot_draw.so.0.3"
+      {
+        PlParam "accept" "0.0.0.0"
+        PlParam "port" "2004"
+      }
+      LoadPlugin "olsrd_watchdog.so.0.1"
+      {
+        PlParam "file" "/tmp/olsrd.watchdog"
+        PlParam "interval" "5"
+      }
+      LoadPlugin "olsrd_nameservice.so.0.4"
+      {
+        PlParam "sighup-pid-file" "/var/run/dnsmasq/dnsmasq.pid"
+        PlParam "interval" "30"
+        PlParam "timeout" "300"
+        PlParam "name" "KI5VMF-KUBERNETES"
+      }
+      Interface "tunnel"
+      {
+        Ip4Broadcast 255.255.255.255
+        Mode "ether"
+      }
 
 envFrom: []
 # - secretRef:
@@ -88,8 +191,12 @@ service:
 persistentVolumes:
 - name: server-olsr-config
   mountPath: /etc/olsrd
-  secret:
-    secretName: server-olsr-config
+  configMap:
+    name: server-olsr-config
+- name: server-babel-config
+  mountPath: /etc/babel
+  configMap:
+    name: server-babel-config
 - name: server-wireguard-config
   mountPath: /etc/wireguard
   secret:
