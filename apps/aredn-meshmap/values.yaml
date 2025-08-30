@@ -8,7 +8,7 @@ controllers:
         sysctls:
         - name: net.ipv4.conf.all.src_valid_mark
           value: "1"
-    initContainers:
+    containers:
       wireguard-init:
         image:
           repository: ghcr.io/usa-reddragon/wireguard
@@ -38,35 +38,36 @@ controllers:
           ip r add default via 172.27.1.1 dev wg0 && \
           ip r add 172.17.0.0/16 via $GW dev eth0 && \
           ip r add 172.18.0.0/16 via $GW dev eth0
-    containers:
-      meshmap:
-        image:
-          repository: ghcr.io/usa-reddragon/meshmap
-          tag: k8s@sha256:07a0144b75af52da82f68f946fc05cd52739d13181e65278d62def7398818115
-        env:
-        - name: RETRIES
-          value: "5"
-        - name: TIMEOUT
-          value: "60"
-        - name: CONCURRENCY
-          value: "100"
-        - name: STARTING_NODE
-          value: "KI5VMF-CLOUD-TUNNEL-supernode"
-        - name: APP_CONFIG
-          value: '{"name":"Oklahoma Mesh","mapSettings":{"zoom":"10","mapCenter":{"node":"KP4DJT-HAP","lat":"35.4704","lon":"-97.5147"},"servers":[{"test":"https://c.tile.openstreetmap.org/10/162/395.png","url":"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]},"contactInfo":{"callsign":"KI5VMF","name":"Jacob McSwain","email":"mesh-map@mcswain.dev"},"nodesFilter":"[a-zA-z]+[0-9][a-zA-Z]+","offline":true}'
-        probes:
-          liveness:
-            enabled: true
-          readiness:
-            enabled: true
-          startup:
-            enabled: true
-        resources:
-          limits:
-            memory: 500Mi
-          requests:
-            cpu: 74m
-            memory: 340Mi
+          sleep infinity
+    # containers:
+    #   meshmap:
+    #     image:
+    #       repository: ghcr.io/usa-reddragon/meshmap
+    #       tag: k8s@sha256:07a0144b75af52da82f68f946fc05cd52739d13181e65278d62def7398818115
+    #     env:
+    #     - name: RETRIES
+    #       value: "5"
+    #     - name: TIMEOUT
+    #       value: "60"
+    #     - name: CONCURRENCY
+    #       value: "100"
+    #     - name: STARTING_NODE
+    #       value: "KI5VMF-CLOUD-TUNNEL-supernode"
+    #     - name: APP_CONFIG
+    #       value: '{"name":"Oklahoma Mesh","mapSettings":{"zoom":"10","mapCenter":{"node":"KP4DJT-HAP","lat":"35.4704","lon":"-97.5147"},"servers":[{"test":"https://c.tile.openstreetmap.org/10/162/395.png","url":"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]},"contactInfo":{"callsign":"KI5VMF","name":"Jacob McSwain","email":"mesh-map@mcswain.dev"},"nodesFilter":"[a-zA-z]+[0-9][a-zA-Z]+","offline":true}'
+    #     probes:
+    #       liveness:
+    #         enabled: true
+    #       readiness:
+    #         enabled: true
+    #       startup:
+    #         enabled: true
+    #     resources:
+    #       limits:
+    #         memory: 500Mi
+    #       requests:
+    #         cpu: 74m
+    #         memory: 340Mi
 
 service:
   meshmap:
