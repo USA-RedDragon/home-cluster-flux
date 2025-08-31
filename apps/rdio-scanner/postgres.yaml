@@ -26,7 +26,7 @@ spec:
         compression: gzip
     retentionPolicy: "4w"
   storage:
-    size: 12Gi
+    size: 25Gi
   monitoring:
     enablePodMonitor: true
   resources:
