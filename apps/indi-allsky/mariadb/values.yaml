@@ -24,6 +24,14 @@ controllers:
             cpu: 40m
           limits: {}
 
+
+service:
+  mariadb:
+    controller: mariadb
+    ports:
+      mariadb:
+        port: 3306
+
 persistence:
   data:
     storageClass: longhorn-nvme-no-replicas
