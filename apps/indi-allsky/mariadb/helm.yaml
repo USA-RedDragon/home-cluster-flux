@@ -11,12 +11,12 @@ spec:
   releaseName: mariadb
   chart:
     spec:
-      chart: mariadb
+      chart: app-template
       sourceRef:
         kind: HelmRepository
-        name: bitnami
+        name: bjw-s
         namespace: flux-system
-      version: '20.5.6'
+      version: '3.7.3'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
