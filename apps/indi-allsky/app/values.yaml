@@ -23,12 +23,12 @@ controllers:
           - name: MARIADB_DATABASE
             value: indi_allsky
           - name: MARIADB_USER
-            value: root
+            value: indi_allsky
           - name: MARIADB_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: mariadb
-                key: mariadb-root-password
+                key: mariadb-password
           - name: INDIALLSKY_MARIADB_CHARSET
             value: utf8mb4
           - name: INDIALLSKY_MARIADB_COLLATION

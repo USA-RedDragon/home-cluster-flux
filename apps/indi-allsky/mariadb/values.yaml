@@ -1,15 +1,32 @@
-image:
-  registry: docker.io
-  repository: bitnami/mariadb
-  tag: 11.7.2-debian-12-r0
-  digest: ""
+controllers:
+  mariadb:
+    containers:
+      mariadb:
+        image:
+          repository: mariadb
+          tag: 12.0.2@sha256:b30cc65b57a11a2e791ad5c06284e599fe9f1bf3fe9081a88d85bcf36389be4a
+        env:
+          MARIADB_DATABASE: indi_allsky
+          MARIADB_USER: indi_allsky
+          MARIADB_PASSWORD:
+            valueFrom:
+              secretKeyRef:
+                name: mariadb
+                key: mariadb-password
+          MARIADB_ROOT_PASSWORD:
+            valueFrom:
+              secretKeyRef:
+                name: mariadb
+                key: mariadb-root-password
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 40m
+          limits: {}
 
-auth:
-  database: indi_allsky
-
-primary:
-  resources:
-    requests:
-      memory: 256Mi
-      cpu: 40m
-    limits: {}
+persistence:
+  data:
+    storageClass: longhorn-nvme-no-replicas
+    accessMode: ReadWriteOnce
+    size: 8Gi
+    retain: true
