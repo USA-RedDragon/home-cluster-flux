@@ -106,7 +106,7 @@ persistence:
   config:
     enabled: true
     type: configMap
-    name: zot-config
+    name: zot
     globalMounts:
       - path: /etc/zot/config.yaml
         subPath: config.yaml
