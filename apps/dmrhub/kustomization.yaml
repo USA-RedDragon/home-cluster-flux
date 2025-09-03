@@ -9,13 +9,10 @@ resources:
   - ingress-redirect.yaml
   - prom.yaml
   - postgres.yaml
-  - redis-helm.yaml
+  - valkey.yaml
 configMapGenerator:
   - name: chart-values
     files:
       - values.yaml=values.yaml
-  - name: redis-chart-values
-    files:
-      - values.yaml=redis-values.yaml
 configurations:
   - kustomizeconfig.yaml

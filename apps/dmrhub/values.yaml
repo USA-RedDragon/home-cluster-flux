@@ -80,7 +80,12 @@ env:
 - name: REDIS_ENABLED
   value: "true"
 - name: REDIS_HOST
-  value: redis-app
+  value: valkey
+- name: REDIS_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: valkey
+      key: valkey-password
 - name: NETWORK_NAME
   value: "Official DMRHub"
 - name: HTTP_ROBOTS_TXT_MODE
