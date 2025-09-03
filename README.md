@@ -1358,7 +1358,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>zot</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/zot/app/helm.yaml">zot</a></td>
-    <td><a href="services/zot/app/redis.yaml">redis</a></td>
+    <td><a href="services/zot/app/valkey.yaml">valkey</a></td>
   </tr>
 </table>
 <!-- End apps section -->
