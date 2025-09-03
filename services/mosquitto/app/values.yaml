@@ -84,7 +84,7 @@ persistence:
   config:
     enabled: true
     type: configMap
-    name: mosquitto-config
+    name: mosquitto
     advancedMounts:
       mosquitto:
         mosquitto:
