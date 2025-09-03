@@ -8,33 +8,14 @@ controllers:
         env:
           MARIADB_DATABASE: indi_allsky
           MARIADB_USER: indi_allsky
-          MARIADB_PASSWORD:
-            valueFrom:
-              secretKeyRef:
-                name: mariadb
-                key: mariadb-password
-          MARIADB_ROOT_PASSWORD:
-            valueFrom:
-              secretKeyRef:
-                name: mariadb
-                key: mariadb-root-password
         resources:
           requests:
             memory: 256Mi
             cpu: 40m
           limits: {}
 
-
-service:
-  mariadb:
-    controller: mariadb
-    ports:
-      mariadb:
-        port: 3306
-
 persistence:
   data:
     storageClass: longhorn-nvme
     accessMode: ReadWriteOnce
     size: 8Gi
-    retain: true
