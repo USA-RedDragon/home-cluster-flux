@@ -37,7 +37,7 @@ persistence:
   config:
     enabled: true
     type: configMap
-    name: ping-exporter-config
+    name: ping-exporter
 
 configMaps:
   config:
