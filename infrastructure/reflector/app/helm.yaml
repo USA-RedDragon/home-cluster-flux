@@ -24,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: emberstack
-      version: '7.1.288'
+      version: '9.1.29'
       interval: 1m0s
   values:
     imagePullSecrets:
