@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: zot
 resources:
   - helm.yaml
-  - redis.yaml
+  - valkey.yaml
 configMapGenerator:
   - name: chart-values
     files:
