@@ -93,6 +93,7 @@ configMaps:
           cacheDriver:
             name: redis
             url: redis://valkey:6379
+            password: ${valkey-password}
           dedupe: true
           storageDriver:
             name: s3
