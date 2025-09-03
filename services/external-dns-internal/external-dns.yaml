@@ -23,7 +23,7 @@ spec:
       version: 1.18.0
       sourceRef:
         kind: HelmRepository
-        namespace: flux-system
+        namespace: external-dns-internal
         name: external-dns
       interval: 1h
   # TODO: Enable schema validation when new chart version is released
