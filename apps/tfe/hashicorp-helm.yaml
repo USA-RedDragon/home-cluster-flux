@@ -14,6 +14,9 @@ metadata:
   name: tfe
   namespace: tfe
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 1m0s
   releaseName: tfe
   chart:

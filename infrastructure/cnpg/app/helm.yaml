@@ -28,6 +28,8 @@ spec:
       interval: 1m0s
   install:
     crds: Create
+    remediation:
+      retries: -1
   upgrade:
     crds: CreateReplace
   values:

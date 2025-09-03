@@ -29,6 +29,8 @@ spec:
   # TODO: Enable schema validation when new chart version is released
   install:
     disableSchemaValidation: true
+    remediation:
+      retries: -1
   upgrade:
     disableSchemaValidation: true
   values:

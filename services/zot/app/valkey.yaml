@@ -3,6 +3,9 @@ kind: HelmRelease
 metadata:
   name: valkey
 spec:
+  install:
+    remediation:
+      retries: -1
   chart:
     spec:
       chart: app-template

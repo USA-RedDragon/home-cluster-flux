@@ -14,6 +14,9 @@ metadata:
   name: mattermost
   namespace: mattermost
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 1m0s
   driftDetection:
     mode: enabled

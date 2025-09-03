@@ -14,6 +14,9 @@ metadata:
   name: renovate-ce
   namespace: renovate-ce
 spec:
+  install:
+    remediation:
+      retries: -1
   chart:
     spec:
       chart: mend-renovate-enterprise-edition

@@ -19,6 +19,8 @@ spec:
     mode: enabled
   releaseName: metallb
   install:
+    remediation:
+      retries: -1
     crds: Create
   upgrade:
     crds: CreateReplace
