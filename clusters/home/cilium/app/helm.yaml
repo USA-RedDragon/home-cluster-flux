@@ -21,7 +21,7 @@ spec:
   install:
     remediation:
       retries: -1
-      crds: Create
+    crds: Create
   upgrade:
     crds: CreateReplace
   chart:
