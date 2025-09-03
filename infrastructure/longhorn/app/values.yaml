@@ -8,6 +8,8 @@ defaultSettings:
   backupTarget: s3://longhorn@us-east-1/
   backupTargetCredentialSecret: minio
   guaranteedInstanceManagerCPU: '25'
+  offlineReplicaRebuilding: true
+  orphanResourceAutoDeletion: instance
 longhornManager:
   priorityClass: system-cluster-critical
   tolerations:
