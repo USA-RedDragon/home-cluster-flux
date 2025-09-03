@@ -19,7 +19,9 @@ spec:
     mode: enabled
   releaseName: cilium
   install:
-    crds: Create
+    remediation:
+      retries: -1
+      crds: Create
   upgrade:
     crds: CreateReplace
   chart:

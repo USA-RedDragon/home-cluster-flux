@@ -4,6 +4,9 @@ metadata:
   name: ephemeris
   namespace: ephemeris
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 60m0s
   driftDetection:
     mode: enabled

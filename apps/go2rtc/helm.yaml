@@ -4,6 +4,9 @@ metadata:
   name: go2rtc
   namespace: go2rtc
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 60m0s
   releaseName: go2rtc
   suspend: false
@@ -26,6 +29,9 @@ metadata:
   name: go2rtc-real
   namespace: go2rtc
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 60m0s
   driftDetection:
     mode: enabled

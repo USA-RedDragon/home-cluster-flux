@@ -5,6 +5,9 @@ metadata:
   name: indi-allsky-mariadb
   namespace: indi-allsky
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 60m0s
   driftDetection:
     mode: enabled

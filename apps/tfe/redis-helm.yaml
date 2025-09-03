@@ -4,6 +4,9 @@ metadata:
   name: redis
   namespace: tfe
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 60m0s
   releaseName: redis
   chart:

@@ -25,6 +25,8 @@ spec:
       name: chart-values
   install:
     crds: CreateReplace
+    remediation:
+      retries: -1
   upgrade:
     crds: CreateReplace
 ---

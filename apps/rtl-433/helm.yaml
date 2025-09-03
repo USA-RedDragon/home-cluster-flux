@@ -4,6 +4,9 @@ metadata:
   name: rtl-433
   namespace: rtl-433
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 60m0s
   driftDetection:
     mode: enabled

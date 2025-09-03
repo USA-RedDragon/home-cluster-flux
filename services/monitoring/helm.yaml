@@ -5,6 +5,9 @@ metadata:
   name: thanos-querier
   namespace: monitoring
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 60m0s
   driftDetection:
     mode: enabled
@@ -28,6 +31,9 @@ metadata:
   name: thanos-compactor
   namespace: monitoring
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 60m0s
   driftDetection:
     mode: enabled
@@ -51,6 +57,9 @@ metadata:
   name: pushgateway
   namespace: monitoring
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 1m0s
   driftDetection:
     mode: enabled

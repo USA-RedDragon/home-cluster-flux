@@ -14,6 +14,9 @@ metadata:
   name: descheduler
   namespace: descheduler
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 1m0s
   driftDetection:
     mode: enabled

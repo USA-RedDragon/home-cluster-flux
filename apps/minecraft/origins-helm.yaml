@@ -4,6 +4,9 @@ metadata:
   name: origins
   namespace: minecraft
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 60m0s
   releaseName: origins
   suspend: true

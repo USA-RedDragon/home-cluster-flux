@@ -4,6 +4,9 @@ metadata:
   name: mqtt-wx
   namespace: mqtt-wx
 spec:
+  install:
+    remediation:
+      retries: -1
   interval: 60m0s
   releaseName: mqtt-wx
   chart:
