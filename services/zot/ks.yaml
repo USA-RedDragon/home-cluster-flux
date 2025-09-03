@@ -17,7 +17,7 @@ spec:
       - kind: Secret
         name: zot-oidc
       - kind: Secret
-        name: valkey
+        name: valkey-password
   dependsOn:
     - name: secrets
       namespace: flux-system
