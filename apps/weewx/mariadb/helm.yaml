@@ -1,3 +1,4 @@
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -13,13 +14,13 @@ spec:
   releaseName: mariadb
   chart:
     spec:
-      chart: app-template
+      chart: mariadb
+      version: 0.1.0
+      reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
-        name: bjw-s
         namespace: flux-system
-      version: '4.2.0'
-      interval: 60m0s
+        name: usa-reddragon
   valuesFrom:
     - kind: ConfigMap
       name: chart-values

@@ -8,32 +8,14 @@ controllers:
         env:
           MARIADB_DATABASE: weewx
           MARIADB_USER: weewx
-          MARIADB_PASSWORD:
-            valueFrom:
-              secretKeyRef:
-                name: mariadb
-                key: mariadb-password
-          MARIADB_ROOT_PASSWORD:
-            valueFrom:
-              secretKeyRef:
-                name: mariadb
-                key: mariadb-root-password
         resources:
           requests:
             memory: 256Mi
             cpu: 30m
           limits: {}
 
-service:
-  mariadb:
-    controller: mariadb
-    ports:
-      mariadb:
-        port: 3306
-
 persistence:
   data:
     storageClass: longhorn-nvme
     accessMode: ReadWriteOnce
     size: 8Gi
-    retain: true
