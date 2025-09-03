@@ -7,7 +7,7 @@ controllers:
       apprise:
         image:
           repository: lscr.io/linuxserver/apprise-api
-          tag: 1.2.0
+          tag: 1.2.1
         probes:
           liveness:
             enabled: true
