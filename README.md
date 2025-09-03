@@ -44,6 +44,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#dmrhub">dmrhub</a></li>
   <li><a href="#dump978">dump978</a></li>
   <li><a href="#ephemeris">ephemeris</a></li>
+  <li><a href="#external-dns-internal">external-dns-internal</a></li>
   <li><a href="#ffmpeg-printer-webcam">ffmpeg-printer-webcam</a></li>
   <li><a href="#gittea">gittea</a></li>
   <li><a href="#go2rtc">go2rtc</a></li>
@@ -85,7 +86,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#scrypted">scrypted</a></li>
   <li><a href="#ses-email-service">ses-email-service</a></li>
   <li><a href="#site-inspector">site-inspector</a></li>
-  <li><a href="#split-dns">split-dns</a></li>
   <li><a href="#tailscale-operator">tailscale-operator</a></li>
   <li><a href="#tandoor">tandoor</a></li>
   <li><a href="#tdarr">tdarr</a></li>
@@ -438,6 +438,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>ephemeris</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/ephemeris/helm.yaml">ephemeris</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>external-dns-internal</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>external-dns-internal</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/external-dns-internal/external-dns.yaml">external-dns-internal</a></td>
     <td></td>
   </tr>
 </table>
@@ -1139,30 +1155,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/site-inspector/helm.yaml">site-inspector</a></td>
     <td><a href="apps/site-inspector/postgres.yaml">postgresql</a></td>
-  </tr>
-</table>
-
-<h4>split-dns</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td rowspan="3">split-dns</td>
-    <td><code>Deployment</code></td>
-    <td><a href="services/split-dns/coredns.deployment.yaml">coredns</a></td>
-    <td rowspan="3"></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="services/split-dns/etcd.helm.yaml">etcd</a></td>
-  </tr>
-  <tr>
-    <td><code>Deployment</code></td>
-    <td><a href="services/split-dns/external-dns.yaml">external-dns</a></td>
   </tr>
 </table>
 
