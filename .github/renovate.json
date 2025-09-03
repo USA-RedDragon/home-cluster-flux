@@ -193,16 +193,6 @@
             "matchDatasources": [
                 "docker"
             ],
-            "versioning": "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z$",
-            "matchPackageNames": [
-                "/minio/"
-            ],
-            "allowedVersions": "<=RELEASE.2025-04-22T22-12-26Z"
-        },
-        {
-            "matchDatasources": [
-                "docker"
-            ],
             "versioning": "regex:^version-(?<major>\\d+).(?<minor>\\d+)-cli$",
             "matchPackageNames": [
                 "/^lscr.io\\/linuxserver\\/ffmpeg$/"
