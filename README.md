@@ -406,7 +406,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>dmrhub</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/dmrhub/helm.yaml">dmrhub</a></td>
-    <td><a href="apps/dmrhub/postgres.yaml">postgresql</a>, <a href="apps/dmrhub/redis-helm.yaml">redis</a></td>
+    <td><a href="apps/dmrhub/postgres.yaml">postgresql</a>, <a href="apps/dmrhub/valkey.yaml">valkey</a></td>
   </tr>
 </table>
 
