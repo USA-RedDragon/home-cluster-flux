@@ -16,6 +16,8 @@ deploymentStrategy:
     maxUnavailable: 1
     maxSurge: 1
 
+podLabels:
+  valkey-client: "true"
 args: []
 imagePullSecrets: []
 nameOverride: ""
