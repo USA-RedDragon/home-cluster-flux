@@ -63,6 +63,9 @@ controllers:
 
   gunicorn:
     replicas: 1
+    pod:
+      labels:
+        mariadb-client: "true"
     containers:
       gunicorn:
         image:
