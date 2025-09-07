@@ -10,6 +10,8 @@ controllers:
         runAsUser: 65534
         runAsGroup: 65534
         fsGroup: 65534
+      labels:
+        valkey-client: "true"
     containers:
       zot:
         args:
