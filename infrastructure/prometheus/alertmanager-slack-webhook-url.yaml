@@ -4,7 +4,7 @@ metadata:
     name: alertmanager-slack-webhook-url
     namespace: monitoring
 stringData:
-    slack_webhook_url: ENC[AES256_GCM,data:2smqqkKOP8F89IE4FR7T9U+HA2m4VtehPEVWBr9REeJgvvdOL31Es/l1zVrtXUFYWuz9b+qpwDAFxf+s5VsO,iv:Spf1QLNML3VQq+g4u4nsOUoGBF1Ot0o/SRGtRsR7+ig=,tag:NPAsmmTCG2tC2Znn0FE9VA==,type:str]
+    slack_webhook_url: ENC[AES256_GCM,data:EP8b3CERwncLChrtyB3c/VO2B7vtCF9omUlAxY+5XyUk7Zw4RJrGz//8Ig4tGCW6vV0FLFE8a7N7bNCiZ1u3,iv:tCyjP6rWbTs8Jlrt3B5ps/qEwZafDpJSWL95xA5yp80=,tag:4IG1glZvivZ5BKyF0ayEZg==,type:str]
 type: Opaque
 sops:
     kms: []
@@ -12,8 +12,8 @@ sops:
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2024-08-13T18:59:53Z"
-    mac: ENC[AES256_GCM,data:VQWu8Qs7+a0QOUkirjq9t5v/iVBWeSKHWFNttq7OM2fK1QHFuAkAKySl/LHahuEDp3992hrkZzaAFaw16Q5u18g9GrwSm3kCad4gcJzt2v2qTteHMyl6wsdUj+hwCNl4wt/N915kLqkN2c414M3sx7J1aRBPnAVzJwmD1IRkPGk=,iv:bArJcpOwy0SMuInIXoz4FTFnVEe6ZhnxoPf7iF0dIq4=,tag:aAGXY+AotyGPxTEzuWz0jg==,type:str]
+    lastmodified: "2025-09-07T05:44:32Z"
+    mac: ENC[AES256_GCM,data:meX6Hpg3bMAJkFM/bno++/51b8CUqG33p4xipreO/FvtSArvVP1gKIKRpT7AKodY0FmuBqjlVQSRSrqiiQpo8ei6AK0UbVvAqqx4ROlk51cHFe7E2vJgBTFhFTtLhqiYvAnekm+eAY5PFHul00Ak+LCDIn0QnAzmB8gjRABVnvA=,iv:6AFIy1Fxaw3wZx1785CNIJO7FCBE2RiqAfsDXPnHOgQ=,tag:TqN7tD9DOUuIMjpDEHRYeg==,type:str]
     pgp:
         - created_at: "2024-03-03T08:36:58Z"
           enc: |
