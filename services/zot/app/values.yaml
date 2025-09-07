@@ -94,8 +94,7 @@ configMaps:
           remoteCache: true
           cacheDriver:
             name: redis
-            url: redis://valkey:6379
-            password: ${valkey_password}
+            url: redis://:${valkey_password}@valkey:6379
           dedupe: true
           storageDriver:
             name: s3
