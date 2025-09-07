@@ -1,0 +1,142 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  linx:
+    replicas: 2
+    strategy: RollingUpdate
+    rollingUpdate:
+      unavailable: 1
+      surge: 25%
+    pod: &pod
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65535
+        fsGroup: 65535
+    containers:
+      linx: &app
+        image:
+          repository: ghcr.io/gabe565/linx-server
+          tag: beta@sha256:fcf169c90bb2764387edba2acc1fe28b91f12ec264e5df058804f8750c7e7134
+          pullPolicy: IfNotPresent
+        resources:
+          requests: {}
+          limits: {}
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          - name: GOMEMLIMIT
+            value: 1GiB
+          - name: LINX_SITE_URL
+            value: https://files.mcswain.dev
+          - name: LINX_MAX_EXPIRY
+            value: 744h
+          - name: LINX_MAX_SIZE
+            value: 4Gi
+          - name: LINX_NO_TORRENT
+            value: "true"
+          - name: LINX_HEADER_REAL_IP
+            value: "true"
+          - name: LINX_CLEANUP_EVERY
+            value: "0"
+          - name: LINX_S3_ENDPOINT
+            value: http://minio-app.minio.svc.cluster.local:9000
+          - name: LINX_S3_BUCKET
+            value: linx
+        envFrom:
+          - secretRef:
+              name: linx
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+  cleanup:
+    type: cronjob
+    cronjob:
+      schedule: '0 0 * * *'
+    containers:
+      app:
+        <<: *app
+        probes: {}
+        command:
+          - linx-server
+          - cleanup
+    pod: *pod
+
+service:
+  linx:
+    controller: linx
+    ports:
+      http:
+        port: 8080
+
+
+ingress:
+  linx:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: cloudflare
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "900"
+    hosts:
+      - host: files.mcswain.dev
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: linx
+              port: http
+    tls: &tls
+      - hosts:
+          - files.mcswain.dev
+        secretName: files-mcswain-dev
+  robots:
+      enabled: true
+      annotations:
+        nginx.ingress.kubernetes.io/configuration-snippet: |
+          add_header Content-Type text/plain;
+          return 200 "User-Agent: *\nDisallow: /\n";
+      hosts:
+        - host: files.mcswain.dev
+          paths:
+            - path: /robots.txt
+              pathType: ImplementationSpecific
+              service:
+                identifier: linx
+                port: http
+      tls: *tls
+
+networkpolicies:
+  linx:
+    enabled: true
+    controller: linx
+    policyTypes: [Ingress, Egress]
+    rules:
+      ingress:
+        - from:
+          - namespaceSelector: {}
+      egress:
+        - to:
+          - namespaceSelector: {}
+        - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: minio
+            podSelector:
+              matchLabels:
+                app.kubernetes.io/instance: minio
+        - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: kube-system
+            podSelector:
+              matchLabels:
+                k8s-app: kube-dns
