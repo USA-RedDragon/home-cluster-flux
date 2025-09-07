@@ -47,6 +47,10 @@ spec:
         enabled: true
         egress:
         - to:
+          ports:
+          - protocol: TCP
+            port: 6443
+        - to:
           - ipBlock:
               cidr: 172.18.0.1/32
           ports:
