@@ -331,7 +331,14 @@ mattermostApp:
     - name: MM_IMAGEPROXYSETTINGS_ENABLE
       value: "true"
     - name: MM_IMAGEPROXYSETTINGS_IMAGEPROXYTYPE
-      value: "local"
+      value: "atmos/camo"
+    - name: MM_IMAGEPROXYSETTINGS_REMOTEIMAGEPROXYURL
+      value: "https://camo.mcswain.dev"
+    - name: MM_IMAGEPROXYSETTINGS_REMOTEIMAGEPROXYOPTIONS
+      valueFrom:
+        secretKeyRef:
+          name: mattermost
+          key: camo_key
     - name: MM_CONNECTEDWORKSPACESSETTINGS_ENABLEREMOTECLUSTERSERVICE
       value: "true"
     - name: MM_CONNECTEDWORKSPACESSETTINGS_ENABLESHAREDCHANNELS
