@@ -143,30 +143,14 @@ ingress:
             deny all;
             return 401;
         }
+        location /metrics {
+            deny all;
+            return 404;
+        }
     hosts:
       - host: jacob.pub
         paths:
           - path: /
-            service:
-              identifier: zot
-              port: http
-    tls:
-      - hosts:
-          - jacob.pub
-        secretName: jacob-pub
-  block-metrics:
-    enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/temporal-redirect: https://jacob.pub/
-    hosts:
-      - host: jacob.pub
-        paths:
-          - path: /metrics
-            pathType: Exact
             service:
               identifier: zot
               port: http

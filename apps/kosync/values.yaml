@@ -85,6 +85,11 @@ ingress:
       kubernetes.io/tls-acme: "true"
       cert-manager.io/cluster-issuer: cloudflare
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/server-snippet: |
+        location /metrics {
+            deny all;
+            return 404;
+        }
     hosts:
       - host: kosync.mcswain.dev
         paths:
