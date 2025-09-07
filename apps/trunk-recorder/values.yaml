@@ -100,11 +100,11 @@ podLabels:
 
 resources:
   limits:
-    memory: 500Mi
+    memory: 1Gi
     squat.ai/sdrplay: 1
   requests:
     cpu: '2'
-    memory: 300Mi
+    memory: 500Mi
 
 nodeSelector: {}
 
