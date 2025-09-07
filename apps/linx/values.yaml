@@ -48,6 +48,8 @@ controllers:
             value: http://minio-app.minio.svc.cluster.local:9000
           - name: LINX_S3_BUCKET
             value: linx
+          - name: LINX_S3_FORCE_PATH_STYLE
+            value: "true"
         envFrom:
           - secretRef:
               name: linx
