@@ -140,3 +140,8 @@ networkpolicies:
             podSelector:
               matchLabels:
                 k8s-app: kube-dns
+
+persistence:
+  tmp:
+    type: emptyDir
+    sizeLimit: 4Gi
