@@ -13,7 +13,7 @@ spec:
       owner: mattermost
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/mattermost-1"
+      destinationPath: "s3://cnpg/mattermost"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -27,7 +27,7 @@ spec:
     retentionPolicy: "4w"
   storage:
     size: 80Gi
-    storageClassName: "longhorn-nvme-no-replicas"
+    storageClass: "longhorn-nvme-no-replicas"
   monitoring:
     enablePodMonitor: true
   resources:
