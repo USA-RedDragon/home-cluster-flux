@@ -41,7 +41,7 @@ spec:
       owner: dmrhub
       source: postgresql
   storage:
-    size: 15Gi
+    size: 30Gi
   monitoring:
     enablePodMonitor: true
   resources:
