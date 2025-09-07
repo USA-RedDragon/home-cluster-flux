@@ -78,6 +78,14 @@ spec:
               - kyverno
     networkPolicy:
       enabled: true
+      ingress:
+        - from:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: monitoring
+            podSelector:
+              matchLabels:
+                app.kubernetes.io/name: prometheus
       egress:
         - to:
           ports:
