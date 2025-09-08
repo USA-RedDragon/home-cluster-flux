@@ -3,6 +3,7 @@ kind: Service
 metadata:
   annotations:
     tailscale.com/tailnet-ip: 100.104.111.93
+    kustomize.toolkit.fluxcd.io/reconcile: disabled
   name: observatory
 spec:
   externalName: observatory
