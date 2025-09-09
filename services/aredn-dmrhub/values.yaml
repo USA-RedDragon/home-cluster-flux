@@ -247,7 +247,7 @@ probes: {}
 resources:
   requests:
     cpu: 10m
-    memory: 6Mi
+    memory: 20Mi
 
 initContainers: []
 
