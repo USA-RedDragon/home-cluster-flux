@@ -19,7 +19,7 @@ controllers:
           pullPolicy: IfNotPresent
         resources:
           limits:
-            memory: 350Mi
+            memory: 500Mi
           requests:
             memory: 250Mi
         probes:

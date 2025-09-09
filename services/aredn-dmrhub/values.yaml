@@ -245,8 +245,6 @@ probes: {}
   #     port: 81
 
 resources:
-  limits:
-    memory: 12Mi
   requests:
     cpu: 10m
     memory: 6Mi
