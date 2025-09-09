@@ -43,8 +43,6 @@ spec:
     requests:
       memory: 450Mi
       cpu: 50m
-    limits:
-      memory: 600Mi
   smartShutdownTimeout: 30
   stopDelay: 300
 ---
