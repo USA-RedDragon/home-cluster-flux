@@ -193,18 +193,18 @@ resources:
     memory: 3Gi
     cpu: 2
 
-extraContainers:
-- name: gitea-mirror
-  image: ghcr.io/usa-reddragon/gitea-mirror:v1.0.13
-  imagePullPolicy: IfNotPresent
-  args:
-  - "--config=/config/config.yaml"
-  volumeMounts:
-    - mountPath: /data
-      name: data
-    - name: gitea-mirror-config
-      mountPath: /config
-      readOnly: true
+# extraContainers:
+# - name: gitea-mirror
+#   image: ghcr.io/usa-reddragon/gitea-mirror:v1.0.13
+#   imagePullPolicy: IfNotPresent
+#   args:
+#   - "--config=/config/config.yaml"
+#   volumeMounts:
+#     - mountPath: /data
+#       name: data
+#     - name: gitea-mirror-config
+#       mountPath: /config
+#       readOnly: true
 
 nodeSelector: {}
 
