@@ -100,6 +100,8 @@ microservices:
 
 machine-learning:
   enabled: true
+  controller:
+    strategy: Recreate
   image:
     repository: ghcr.io/immich-app/immich-machine-learning
     tag: v1.141.1
