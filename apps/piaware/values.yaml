@@ -36,7 +36,7 @@ controllers:
           limits:
             memory: 130Mi
           requests:
-            cpu: 40m
+            cpu: 100m
             memory: 90Mi
 
 service:
