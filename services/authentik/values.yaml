@@ -169,9 +169,9 @@ probes:
 
 resources:
   limits:
-    memory: 800Mi
+    memory: 1Gi
   requests:
-    cpu: 10m
+    cpu: 100m
     memory: 600Mi
 
 nodeSelector: {}
