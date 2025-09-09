@@ -31,9 +31,10 @@ spec:
       interval: 1m0s
   values:
     admissionController:
-      resources:
-        requests:
-          memory: 200Mi
+      container:
+        resources:
+          requests:
+            memory: 200Mi
     reportsController:
       resources:
         requests:
