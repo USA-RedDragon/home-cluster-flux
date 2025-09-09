@@ -234,10 +234,10 @@ probes: {}
 
 resources:
   limits:
-    memory: 12Mi
+    memory: 30Mi
   requests:
     cpu: 10m
-    memory: 6Mi
+    memory: 20Mi
 
 initContainers:
 - image: ghcr.io/usa-reddragon/wireguard:main@sha256:1fca4f1fc917a46e1443dffc1201ed9f516e12fb29dba9471e74762834901cc6
