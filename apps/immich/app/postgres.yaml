@@ -5,7 +5,7 @@ metadata:
   namespace: immich
 spec:
   instances: 3
-  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.5-0.5.1
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.5-0.5.0
   enableSuperuserAccess: true
   bootstrap:
     initdb:
