@@ -273,7 +273,10 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   ingressClassName: nginx
   hosts:
-    - renovate.mcswain.dev
+    renovate.mcswain.dev:
+      paths:
+        - path: "/"
+          pathType: Prefix
   tls:
     - secretName: renovate-mcswain-dev-tls
       hosts:
