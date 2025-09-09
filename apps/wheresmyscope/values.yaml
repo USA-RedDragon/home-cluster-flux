@@ -22,7 +22,7 @@ controllers:
         resources:
           requests:
             cpu: 5m
-            memory: 5Mi
+            memory: 15Mi
         probes:
           liveness:
             enabled: true
