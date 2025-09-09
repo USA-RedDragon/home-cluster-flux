@@ -94,6 +94,8 @@ spec:
               containers:
                 - name: manager
                   resources:
+                    requests:
+                      memory: 200Mi
                     limits:
                       memory: 2Gi
       target:
