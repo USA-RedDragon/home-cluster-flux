@@ -18,8 +18,6 @@ spec:
         - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
         - CREATE EXTENSION IF NOT EXISTS pg_trgm;
         - CREATE EXTENSION IF NOT EXISTS unaccent;
-        - ALTER DATABASE immich SET search_path TO "$user", public, vectors;
-        - GRANT USAGE ON SCHEMA vectors TO immich;
         - GRANT SELECT ON TABLE pg_vector_index_stat to immich;
   postgresql:
     shared_preload_libraries:
