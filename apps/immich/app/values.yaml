@@ -37,6 +37,8 @@ redis:
 
 server:
   enabled: true
+  controller:
+    strategy: Recreate
   image:
     repository: ghcr.io/immich-app/immich-server
     tag: v1.141.1
