@@ -33,7 +33,7 @@ spec:
   resources:
     requests:
       memory: 200Mi
-      cpu: 20m
+      cpu: 100m
   smartShutdownTimeout: 30
   stopDelay: 300
 ---
