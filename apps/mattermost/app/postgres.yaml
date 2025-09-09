@@ -32,11 +32,8 @@ spec:
     enablePodMonitor: true
   resources:
     requests:
-      memory: 80Mi
+      memory: 200Mi
       cpu: 20m
-    limits:
-      # The backup process is quite memory intensive
-      memory: 600Mi
   smartShutdownTimeout: 30
   stopDelay: 300
 ---
