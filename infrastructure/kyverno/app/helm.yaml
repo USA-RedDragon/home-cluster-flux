@@ -35,6 +35,12 @@ spec:
         resources:
           requests:
             memory: 200Mi
+    backgroundController:
+      resources:
+        requests:
+          memory: 200Mi
+        limits:
+          memory: 400Mi
     reportsController:
       resources:
         requests:
