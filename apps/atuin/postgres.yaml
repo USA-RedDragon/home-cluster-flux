@@ -46,7 +46,7 @@ spec:
     enablePodMonitor: true
   resources:
     requests:
-      memory: 200Mi
+      memory: 400Mi
       cpu: 20m
   smartShutdownTimeout: 30
   stopDelay: 300
