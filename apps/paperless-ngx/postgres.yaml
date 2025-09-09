@@ -50,7 +50,7 @@ metadata:
   name: backup
 spec:
   immediate: true
-  schedule: "0 0 * * * *"
+  schedule: "0 8 * * * *"
   backupOwnerReference: self
   cluster:
     name: postgresql
