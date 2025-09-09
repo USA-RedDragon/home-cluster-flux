@@ -23,9 +23,6 @@ controllers:
           requests:
             cpu: 5m
             memory: 5Mi
-          limits:
-            cpu: 10m
-            memory: 10Mi
         probes:
           liveness:
             enabled: true
