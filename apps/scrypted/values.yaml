@@ -17,7 +17,7 @@ controllers:
           pullPolicy: IfNotPresent
         resources:
           requests:
-            cpu: 1200m
+            cpu: 1500m
             memory: 6Gi
         probes:
           liveness:
