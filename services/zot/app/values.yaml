@@ -23,6 +23,9 @@ controllers:
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
         probes:
           liveness:
             enabled: true
