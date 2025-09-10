@@ -125,6 +125,7 @@ persistence:
   tmp-zot:
     enabled: true
     type: emptyDir
+    medium: Memory
     globalMounts:
       - path: /tmp/zot
 
@@ -147,10 +148,6 @@ ingress:
             deny all;
             return 404;
         }
-      #   location = /v2/ {
-      #       deny all;
-      #       return 401;
-      #   }
     hosts:
       - host: jacob.pub
         paths:
