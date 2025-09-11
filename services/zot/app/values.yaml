@@ -160,15 +160,6 @@ persistence:
         zot:
           - path: /etc/zot/config.yaml
             subPath: config.yaml
-  docker-proxy-config:
-    enabled: true
-    type: configMap
-    name: zot
-    advancedMounts:
-      docker-proxy:
-        docker-proxy:
-          - path: /config.yaml
-            subPath: config.yaml
   sessionkeys:
     enabled: true
     type: secret
