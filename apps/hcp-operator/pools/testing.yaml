@@ -1,0 +1,23 @@
+apiVersion: app.terraform.io/v1alpha2
+kind: AgentPool
+metadata:
+  name: agent-pool-testing
+spec:
+  organization: test
+  token:
+    secretKeyRef:
+      name: tfc-owner
+      key: token
+  name: agent-pool-testing
+  agentTokens:
+    - name: agent-pool-testing-token
+  agentDeployment:
+    replicas: 1
+    spec:
+      containers:
+        - name: tfc-agent
+          image: "hashicorp/tfc-agent:1.23.2"
+  autoscaling:
+    minReplicas: 1
+    maxReplicas: 2
+    cooldownPeriodSeconds: 30
