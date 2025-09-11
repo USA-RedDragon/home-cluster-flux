@@ -144,12 +144,29 @@ configMaps:
                 retryDelay: 5m
                 onlySigned: false
                 content:
-                  - prefix: "/usa-reddragon/kubelet"
+                  - prefix: "usa-reddragon/**"
                     stripPrefix: false
                     destination: "/ghcr.io"
-                    tags:
-                      regex: ".*"
-                      semver: false
+              - urls:
+                  - https://ghcr.io
+                onDemand: true
+                maxRetries: 5
+                retryDelay: 5m
+                onlySigned: false
+                content:
+                  - prefix: "**"
+                    stripPrefix: false
+                    destination: "/ghcr.io"
+              - urls:
+                  - https://docker.io
+                onDemand: true
+                maxRetries: 5
+                retryDelay: 5m
+                onlySigned: false
+                content:
+                  - prefix: "**"
+                    stripPrefix: false
+                    destination: "/docker.io"
 
         storage:
           rootDirectory: /tmp/zot
