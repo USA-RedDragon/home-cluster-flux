@@ -1,0 +1,44 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: zot-auth-cert-ca
+spec:
+  isCA: true
+  commonName: zot-auth-cert-ca
+  secretName: zot-auth-cert-ca
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+  duration: 87600h # 10 year
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: zot-auth-cert-issuer
+spec:
+  ca:
+    secretName: zot-auth-cert-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: zot-auth-cert
+spec:
+  commonName: zot-auth-cert
+  secretName: zot-auth-cert
+  issuerRef:
+    name: zot-auth-cert-issuer
+    kind: Issuer
+    group: cert-manager.io
+  dnsNames:
+    - zot.home.lab
+  duration: 8760h # 1 year
+  renewBefore: 360h # 15 days
