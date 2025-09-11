@@ -132,6 +132,7 @@ configMaps:
             prometheus:
               path: /metrics
           sync:
+            DownloadDir: /tmp/zot
             registries:
               - urls:
                   - https://ghcr.io
