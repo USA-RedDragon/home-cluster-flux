@@ -4,6 +4,7 @@ namespace: zot
 resources:
   - helm.yaml
   - valkey.yaml
+  - auth-cert.yaml
 configMapGenerator:
   - name: chart-values
     files:

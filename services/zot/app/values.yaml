@@ -113,6 +113,10 @@ configMaps:
           auth:
             failDelay: 3
             sessionKeysFile: /etc/zot/sessionkeys.json
+            bearer:
+              realm: testing
+              service: testing
+              cert: /ssl/tls.crt
             openid:
               providers:
                 oidc:
@@ -174,6 +178,15 @@ persistence:
         zot:
           - path: /etc/zot/sessionkeys.json
             subPath: sessionkeys
+  auth-cert:
+    enabled: true
+    type: secret
+    name: zot-auth-cert
+    advancedMounts:
+      zot:
+        zot:
+          - path: /ssl/tls.crt
+            subPath: tls.crt
   tmp-zot:
     enabled: true
     type: emptyDir
