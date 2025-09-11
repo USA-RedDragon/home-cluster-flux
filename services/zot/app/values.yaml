@@ -131,6 +131,20 @@ configMaps:
             enable: true
             prometheus:
               path: /metrics
+          sync:
+            registries:
+              - urls:
+                  - https://ghcr.io
+                onDemand: false
+                pollInterval: 1h
+                maxRetries: 5
+                retryDelay: 5m
+                onlySigned: false
+                content:
+                  - prefix: "/usa-reddragon/kubelet"
+                    stripPrefix: false
+                    destination: "/ghcr.io"
+
         storage:
           rootDirectory: /tmp/zot
           remoteCache: true
