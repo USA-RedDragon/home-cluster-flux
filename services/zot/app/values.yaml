@@ -207,7 +207,7 @@ ingress:
         paths:
           - path: /
             service:
-              identifier: zot-docker-proxy
+              identifier: docker-proxy
               port: http
     tls:
       - hosts:
