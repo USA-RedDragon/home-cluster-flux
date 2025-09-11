@@ -133,6 +133,7 @@ configMaps:
               path: /metrics
           sync:
             enable: true
+            credentialsFile: /etc/zot/registry-credentials/credentials.json
             DownloadDir: /tmp/zot
             registries:
               - urls:
@@ -172,6 +173,15 @@ persistence:
         zot:
           - path: /etc/zot/config.yaml
             subPath: config.yaml
+  registry-credentials:
+    enabled: true
+    type: secret
+    name: zot-registry-credentials
+    advancedMounts:
+      zot:
+        zot:
+          - path: /etc/zot/registry-credentials/credentials.json
+            subPath: credentials.json
   sessionkeys:
     enabled: true
     type: secret
