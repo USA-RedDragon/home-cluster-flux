@@ -3,6 +3,9 @@ kind: Kustomization
 namespace: static-services
 resources:
   - ns.yaml
+  - rayhunter.yaml
+  - modem.yaml
+  - router.yaml
   - allsky-mcswain-dev.yaml
   - home-mcswain-dev.yaml
   - vacuum-mcswain-dev.yaml

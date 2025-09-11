@@ -1,0 +1,10 @@
+apiVersion: tailscale.com/v1alpha1
+kind: Connector
+metadata:
+  name: rayhunter
+  namespace: static-services
+spec:
+  proxyClass: tailscale
+  subnetRouter:
+    advertiseRoutes:
+    - 192.168.55.1/32
