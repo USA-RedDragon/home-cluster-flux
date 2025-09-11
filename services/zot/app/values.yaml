@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
 controllers:
-  zot-docker-proxy:
+  docker-proxy:
     strategy: RollingUpdate
     replicas: 3
     pod:
@@ -11,7 +11,7 @@ controllers:
         runAsGroup: 65534
         fsGroup: 65534
     containers:
-      zot-docker-proxy:
+      docker-proxy:
         image:
           repository: ghcr.io/usa-reddragon/zot-docker-proxy
           tag: v0.0.1
@@ -85,8 +85,8 @@ service:
     ports:
       http:
         port: 5000
-  zot-docker-proxy:
-    controller: zot-docker-proxy
+  docker-proxy:
+    controller: docker-proxy
     ports:
       http:
         port: 8080
@@ -156,13 +156,13 @@ persistence:
         zot:
           - path: /etc/zot/config.yaml
             subPath: config.yaml
-  zot-docker-proxy-config:
+  docker-proxy-config:
     enabled: true
     type: configMap
     name: zot
     advancedMounts:
-      zot-docker-proxy:
-        zot-docker-proxy:
+      docker-proxy:
+        docker-proxy:
           - path: /config.yaml
             subPath: config.yaml
   sessionkeys:
