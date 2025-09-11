@@ -113,10 +113,6 @@ configMaps:
           auth:
             failDelay: 3
             sessionKeysFile: /etc/zot/sessionkeys.json
-            bearer:
-              realm: testing
-              service: testing
-              cert: /ssl/tls.crt
             openid:
               providers:
                 oidc:
