@@ -14,7 +14,7 @@ controllers:
       docker-proxy:
         image:
           repository: ghcr.io/usa-reddragon/zot-docker-proxy
-          tag: v0.0.1
+          tag: v0.0.2@sha256:0ed03e9b4ef3588d298c8721152ebf4eb7055b218a45ece9bc9802eb71f6cc26
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
@@ -53,7 +53,7 @@ controllers:
         - /etc/zot/config.yaml
         image:
           repository: ghcr.io/project-zot/zot
-          tag: v2.1.8
+          tag: v2.1.8@sha256:cd2aea942f428630bcb4190542be6abd35e14177aab84fc7ccad0dca8ecb363d
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
