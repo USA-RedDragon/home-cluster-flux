@@ -146,7 +146,10 @@ configMaps:
                 content:
                   - prefix: "/usa-reddragon/kubelet"
                     stripPrefix: false
-                    destination: "/ghcr.io/kubelet"
+                    destination: "/ghcr.io"
+                    tags:
+                      regex: ".*"
+                      semver: false
 
         storage:
           rootDirectory: /tmp/zot
