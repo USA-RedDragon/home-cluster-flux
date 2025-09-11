@@ -1,0 +1,29 @@
+replicaCount: 2
+
+operator:
+  image:
+    repository: hashicorp/hcp-terraform-operator
+    tag: "2.9.2"
+
+  syncPeriod: 1h
+
+  tfeAddress: "https://tfe.mcswain.dev"
+
+kubeRbacProxy:
+  image:
+    repository: quay.io/brancz/kube-rbac-proxy
+    tag: v0.19.1
+
+controllers:
+  agentPool:
+    workers: 1
+    syncPeriod: 30s
+  module:
+    workers: 1
+    syncPeriod: 5m
+  project:
+    workers: 1
+    syncPeriod: 5m
+  workspace:
+    workers: 1
+    syncPeriod: 5m
