@@ -49,6 +49,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#gittea">gittea</a></li>
   <li><a href="#go2rtc">go2rtc</a></li>
   <li><a href="#golink">golink</a></li>
+  <li><a href="#hcp-operator">hcp-operator</a></li>
   <li><a href="#healthchecks">healthchecks</a></li>
   <li><a href="#hp-scan-to">hp-scan-to</a></li>
   <li><a href="#imagescraper-mesonet">imagescraper-mesonet</a></li>
@@ -523,6 +524,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>golink</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/golink/helm.yaml">golink</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>hcp-operator</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>hcp-operator</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/hcp-operator/app/helm.yaml">hcp-operator</a></td>
     <td></td>
   </tr>
 </table>
