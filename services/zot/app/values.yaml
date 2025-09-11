@@ -132,6 +132,7 @@ configMaps:
             prometheus:
               path: /metrics
           sync:
+            enable: true
             DownloadDir: /tmp/zot
             registries:
               - urls:
@@ -144,7 +145,7 @@ configMaps:
                 content:
                   - prefix: "/usa-reddragon/kubelet"
                     stripPrefix: false
-                    destination: "/ghcr.io"
+                    destination: "/ghcr.io/kubelet"
 
         storage:
           rootDirectory: /tmp/zot
