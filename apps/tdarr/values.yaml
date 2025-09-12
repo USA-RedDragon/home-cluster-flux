@@ -12,7 +12,7 @@ controllers:
     containers:
       tdarr:
         image:
-          repository: ghcr.io/usa-reddragon/tdarr
+          repository: jacob.pub/ghcr.io/usa-reddragon/tdarr
           tag: 2.33.01
           pullPolicy: IfNotPresent
         resources:

@@ -5,7 +5,7 @@ metadata:
   namespace: atuin
 spec:
   instances: 3
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.5-22
+  imageName: jacob.pub/ghcr.io/cloudnative-pg/postgresql:17.5-22
   enableSuperuserAccess: true
   bootstrap:
     recovery:

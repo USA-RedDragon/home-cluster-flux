@@ -16,7 +16,7 @@ controllers:
     containers:
       wheresmyscope:
         image:
-          repository: ghcr.io/usa-reddragon/wheresmyscope
+          repository: jacob.pub/ghcr.io/usa-reddragon/wheresmyscope
           tag: v1.0.1@sha256:3c44f72725ffd4ee3d3fd7b221ed8247cbdf8e2466e4b9adbc23a091d1c0db9f
           pullPolicy: IfNotPresent
         resources:

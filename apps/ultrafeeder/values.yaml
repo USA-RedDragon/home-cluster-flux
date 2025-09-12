@@ -6,7 +6,7 @@ controllers:
     containers:
       ultrafeeder:
         image:
-          repository: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder
+          repository: jacob.pub/ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder
           tag: telegraf-build-757
         probes:
           liveness:

@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/usa-reddragon/nginx-rtmp
+  repository: jacob.pub/ghcr.io/usa-reddragon/nginx-rtmp
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "1.29.0@sha256:3d0770769efcc83c1f03df2499bf409e408a155f40fc8cf9dbe96a31cbf71f04"

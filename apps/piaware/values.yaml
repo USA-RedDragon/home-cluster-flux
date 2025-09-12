@@ -10,7 +10,7 @@ controllers:
     containers:
       piaware:
         image:
-          repository: ghcr.io/sdr-enthusiasts/docker-piaware
+          repository: jacob.pub/ghcr.io/sdr-enthusiasts/docker-piaware
           tag: latest-build-628
         probes:
           liveness:

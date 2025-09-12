@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/usa-reddragon/rdio-scanner
+  repository: jacob.pub/ghcr.io/usa-reddragon/rdio-scanner
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "v7.2.23"
