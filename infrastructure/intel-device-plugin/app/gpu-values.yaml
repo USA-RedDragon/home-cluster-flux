@@ -1,12 +1,12 @@
 name: gpudeviceplugin-sample
 
 image:
-  hub: intel
+  hub: jacob.pub/docker.io/intel
   tag: ""
 
 initImage:
   enable: false
-  hub: intel
+  hub: jacob.pub/docker.io/intel
   tag: ""
 
 sharedDevNum: 1
