@@ -33,6 +33,8 @@ spec:
   upgrade:
     crds: CreateReplace
   values:
+    image:
+      repository: jacob.pub/ghcr.io/cloudnative-pg/cloudnative-pg
     resources:
       requests:
         memory: 600Mi

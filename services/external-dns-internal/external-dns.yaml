@@ -34,6 +34,8 @@ spec:
   upgrade:
     disableSchemaValidation: true
   values:
+    image:
+      repository: jacob.pub/registry.k8s.io/external-dns/external-dns
     provider:
       name: webhook
       webhook:

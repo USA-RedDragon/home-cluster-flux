@@ -3,9 +3,7 @@ nodeSelector:
 
 manager:
   image:
-    hub: intel
-    tag: ""
-    pullPolicy: IfNotPresent
+    hub: jacob.pub/docker.io/intel
 
 kubeRbacProxy:
   image:
