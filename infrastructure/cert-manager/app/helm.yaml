@@ -30,6 +30,8 @@ spec:
       version: v1.18.2
       interval: 1m0s
   values:
+    image:
+      registry: jacob.pub
     installCRDs: true
     resources:
       requests:
@@ -38,6 +40,8 @@ spec:
       limits:
         memory: 100Mi
     webhook:
+      image:
+        registry: jacob.pub
       resources:
         requests:
           cpu: 10m
@@ -45,6 +49,8 @@ spec:
         limits:
           memory: 75Mi
     cainjector:
+      image:
+        registry: jacob.pub
       resources:
         requests:
           cpu: 10m
