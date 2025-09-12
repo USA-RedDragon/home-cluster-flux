@@ -5,13 +5,11 @@
 replicaCount: 1
 
 image:
-  repository: redis
+  repository: jacob.pub/docker.io/redis
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "8"
 
-imagePullSecrets:
-- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 

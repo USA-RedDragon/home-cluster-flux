@@ -8,14 +8,12 @@ controllers:
         - key: node-role.kubernetes.io/control-plane
           operator: Exists
           effect: NoSchedule
-      imagePullSecrets:
-        - name: registry-docker-hub
       securityContext:
         fsGroup: 1000
     containers:
       ping-exporter:
         image:
-          repository: czerwonk/ping_exporter
+          repository: jacob.pub/docker.io/czerwonk/ping_exporter
           tag: v1.1.4@sha256:bb748e3ec728d779544dca8207321abbdf4121a15d259c6df7563db332dc6b38
           pullPolicy: IfNotPresent
         resources:

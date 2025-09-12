@@ -37,8 +37,6 @@ controllers:
       timeZone: America/Chicago
       concurrencyPolicy: Forbid
     pod:
-      imagePullSecrets:
-        - name: registry-docker-hub
       securityContext:
         fsGroup: 65535
     initContainers:
@@ -79,8 +77,6 @@ controllers:
       timeZone: America/Chicago
       concurrencyPolicy: Forbid
     pod:
-      imagePullSecrets:
-        - name: registry-docker-hub
       securityContext:
         fsGroup: 65535
     initContainers:
@@ -121,8 +117,6 @@ controllers:
       timeZone: America/Chicago
       concurrencyPolicy: Forbid
     pod:
-      imagePullSecrets:
-        - name: registry-docker-hub
       securityContext:
         fsGroup: 65535
     initContainers:

@@ -5,13 +5,11 @@
 replicaCount: 0
 
 image:
-  repository: healthchecks/healthchecks
+  repository: jacob.pub/docker.io/healthchecks/healthchecks
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "v3.11@sha256:f4c6c4cc4f36daa24d8088b99160e2913410d7f9925912e66695065b880af983"
 
-imagePullSecrets:
-- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 

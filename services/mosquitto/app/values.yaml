@@ -5,15 +5,13 @@ controllers:
     strategy: Recreate
     replicas: 1
     pod:
-      imagePullSecrets:
-        - name: registry-docker-hub
       priorityClassName: system-cluster-critical
       securityContext:
         fsGroup: 1883
     containers:
       mosquitto:
         image:
-          repository: eclipse-mosquitto
+          repository: jacob.pub/docker.io/eclipse-mosquitto
           tag: 2.0.22@sha256:d219d3a72847f3aed6a1d66975972d3b17f86e39e8f6f6b86b4088b879c1a2d6
           pullPolicy: IfNotPresent
         securityContext:

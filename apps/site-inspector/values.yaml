@@ -5,13 +5,11 @@
 replicaCount: 1
 
 image:
-  repository: siteinspector/siteinspector
+  repository: jacob.pub/docker.io/siteinspector/siteinspector
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "1.2.0@sha256:836acf082e6fa9f0d1ab15a281556a1e266324e6f204a5de1d2adc4e6b5dd361"
 
-imagePullSecrets:
-- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 

@@ -5,13 +5,11 @@
 replicaCount: 1
 
 image:
-  repository: mpepping/cyberchef
+  repository: jacob.pub/docker.io/mpepping/cyberchef
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "v10.19.4@sha256:91e04eaaa1ba1eac6b8e410d6f7b340e1ea0450d48ccbb52ec67ce6faa3672c5"
 
-imagePullSecrets:
-- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 
