@@ -9,6 +9,8 @@ spec:
     spec:
       template:
         spec:
+          imagePullSecrets:
+          - name: registry-zot
           containers:
           - name: backup
             image: jacob.pub/docker.io/alpine:3.22.1
