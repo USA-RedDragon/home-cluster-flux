@@ -31,7 +31,12 @@ spec:
     mode: enabled
   suspend: false
   values:
+    ml-api:
+      image:
+        repository: jacob.pub/ghcr.io/gabe565/obico/ml-api
     server:
+      image:
+        repository: jacob.pub/ghcr.io/gabe565/obico/web
       env:
         EMAIL_HOST: email.mcswain.dev
         EMAIL_HOST_USER: obico
