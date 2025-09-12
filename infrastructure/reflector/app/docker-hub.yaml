@@ -1,6 +1,6 @@
 apiVersion: v1
 data:
-    .dockerconfigjson: ENC[AES256_GCM,data:Zf6nL+n+9rRISw67Ts2y714vNkdDzjx10J/D7Hm6Y5gvAwBfJmiGvW7I5zO6lbxQCd+Dy7KcZMKD+ZZlDxUs9atYV4rv/EEueKg3y+Tc3eR06oddquY3RWhEK5EBsmYnGK2XrSLR8gUF52Hiu9n/6iq49p3lo0cgrvSfDffOtc5GxUnCAwIPuJUNmNO4sAe3QKz4p7oOaKh9LBXwJPK6dcFcKssNi+ErNhu+Sb3AyhCtAgz/HOitH2OoVB8=,iv:/aFs3BJu6KCDsEVhL6E6nJX6IYO7aZnk8zwyeHckqm4=,tag:3uASBmKFLffCy+84pTzeeQ==,type:str]
+    .dockerconfigjson: ENC[AES256_GCM,data:GwgZe4ROCAUMN3PheszMBjVb5OYjSGqYN6HLlzzH7I/eU8/9A+4G03zjMOzF3R9AugH6UzDA9DU+vCRbzw3693CLfmD4StRSrE37kKTgINOJN/8NsKsdSkSJ5lNqSuz1xPSsXe69YRxBltz05Yr/PsEeRt0R54k5JwqdxR70kUkop7UhJOgz8NV37Rl1t+g/vsPNmhYz7Z68GMU5ol5r2iQauLL9N3zuDxVubRlXMi/otPvwqNa09O13pMp/2WJ9pAuvnA==,iv:xP2RMgEhBwQ81qXnkWgAEpGjz6cFF/EyroQ173wprk8=,tag:neXdaHsmNIccTvx4Hps3yw==,type:str]
 kind: Secret
 metadata:
     name: registry-docker-hub
@@ -15,8 +15,8 @@ sops:
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2023-08-13T12:08:19Z"
-    mac: ENC[AES256_GCM,data:zrV66cmvqCuPvbwpQqFv7tnSXj7IvwxSTKvX8/FJ5u3XKkuburjpKf7pckP2n1pA7q45HWSul5l/tRnK+mIQzy4oEnfz18dvlNOhOAqpoqqNuiapo8P6c4YN7f37OMVcLjJyUKKAHcp/ccFR50Q9Eypador6PpyFmeBwFT1Dij4=,iv:77JIDTKl0x4JcgtQZF/YIXB5fb6Ie0qAoy7HgBgMTns=,tag:s4papt/fRZgJwTsiwV590g==,type:str]
+    lastmodified: "2025-09-12T20:48:10Z"
+    mac: ENC[AES256_GCM,data:AjPPQOvE9lD795rtnv/va8PirLdT6/9nDHcD4IcTUFguvbPmW/KuRO74Kg1i9GV2FXCEz9b1NZLXfNkvOgeZCk/symTdqT2Xfk20UwdFX0A5zwS5mP641uRSfDr8O7UeQHqiCPNBE8KKhRvmlQZt2lACHmmVsSP0zZGqK5YV/XQ=,iv:pP50hjSmCbbDQ1cP6TXGSGqbEsydQYq/E/csFofbRy4=,tag:wls3uXrlDJ63aqYLoxJcpg==,type:str]
     pgp:
         - created_at: "2023-08-13T12:08:19Z"
           enc: |
