@@ -7,7 +7,7 @@ manager:
 
 kubeRbacProxy:
   image:
-    hub: gcr.io
+    hub: jacob.pub/gcr.io
     hubRepo: kubebuilder
     tag: v0.15.0
     pullPolicy: IfNotPresent
