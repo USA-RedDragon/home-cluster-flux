@@ -14,7 +14,7 @@ controllers:
       docker-proxy:
         image:
           repository: ghcr.io/usa-reddragon/zot-docker-proxy
-          tag: v0.0.4@sha256:5a13c11ae351efb13edd448ae1531d48f96fc2643c81700db5e58ea962c01b2b
+          tag: v0.0.5@sha256:c7a939efd06c8696c2c430833a98f39cb44933c23e2cfc815a7547a275d8e9ad
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
