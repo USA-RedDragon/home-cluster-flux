@@ -172,6 +172,26 @@ configMaps:
                   - prefix: "**"
                     stripPrefix: false
                     destination: "/docker.io"
+              - urls:
+                  - https://quay.io
+                onDemand: true
+                maxRetries: 5
+                retryDelay: 5m
+                onlySigned: false
+                content:
+                  - prefix: "**"
+                    stripPrefix: false
+                    destination: "/quay.io"
+              - urls:
+                  - https://registry.k8s.io
+                onDemand: true
+                maxRetries: 5
+                retryDelay: 5m
+                onlySigned: false
+                content:
+                  - prefix: "**"
+                    stripPrefix: false
+                    destination: "/registry.k8s.io"
 
         storage:
           rootDirectory: /tmp/zot
