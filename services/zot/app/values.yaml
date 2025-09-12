@@ -152,7 +152,6 @@ configMaps:
                   - prefix: "usa-reddragon/**"
                     stripPrefix: false
                     destination: "/ghcr.io"
-                    preserveDigest: true
               - urls:
                   - https://ghcr.io
                 onDemand: true
