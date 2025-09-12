@@ -229,7 +229,6 @@ persistence:
     enabled: true
     type: emptyDir
     medium: Memory
-    sizeLimit: 5Gi
     advancedMounts:
       zot:
         zot:
