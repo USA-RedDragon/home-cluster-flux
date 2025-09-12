@@ -144,7 +144,7 @@ configMaps:
               - urls:
                   - https://ghcr.io
                 onDemand: false
-                pollInterval: 1h
+                pollInterval: 5m
                 maxRetries: 5
                 retryDelay: 5m
                 onlySigned: false
@@ -152,6 +152,7 @@ configMaps:
                   - prefix: "usa-reddragon/**"
                     stripPrefix: false
                     destination: "/ghcr.io"
+                    preserveDigest: true
               - urls:
                   - https://ghcr.io
                 onDemand: true
