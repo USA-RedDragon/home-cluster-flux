@@ -25,49 +25,51 @@ ingress:
   ingressClassName: tailscale
   host: longhorn
   tls: true
+global:
+  imageRegistry: jacob.pub
 image:
   longhorn:
     engine:
-      repository: jacob.pub/docker.io/longhornio/longhorn-engine
+      repository: docker.io/longhornio/longhorn-engine
       tag: v1.9.1
     manager:
-      repository: jacob.pub/docker.io/longhornio/longhorn-manager
+      repository: docker.io/longhornio/longhorn-manager
       tag: v1.9.1
     ui:
-      repository: jacob.pub/docker.io/longhornio/longhorn-ui
+      repository: docker.io/longhornio/longhorn-ui
       tag: v1.9.1
     instanceManager:
-      repository: jacob.pub/docker.io/longhornio/longhorn-instance-manager
+      repository: docker.io/longhornio/longhorn-instance-manager
       tag: v1.9.1
     shareManager:
-      repository: jacob.pub/docker.io/longhornio/longhorn-share-manager
+      repository: docker.io/longhornio/longhorn-share-manager
       tag: v1.9.1
     backingImageManager:
-      repository: jacob.pub/docker.io/longhornio/backing-image-manager
+      repository: docker.io/longhornio/backing-image-manager
       tag: v1.9.1
     supportBundleKit:
-      repository: jacob.pub/docker.io/longhornio/support-bundle-kit
+      repository: docker.io/longhornio/support-bundle-kit
       tag: v0.0.67
   csi:
     attacher:
-      repository: jacob.pub/docker.io/longhornio/csi-attacher
+      repository: docker.io/longhornio/csi-attacher
       tag: v4.9.0
     provisioner:
-      repository: jacob.pub/docker.io/longhornio/csi-provisioner
+      repository: docker.io/longhornio/csi-provisioner
       tag: v5.3.0
     nodeDriverRegistrar:
-      repository: jacob.pub/docker.io/longhornio/csi-node-driver-registrar
+      repository: docker.io/longhornio/csi-node-driver-registrar
       tag: v2.14.0
     resizer:
-      repository: jacob.pub/docker.io/longhornio/csi-resizer
+      repository: docker.io/longhornio/csi-resizer
       tag: v1.14.0
     snapshotter:
-      repository: jacob.pub/docker.io/longhornio/csi-snapshotter
+      repository: docker.io/longhornio/csi-snapshotter
       tag: v8.3.0
     livenessProbe:
-      repository: jacob.pub/docker.io/longhornio/livenessprobe
+      repository: docker.io/longhornio/livenessprobe
       tag: v2.16.0
   openshift:
     oauthProxy:
-      repository: jacob.pub/docker.io/longhornio/openshift-origin-oauth-proxy
+      repository: docker.io/longhornio/openshift-origin-oauth-proxy
       tag: 4.15
