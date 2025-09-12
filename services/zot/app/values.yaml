@@ -149,7 +149,7 @@ configMaps:
                 retryDelay: 5m
                 onlySigned: false
                 content:
-                  - prefix: "usa-reddragon/**"
+                  - prefix: "/usa-reddragon/**"
                     stripPrefix: false
                     destination: "/ghcr.io"
               - urls:
