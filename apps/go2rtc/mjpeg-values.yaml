@@ -5,13 +5,11 @@
 replicaCount: 1
 
 image:
-  repository: alexxit/go2rtc
+  repository: jacob.pub/docker.io/alexxit/go2rtc
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "1.9.9"
 
-imagePullSecrets:
-- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 

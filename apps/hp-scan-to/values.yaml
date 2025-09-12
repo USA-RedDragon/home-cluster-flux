@@ -7,13 +7,11 @@ replicaCount: 1
 hostname: paperless
 
 image:
-  repository: manuc66/node-hp-scan-to
+  repository: jacob.pub/docker.io/manuc66/node-hp-scan-to
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest@sha256:758921034cd4ff49c270a791093c5a66bc524b0539b9712541a90f72acad3422"
 
-imagePullSecrets:
-- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 

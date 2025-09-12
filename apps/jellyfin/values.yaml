@@ -4,8 +4,6 @@ controllers:
   jellyfin:
     replicas: 1
     pod:
-      imagePullSecrets:
-        - name: registry-docker-hub
       nodeSelector:
         nvidia.com/gpu.product: NVIDIA-GeForce-RTX-2070
       runtimeClassName: nvidia
@@ -17,7 +15,7 @@ controllers:
     containers:
       jellyfin:
         image:
-          repository: jellyfin/jellyfin
+          repository: jacob.pub/docker.io/jellyfin/jellyfin
           tag: 10.10.7
           pullPolicy: IfNotPresent
         resources:

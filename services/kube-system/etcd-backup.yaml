@@ -9,11 +9,9 @@ spec:
     spec:
       template:
         spec:
-          imagePullSecrets:
-          - name: registry-docker-hub
           containers:
           - name: backup
-            image: alpine:3.22.1
+            image: jacob.pub/docker.io/alpine:3.22.1
             imagePullPolicy: IfNotPresent
             volumeMounts:
             - name: backups
