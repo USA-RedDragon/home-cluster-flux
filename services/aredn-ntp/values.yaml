@@ -156,7 +156,7 @@ persistentVolumes:
 
 extraContainers:
 - name: ntp
-  image: cturra/ntp@sha256:8ee0cfcabfa3d0d77dde02cb2930da02da8c33a2b7393bb429010cbae0b9d509
+  image: jacob.pub/docker.io/cturra/ntp@sha256:8ee0cfcabfa3d0d77dde02cb2930da02da8c33a2b7393bb429010cbae0b9d509
   imagePullPolicy: IfNotPresent
   ports:
     - containerPort: 123
