@@ -35,6 +35,11 @@ controllers:
             value: https://jacob.pub
           - name: CORS_ALLOWED_ORIGINS
             value: https://jacob.pub
+          - name: SECRET
+            valueFrom:
+              secretKeyRef:
+                name: docker-proxy
+                key: secret
   zot:
     strategy: RollingUpdate
     replicas: 3
