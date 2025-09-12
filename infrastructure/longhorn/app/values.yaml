@@ -31,7 +31,7 @@ image:
   longhorn:
     engine:
       repository: docker.io/longhornio/longhorn-engine
-      tag: v1.9.1
+      tag: 4408836
     manager:
       repository: docker.io/longhornio/longhorn-manager
       tag: v1.9.1
