@@ -22,8 +22,6 @@ spec:
                 operator: AnyNotIn
                 value:
                 - ghcr.io
-                - quay.io
-                - registry.k8s.io
                 - lscr.io
                 - images.releases.hashicorp.com
                 - nvcr.io
