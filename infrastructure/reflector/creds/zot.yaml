@@ -1,6 +1,6 @@
 apiVersion: v1
 stringData:
-    .dockerconfigjson: ENC[AES256_GCM,data:i7N23xaTHS3r3wFuAGmZqVMRqzg3D/8K2YThL+H4c04snJB9PxkujmBb/laZrWqd+ioGWLp6V7ty6GUT90VbWeDz9QhgXvUvaB++lQzMiGduZAmWp/CjgOKRhFGV0lK9rjpx,iv:1ESKb1e38S+6Y3s52+ohnvoojOn6vk5u68W+xMyyz6E=,tag:hyrAG6iUgtf2omwoadmPaQ==,type:str]
+    .dockerconfigjson: ENC[AES256_GCM,data:Hgoqkl7vbXu6Ktvwx9MraQFbEORM7bZpmcBD93GCmsyQZ4QuR3YedM8cSnPjpqtk8ibi6lEZmQrxYcGYAEUTr56DX+47ZrZOm/aV20F/RTj6zPOBt9So6eNxH3CtgKy9G3GOMCqmCR8cl77KGpH/1S1TSeOQ1v5wunxdLCE77iBMfKTyfph7,iv:9nw6FFYztupcojkxUbKZJgR6X7Pz4uSwcqTcxDpA7Gc=,tag:sbL13zvAasvCrwWUV1QfHQ==,type:str]
 kind: Secret
 metadata:
     name: registry-zot
@@ -15,8 +15,8 @@ sops:
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2025-09-12T18:51:26Z"
-    mac: ENC[AES256_GCM,data:x964sE/9lF5OPFB1AQo+J0bI+fuZcHfBqkwI5KiNxC//LTV7BlrEmFx9pJhTb42PrCsz3VizWZBerupmapgIRt09eDQBJkkTsEnm+TkGaLlAHNmfd6Fxgu20Lg8xrFzi4+17Nx9avhMltSEkNfMhA0vuFMSvLyX0LR4XgklsXuA=,iv:LtkB/7CV33XGEv/NK7lGfAk+fR8tbf4kWl+18qhV4zI=,tag:4kSYDa3o7qMRHySX4NCySg==,type:str]
+    lastmodified: "2025-09-12T18:59:35Z"
+    mac: ENC[AES256_GCM,data:FVXV8uvvFSvTA4IdLHQAxwdP3PYqek66ZowNk1R/UT0DkaUOV51eFtxIX/whl9JdRFlEtWnEcoIrKk4vRDYDtqUXvzDuP+DrMzJvLYf5uNPy87tH4YANU3pdSUsCsPZXX+1E9qUqmCCxDVItVFo9qECHhygFNPgf5Q4jQ9nHDgw=,iv:ozrnJyxvgGoGJuKzssOowNkYfzn6D8IhqyijgxRvi88=,tag:UWtVeio/G/xgF/WBvySKRA==,type:str]
     pgp:
         - created_at: "2023-08-14T01:28:36Z"
           enc: |
