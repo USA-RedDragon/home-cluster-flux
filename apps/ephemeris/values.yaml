@@ -44,7 +44,7 @@ controllers:
     initContainers:
       ephemeris:
         image:
-          repository: ghcr.io/rmitchellscott/ephemeris
+          repository: jacob.pub/ghcr.io/rmitchellscott/ephemeris
           tag: v1.6.5@sha256:3547b4f8669acc4152f6d3a4c2d0aa50a130033ec6a722fe2987776b67e19581
           pullPolicy: IfNotPresent
         env:
@@ -54,7 +54,7 @@ controllers:
     containers:
       process-and-upload:
         image:
-          repository: ghcr.io/usa-reddragon/magick-s3
+          repository: jacob.pub/ghcr.io/usa-reddragon/magick-s3
           tag: 7.1.1.41@sha256:b29e651570230f8bbfd6060f654d147cc60ef4738018615d63417fa50c7f45c5
           pullPolicy: IfNotPresent
         securityContext:
@@ -86,7 +86,7 @@ controllers:
     initContainers:
       ephemeris:
         image:
-          repository: ghcr.io/rmitchellscott/ephemeris
+          repository: jacob.pub/ghcr.io/rmitchellscott/ephemeris
           tag: v1.6.5@sha256:3547b4f8669acc4152f6d3a4c2d0aa50a130033ec6a722fe2987776b67e19581
           pullPolicy: IfNotPresent
         env:
@@ -96,7 +96,7 @@ controllers:
     containers:
       process-and-upload:
         image:
-          repository: ghcr.io/usa-reddragon/magick-s3
+          repository: jacob.pub/ghcr.io/usa-reddragon/magick-s3
           tag: 7.1.1.41@sha256:b29e651570230f8bbfd6060f654d147cc60ef4738018615d63417fa50c7f45c5
           pullPolicy: IfNotPresent
         securityContext:
@@ -128,7 +128,7 @@ controllers:
     initContainers:
       ephemeris:
         image:
-          repository: ghcr.io/rmitchellscott/ephemeris
+          repository: jacob.pub/ghcr.io/rmitchellscott/ephemeris
           tag: v1.6.5@sha256:3547b4f8669acc4152f6d3a4c2d0aa50a130033ec6a722fe2987776b67e19581
           pullPolicy: IfNotPresent
         env:
@@ -139,7 +139,7 @@ controllers:
     containers:
       process-and-upload:
         image:
-          repository: ghcr.io/usa-reddragon/magick-s3
+          repository: jacob.pub/ghcr.io/usa-reddragon/magick-s3
           tag: 7.1.1.41@sha256:b29e651570230f8bbfd6060f654d147cc60ef4738018615d63417fa50c7f45c5
           pullPolicy: IfNotPresent
         securityContext:

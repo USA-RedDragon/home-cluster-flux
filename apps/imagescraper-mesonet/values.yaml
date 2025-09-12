@@ -11,7 +11,7 @@ x-scrape-job: &scrapejob
   containers:
     process-and-upload: &scrapejob-container
       image:
-        repository: ghcr.io/usa-reddragon/magick-s3
+        repository: jacob.pub/ghcr.io/usa-reddragon/magick-s3
         tag: 7.1.1.41@sha256:b29e651570230f8bbfd6060f654d147cc60ef4738018615d63417fa50c7f45c5
         pullPolicy: IfNotPresent
       securityContext:
@@ -47,7 +47,7 @@ controllers:
     containers:
       viewer:
         image:
-          repository: ghcr.io/usa-reddragon/mesonet-timelapse-viewer
+          repository: jacob.pub/ghcr.io/usa-reddragon/mesonet-timelapse-viewer
           tag: v0.0.3@sha256:1d95c21f2f38466fbeab33c32ab7c5c0e5436223e9ee857aef7649b0cf9e714d
           pullPolicy: IfNotPresent
         resources:

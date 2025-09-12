@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/usa-reddragon/weewx
+  repository: jacob.pub/ghcr.io/usa-reddragon/weewx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "5.1.0@sha256:fe6b548275423a3e3033231d949c7130c2e1b0a8e4fc66c99ccd5efa77824f68"

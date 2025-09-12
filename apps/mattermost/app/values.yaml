@@ -65,7 +65,7 @@ initContainerImage:
 mattermostApp:
   replicaCount: 2
   image:
-    repository: ghcr.io/usa-reddragon/mattermost
+    repository: jacob.pub/ghcr.io/usa-reddragon/mattermost
     tag: v10.11.2@sha256:060f6aa4fb929202aee2ba169459ea84f9c8795a4bef2014e7ae3a1c1a7b1dd1
     pullPolicy: IfNotPresent
 

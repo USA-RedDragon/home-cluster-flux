@@ -40,7 +40,7 @@ server:
   controller:
     strategy: Recreate
   image:
-    repository: ghcr.io/immich-app/immich-server
+    repository: jacob.pub/ghcr.io/immich-app/immich-server
     tag: v1.141.1
     pullPolicy: IfNotPresent
   env:
@@ -90,7 +90,7 @@ server:
 microservices:
   enabled: true
   image:
-    repository: ghcr.io/immich-app/immich-server
+    repository: jacob.pub/ghcr.io/immich-app/immich-server
     tag: v1.141.1
     pullPolicy: IfNotPresent
   resources:
@@ -105,7 +105,7 @@ machine-learning:
   controller:
     strategy: Recreate
   image:
-    repository: ghcr.io/immich-app/immich-machine-learning
+    repository: jacob.pub/ghcr.io/immich-app/immich-machine-learning
     tag: v1.142.0
     pullPolicy: IfNotPresent
   env:

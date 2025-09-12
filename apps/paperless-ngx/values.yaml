@@ -5,14 +5,11 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/paperless-ngx/paperless-ngx
+  repository: jacob.pub/ghcr.io/paperless-ngx/paperless-ngx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "2.18.4@sha256:7729fccc4a763ca85bac26b9c4a495b6816e59be8fbd27d29c0e773201bfc6e7"
 
-imagePullSecrets:
-- name: registry-ghcr
-- name: registry-docker-hub
 nameOverride: ""
 fullnameOverride: ""
 
@@ -175,7 +172,7 @@ extraContainers:
   imagePullPolicy: IfNotPresent
   name: redis
   resources: {}
-- image: ghcr.io/paperless-ngx/tika:2.9.1-minimal@sha256:20db3df89eaeb1b271dd840888fe909b88b12f4b86ef641ec07a1d45d4c5168f
+- image: jacob.pub/ghcr.io/paperless-ngx/tika:2.9.1-minimal@sha256:20db3df89eaeb1b271dd840888fe909b88b12f4b86ef641ec07a1d45d4c5168f
   imagePullPolicy: IfNotPresent
   name: tika
   resources: {}

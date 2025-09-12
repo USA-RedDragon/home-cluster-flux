@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/usa-reddragon/mesh-base
+  repository: jacob.pub/ghcr.io/usa-reddragon/mesh-base
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "main@sha256:84dd2d2b08aac476bf35f210957e184fae3836469fb909d123bb37c5d1a16693"
@@ -182,7 +182,7 @@ resources:
     memory: 6Mi
 
 initContainers:
-- image: ghcr.io/usa-reddragon/wireguard:main@sha256:1fca4f1fc917a46e1443dffc1201ed9f516e12fb29dba9471e74762834901cc6
+- image: jacob.pub/ghcr.io/usa-reddragon/wireguard:main@sha256:1fca4f1fc917a46e1443dffc1201ed9f516e12fb29dba9471e74762834901cc6
   name: wireguard-init
   securityContext:
     privileged: true

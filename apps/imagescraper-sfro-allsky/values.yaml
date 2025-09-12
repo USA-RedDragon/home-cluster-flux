@@ -13,7 +13,7 @@ controllers:
     containers:
       viewer:
         image:
-          repository: ghcr.io/usa-reddragon/allsky-timelapse-viewer
+          repository: jacob.pub/ghcr.io/usa-reddragon/allsky-timelapse-viewer
           tag: v0.0.1@sha256:a55a3ee64ecdb93172c4c6f14d0556f27f6e8c058b73e08302f824f1fc5f0bce
           pullPolicy: IfNotPresent
         resources:
@@ -49,7 +49,7 @@ controllers:
     containers:
       process-and-upload:
         image:
-          repository: ghcr.io/usa-reddragon/magick-s3
+          repository: jacob.pub/ghcr.io/usa-reddragon/magick-s3
           tag: 7.1.1.41@sha256:b29e651570230f8bbfd6060f654d147cc60ef4738018615d63417fa50c7f45c5
           pullPolicy: IfNotPresent
         securityContext:
