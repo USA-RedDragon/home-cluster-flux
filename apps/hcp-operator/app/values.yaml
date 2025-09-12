@@ -11,7 +11,7 @@ operator:
 
 kubeRbacProxy:
   image:
-    repository: quay.io/brancz/kube-rbac-proxy
+    repository: jacob.pub/quay.io/brancz/kube-rbac-proxy
     tag: v0.19.1
 
 controllers:
