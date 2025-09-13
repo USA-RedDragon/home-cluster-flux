@@ -45,6 +45,9 @@ spec:
         kyverno: true
     ui:
       enabled: true
+      image:
+        registry: jacob.pub
+        repository: ghcr.io/kyverno/policy-reporter-ui
       displayMode: dark
       plugins:
         kyverno: true
