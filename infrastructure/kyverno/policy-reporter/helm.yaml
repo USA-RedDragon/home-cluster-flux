@@ -33,6 +33,8 @@ spec:
     image:
       registry: jacob.pub
       repository: ghcr.io/kyverno/policy-reporter
+    imagePullSecrets:
+      - name: registry-zot
     metrics:
       enabled: true
     monitoring:
