@@ -30,6 +30,9 @@ spec:
       version: '3.4.2'
       interval: 1m0s
   values:
+    image:
+      registry: jacob.pub
+      repository: ghcr.io/kyverno/policy-reporter
     metrics:
       enabled: true
     monitoring:
