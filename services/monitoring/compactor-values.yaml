@@ -5,8 +5,7 @@
 replicaCount: 1
 
 image:
-  registry: jacob.pub
-  repository: quay.io/thanos/thanos
+  repository: jacob.pub/quay.io/thanos/thanos
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: v0.39.2
