@@ -6,7 +6,7 @@ controllers:
     containers:
       apprise:
         image:
-          repository: lscr.io/linuxserver/apprise-api
+          repository: jacob.pub/lscr.io/linuxserver/apprise-api
           tag: 1.2.1
         probes:
           liveness:
