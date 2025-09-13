@@ -81,6 +81,8 @@ runtimeClassName: nvidia
 # Subcharts
 nfd:
   nameOverride: node-feature-discovery
+  image:
+    repository: jacob.pub/registry.k8s.io/nfd/node-feature-discovery
   enableNodeFeatureApi: false
   master:
     extraLabelNs:
