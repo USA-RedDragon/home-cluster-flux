@@ -31,6 +31,8 @@ spec:
     mode: enabled
   suspend: false
   values:
+    redis:
+      enabled: false
     ml-api:
       image:
         repository: jacob.pub/ghcr.io/gabe565/obico/ml-api
@@ -44,9 +46,17 @@ spec:
         EMAIL_PORT: '465'
         EMAIL_USE_TLS: 'False'
         EMAIL_USE_SSL: 'True'
+        REDIS_PASSWORD:
+          secretKeyRef:
+            name: valkey
+            key: valkey-password
+        REDIS_URL: redis://:$(REDIS_PASSWORD)@valkey:6379
       envFrom:
         - secretRef:
             name: obico
+
+      podLabels:
+        valkey-client: "true"
 
       persistence:
         data:
