@@ -976,7 +976,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>obico</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/obico/helm.yaml">obico</a></td>
-    <td></td>
+    <td><a href="apps/obico/valkey.yaml">valkey</a></td>
   </tr>
 </table>
 
