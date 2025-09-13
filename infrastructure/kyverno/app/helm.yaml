@@ -30,6 +30,9 @@ spec:
       version: '3.5.1'
       interval: 1m0s
   values:
+    global:
+      image:
+        registry: jacob.pub/reg.kyverno.io
     admissionController:
       container:
         resources:
