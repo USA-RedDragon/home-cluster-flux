@@ -1935,6 +1935,10 @@ kubeStateMetrics:
 ##
 kube-state-metrics:
   namespaceOverride: ""
+  image:
+    registry: jacob.pub
+    repository: registry.k8s.io/kube-state-metrics/kube-state-metrics
+    tag: v2.17.0
   rbac:
     create: true
   releaseLabel: true
