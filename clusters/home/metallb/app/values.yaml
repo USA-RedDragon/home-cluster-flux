@@ -11,13 +11,13 @@ prometheus:
 
 controller:
   image:
-    repository: jacob.pub/quay.io/metallb/controller
+    repository: quay.io/metallb/controller
     tag: v0.15.2
   resources: {}
 
 speaker:
   image:
-    repository: jacob.pub/quay.io/metallb/speaker
+    repository: quay.io/metallb/speaker
     tag: v0.15.2
   resources: {}
   updateStrategy:
@@ -25,7 +25,7 @@ speaker:
   frr:
     enabled: false
     image:
-      repository: jacob.pub/quay.io/frrouting/frr
+      repository: quay.io/frrouting/frr
       tag: 10.4.1
     metricsPort: 7473
     resources: {}
