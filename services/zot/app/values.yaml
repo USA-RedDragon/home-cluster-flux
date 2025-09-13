@@ -183,6 +183,36 @@ configMaps:
                     stripPrefix: false
                     destination: "/quay.io"
               - urls:
+                  - https://lscr.io
+                onDemand: true
+                maxRetries: 5
+                retryDelay: 5m
+                onlySigned: false
+                content:
+                  - prefix: "**"
+                    stripPrefix: false
+                    destination: "/lscr.io"
+              - urls:
+                  - https://nvcr.io
+                onDemand: true
+                maxRetries: 5
+                retryDelay: 5m
+                onlySigned: false
+                content:
+                  - prefix: "**"
+                    stripPrefix: false
+                    destination: "/nvcr.io"
+              - urls:
+                  - https://reg.kyverno.io
+                onDemand: true
+                maxRetries: 5
+                retryDelay: 5m
+                onlySigned: false
+                content:
+                  - prefix: "**"
+                    stripPrefix: false
+                    destination: "/reg.kyverno.io"
+              - urls:
                   - https://registry.k8s.io
                 onDemand: true
                 maxRetries: 5
