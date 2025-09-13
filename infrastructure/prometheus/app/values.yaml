@@ -897,7 +897,7 @@ grafana:
     image:
       registry: jacob.pub
       repository: docker.io/busybox
-      tag: 1.31.1
+      tag: 1.37.0
 
   envFromSecret: grafana-oauth
 
