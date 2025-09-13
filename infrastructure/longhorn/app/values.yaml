@@ -28,60 +28,46 @@ ingress:
 image:
   longhorn:
     engine:
-      registry: jacob.pub
-      repository: docker.io/longhornio/longhorn-engine
+      repository: longhornio/longhorn-engine
       tag: v1.9.1
     manager:
-      registry: jacob.pub
-      repository: docker.io/longhornio/longhorn-manager
+      repository: longhornio/longhorn-manager
       tag: v1.9.1
     ui:
-      registry: jacob.pub
-      repository: docker.io/longhornio/longhorn-ui
+      repository: longhornio/longhorn-ui
       tag: v1.9.1
     instanceManager:
-      registry: jacob.pub
-      repository: docker.io/longhornio/longhorn-instance-manager
+      repository: longhornio/longhorn-instance-manager
       tag: v1.9.1
     shareManager:
-      registry: jacob.pub
-      repository: docker.io/longhornio/longhorn-share-manager
+      repository: longhornio/longhorn-share-manager
       tag: v1.9.1
     backingImageManager:
-      registry: jacob.pub
-      repository: docker.io/longhornio/backing-image-manager
+      repository: longhornio/backing-image-manager
       tag: v1.9.1
     supportBundleKit:
-      registry: jacob.pub
-      repository: docker.io/longhornio/support-bundle-kit
+      repository: longhornio/support-bundle-kit
       tag: v0.0.67
   csi:
     attacher:
-      registry: jacob.pub
-      repository: docker.io/longhornio/csi-attacher
+      repository: longhornio/csi-attacher
       tag: v4.9.0
     provisioner:
-      registry: jacob.pub
-      repository: docker.io/longhornio/csi-provisioner
+      repository: longhornio/csi-provisioner
       tag: v5.3.0
     nodeDriverRegistrar:
-      registry: jacob.pub
-      repository: docker.io/longhornio/csi-node-driver-registrar
+      repository: longhornio/csi-node-driver-registrar
       tag: v2.14.0
     resizer:
-      registry: jacob.pub
-      repository: docker.io/longhornio/csi-resizer
+      repository: longhornio/csi-resizer
       tag: v1.14.0
     snapshotter:
-      registry: jacob.pub
-      repository: docker.io/longhornio/csi-snapshotter
+      repository: longhornio/csi-snapshotter
       tag: v8.3.0
     livenessProbe:
-      registry: jacob.pub
-      repository: docker.io/longhornio/livenessprobe
+      repository: longhornio/livenessprobe
       tag: v2.16.0
   openshift:
     oauthProxy:
-      registry: jacob.pub
-      repository: docker.io/longhornio/openshift-origin-oauth-proxy
+      repository: longhornio/openshift-origin-oauth-proxy
       tag: 4.15
