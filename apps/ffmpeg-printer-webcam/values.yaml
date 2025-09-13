@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: lscr.io/linuxserver/ffmpeg
+  repository: jacob.pub/lscr.io/linuxserver/ffmpeg
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "version-8.0-cli"
