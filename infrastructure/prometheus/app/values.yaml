@@ -899,12 +899,6 @@ grafana:
       repository: docker.io/busybox
       tag: 1.31.1
 
-  sidecar:
-    image:
-      registry: jacob.pub
-      repository: quay.io/kiwigrid/k8s-sidecar
-      tag: 1.30.10
-
   envFromSecret: grafana-oauth
 
   dashboardProviders:
@@ -1043,6 +1037,10 @@ grafana:
       - grafana.mcswain.dev
 
   sidecar:
+    image:
+      registry: jacob.pub
+      repository: quay.io/kiwigrid/k8s-sidecar
+      tag: 1.30.10
     dashboards:
       enabled: true
       label: grafana_dashboard
