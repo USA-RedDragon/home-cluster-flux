@@ -38,7 +38,7 @@ spec:
     mode: enabled
   values:
     image:
-      repository: ghcr.io/weaveworks/wego-app
+      repository: jacob.pub/ghcr.io/weaveworks/wego-app
       tag: v0.38.0
     envVars:
     - name: WEAVE_GITOPS_FEATURE_OIDC_BUTTON_LABEL
