@@ -33,6 +33,8 @@ spec:
     global:
       image:
         registry: jacob.pub/reg.kyverno.io
+      imagePullSecrets:
+        - name: registry-zot
     admissionController:
       container:
         resources:
