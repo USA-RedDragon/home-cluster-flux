@@ -883,6 +883,28 @@ grafana:
   enabled: true
   namespaceOverride: ""
 
+  image:
+    registry: jacob.pub
+    repository: docker.io/grafana/grafana
+    tag: 12.1.1
+
+  downloadDashboardsImage:
+    registry: jacob.pub
+    repository: docker.io/curlimages/curl
+    tag: 8.9.1
+
+  initChownData:
+    image:
+      registry: jacob.pub
+      repository: docker.io/busybox
+      tag: 1.31.1
+
+  sidecar:
+    image:
+      registry: jacob.pub
+      repository: quay.io/kiwigrid/k8s-sidecar
+      tag: 1.30.10
+
   envFromSecret: grafana-oauth
 
   dashboardProviders:
