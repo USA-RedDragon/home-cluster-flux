@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/docker.io/dgtlmoon/changedetection.io
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.50.13@sha256:621b67a0f9bf338f5e9f3befb736f486d57b180d770275c1a1adac3d2e53e902"
+  tag: "0.50.14@sha256:d8113bf66f47895d29c6935000bbac4c0f33d79588ae37d9ed6000ed328c5833"
 
 nameOverride: ""
 fullnameOverride: ""
