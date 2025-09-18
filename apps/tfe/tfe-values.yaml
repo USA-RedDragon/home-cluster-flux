@@ -6,7 +6,7 @@ imagePullSecrets:
 
 # Image sets the repo, name and tag of the Terraform Enterprise image to use.
 image:
-  tag: v202503-1
+  tag: 1.0.0
   pullPolicy: IfNotPresent
 
 # Resource limits are not set by default, to give the user the ability to set specific resource limits.
@@ -88,6 +88,7 @@ env:
     TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
     TFE_TLS_KEY_FILE_SECONDARY: /etc/secondary-certs/tls.key
     TFE_TLS_CERT_FILE_SECONDARY: /etc/secondary-certs/tls.crt
+    TFE_RUN_PIPELINE_KUBERNETES_OPEN_SHIFT_ENABLED: "true"
 
 securityContext:
   runAsNonRoot: true
@@ -99,10 +100,11 @@ container:
     readOnlyRootFilesystem: true
     seccompProfile:
       type: RuntimeDefault
-    # allowPrivilegeEscalation: false
-    # capabilities:
-    #   drop:
-    #     - ALL
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
 
 extraVolumes:
   - emptyDir:
