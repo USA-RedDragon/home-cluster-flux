@@ -92,7 +92,7 @@ env:
 
 securityContext:
   runAsNonRoot: true
-  runAsUser: 1000
+  runAsUser: 1000620000
   fsGroup: 1012
 
 container:
