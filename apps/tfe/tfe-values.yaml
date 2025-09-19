@@ -6,7 +6,7 @@ imagePullSecrets:
 
 # Image sets the repo, name and tag of the Terraform Enterprise image to use.
 image:
-  tag: v202507-1
+  tag: 1.0.0
   pullPolicy: IfNotPresent
 
 # Resource limits are not set by default, to give the user the ability to set specific resource limits.
