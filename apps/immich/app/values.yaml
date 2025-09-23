@@ -41,7 +41,7 @@ server:
     strategy: Recreate
   image:
     repository: jacob.pub/ghcr.io/immich-app/immich-server
-    tag: v1.143.0
+    tag: v1.143.1
     pullPolicy: IfNotPresent
   env:
     CPU_CORES: '1'
@@ -91,7 +91,7 @@ microservices:
   enabled: true
   image:
     repository: jacob.pub/ghcr.io/immich-app/immich-server
-    tag: v1.143.0
+    tag: v1.143.1
     pullPolicy: IfNotPresent
   resources:
     requests:
