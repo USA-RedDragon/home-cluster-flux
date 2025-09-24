@@ -13,3 +13,6 @@ proxyConfig:
 
 apiServerProxyConfig:
   mode: "noauth"
+
+imagePullSecrets:
+- name: registry-zot
