@@ -9,7 +9,10 @@ spec:
     pod:
       nodeSelector:
         kubernetes.io/os: "linux"
+      imagePullSecrets:
+        - name: registry-zot
       tailscaleContainer:
+        image: jacob.pub/ghcr.io/tailscale/tailscale:v1.88.2
         securityContext:
           privileged: true
           capabilities:
@@ -18,6 +21,7 @@ spec:
           appArmorProfile:
             type: Unconfined
       tailscaleInitContainer:
+        image: jacob.pub/ghcr.io/tailscale/tailscale:v1.88.2
         securityContext:
           privileged: true
           capabilities:
