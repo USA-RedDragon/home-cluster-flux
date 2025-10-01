@@ -106,7 +106,7 @@ machine-learning:
     strategy: Recreate
   image:
     repository: jacob.pub/ghcr.io/immich-app/immich-machine-learning
-    tag: v1.143.1
+    tag: v1.144.1
     pullPolicy: IfNotPresent
   env:
     TRANSFORMERS_CACHE: /cache
