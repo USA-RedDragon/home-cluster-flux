@@ -12,6 +12,8 @@ renovateWorker:
 
   mendRnvWorkerCleanup: always
 
+  disableCacheVolume: true
+
   extraEnvVars:
   - name: RENOVATE_REPOSITORY_CACHE
     value: 'enabled'
