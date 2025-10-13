@@ -1040,7 +1040,7 @@ grafana:
     image:
       registry: jacob.pub
       repository: quay.io/kiwigrid/k8s-sidecar
-      tag: 1.30.10
+      tag: 1.30.11
     dashboards:
       enabled: true
       label: grafana_dashboard
