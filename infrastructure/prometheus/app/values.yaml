@@ -2492,7 +2492,7 @@ prometheusOperator:
       registry: jacob.pub
       repository: quay.io/prometheus-operator/prometheus-config-reloader
       # if not set appVersion field from Chart.yaml is used
-      tag: v0.86.0
+      tag: v0.86.1
 
     # add prometheus config reloader liveness and readiness probe. Default: false
     enableProbe: false
