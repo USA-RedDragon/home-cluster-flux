@@ -28,7 +28,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - uses: actions/setup-go@v6
         with:
-          go-version: '>=1.25.2'
+          go-version: '>=1.25.3'
       - run: uv pip install --system pre-commit
       - uses: actions/cache@v4
         with:
