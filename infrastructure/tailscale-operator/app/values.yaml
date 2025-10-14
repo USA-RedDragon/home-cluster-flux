@@ -1,7 +1,7 @@
 operatorConfig:
   image:
     repository: jacob.pub/ghcr.io/tailscale/k8s-operator
-    tag: v1.88.3
+    tag: v1.88.4
   hostname: "tailscale-operator"
 
   resources: {}
