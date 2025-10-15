@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/docker.io/mattermost/mattermost-push-proxy
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "6.4.3@sha256:ae63fa716e5c40f0bef3ea8488ca8f99cd40ecf4d455df3a0897bdf4febdcf00"
+  tag: "6.4.4@sha256:539016df6905e97db672e3d992fd831acfd4b92b21bf68e954c89fc627582188"
 
 nameOverride: ""
 fullnameOverride: ""
