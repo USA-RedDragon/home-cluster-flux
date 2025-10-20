@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/docker.io/louislam/uptime-kuma
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.23.16-alpine@sha256:f111cca721507faa0a57e1ffc75210d64c9a9ca0f8375e0336a2a9a88ae2987c"
+  tag: "1.23.17-alpine@sha256:3859962a55f1821dc47552db991b49ee23586122496bb218bbe1c8826f91fbaf"
 
 nameOverride: ""
 fullnameOverride: ""
