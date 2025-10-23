@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/ghcr.io/paperless-ngx/paperless-ngx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.19.1@sha256:061effa071570af9bd5f86a1b005a1bd5b199a1521d110d9564924eb5808d7d5"
+  tag: "2.19.2@sha256:04bdb4cd2598099c51efe6c312a382c1538561765af27f0c29f08d13a3aa2165"
 
 nameOverride: ""
 fullnameOverride: ""
