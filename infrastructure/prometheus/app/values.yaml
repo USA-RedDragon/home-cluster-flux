@@ -3027,7 +3027,7 @@ prometheus:
     image:
       registry: jacob.pub
       repository: quay.io/prometheus/prometheus
-      tag: v3.7.1
+      tag: v3.7.2
 
     ## Tolerations for use with node taints
     ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
