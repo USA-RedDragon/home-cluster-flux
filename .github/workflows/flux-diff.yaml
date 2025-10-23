@@ -41,7 +41,7 @@ jobs:
         run: find . -name .sops.yaml -delete
 
       - name: Diff Resources
-        uses: docker://ghcr.io/allenporter/flux-local:v7.10.1
+        uses: docker://ghcr.io/allenporter/flux-local:v7.11.0
         with:
           args: >-
             diff ${{ steps.resource.outputs.resource }}
