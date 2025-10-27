@@ -35,7 +35,7 @@ spec:
   values:
     image:
       repository: jacob.pub/ghcr.io/squat/generic-device-plugin
-      tag: latest@sha256:5aab484db48d662b48342476b431c842b95d3fcba419fe35c19afbb6ceab1658
+      tag: latest@sha256:eebecd9172b4c2a61e4b3149c943a4ef2c293d7ceb89b69fec5ce5092eb7cf16
     resources:
       requests:
         memory: 60Mi
