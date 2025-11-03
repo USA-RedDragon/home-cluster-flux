@@ -27,7 +27,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: emberstack
-      version: '9.1.37'
+      version: '9.1.38'
       interval: 1m0s
   values:
     image:
