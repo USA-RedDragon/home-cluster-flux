@@ -16,7 +16,7 @@ controllers:
       jellyfin:
         image:
           repository: jacob.pub/docker.io/jellyfin/jellyfin
-          tag: 10.11.1
+          tag: 10.11.2
           pullPolicy: IfNotPresent
         resources:
           requests:
