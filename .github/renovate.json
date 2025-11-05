@@ -61,6 +61,18 @@
             ],
             "datasourceTemplate": "docker",
             "versioningTemplate": "semver-coerced"
+        },
+        {
+            "customType": "regex",
+            "fileMatch": [
+                "(^|/)apps\\/sensy-zone-editor\\/values\\.yaml"
+            ],
+            "matchStrings": [
+                "SENSY_VERSION=\"(?<currentValue>v[0-9.]+)\""
+            ],
+            "depNameTemplate": "sensy-one/S1",
+            "datasourceTemplate": "github-releases",
+            "versioningTemplate": "semver"
         }
     ],
     "packageRules": [
