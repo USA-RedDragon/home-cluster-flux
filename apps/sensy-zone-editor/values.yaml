@@ -5,6 +5,9 @@ controllers:
     replicas: 1
     pod:
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
     initContainers:
@@ -12,6 +15,15 @@ controllers:
         image:
           repository: jacob.pub/docker.io/curlimages/curl
           tag: 8.16.0@sha256:463eaf6072688fe96ac64fa623fe73e1dbe25d8ad6c34404a669ad3ce1f104b6
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 101
+          runAsGroup: 101
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
         command:
           - /bin/sh
           - -c
@@ -27,6 +39,14 @@ controllers:
         image:
           repository: jacob.pub/docker.io/library/nginx
           tag: 1.28.0-alpine-slim@sha256:ce2bd4775ed6859d35f47d65401ee9f35f1dd00b32ed05f0ce38b68aa1830195
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 101
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
 
 service:
   app:
@@ -49,6 +69,22 @@ persistence:
     size: 1Gi
     globalMounts:
       - path: /usr/share/nginx/html
+  tmp:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
+  nginx-cache:
+    type: emptyDir
+    advancedMounts:
+      app:
+        app:
+          - path: /var/cache/nginx
+  nginx-run:
+    type: emptyDir
+    advancedMounts:
+      app:
+        app:
+          - path: /var/run
 
 ingress:
   app:
@@ -77,14 +113,14 @@ configMaps:
         server {
             listen 80;
             server_name _;
-
+            
             root /usr/share/nginx/html;
             index index.html;
-
+            
             location / {
                 try_files $uri $uri/ =404;
             }
-
+            
             # Security headers
             add_header X-Frame-Options "SAMEORIGIN" always;
             add_header X-Content-Type-Options "nosniff" always;
