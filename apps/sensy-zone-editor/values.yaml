@@ -38,7 +38,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/docker.io/library/nginx
-          tag: 1.28.0-alpine-slim@sha256:ce2bd4775ed6859d35f47d65401ee9f35f1dd00b32ed05f0ce38b68aa1830195
+          tag: 1.29.3-alpine-slim@sha256:4c175d0d849aae0e0eedc64d718ef6323bed2bc68ee673e2d0a1bd5d501d0e5f
         securityContext:
           runAsNonRoot: true
           runAsUser: 101
