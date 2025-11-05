@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/docker.io/gitea/gitea
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.25.0@sha256:5ee853917e9b4d3ac5f35afe6929a9505e8237ea1faaef9f9e1cc395e035074f"
+  tag: "1.25.1@sha256:b3aee0f6fa4ff3271180a2388bb796be5cced8828685b968a310d70e881fcbb3"
 
 nameOverride: ""
 fullnameOverride: ""
