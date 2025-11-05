@@ -86,6 +86,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#rtl-433">rtl-433</a></li>
   <li><a href="#rtz">rtz</a></li>
   <li><a href="#scrypted">scrypted</a></li>
+  <li><a href="#sensy-zone-editor">sensy-zone-editor</a></li>
   <li><a href="#ses-email-service">ses-email-service</a></li>
   <li><a href="#site-inspector">site-inspector</a></li>
   <li><a href="#tailscale-operator">tailscale-operator</a></li>
@@ -1156,6 +1157,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>scrypted</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/scrypted/helm.yaml">scrypted</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>sensy-zone-editor</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>sensy-zone-editor</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/sensy-zone-editor/helm.yaml">sensy-zone-editor</a></td>
     <td></td>
   </tr>
 </table>
