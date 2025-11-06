@@ -891,7 +891,7 @@ grafana:
   downloadDashboardsImage:
     registry: jacob.pub
     repository: docker.io/curlimages/curl
-    tag: 8.16.0
+    tag: 8.17.0
 
   initChownData:
     image:
