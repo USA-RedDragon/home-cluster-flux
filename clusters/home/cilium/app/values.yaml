@@ -77,7 +77,7 @@ securityContext:
 
 image:
   repository: "quay.io/cilium/cilium"
-  tag: "v1.18.3"
+  tag: "v1.18.4"
   digest: "sha256:cd096a343861d48e2849b403f0c410bfbb36e64d042f0692b73b93c97d94d9bd"
 
 priorityClassName: system-node-critical
