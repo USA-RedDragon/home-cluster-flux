@@ -120,7 +120,7 @@ configMaps:
               path: '{ .Response.Temperature }'
               help: Current camera sensor temperature in Celsius
             - name: observatory_camera_target_temperature_celsius
-              path: '{ .Response.TargetTemp }'
+              path: '{ .Response.TemperatureSetPoint }'
               help: Target camera sensor temperature in Celsius
             - name: observatory_camera_at_target_temperature
               path: '{ .Response.AtTargetTemp }'
