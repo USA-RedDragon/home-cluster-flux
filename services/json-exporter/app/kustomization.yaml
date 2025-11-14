@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: json-exporter
 resources:
   - helm.yaml
+  - tailscale-observatory.yaml
 configMapGenerator:
   - name: chart-values
     files:
