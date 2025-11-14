@@ -59,6 +59,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#ingress-nginx">ingress-nginx</a></li>
   <li><a href="#intel-device-plugin">intel-device-plugin</a></li>
   <li><a href="#jellyfin">jellyfin</a></li>
+  <li><a href="#json-exporter">json-exporter</a></li>
   <li><a href="#kosync">kosync</a></li>
   <li><a href="#kromgo">kromgo</a></li>
   <li><a href="#kube-system">kube-system</a></li>
@@ -692,6 +693,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>jellyfin</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/jellyfin/helm.yaml">jellyfin</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>json-exporter</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>json-exporter</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/json-exporter/app/helm.yaml">json-exporter</a></td>
     <td></td>
   </tr>
 </table>
