@@ -1,0 +1,592 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  json-exporter:
+    strategy: RollingUpdate
+    replicas: 3
+    pod:
+      priorityClassName: system-cluster-critical
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+    containers:
+      json-exporter:
+        image:
+          repository: jacob.pub/docker.io/prometheuscommunity/json-exporter
+          tag: v0.7.0@sha256:3a777171d39ad435cb39519e84e0a8b5c63c7e716cc06011f8140cfaabfc1baf
+          pullPolicy: IfNotPresent
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+service:
+  json-exporter:
+    controller: json-exporter
+    ports:
+      http:
+        port: 7979
+
+configMaps:
+  config:
+    data:
+      config.yml: |
+        ---
+        modules:
+          guider:
+            metrics:
+            # Connection Status
+            - name: observatory_guider_connected
+              path: '{ .Response.Connected }'
+              help: Guider connection status (1 = connected, 0 = disconnected)
+            
+            # RMS Error - RA
+            - name: observatory_guider_rms_error_ra_arcseconds
+              path: '{ .Response.RMSError.RA.Arcseconds }'
+              help: Guider Right Ascension RMS Error in Arcseconds
+            - name: observatory_guider_rms_error_ra_pixels
+              path: '{ .Response.RMSError.RA.Pixel }'
+              help: Guider Right Ascension RMS Error in Pixels
+            
+            # RMS Error - Dec
+            - name: observatory_guider_rms_error_dec_arcseconds
+              path: '{ .Response.RMSError.Dec.Arcseconds }'
+              help: Guider Declination RMS Error in Arcseconds
+            - name: observatory_guider_rms_error_dec_pixels
+              path: '{ .Response.RMSError.Dec.Pixel }'
+              help: Guider Declination RMS Error in Pixels
+            
+            # RMS Error - Total
+            - name: observatory_guider_rms_error_total_arcseconds
+              path: '{ .Response.RMSError.Total.Arcseconds }'
+              help: Guider Total RMS Error in Arcseconds
+            - name: observatory_guider_rms_error_total_pixels
+              path: '{ .Response.RMSError.Total.Pixel }'
+              help: Guider Total RMS Error in Pixels
+            
+            # Peak Errors - RA
+            - name: observatory_guider_peak_error_ra_arcseconds
+              path: '{ .Response.RMSError.PeakRA.Arcseconds }'
+              help: Guider Peak Right Ascension Error in Arcseconds
+            - name: observatory_guider_peak_error_ra_pixels
+              path: '{ .Response.RMSError.PeakRA.Pixel }'
+              help: Guider Peak Right Ascension Error in Pixels
+            
+            # Peak Errors - Dec
+            - name: observatory_guider_peak_error_dec_arcseconds
+              path: '{ .Response.RMSError.PeakDec.Arcseconds }'
+              help: Guider Peak Declination Error in Arcseconds
+            - name: observatory_guider_peak_error_dec_pixels
+              path: '{ .Response.RMSError.PeakDec.Pixel }'
+              help: Guider Peak Declination Error in Pixels
+            
+            # Pixel Scale
+            - name: observatory_guider_pixel_scale
+              path: '{ .Response.PixelScale }'
+              help: Guider pixel scale in arcseconds per pixel
+            
+            # Last Guide Step
+            - name: observatory_guider_last_step_ra_distance
+              path: '{ .Response.LastGuideStep.RADistanceRaw }'
+              help: Last guide step RA distance (raw)
+            - name: observatory_guider_last_step_dec_distance
+              path: '{ .Response.LastGuideStep.DECDistanceRaw }'
+              help: Last guide step DEC distance (raw)
+            - name: observatory_guider_last_step_ra_duration
+              path: '{ .Response.LastGuideStep.RADuration }'
+              help: Last guide step RA correction duration in milliseconds
+            - name: observatory_guider_last_step_dec_duration
+              path: '{ .Response.LastGuideStep.DECDuration }'
+              help: Last guide step DEC correction duration in milliseconds
+          
+          camera:
+            metrics:
+            # Connection Status
+            - name: observatory_camera_connected
+              path: '{ .Response.Connected }'
+              help: Camera connection status (1 = connected, 0 = disconnected)
+            
+            # Temperature Management
+            - name: observatory_camera_temperature_celsius
+              path: '{ .Response.Temperature }'
+              help: Current camera sensor temperature in Celsius
+            - name: observatory_camera_target_temperature_celsius
+              path: '{ .Response.TargetTemp }'
+              help: Target camera sensor temperature in Celsius
+            - name: observatory_camera_at_target_temperature
+              path: '{ .Response.AtTargetTemp }'
+              help: Whether camera is at target temperature (1 = yes, 0 = no)
+            - name: observatory_camera_cooler_on
+              path: '{ .Response.CoolerOn }'
+              help: Camera cooler status (1 = on, 0 = off)
+            - name: observatory_camera_cooler_power_percent
+              path: '{ .Response.CoolerPower }'
+              help: Camera cooler power percentage (0-100)
+            
+            # Dew Heater
+            - name: observatory_camera_dew_heater_on
+              path: '{ .Response.DewHeaterOn }'
+              help: Camera dew heater status (1 = on, 0 = off)
+            
+            # Camera Settings
+            - name: observatory_camera_gain
+              path: '{ .Response.Gain }'
+              help: Current camera gain setting
+            - name: observatory_camera_offset
+              path: '{ .Response.Offset }'
+              help: Current camera offset setting
+            - name: observatory_camera_usb_limit
+              path: '{ .Response.USBLimit }'
+              help: Current USB bandwidth limit setting
+            - name: observatory_camera_binning_x
+              path: '{ .Response.BinX }'
+              help: Current X-axis binning factor
+            - name: observatory_camera_binning_y
+              path: '{ .Response.BinY }'
+              help: Current Y-axis binning factor
+            
+            # Sensor Properties
+            - name: observatory_camera_sensor_width_pixels
+              path: '{ .Response.XSize }'
+              help: Camera sensor width in pixels
+            - name: observatory_camera_sensor_height_pixels
+              path: '{ .Response.YSize }'
+              help: Camera sensor height in pixels
+            - name: observatory_camera_pixel_size_microns
+              path: '{ .Response.PixelSize }'
+              help: Camera pixel size in microns
+            - name: observatory_camera_bit_depth
+              path: '{ .Response.BitDepth }'
+              help: Camera bit depth
+            - name: observatory_camera_electrons_per_adu
+              path: '{ .Response.ElectronsPerADU }'
+              help: Camera electrons per ADU conversion factor
+            
+            # Exposure Status
+            - name: observatory_camera_is_exposing
+              path: '{ .Response.IsExposing }'
+              help: Whether camera is currently exposing (1 = yes, 0 = no)
+            - name: observatory_camera_last_download_time_seconds
+              path: '{ .Response.LastDownloadTime }'
+              help: Last image download time in seconds
+            
+            # Subsampling/ROI
+            - name: observatory_camera_subsample_enabled
+              path: '{ .Response.IsSubSampleEnabled }'
+              help: Whether subsampling/ROI is enabled (1 = yes, 0 = no)
+            - name: observatory_camera_subsample_x
+              path: '{ .Response.SubSampleX }'
+              help: Subsample region X offset in pixels
+            - name: observatory_camera_subsample_y
+              path: '{ .Response.SubSampleY }'
+              help: Subsample region Y offset in pixels
+            - name: observatory_camera_subsample_width
+              path: '{ .Response.SubSampleWidth }'
+              help: Subsample region width in pixels
+            - name: observatory_camera_subsample_height
+              path: '{ .Response.SubSampleHeight }'
+              help: Subsample region height in pixels
+            
+            # Exposure Limits
+            - name: observatory_camera_exposure_max_seconds
+              path: '{ .Response.ExposureMax }'
+              help: Maximum exposure time in seconds
+            - name: observatory_camera_exposure_min_seconds
+              path: '{ .Response.ExposureMin }'
+              help: Minimum exposure time in seconds
+            
+            # Battery (if applicable)
+            - name: observatory_camera_battery_percent
+              path: '{ .Response.Battery }'
+              help: Camera battery percentage (-1 if not applicable)
+          
+          filterwheel:
+            metrics:
+            # Connection Status
+            - name: observatory_filterwheel_connected
+              path: '{ .Response.Connected }'
+              help: Filter wheel connection status (1 = connected, 0 = disconnected)
+            
+            # Movement Status
+            - name: observatory_filterwheel_is_moving
+              path: '{ .Response.IsMoving }'
+              help: Whether filter wheel is currently moving (1 = moving, 0 = stationary)
+            
+            # Selected Filter
+            - name: observatory_filterwheel_selected_filter_id
+              path: '{ .Response.SelectedFilter.Id }'
+              help: Currently selected filter ID (position number)
+          
+          flatdevice:
+            metrics:
+            # Connection Status
+            - name: observatory_flatdevice_connected
+              path: '{ .Response.Connected }'
+              help: Flat device connection status (1 = connected, 0 = disconnected)
+            
+            # Light Status
+            - name: observatory_flatdevice_light_on
+              path: '{ .Response.LightOn }'
+              help: Flat device light status (1 = on, 0 = off)
+            - name: observatory_flatdevice_brightness
+              path: '{ .Response.Brightness }'
+              help: Current flat device brightness level
+            - name: observatory_flatdevice_brightness_min
+              path: '{ .Response.MinBrightness }'
+              help: Minimum flat device brightness level
+            - name: observatory_flatdevice_brightness_max
+              path: '{ .Response.MaxBrightness }'
+              help: Maximum flat device brightness level
+            
+            # Capabilities
+            - name: observatory_flatdevice_supports_open_close
+              path: '{ .Response.SupportsOpenClose }'
+              help: Whether flat device supports open/close operations (1 = yes, 0 = no)
+            - name: observatory_flatdevice_supports_on_off
+              path: '{ .Response.SupportsOnOff }'
+              help: Whether flat device supports on/off light control (1 = yes, 0 = no)
+          
+          focuser:
+            metrics:
+            # Connection Status
+            - name: observatory_focuser_connected
+              path: '{ .Response.Connected }'
+              help: Focuser connection status (1 = connected, 0 = disconnected)
+            
+            # Position
+            - name: observatory_focuser_position
+              path: '{ .Response.Position }'
+              help: Current focuser position in steps
+            - name: observatory_focuser_step_size
+              path: '{ .Response.StepSize }'
+              help: Focuser step size in microns (0 if not available)
+            
+            # Temperature
+            - name: observatory_focuser_temperature_celsius
+              path: '{ .Response.Temperature }'
+              help: Focuser temperature in Celsius
+            
+            # Status
+            - name: observatory_focuser_is_moving
+              path: '{ .Response.IsMoving }'
+              help: Whether focuser is currently moving (1 = moving, 0 = stationary)
+            - name: observatory_focuser_is_settling
+              path: '{ .Response.IsSettling }'
+              help: Whether focuser is settling after a move (1 = settling, 0 = stable)
+            
+            # Temperature Compensation
+            - name: observatory_focuser_temp_comp_enabled
+              path: '{ .Response.TempComp }'
+              help: Whether temperature compensation is enabled (1 = enabled, 0 = disabled)
+            - name: observatory_focuser_temp_comp_available
+              path: '{ .Response.TempCompAvailable }'
+              help: Whether temperature compensation is available (1 = available, 0 = not available)
+          
+          focuser_autofocus:
+            metrics:
+            # Autofocus Results
+            - name: observatory_autofocus_calculated_position
+              path: '{ .Response.CalculatedFocusPoint.Position }'
+              help: Calculated optimal focus position from last autofocus run
+            - name: observatory_autofocus_calculated_hfr
+              path: '{ .Response.CalculatedFocusPoint.Value }'
+              help: Calculated HFR value at optimal focus position
+            - name: observatory_autofocus_initial_position
+              path: '{ .Response.InitialFocusPoint.Position }'
+              help: Initial focus position at start of autofocus run
+            - name: observatory_autofocus_initial_hfr
+              path: '{ .Response.InitialFocusPoint.Value }'
+              help: Initial HFR value at start of autofocus run
+            
+            # Environmental
+            - name: observatory_autofocus_temperature_celsius
+              path: '{ .Response.Temperature }'
+              help: Temperature at time of autofocus run in Celsius
+            
+            # Fit Quality
+            - name: observatory_autofocus_hyperbolic_rsquare
+              path: '{ .Response.RSquares.Hyperbolic }'
+              help: R-squared value for hyperbolic fit (quality metric, 0-1)
+            - name: observatory_autofocus_left_trend_rsquare
+              path: '{ .Response.RSquares.LeftTrend }'
+              help: R-squared value for left trend line
+            - name: observatory_autofocus_right_trend_rsquare
+              path: '{ .Response.RSquares.RightTrend }'
+              help: R-squared value for right trend line
+            
+            # Backlash Compensation
+            - name: observatory_autofocus_backlash_in
+              path: '{ .Response.BacklashCompensation.BacklashIN }'
+              help: Backlash compensation IN value in steps
+            - name: observatory_autofocus_backlash_out
+              path: '{ .Response.BacklashCompensation.BacklashOUT }'
+              help: Backlash compensation OUT value in steps
+          
+          image:
+            metrics:
+            # Exposure Settings
+            - name: observatory_image_exposure_time_seconds
+              path: '{ .Response[0].ExposureTime }'
+              help: Exposure time of last captured image in seconds
+            - name: observatory_image_gain
+              path: '{ .Response[0].Gain }'
+              help: Gain setting used for last captured image
+            - name: observatory_image_offset
+              path: '{ .Response[0].Offset }'
+              help: Offset setting used for last captured image
+            - name: observatory_image_temperature_celsius
+              path: '{ .Response[0].Temperature }'
+              help: Camera temperature during last image capture in Celsius
+            
+            # Optical Properties
+            - name: observatory_image_focal_length_mm
+              path: '{ .Response[0].FocalLength }'
+              help: Focal length used for last image in millimeters
+            
+            # Image Statistics
+            - name: observatory_image_mean_adu
+              path: '{ .Response[0].Mean }'
+              help: Mean ADU value of last captured image
+            - name: observatory_image_median_adu
+              path: '{ .Response[0].Median }'
+              help: Median ADU value of last captured image
+            - name: observatory_image_stdev_adu
+              path: '{ .Response[0].StDev }'
+              help: Standard deviation of ADU values in last captured image
+            - name: observatory_image_min_adu
+              path: '{ .Response[0].Min }'
+              help: Minimum ADU value in last captured image
+            - name: observatory_image_max_adu
+              path: '{ .Response[0].Max }'
+              help: Maximum ADU value in last captured image
+            
+            # Star Detection and Focus
+            - name: observatory_image_stars_detected
+              path: '{ .Response[0].Stars }'
+              help: Number of stars detected in last captured image
+            - name: observatory_image_hfr
+              path: '{ .Response[0].HFR }'
+              help: Half-Flux Radius (HFR) of last captured image
+            - name: observatory_image_hfr_stdev
+              path: '{ .Response[0].HFRStDev }'
+              help: Standard deviation of HFR measurements in last captured image
+            
+            # Sensor Type
+            - name: observatory_image_is_bayered
+              path: '{ .Response[0].IsBayered }'
+              help: Whether last image is from a Bayer sensor (1 = color, 0 = mono)
+          
+          mount:
+            metrics:
+            # Connection Status
+            - name: observatory_mount_connected
+              path: '{ .Response.Connected }'
+              help: Mount connection status (1 = connected, 0 = disconnected)
+            
+            # Coordinates - Equatorial
+            - name: observatory_mount_right_ascension_hours
+              path: '{ .Response.RightAscension }'
+              help: Current Right Ascension in hours (0-24)
+            - name: observatory_mount_right_ascension_degrees
+              path: '{ .Response.Coordinates.RADegrees }'
+              help: Current Right Ascension in degrees (0-360)
+            - name: observatory_mount_declination_degrees
+              path: '{ .Response.Declination }'
+              help: Current Declination in degrees (-90 to +90)
+            
+            # Coordinates - Horizontal
+            - name: observatory_mount_altitude_degrees
+              path: '{ .Response.Altitude }'
+              help: Current altitude above horizon in degrees (0-90)
+            - name: observatory_mount_azimuth_degrees
+              path: '{ .Response.Azimuth }'
+              help: Current azimuth in degrees (0-360)
+            
+            # Site Location
+            - name: observatory_mount_site_latitude_degrees
+              path: '{ .Response.SiteLatitude }'
+              help: Observatory site latitude in degrees
+            - name: observatory_mount_site_longitude_degrees
+              path: '{ .Response.SiteLongitude }'
+              help: Observatory site longitude in degrees
+            - name: observatory_mount_site_elevation_meters
+              path: '{ .Response.SiteElevation }'
+              help: Observatory site elevation in meters
+            
+            # Time
+            - name: observatory_mount_sidereal_time_hours
+              path: '{ .Response.SiderealTime }'
+              help: Local sidereal time in hours (0-24)
+            - name: observatory_mount_time_to_meridian_flip_hours
+              path: '{ .Response.TimeToMeridianFlip }'
+              help: Time until meridian flip in hours
+            
+            # Status
+            - name: observatory_mount_tracking_enabled
+              path: '{ .Response.TrackingEnabled }'
+              help: Whether tracking is enabled (1 = enabled, 0 = disabled)
+            - name: observatory_mount_slewing
+              path: '{ .Response.Slewing }'
+              help: Whether mount is currently slewing (1 = slewing, 0 = stationary)
+            - name: observatory_mount_at_park
+              path: '{ .Response.AtPark }'
+              help: Whether mount is parked (1 = parked, 0 = unparked)
+            - name: observatory_mount_at_home
+              path: '{ .Response.AtHome }'
+              help: Whether mount is at home position (1 = home, 0 = not home)
+            - name: observatory_mount_is_pulse_guiding
+              path: '{ .Response.IsPulseGuiding }'
+              help: Whether mount is currently pulse guiding (1 = guiding, 0 = not guiding)
+            
+            # Guide Rates
+            - name: observatory_mount_guide_rate_ra_arcsec_per_sec
+              path: '{ .Response.GuideRateRightAscensionArcsecPerSec }'
+              help: Guide rate for Right Ascension in arcseconds per second
+            - name: observatory_mount_guide_rate_dec_arcsec_per_sec
+              path: '{ .Response.GuideRateDeclinationArcsecPerSec }'
+              help: Guide rate for Declination in arcseconds per second
+          
+          rotator:
+            metrics:
+            # Connection Status
+            - name: observatory_rotator_connected
+              path: '{ .Response.Connected }'
+              help: Rotator connection status (1 = connected, 0 = disconnected)
+            
+            # Position
+            - name: observatory_rotator_position_degrees
+              path: '{ .Response.Position }'
+              help: Current rotator position in degrees (sky angle)
+            - name: observatory_rotator_mechanical_position_degrees
+              path: '{ .Response.MechanicalPosition }'
+              help: Current mechanical rotator position in degrees
+            - name: observatory_rotator_step_size_degrees
+              path: '{ .Response.StepSize }'
+              help: Rotator step size in degrees
+            
+            # Status
+            - name: observatory_rotator_is_moving
+              path: '{ .Response.IsMoving }'
+              help: Whether rotator is currently moving (1 = moving, 0 = stationary)
+            - name: observatory_rotator_synced
+              path: '{ .Response.Synced }'
+              help: Whether rotator is synced (1 = synced, 0 = not synced)
+            - name: observatory_rotator_reverse
+              path: '{ .Response.Reverse }'
+              help: Whether rotator direction is reversed (1 = reversed, 0 = normal)
+          
+          safetymonitor:
+            metrics:
+            # Connection Status
+            - name: observatory_safetymonitor_connected
+              path: '{ .Response.Connected }'
+              help: Safety monitor connection status (1 = connected, 0 = disconnected)
+            
+            # Safety Status
+            - name: observatory_safetymonitor_is_safe
+              path: '{ .Response.IsSafe }'
+              help: Safety status (1 = safe to observe, 0 = unsafe conditions)
+          
+          switch:
+            metrics:
+            # Connection Status
+            - name: observatory_switch_connected
+              path: '{ .Response.Connected }'
+              help: Switch hub connection status (1 = connected, 0 = disconnected)
+            
+            # Power Monitoring (ReadonlySwitches - Voltage is Id 25, Current is Id 26, Power is Id 27)
+            - name: observatory_switch_input_voltage_volts
+              path: '{ .Response.ReadonlySwitches[0].Value }'
+              help: Power supply input voltage in volts
+            - name: observatory_switch_current_amps
+              path: '{ .Response.ReadonlySwitches[1].Value }'
+              help: Total current draw in amps
+            - name: observatory_switch_power_watts
+              path: '{ .Response.ReadonlySwitches[2].Value }'
+              help: Total power consumption in watts
+            
+            # Dew Heater Levels (WritableSwitches - Dew A is Id 22, Dew B is Id 23, Dew C is Id 24)
+            - name: observatory_switch_dew_heater_a_percent
+              path: '{ .Response.WritableSwitches[22].Value }'
+              help: Dew heater A power level percentage (0-100)
+            - name: observatory_switch_dew_heater_b_percent
+              path: '{ .Response.WritableSwitches[23].Value }'
+              help: Dew heater B power level percentage (0-100)
+            - name: observatory_switch_dew_heater_c_percent
+              path: '{ .Response.WritableSwitches[24].Value }'
+              help: Dew heater C power level percentage (0-100)
+          
+          weather:
+            metrics:
+            # Connection Status
+            - name: observatory_weather_connected
+              path: '{ .Response.Connected }'
+              help: Weather station connection status (1 = connected, 0 = disconnected)
+            
+            # Temperature and Humidity
+            - name: observatory_weather_temperature_celsius
+              path: '{ .Response.Temperature }'
+              help: Ambient temperature in Celsius
+            - name: observatory_weather_dew_point_celsius
+              path: '{ .Response.DewPoint }'
+              help: Dew point temperature in Celsius
+            - name: observatory_weather_humidity_percent
+              path: '{ .Response.Humidity }'
+              help: Relative humidity percentage (0-100)
+            
+            # Sky Conditions
+            - name: observatory_weather_sky_temperature_celsius
+              path: '{ .Response.SkyTemperature }'
+              help: Sky temperature in Celsius (IR reading for clouds)
+            - name: observatory_weather_cloud_cover_percent
+              path: '{ .Response.CloudCover }'
+              help: Cloud cover percentage (0-100)
+            - name: observatory_weather_sky_brightness
+              path: '{ .Response.SkyBrightness }'
+              help: Sky brightness reading (relative units)
+            
+            # Atmospheric Pressure
+            - name: observatory_weather_pressure_mbar
+              path: '{ .Response.Pressure }'
+              help: Atmospheric pressure in millibars
+            
+            # Wind
+            - name: observatory_weather_wind_speed_mps
+              path: '{ .Response.WindSpeed }'
+              help: Wind speed in meters per second
+            - name: observatory_weather_wind_gust_mps
+              path: '{ .Response.WindGust }'
+              help: Wind gust speed in meters per second
+            - name: observatory_weather_wind_direction_degrees
+              path: '{ .Response.WindDirection }'
+              help: Wind direction in degrees (0-360, 0=North)
+            
+            # Precipitation
+            - name: observatory_weather_rain_rate
+              path: '{ .Response.RainRate }'
+              help: Rain rate (mm per hour or similar units)
+            
+            # Measurement Period
+            - name: observatory_weather_average_period_seconds
+              path: '{ .Response.AveragePeriod }'
+              help: Averaging period for weather measurements in seconds
+
+persistence:
+  config:
+    enabled: true
+    type: configMap
+    name: json-exporter
+    advancedMounts:
+      json-exporter:
+        json-exporter:
+          - path: /config.yml
+            subPath: config.yml

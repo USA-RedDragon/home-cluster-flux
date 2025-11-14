@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: json-exporter
+  namespace: json-exporter
+spec:
+  interval: 1h
+  targetNamespace: json-exporter
+  path: ./services/json-exporter/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
