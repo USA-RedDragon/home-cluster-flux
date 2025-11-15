@@ -41,6 +41,7 @@ controllers:
         securityContext:
           fsGroup: 65534
           readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
           capabilities:
             drop:
               - ALL
