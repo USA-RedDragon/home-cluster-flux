@@ -1,0 +1,25 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: rmfakecloud-ca-issuer
+  namespace: rmfakecloud
+spec:
+  ca:
+    secretName: rmfakecloud-ca-key
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rmfakecloud
+  namespace: rmfakecloud
+spec:
+  secretName: rmfakecloud-tls
+  issuerRef:
+    name: rmfakecloud-ca-issuer
+  dnsNames:
+    - "*.appspot.com"
+    - "*.remarkable.com"
+    - "internal.cloud.remarkable.com"
+    - "backtrace-proxy.cloud.remarkable.engineering"
+    - "eu.tectonic.remarkable.com"
+    - "vernemq-prod.cloud.remarkable.engineering"
