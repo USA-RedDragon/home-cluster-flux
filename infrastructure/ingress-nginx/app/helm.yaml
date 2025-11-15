@@ -37,6 +37,8 @@ spec:
       replicaCount: 2
       config:
         annotations-risk-level: Critical
+      extraArgs:
+        enable-ssl-passthrough: ""
       updateStrategy:
         rollingUpdate:
           maxUnavailable: 1
