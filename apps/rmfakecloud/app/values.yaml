@@ -38,6 +38,11 @@ controllers:
           MQTT_PORT: "8883"
           TLS_CERT: /certs/tls.crt
           TLS_KEY: /certs/tls.key
+          JWT_SECRET_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: rmfakecloud
+                key: jwt-secret-key
         securityContext:
           fsGroup: 65534
           readOnlyRootFilesystem: true
