@@ -84,6 +84,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#redis">redis</a></li>
   <li><a href="#reflector">reflector</a></li>
   <li><a href="#renovate-ce">renovate-ce</a></li>
+  <li><a href="#rmfakecloud">rmfakecloud</a></li>
   <li><a href="#rtl-433">rtl-433</a></li>
   <li><a href="#rtz">rtz</a></li>
   <li><a href="#scrypted">scrypted</a></li>
@@ -1121,6 +1122,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>renovate-ce</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/renovate-ce/helm.yaml">renovate-ce</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>rmfakecloud</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>rmfakecloud</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/rmfakecloud/app/helm.yaml">rmfakecloud</a></td>
     <td></td>
   </tr>
 </table>
