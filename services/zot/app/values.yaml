@@ -173,6 +173,16 @@ configMaps:
                     stripPrefix: false
                     destination: "/docker.io"
               - urls:
+                  - https://git.scottlabs.io
+                onDemand: true
+                maxRetries: 5
+                retryDelay: 5m
+                onlySigned: false
+                content:
+                  - prefix: "**"
+                    stripPrefix: false
+                    destination: "/git.scottlabs.io"
+              - urls:
                   - https://quay.io
                 onDemand: true
                 maxRetries: 5
