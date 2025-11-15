@@ -105,6 +105,10 @@ ingress:
             service:
               identifier: rmfakecloud
               port: mqtt
+    tls:
+      - hosts:
+          - vernemq-prod.cloud.remarkable.engineering
+        secretName: rmfakecloud-tls
   hijack:
     className: nginx
     annotations:
