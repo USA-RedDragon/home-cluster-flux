@@ -30,6 +30,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#aredn-ntp">aredn-ntp</a></li>
   <li><a href="#aredn-piaware">aredn-piaware</a></li>
   <li><a href="#aredn-scanner">aredn-scanner</a></li>
+  <li><a href="#astro-processing">astro-processing</a></li>
   <li><a href="#astroframe">astroframe</a></li>
   <li><a href="#atuin">atuin</a></li>
   <li><a href="#authentik">authentik</a></li>
@@ -214,6 +215,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>aredn-scanner</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/aredn-scanner/helm.yaml">aredn-scanner</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>astro-processing</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>astro-processing</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/astro-processing/app/helm.yaml">astro-processing</a></td>
     <td></td>
   </tr>
 </table>
