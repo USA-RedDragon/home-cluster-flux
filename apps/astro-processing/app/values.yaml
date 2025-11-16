@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  astro-processing:
+    replicas: 1
+
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+    containers:
+      app:
+        image:
+          repository: alpine
+          tag: "3.20"
+        command: ["sh", "-c", "sleep infinity"]
+
+      litestream-restore:
+        image:
+          repository: litestream/litestream
+          tag: "latest"
+        args:
+          - "restore"
+          - "-config"
+          - "/etc/litestream/litestream.yml"
+          - "-path"
+          - "/data/schedulerdb.sqlite"
+          - "-follow"
+        env:
+          AWS_ACCESS_KEY_ID:
+            valueFrom:
+              secretKeyRef:
+                name: litestream
+                key: accesskey
+          AWS_SECRET_ACCESS_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: litestream
+                key: secretkey
+
+persistence:
+  db:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: longhorn-ssd
+    advancedMounts:
+      astro-processing:
+        app:
+          - path: /data
+        litestream-restore:
+          - path: /data
+  litestream-config:
+    enabled: true
+    type: configMap
+    name: litestream-config
+    advancedMounts:
+      astro-processing:
+        litestream-restore:
+          - path: /etc/litestream
+
+configMaps:
+  litestream-config:
+    data:
+      litestream.yml: |
+        dbs:
+          - path: /data/schedulerdb.sqlite
+            replicas:
+              - type: s3
+                endpoint: https://s3.mcswain.dev
+                region: us-east-1
+                bucket: astro
+                path: schedulerdb.sqlite
