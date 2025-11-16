@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  astro-processing:
+    replicas: 1
+
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+    containers:
+      app:
+        image:
+          repository: jacob.pub/docker.io/alpine
+          tag: "3.22.2@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412"
+        command: ["sh", "-c", "sleep infinity"]
+
+      litestream-restore:
+        image:
+          repository: jacob.pub/docker.io/litestream/litestream
+          tag: "0.5.2@sha256:e4fd484cb1cd9d6fa58fff7127d551118e150ab75b389cf868a053152ba6c9c0"
+        args:
+          - "restore"
+          - "-config"
+          - "/etc/litestream/litestream.yml"
+          - "-path"
+          - "/data/schedulerdb.sqlite"
+          - "-follow"
+        env:
+          AWS_ACCESS_KEY_ID:
+            valueFrom:
+              secretKeyRef:
+                name: litestream
+                key: accesskey
+          AWS_SECRET_ACCESS_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: litestream
+                key: secretkey
+
+persistence:
+  db:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: longhorn-ssd
+    advancedMounts:
+      astro-processing:
+        app:
+          - path: /data
+        litestream-restore:
+          - path: /data
+  litestream-config:
+    enabled: true
+    type: configMap
+    identifier: litestream-config
+    advancedMounts:
+      astro-processing:
+        litestream-restore:
+          - path: /etc/litestream
+
+configMaps:
+  litestream-config:
+    suffix: litestream-config
+    data:
+      litestream.yml: |
+        dbs:
+          - path: /data/schedulerdb.sqlite
+            replicas:
+              - type: s3
+                endpoint: https://s3.mcswain.dev
+                region: us-east-1
+                bucket: astro
+                path: schedulerdb.sqlite
