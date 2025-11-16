@@ -16,7 +16,7 @@ controllers:
       app:
         image:
           repository: alpine
-          tag: "3.20"
+          tag: "3.22"
         command: ["sh", "-c", "sleep infinity"]
 
       litestream-restore:
