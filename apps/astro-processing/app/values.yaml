@@ -35,11 +35,7 @@ controllers:
             drop: ["ALL"]
         args:
           - "restore"
-          - "-config"
-          - "/etc/litestream/litestream.yml"
-          - "-path"
           - "/data/schedulerdb.sqlite"
-          - "-follow"
         env:
           AWS_ACCESS_KEY_ID:
             valueFrom:
@@ -72,7 +68,8 @@ persistence:
     advancedMounts:
       astro-processing:
         litestream-restore:
-          - path: /etc/litestream
+          - path: /etc/litestream.yml
+            subPath: litestream.yml
 
 configMaps:
   litestream-config:
