@@ -16,7 +16,7 @@ controllers:
       symmetricds:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/symmetricds
-          tag: "3.16.7@sha256:3cb4c9f624820fe5d7e96752014b965f801384c175fa0307d6ea61cda500418f"
+          tag: "3.16.7@sha256:b8164119ee4f26254e9df936d27abedbb815e487ac6997e86b6b5e74da3b3864"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
