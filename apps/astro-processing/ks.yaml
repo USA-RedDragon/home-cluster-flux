@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: astro-processing
-  path: ./apps/astro-processing/app
+  path: ./apps/astro-processing/resources
   prune: true
   sourceRef:
     kind: GitRepository
