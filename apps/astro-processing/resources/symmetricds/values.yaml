@@ -93,3 +93,6 @@ configMaps:
         registration.url=
         auto.registration=true
         initial.load.create.first=true
+        job.routing.period.time.ms=5000
+        job.push.period.time.ms=10000
+        job.pull.period.time.ms=10000
