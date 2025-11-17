@@ -4,7 +4,7 @@ namespace: symmetricds
 resources:
   - helm.yaml
 configMapGenerator:
-  - name: chart-values
+  - name: symmetricds-chart-values
     files:
       - values.yaml=values.yaml
 configurations:

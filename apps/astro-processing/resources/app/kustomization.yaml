@@ -4,7 +4,7 @@ namespace: astro-processing
 resources:
   - helm.yaml
 configMapGenerator:
-  - name: chart-values
+  - name: astro-processing-chart-values
     files:
       - values.yaml=values.yaml
 configurations:
