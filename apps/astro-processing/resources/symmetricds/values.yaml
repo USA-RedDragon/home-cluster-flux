@@ -22,3 +22,17 @@ controllers:
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
+
+persistence:
+  logs:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 3Gi
+    globalMounts:
+      - path: /opt/symmetric-ds/logs
+  tmp:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 3Gi
+    globalMounts:
+      - path: /opt/symmetric-ds/tmp
