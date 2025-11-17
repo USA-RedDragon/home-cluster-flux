@@ -87,7 +87,7 @@ configMaps:
         db.url=jdbc:postgresql://postgresql-rw:5432/schedulerdb
         db.user=$(POSTGRES_USERNAME)
         db.password=$(POSTGRES_PASSWORD)
-        group.id=astro
+        group.id=home
         external.id=home
         sync.url=https://symmetricds-home.jackal-stargazer.ts.net/sync/home
         registration.url=
