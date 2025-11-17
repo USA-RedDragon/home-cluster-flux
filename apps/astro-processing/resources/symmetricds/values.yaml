@@ -22,6 +22,17 @@ controllers:
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
+        env:
+          - name: POSTGRES_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-symmetricds
+                key: username
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-symmetricds
+                key: password
 
 persistence:
   logs:
@@ -36,3 +47,25 @@ persistence:
     sizeLimit: 3Gi
     globalMounts:
       - path: /opt/symmetric-ds/tmp
+  engines:
+    enabled: true
+    type: configMap
+    identifier: engines
+    globalMounts:
+      - path: /opt/symmetric-ds/engines
+
+configMaps:
+  engines:
+    suffix: engines
+    data:
+      home.properties: |
+        engine.name=home
+        db.driver=org.postgresql.Driver
+        db.url=jdbc:postgresql://postgresql-rw:5432/schedulerdb
+        db.user=$(POSTGRES_USERNAME)
+        db.password=$(POSTGRES_PASSWORD)
+        group.id=home
+        external.id=home
+        sync.url=http://localhost:31415/sync/home
+        registration.url=
+        initial.load.create.first=true
