@@ -41,6 +41,22 @@ service:
       http:
         port: 31415
 
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: symmetricds-home
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: symmetricds
+              port: http
+    tls:
+      - hosts:
+          - symmetricds-home
+
 persistence:
   logs:
     enabled: true
