@@ -17,6 +17,20 @@ controllers:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/symmetricds
           tag: "3.16.7@sha256:b8164119ee4f26254e9df936d27abedbb815e487ac6997e86b6b5e74da3b3864"
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        resources:
+          requests:
+            cpu: 10m
+            memory: 512Mi
+          limits:
+            cpu: 100m
+            memory: 1Gi
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
