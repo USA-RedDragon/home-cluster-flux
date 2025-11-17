@@ -85,8 +85,8 @@ configMaps:
         engine.name=home
         db.driver=org.postgresql.Driver
         db.url=jdbc:postgresql://postgresql-rw:5432/schedulerdb
-        db.user=${env.POSTGRES_USERNAME}
-        db.password=${env.POSTGRES_PASSWORD}
+        db.user=$(POSTGRES_USERNAME)
+        db.password=$(POSTGRES_PASSWORD)
         group.id=home
         external.id=home
         sync.url=http://localhost:31415/sync/home
