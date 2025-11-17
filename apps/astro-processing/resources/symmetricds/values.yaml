@@ -89,6 +89,6 @@ configMaps:
         db.password=$(POSTGRES_PASSWORD)
         group.id=home
         external.id=home
-        sync.url=http://localhost:31415/sync/home
+        sync.url=https://symmetricds-home.jackal-stargazer.ts.net/sync/home
         registration.url=
         initial.load.create.first=true
