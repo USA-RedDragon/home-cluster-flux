@@ -230,7 +230,13 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>astro-processing</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/astro-processing/app/helm.yaml">astro-processing</a></td>
+    <td><a href="apps/astro-processing/resources/app/helm.yaml">astro-processing</a></td>
+    <td><a href="apps/astro-processing/resources/postgres/postgres.yaml">postgresql</a></td>
+  </tr>
+  <tr>
+    <td>symmetricds</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/astro-processing/resources/symmetricds/helm.yaml">symmetricds</a></td>
     <td></td>
   </tr>
 </table>
