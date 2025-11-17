@@ -91,4 +91,5 @@ configMaps:
         external.id=home
         sync.url=https://symmetricds-home.jackal-stargazer.ts.net/sync/home
         registration.url=
+        auto.registration=true
         initial.load.create.first=true
