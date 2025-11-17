@@ -21,7 +21,6 @@ spec:
       wal:
         compression: gzip
     retentionPolicy: "4w"
-    name: postgresql
   bootstrap:
     initdb:
       database: astro-processing
