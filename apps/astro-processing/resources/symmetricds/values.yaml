@@ -34,6 +34,13 @@ controllers:
                 name: postgresql-symmetricds
                 key: password
 
+service:
+  symmetricds:
+    controller: symmetricds
+    ports:
+      http:
+        port: 31415
+
 persistence:
   logs:
     enabled: true
