@@ -63,3 +63,13 @@ spec:
   backupOwnerReference: self
   cluster:
     name: postgresql
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: schedulerdb
+spec:
+  name: schedulerdb
+  owner: astro-processing
+  cluster:
+    name: postgresql
