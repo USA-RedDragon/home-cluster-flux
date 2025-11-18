@@ -168,7 +168,7 @@ ingress:
       - paperless.mcswain.dev
 
 extraContainers:
-- image: redis:8.2.3-alpine
+- image: redis:8.4.0-alpine
   imagePullPolicy: IfNotPresent
   name: redis
   resources: {}
