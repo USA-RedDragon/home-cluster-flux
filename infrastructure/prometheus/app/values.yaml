@@ -886,7 +886,7 @@ grafana:
   image:
     registry: jacob.pub
     repository: docker.io/grafana/grafana
-    tag: 12.2.1
+    tag: 12.3.0
 
   downloadDashboardsImage:
     registry: jacob.pub
