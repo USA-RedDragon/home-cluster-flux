@@ -4,7 +4,7 @@ controllers:
       mariadb:
         image:
           repository: jacob.pub/docker.io/mariadb
-          tag: 12.0.2@sha256:a5af517d52262da1583cebe6b7c970d7bbeaf1f016938c2fc3cf2e95c52d8c08
+          tag: 12.1.2@sha256:eb37f58646a901dc7727cf448cae36daaefaba79de33b5058dab79aa4c04aefb
         env:
           MARIADB_DATABASE: indi_allsky
           MARIADB_USER: indi_allsky
