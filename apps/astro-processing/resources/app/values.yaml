@@ -22,6 +22,13 @@ controllers:
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
         env:
           DB_USER:
             secretKeyRef:
@@ -60,3 +67,41 @@ controllers:
             value: "debug"
           HTTP_TRUSTED_PROXIES:
             value: "172.17.0.0/16"
+
+service:
+  astro-processing:
+    controller: astro-processing
+    ports:
+      http:
+        port: 8080
+      metrics:
+        port: 9090
+      pprof:
+        port: 9999
+
+serviceMonitor:
+  astro-processing:
+    enabled: true
+    serviceName: astro-processing
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: astro-processing
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: astro-processing
+              port: http
+    tls:
+      - hosts:
+          - astro-processing
