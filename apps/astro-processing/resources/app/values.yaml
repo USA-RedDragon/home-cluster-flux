@@ -12,93 +12,51 @@ controllers:
         fsGroup: 65534
         fsGroupChangePolicy: OnRootMismatch
 
-    initContainers:
-      litestream-restore:
-        image:
-          repository: jacob.pub/docker.io/litestream/litestream
-          tag: "0.5.2@sha256:e4fd484cb1cd9d6fa58fff7127d551118e150ab75b389cf868a053152ba6c9c0"
-        command:
-          - "litestream"
-          - "restore"
-          - "-config"
-          - "/etc/litestream.yml"
-          - "/data/schedulerdb.sqlite"
-        securityContext:
-            readOnlyRootFilesystem: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-        env:
-          AWS_ACCESS_KEY_ID:
-            valueFrom:
-              secretKeyRef:
-                name: litestream
-                key: accesskey
-          AWS_SECRET_ACCESS_KEY:
-            valueFrom:
-              secretKeyRef:
-                name: litestream
-                key: secretkey
-
     containers:
       app:
         image:
-          repository: jacob.pub/docker.io/alpine
-          tag: "3.22.2@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412"
-        command: ["sh", "-c", "sleep infinity"]
+          repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing
+          tag: "beta@sha256:8ec110e0af9f51210690100d3c43d00a2a90bce7db6e74b08028eee6a25ef082"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
         env:
-          AWS_ACCESS_KEY_ID:
-            valueFrom:
-              secretKeyRef:
-                name: litestream
-                key: accesskey
-          AWS_SECRET_ACCESS_KEY:
-            valueFrom:
-              secretKeyRef:
-                name: litestream
-                key: secretkey
-
-persistence:
-  db:
-    enabled: true
-    type: persistentVolumeClaim
-    accessMode: ReadWriteOnce
-    size: 1Gi
-    storageClass: longhorn-ssd
-    advancedMounts:
-      astro-processing:
-        app:
-          - path: /data
-        litestream-restore:
-          - path: /data
-  litestream-config:
-    enabled: true
-    type: configMap
-    identifier: litestream-config
-    advancedMounts:
-      astro-processing:
-        app:
-          - path: /etc/litestream.yml
-            subPath: litestream.yml
-        litestream-restore:
-          - path: /etc/litestream.yml
-            subPath: litestream.yml
-
-configMaps:
-  litestream-config:
-    suffix: litestream-config
-    data:
-      litestream.yml: |
-        dbs:
-          - path: /data/schedulerdb.sqlite
-            replicas:
-              - type: s3
-                endpoint: https://s3.mcswain.dev
-                region: us-east-1
-                bucket: astro
-                path: schedulerdb.sqlite
+          DB_USER:
+            secretKeyRef:
+              name: postgresql-app
+              key: user
+          DB_PASS:
+            secretKeyRef:
+              name: postgresql-app
+              key: password
+          DB_HOST:
+            secretKeyRef:
+              name: postgresql-app
+              key: host
+          DB_PORT:
+            secretKeyRef:
+              name: postgresql-app
+              key: port
+          DB_NAME:
+            secretKeyRef:
+              name: postgresql-app
+              key: dbname
+          STORAGE_TYPE:
+            value: "postgres"
+          STORAGE_DSN:
+            value: host=$(DB_HOST) user=$(DB_USER) password=$(DB_PASS) dbname=$(DB_NAME) port=$(DB_PORT) sslmode=disable
+            dependsOn: [DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME]
+          METRICS_ENABLED:
+            value: "true"
+          METRICS_BIND:
+            value: "[::]"
+          PPROF_ENABLED:
+            value: "true"
+          PPROF_BIND:
+            value: "[::]"
+          LOG_LEVEL:
+            value: "debug"
+          HTTP_TRUSTED_PROXIES:
+            value: "172.17.0.0/16"
