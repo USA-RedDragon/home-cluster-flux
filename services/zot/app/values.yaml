@@ -3,7 +3,7 @@
 controllers:
   docker-proxy:
     strategy: RollingUpdate
-    replicas: 3
+    replicas: 1
     pod:
       priorityClassName: system-cluster-critical
       securityContext:
@@ -42,7 +42,7 @@ controllers:
                 key: secret
   zot:
     strategy: RollingUpdate
-    replicas: 3
+    replicas: 1
     pod:
       priorityClassName: system-cluster-critical
       securityContext:
