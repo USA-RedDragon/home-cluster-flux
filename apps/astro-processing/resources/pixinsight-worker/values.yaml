@@ -17,7 +17,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/pixinsight-worker
-          tag: "beta@sha256:53f90e4e1fbb846d9f8b986c54b501acb6407675a41e00b620d878f7e32acb18"
+          tag: "beta@sha256:b5312da82e5d15879152667e49d2d19a2642b4975f9da8a9e3cd23d60638fca6"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
