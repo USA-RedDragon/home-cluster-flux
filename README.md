@@ -228,10 +228,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>astro-processing</td>
+    <td rowspan="2">astro-processing</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/astro-processing/resources/app/helm.yaml">astro-processing</a></td>
-    <td><a href="apps/astro-processing/resources/postgres/postgres.yaml">postgresql</a></td>
+    <td rowspan="2"><a href="apps/astro-processing/resources/postgres/postgres.yaml">postgresql</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/astro-processing/resources/pixinsight-worker/helm.yaml">pixinsight-worker</a></td>
   </tr>
   <tr>
     <td>symmetricds</td>
