@@ -3,6 +3,7 @@
 controllers:
   astro-processing:
     replicas: 1
+    strategy: RollingUpdate
 
     pod:
       securityContext:
