@@ -47,9 +47,7 @@ controllers:
               name: postgresql-app
               key: port
           DB_NAME:
-            secretKeyRef:
-              name: postgresql-app
-              key: dbname
+            value: "schedulerdb"
           STORAGE_TYPE:
             value: "postgres"
           STORAGE_DSN:
