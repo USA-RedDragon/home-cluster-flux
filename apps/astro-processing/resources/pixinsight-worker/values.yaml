@@ -1,0 +1,113 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  pixinsight-worker:
+    replicas: 1
+    strategy: RollingUpdate
+
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/pixinsight-worker
+          tag: "beta@sha256:53f90e4e1fbb846d9f8b986c54b501acb6407675a41e00b620d878f7e32acb18"
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          DB_USER:
+            secretKeyRef:
+              name: postgresql-app
+              key: user
+          DB_PASS:
+            secretKeyRef:
+              name: postgresql-app
+              key: password
+          DB_HOST:
+            secretKeyRef:
+              name: postgresql-app
+              key: host
+          DB_PORT:
+            secretKeyRef:
+              name: postgresql-app
+              key: port
+          SCHEDULER_DB_NAME:
+            value: "schedulerdb"
+          APP_DB_NAME:
+            secretKeyRef:
+              name: postgresql-app
+              key: dbname
+          STORAGE_TYPE:
+            value: "postgres"
+          STORAGE_DSN_APP:
+            value: host=$(DB_HOST) user=$(DB_USER) password=$(DB_PASS) dbname=$(APP_DB_NAME) port=$(DB_PORT) sslmode=disable
+            dependsOn: [DB_USER, DB_PASS, DB_HOST, DB_PORT, APP_DB_NAME]
+          STORAGE_DSN_SCHEDULERDB:
+            value: host=$(DB_HOST) user=$(DB_USER) password=$(DB_PASS) dbname=$(SCHEDULER_DB_NAME) port=$(DB_PORT) sslmode=disable
+            dependsOn: [DB_USER, DB_PASS, DB_HOST, DB_PORT, SCHEDULER_DB_NAME]
+          METRICS_ENABLED:
+            value: "true"
+          METRICS_BIND:
+            value: "[::]"
+          PPROF_ENABLED:
+            value: "true"
+          PPROF_BIND:
+            value: "[::]"
+          LOG_LEVEL:
+            value: "debug"
+          HTTP_TRUSTED_PROXIES:
+            value: "172.17.0.0/16"
+
+service:
+  pixinsight-worker:
+    controller: pixinsight-worker
+    ports:
+      http:
+        port: 8080
+      metrics:
+        port: 9090
+      pprof:
+        port: 9999
+
+serviceMonitor:
+  pixinsight-worker:
+    enabled: true
+    serviceName: pixinsight-worker
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: pixinsight-worker
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: pixinsight-worker
+              port: http
+    tls:
+      - hosts:
+          - pixinsight-worker
