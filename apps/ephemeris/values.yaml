@@ -43,7 +43,7 @@ controllers:
       ephemeris:
         image:
           repository: jacob.pub/ghcr.io/rmitchellscott/ephemeris
-          tag: v1.6.8@sha256:b8842a73f9dde6f34402a2beb1f961302254bd01c659261501be59ee59c751ca
+          tag: v1.6.9@sha256:271482fb2394fc0f9077a8c71abc7cfdeec35b7440c3d0e9d24306a2ec6480f0
           pullPolicy: IfNotPresent
         env:
           <<: *ephemeris-envs
@@ -83,7 +83,7 @@ controllers:
       ephemeris:
         image:
           repository: jacob.pub/ghcr.io/rmitchellscott/ephemeris
-          tag: v1.6.8@sha256:b8842a73f9dde6f34402a2beb1f961302254bd01c659261501be59ee59c751ca
+          tag: v1.6.9@sha256:271482fb2394fc0f9077a8c71abc7cfdeec35b7440c3d0e9d24306a2ec6480f0
           pullPolicy: IfNotPresent
         env:
           <<: *ephemeris-envs
@@ -123,7 +123,7 @@ controllers:
       ephemeris:
         image:
           repository: jacob.pub/ghcr.io/rmitchellscott/ephemeris
-          tag: v1.6.8@sha256:b8842a73f9dde6f34402a2beb1f961302254bd01c659261501be59ee59c751ca
+          tag: v1.6.9@sha256:271482fb2394fc0f9077a8c71abc7cfdeec35b7440c3d0e9d24306a2ec6480f0
           pullPolicy: IfNotPresent
         env:
           <<: *ephemeris-envs
