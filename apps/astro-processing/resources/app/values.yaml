@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
 controllers:
-  astro-processing:
+  frontend:
     replicas: 1
     strategy: RollingUpdate
 
@@ -14,7 +14,37 @@ controllers:
         fsGroupChangePolicy: OnRootMismatch
 
     containers:
-      app:
+      frontend:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing-frontend
+          tag: "beta@sha256:c9855cb0c5bc89b0960d741c13f3d723beb6855bf5615b9fd92917a89eb374c8"
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+  backend:
+    replicas: 1
+    strategy: RollingUpdate
+
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+    containers:
+      backend:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing
           tag: "beta@sha256:f3d49e171ddc9ef760310f38362b5ea630269c667d085321a39069dc47acd50f"
@@ -68,8 +98,13 @@ controllers:
             value: "172.17.0.0/16"
 
 service:
-  astro-processing:
-    controller: astro-processing
+  frontend:
+    controller: frontend
+    ports:
+      http:
+        port: 8080
+  backend:
+    controller: backend
     ports:
       http:
         port: 8080
@@ -79,9 +114,9 @@ service:
         port: 9999
 
 serviceMonitor:
-  astro-processing:
+  backend:
     enabled: true
-    serviceName: astro-processing
+    serviceName: backend
     endpoints:
       - port: metrics
         scheme: http
@@ -99,7 +134,12 @@ ingress:
         - path: /
           pathType: Prefix
           service:
-              identifier: astro-processing
+              identifier: frontend
+              port: http
+        - path: /api/
+          pathType: Prefix
+          service:
+              identifier: backend
               port: http
     tls:
       - hosts:
