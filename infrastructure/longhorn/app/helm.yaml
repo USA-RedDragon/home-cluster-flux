@@ -24,7 +24,7 @@ spec:
         kind: HelmRepository
         namespace: longhorn-system
         name: longhorn
-      version: 1.9.1
+      version: 1.10.1
   interval: 60m0s
   driftDetection:
     mode: enabled
