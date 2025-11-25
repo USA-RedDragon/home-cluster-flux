@@ -22,12 +22,12 @@ jobs:
         sources: [flux-system]
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: pull
 
       - name: Checkout Default Branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           path: default
