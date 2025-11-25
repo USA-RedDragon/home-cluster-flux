@@ -113,6 +113,18 @@ service:
       pprof:
         port: 9999
 
+
+persistence:
+  nginx-tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
+    advancedMounts:
+      frontend:
+        frontend:
+          - path: /tmp
+
 serviceMonitor:
   backend:
     enabled: true
