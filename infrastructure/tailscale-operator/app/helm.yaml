@@ -28,7 +28,7 @@ spec:
         kind: HelmRepository
         name: tailscale
         namespace: tailscale-operator
-      version: '1.90.8'
+      version: '1.90.9'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
