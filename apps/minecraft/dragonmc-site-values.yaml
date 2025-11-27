@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/ghcr.io/usa-reddragon/mc-mcswain-dev
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:2bd487fac71c612fefe752d1dfdc6dc80bd67d3e27c477f8f626074e079e4f86"
+  tag: "main@sha256:4e176b673bac359ddbab4021913e7297d2a79168cf7a0d54843e182b238b4a69"
 
 imagePullSecrets: []
 nameOverride: ""
