@@ -36,6 +36,7 @@ spec:
   values:
     image:
       repository: jacob.pub/registry.k8s.io/external-dns/external-dns
+    sources: [service, ingress, gateway-httproute]
     provider:
       name: webhook
       webhook:
