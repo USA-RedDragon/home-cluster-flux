@@ -1,160 +1,80 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 1
-
-image:
-  repository: jacob.pub/ghcr.io/atuinsh/atuin
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: v18.10.0@sha256:4a29feda6f352581ece849807445fe1f50f2074b4643b7bfe62b27e23705b068
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-args: ["server", "start"]
-
-secrets: []
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs:
-- name: app-config
-  data:
-    server.toml: |
-      [metrics]
-      enable = true
-      host = "0.0.0.0"
-      port = 9090
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - secretRef:
-#     name: app-creds
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: ATUIN_HOST
-  value: 0.0.0.0
-- name: ATUIN_OPEN_REGISTRATION
-  value: "false"
-- name: ATUIN_DB_URI
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: uri
-- name: RUST_LOG
-  value: info
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+controllers:
+  atuin:
+    replicas: 1
+  containers:
+    atuin:
+      args: ["server", "start"]
+      image:
+        repository: jacob.pub/ghcr.io/atuinsh/atuin
+        tag: v18.10.0@sha256:4a29feda6f352581ece849807445fe1f50f2074b4643b7bfe62b27e23705b068
+        pullPolicy: IfNotPresent
+      resources:
+        limits:
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 64Mi
+      probes:
+        liveness:
+          enabled: true
+        readiness:
+          enabled: true
+        startup:
+          enabled: true
+      env:
+        - name: ATUIN_HOST
+          value: 0.0.0.0
+        - name: ATUIN_OPEN_REGISTRATION
+          value: "false"
+        - name: ATUIN_DB_URI
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-app
+              key: uri
+        - name: RUST_LOG
+          value: info
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 8888
-  - name: metrics
-    port: 9090
+  atuin:
+    controller: atuin
+    ports:
+      http:
+        port: 8888
+      metrics:
+        port: 9090
 
-persistentVolumes:
-- name: config
-  mountPath: /config
-  configMap:
-    name: app-config
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+configMaps:
+  config:
+    data:
+      server.toml: |
+        [metrics]
+        enable = true
+        host = "0.0.0.0"
+        port = 9090
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/proxy-body-size: 32M
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  ingressClassName: nginx
-  hosts:
-  - host: atuin.mcswain.dev
-    paths:
-    - port: 8888
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: atuin-mcswain-dev-tls
-    hosts:
+persistence:
+  config:
+    enabled: true
+    type: configMap
+    name: atuin
+
+route:
+  atuin:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
       - atuin.mcswain.dev
-
-extraContainers: []
-
-probes:
-  liveness:
-    httpGet:
-      path: /
-      port: 8888
-  readiness:
-    httpGet:
-      path: /
-      port: 8888
-
-resources:
-  limits:
-    memory: 128Mi
-  requests:
-    cpu: 10m
-    memory: 64Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+    rules:
+      - backendRefs:
+          - name: atuin
+            port: 8888
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
