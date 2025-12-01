@@ -12,9 +12,9 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: nginx
-            app.kubernetes.io/name: ingress-nginx
-            app.kubernetes.io/component: controller
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+            gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway-system
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
