@@ -294,6 +294,25 @@ persistence:
         zot:
           - path: /tmp/zot
 
+route:
+  zot:
+    enabled: true
+    kind: TLSRoute
+    parentRefs:
+      - name: envoy-gateway
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - jacob.pub
+    rules:
+      - backendRefs:
+          - name: zot
+            port: http
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+
 ingress:
   nginx:
     enabled: true
