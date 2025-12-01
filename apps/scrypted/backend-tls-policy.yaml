@@ -10,5 +10,4 @@ spec:
       name: scrypted
       sectionName: "12443"
   validation:
-    wellKnownCACertificates: System
     hostname: cloud.nvr.mcswain.dev
