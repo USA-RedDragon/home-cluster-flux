@@ -9,3 +9,4 @@ resources:
 - services.yaml
 - cilium.yaml
 - metallb.yaml
+- envoy-gateway.yaml
