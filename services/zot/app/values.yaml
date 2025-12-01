@@ -299,7 +299,7 @@ route:
     enabled: true
     kind: HTTPRoute
     parentRefs:
-      - name: envoy-gateway
+      - name: public
         namespace: envoy-gateway-system
         sectionName: https
     hostnames:
