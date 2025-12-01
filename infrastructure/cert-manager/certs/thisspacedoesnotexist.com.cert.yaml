@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: thisspacedoesnotexist.com
+spec:
+  secretName: thisspacedoesnotexist.com-tls
+  issuerRef:
+    name: cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - thisspacedoesnotexist.com
+    - '*.thisspacedoesnotexist.com'
