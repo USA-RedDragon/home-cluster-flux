@@ -12,3 +12,4 @@ resources:
   - mcswain.photography.cert.yaml
   - mcswain.wiki.cert.yaml
   - thisspacedoesnotexist.com.cert.yaml
+  - referencegrant.yaml
