@@ -96,22 +96,21 @@ persistence:
         wireguard-init:
           - path: /etc/wireguard
 
-ingress:
-  bot:
+route:
+  meshmap:
     enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    hosts:
-      - host: meshmap.aredn.mcswain.dev
-        paths:
-          - path: /
-            service:
-              identifier: meshmap
-              port: http
-    tls:
-      - hosts:
-          - meshmap.aredn.mcswain.dev
-        secretName: meshmap.aredn.mcswain.dev-tls
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - meshmap.aredn.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: meshmap
+            port: 80
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
