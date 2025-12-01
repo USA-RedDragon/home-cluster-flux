@@ -1,0 +1,53 @@
+# apiVersion: source.toolkit.fluxcd.io/v1
+# kind: OCIRepository
+# metadata:
+#   name: flux-manifests
+#   namespace: flux-system
+# spec:
+#   interval: 1h
+#   url: oci://docker.io/envoyproxy/gateway-helm
+#   ref:
+#     tag: v1.6.0
+#   secretRef:
+#     name: registry-docker-hub
+# ---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: envoy-gateway
+  namespace: envoy-gateway
+spec:
+  interval: 1m0s
+  type: oci
+  url: oci://docker.io/envoyproxy/gateway-helm
+  secretRef:
+    name: registry-docker-hub
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: envoy-gateway
+  namespace: envoy-gateway
+spec:
+  install:
+    remediation:
+      retries: -1
+    crds: Create
+  upgrade:
+    crds: CreateReplace
+  interval: 60m0s
+  driftDetection:
+    mode: enabled
+  releaseName: envoy-gateway
+  chart:
+    spec:
+      chart: app-template
+      sourceRef:
+        kind: HelmRepository
+        name: envoy-gateway
+        namespace: envoy-gateway
+      version: '1.6.0'
+      interval: 60m0s
+  valuesFrom:
+    - kind: ConfigMap
+      name: chart-values
