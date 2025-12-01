@@ -172,22 +172,21 @@ persistence:
     globalMounts:
       - path: /tmp
 
-ingress:
+route:
   viewer:
     enabled: true
-    className: nginx
-    annotations:
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    hosts:
-      - host: mesonet.mcswain.dev
-        paths:
-          - path: /
-            pathType: Prefix
-            service:
-              identifier: viewer
-              port: http
-    tls:
-      - hosts:
-          - mesonet.mcswain.dev
-        secretName: mesonet-mcswain-dev
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - mesonet.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: viewer
+            port: 80
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
