@@ -49,24 +49,21 @@ service:
       mlat:
         port: 30105
 
-ingress:
+route:
   piaware:
     enabled: true
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/app-root: /skyaware
-    className: nginx
-    hosts:
-      - host: flights.mcswain.dev
-        paths:
-        - path: /
-          pathType: Prefix
-          service:
-              identifier: piaware
-              port: http
-    tls:
-      - secretName: flights-mcswain-dev-tls
-        hosts:
-          - flights.mcswain.dev
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - flights.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: piaware
+            port: 80
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
