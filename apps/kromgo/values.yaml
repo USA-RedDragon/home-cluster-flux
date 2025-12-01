@@ -115,7 +115,7 @@ route:
         namespace: envoy-gateway-system
         sectionName: https
     hostnames:
-      - git.mcswain.dev
+      - kromgo.mcswain.dev
     rules:
       - backendRefs:
           - name: kromgo
