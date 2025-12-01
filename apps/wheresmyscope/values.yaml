@@ -58,25 +58,24 @@ service:
       http:
         port: 8080
 
-
-ingress:
+route:
   wheresmyscope:
     enabled: true
-    className: nginx
-    annotations:
-      cert-manager.io/cluster-issuer: cloudflare
-    hosts:
-      - host: wheresmyscope.mcswain.dev
-        paths:
-          - path: /
-            pathType: Prefix
-            service:
-              identifier: wheresmyscope
-              port: http
-    tls:
-      - hosts:
-          - wheresmyscope.mcswain.dev
-        secretName: wheresmyscope-mcswain-dev
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - wheresmyscope.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: wheresmyscope
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
 
 networkpolicies:
   wheresmyscope:
