@@ -297,7 +297,7 @@ persistence:
 route:
   zot:
     enabled: true
-    kind: TLSRoute
+    kind: HTTPRoute
     parentRefs:
       - name: envoy-gateway
         namespace: envoy-gateway-system
