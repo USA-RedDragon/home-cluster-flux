@@ -20,7 +20,32 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: envoy-gateway-cert
+          - name: dmrhub-tls
+            namespace: cert-manager
+            kind: Secret
+          - name: jacob.network-tls
+            namespace: cert-manager
+            kind: Secret
+          - name: jacob.pub-tls
+            namespace: cert-manager
+            kind: Secret
+          - name: kubewg.net-tls
+            namespace: cert-manager
+            kind: Secret
+          - name: mcswain.cloud-tls
+            namespace: cert-manager
+            kind: Secret
+          - name: mcswain.dev-tls
+            namespace: cert-manager
+            kind: Secret
+          - name: mcswain.photography-tls
+            namespace: cert-manager
+            kind: Secret
+          - name: mcswain.wiki-tls
+            namespace: cert-manager
+            kind: Secret
+          - name: thisspacedoesnotexist.com-tls
+            namespace: cert-manager
             kind: Secret
       allowedRoutes:
         namespaces:
