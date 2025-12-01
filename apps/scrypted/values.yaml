@@ -103,3 +103,7 @@ route:
       - backendRefs:
           - name: scrypted
             port: 12443
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
