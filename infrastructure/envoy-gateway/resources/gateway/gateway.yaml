@@ -15,5 +15,5 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: envoy-gateway-tls
+          - name: envoy-gateway-cert
             kind: Secret
