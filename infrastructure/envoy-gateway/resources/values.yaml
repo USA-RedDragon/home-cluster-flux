@@ -5,3 +5,7 @@ global:
 deployment:
   replicas: 2
   priorityClassName: "system-cluster-critical"
+
+podDisruptionBudget:
+  minAvailable: 1
+  maxUnavailable: 1
