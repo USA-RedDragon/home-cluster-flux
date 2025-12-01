@@ -3,38 +3,38 @@
 controllers:
   atuin:
     replicas: 1
-  containers:
-    atuin:
-      args: ["server", "start"]
-      image:
-        repository: jacob.pub/ghcr.io/atuinsh/atuin
-        tag: v18.10.0@sha256:4a29feda6f352581ece849807445fe1f50f2074b4643b7bfe62b27e23705b068
-        pullPolicy: IfNotPresent
-      resources:
-        limits:
-          memory: 128Mi
-        requests:
-          cpu: 10m
-          memory: 64Mi
-      probes:
-        liveness:
-          enabled: true
-        readiness:
-          enabled: true
-        startup:
-          enabled: true
-      env:
-        - name: ATUIN_HOST
-          value: 0.0.0.0
-        - name: ATUIN_OPEN_REGISTRATION
-          value: "false"
-        - name: ATUIN_DB_URI
-          valueFrom:
-            secretKeyRef:
-              name: postgresql-app
-              key: uri
-        - name: RUST_LOG
-          value: info
+    containers:
+      atuin:
+        args: ["server", "start"]
+        image:
+          repository: jacob.pub/ghcr.io/atuinsh/atuin
+          tag: v18.10.0@sha256:4a29feda6f352581ece849807445fe1f50f2074b4643b7bfe62b27e23705b068
+          pullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          - name: ATUIN_HOST
+            value: 0.0.0.0
+          - name: ATUIN_OPEN_REGISTRATION
+            value: "false"
+          - name: ATUIN_DB_URI
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: uri
+          - name: RUST_LOG
+            value: info
 
 service:
   atuin:
