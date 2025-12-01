@@ -11,6 +11,9 @@ spec:
       kind: EnvoyProxy
       name: public-proxy
   listeners:
+    - name: git-ssh
+      protocol: TCP
+      port: 22
     - name: http
       protocol: HTTP
       port: 80

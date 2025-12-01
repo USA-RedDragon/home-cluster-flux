@@ -1,219 +1,129 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 1
-
-image:
-  repository: jacob.pub/docker.io/gitea/gitea
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.25.1@sha256:b3aee0f6fa4ff3271180a2388bb796be5cced8828685b968a310d70e881fcbb3"
-
-nameOverride: ""
-fullnameOverride: ""
-
-secrets: []
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - secretRef:
-#     name: app-creds
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: GITEA__GIT_0x2E_TIMEOUT__MIGRATE
-  value: "1200"
-- name: GITEA__GIT_0x2E_TIMEOUT__MIRROR
-  value: "1200"
-- name: GITEA__GIT_0x2E_TIMEOUT__PULL
-  value: "1200"
-- name: GITEA__GIT_0x2E_TIMEOUT__CLONE
-  value: "1200"
-- name: GITEA__GIT_0x2E_TIMEOUT__DEFAULT
-  value: "1200"
-- name: GITEA__GIT_0x2E_TIMEOUT__GC
-  value: "1200"
-- name: GITEA__METRICS__ENABLED
-  value: "true"
-- name: GITEA__METRICS__ENABLED_ISSUE_BY_LABEL
-  value: "true"
-- name: GITEA__METRICS__ENABLED_ISSUE_BY_REPOSITORY
-  value: "true"
-- name: GITEA__SERVICE__REQUIRE_SIGNIN_VIEW
-  value: "false"
-- name: GITEA__SERVICE__DISABLE_REGISTRATION
-  value: "true"
-- name: GITEA__OTHER__SHOW_FOOTER_TEMPLATE_LOAD_TIME
-  value: "false"
-- name: GITEA__INDEXER__REPO_INDEXER_ENABLED
-  value: "true"
-- name: GITEA__SERVER__DOMAIN
-  value: git.mcswain.dev
-- name: GITEA__SERVER__ROOT_URL
-  value: https://git.mcswain.dev
-- name: GITEA__SERVER__SSH_DOMAIN
-  value: git.mcswain.dev
-- name: GITEA__MIGRATIONS__ALLOWED_DOMAINS
-  value: "github.com,*.github.com,gitlab.com,*.gitlab.com,bitbucket.org,*.bitbucket.org"
-- name: GITEA__DATABASE__DB_TYPE
-  value: postgres
-- name: GITEA__DATABASE__HOST
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: host
-- name: GITEA__DATABASE__NAME
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: dbname
-- name: GITEA__DATABASE__USER
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: username
-- name: GITEA__DATABASE__PASSWD
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: password
-- name: GITEA__OPENID__ENABLE_OPENID_SIGNIN
-  value: "false"
-
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+controllers:
+  gitea:
+    replicas: 1
+    containers:
+      gitea:
+        image:
+          repository: jacob.pub/docker.io/gitea/gitea
+          tag: 1.25.1@sha256:b3aee0f6fa4ff3271180a2388bb796be5cced8828685b968a310d70e881fcbb3
+          pullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 4Gi
+          requests:
+            memory: 3Gi
+            cpu: 2
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          - name: GITEA__GIT_0x2E_TIMEOUT__MIGRATE
+            value: "1200"
+          - name: GITEA__GIT_0x2E_TIMEOUT__MIRROR
+            value: "1200"
+          - name: GITEA__GIT_0x2E_TIMEOUT__PULL
+            value: "1200"
+          - name: GITEA__GIT_0x2E_TIMEOUT__CLONE
+            value: "1200"
+          - name: GITEA__GIT_0x2E_TIMEOUT__DEFAULT
+            value: "1200"
+          - name: GITEA__GIT_0x2E_TIMEOUT__GC
+            value: "1200"
+          - name: GITEA__METRICS__ENABLED
+            value: "true"
+          - name: GITEA__METRICS__ENABLED_ISSUE_BY_LABEL
+            value: "true"
+          - name: GITEA__METRICS__ENABLED_ISSUE_BY_REPOSITORY
+            value: "true"
+          - name: GITEA__SERVICE__REQUIRE_SIGNIN_VIEW
+            value: "false"
+          - name: GITEA__SERVICE__DISABLE_REGISTRATION
+            value: "true"
+          - name: GITEA__OTHER__SHOW_FOOTER_TEMPLATE_LOAD_TIME
+            value: "false"
+          - name: GITEA__INDEXER__REPO_INDEXER_ENABLED
+            value: "true"
+          - name: GITEA__SERVER__DOMAIN
+            value: git.mcswain.dev
+          - name: GITEA__SERVER__ROOT_URL
+            value: https://git.mcswain.dev
+          - name: GITEA__SERVER__SSH_DOMAIN
+            value: git.mcswain.dev
+          - name: GITEA__MIGRATIONS__ALLOWED_DOMAINS
+            value: "github.com,*.github.com,gitlab.com,*.gitlab.com,bitbucket.org,*.bitbucket.org"
+          - name: GITEA__DATABASE__DB_TYPE
+            value: postgres
+          - name: GITEA__DATABASE__HOST
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: host
+          - name: GITEA__DATABASE__NAME
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: dbname
+          - name: GITEA__DATABASE__USER
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: username
+          - name: GITEA__DATABASE__PASSWD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: password
+          - name: GITEA__OPENID__ENABLE_OPENID_SIGNIN
+            value: "false"
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 3000
-  - name: git
-    port: 22
+  gitea:
+    controller: gitea
+    ports:
+      http:
+        port: 3000
+      ssh:
+        port: 22
 
-persistentVolumes:
-- name: data
-  mountPath: /data
-  nfs:
+persistence:
+  data:
+    enabled: true
+    type: nfs
     path: /mnt/data/git
     server: 192.168.1.135
-- name: gitea-mirror-config
-  mountPath: /do-not-use
-  secret:
-    secretName: gitea-mirror-config
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    # 20-minute timeouts
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "1200"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "1200"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "1200"
-  ingressClassName: nginx
-  hosts:
-  - host: git.mcswain.dev
-    paths:
-    - port: 3000
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: git-mcswain-dev-tls
-    hosts:
+route:
+  gitea:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
       - git.mcswain.dev
-
-probes:
-  liveness:
-    httpGet:
-      path: /api/healthz
-      port: 3000
-  readiness:
-    httpGet:
-      path: /api/healthz
-      port: 3000
-
-resources:
-  limits:
-    memory: 4Gi
-  requests:
-    memory: 3Gi
-    cpu: 2
-
-# extraContainers:
-# - name: gitea-mirror
-#   image: jacob.pub/ghcr.io/usa-reddragon/gitea-mirror:v1.0.13
-#   imagePullPolicy: IfNotPresent
-#   args:
-#   - "--config=/config/config.yaml"
-#   volumeMounts:
-#     - mountPath: /data
-#       name: data
-#     - name: gitea-mirror-config
-#       mountPath: /config
-#       readOnly: true
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+    rules:
+      - backendRefs:
+          - name: gitea
+            port: 3000
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+  git:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: ssh
+    rules:
+      - backendRefs:
+          - name: gitea
+            port: 22
