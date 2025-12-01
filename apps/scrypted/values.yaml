@@ -92,7 +92,7 @@ route:
               value: /
   cloud:
     enabled: true
-    kind: TLSRoute
+    kind: HTTPRoute
     parentRefs:
       - name: public
         namespace: envoy-gateway-system
