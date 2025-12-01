@@ -27,30 +27,29 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
-  annotations:
-    cert-manager.io/cluster-issuer: cloudflare
-    kubernetes.io/tls-acme: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: HTTP
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
   name: home-mcswain-dev
   namespace: static-services
 spec:
-  ingressClassName: nginx
+  hostnames:
+  - home.mcswain.dev
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: public
+    namespace: envoy-gateway-system
+    sectionName: https
   rules:
-  - host: home.mcswain.dev
-    http:
-      paths:
-      - backend:
-          service:
-            name: home-mcswain-dev
-            port:
-              number: 8123
-        path: /
-        pathType: Prefix
-  tls:
-  - hosts:
-    - home.mcswain.dev
-    secretName: home-mcswain-dev-tls
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: home-mcswain-dev
+      namespace: static-services
+      port: 8123
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
