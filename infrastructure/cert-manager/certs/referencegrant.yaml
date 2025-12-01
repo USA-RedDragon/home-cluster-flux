@@ -11,19 +11,28 @@ spec:
   to:
     - kind: Secret
       name: dmrhub-tls
+      group: ""
     - kind: Secret
       name: jacob.network-tls
+      group: ""
     - kind: Secret
       name: jacob.pub-tls
+      group: ""
     - kind: Secret
       name: kubewg.net-tls
+      group: ""
     - kind: Secret
       name: mcswain.cloud-tls
+      group: ""
     - kind: Secret
       name: mcswain.dev-tls
+      group: ""
     - kind: Secret
       name: mcswain.photography-tls
+      group: ""
     - kind: Secret
       name: mcswain.wiki-tls
+      group: ""
     - kind: Secret
       name: thisspacedoesnotexist.com-tls
+      group: ""
