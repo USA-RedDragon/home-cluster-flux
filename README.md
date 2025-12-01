@@ -467,7 +467,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>astro-processing</td>
+    <td>envoy-gateway-system</td>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/envoy-gateway/resources/helm.yaml">envoy-gateway</a></td>
     <td></td>
