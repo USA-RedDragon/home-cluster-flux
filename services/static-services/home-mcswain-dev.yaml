@@ -13,7 +13,7 @@ endpoints:
     conditions:
       ready: true
 ports:
-  - name: http
+  - name: home-assistant
     port: 8123
 ---
 apiVersion: v1
