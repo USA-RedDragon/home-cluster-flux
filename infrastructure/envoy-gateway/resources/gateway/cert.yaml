@@ -2,6 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: selfsigned-issuer
+  namespace: envoy-gateway-system
 spec:
   selfSigned: {}
 ---
@@ -9,6 +10,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: envoy-gateway-ca
+  namespace: envoy-gateway-system
 spec:
   isCA: true
   commonName: envoy-gateway-ca
@@ -23,6 +25,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: envoy-gateway-issuer
+  namespace: envoy-gateway-system
 spec:
   ca:
     secretName: envoy-gateway-ca
@@ -31,6 +34,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: envoy-gateway-cert
+  namespace: envoy-gateway-system
 spec:
   commonName: envoy-gateway-cert
   secretName: envoy-gateway-cert
