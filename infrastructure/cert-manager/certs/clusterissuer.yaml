@@ -18,19 +18,19 @@ spec:
           email: jacob.a.mcswain@gmail.com
       selector:
         dnsZones:
-        - mcswain.dev
+        - dmrhub.app
+        - dmrhub.cloud
+        - dmrhub.net
+        - dmrhub.network
+        - dmrhub.org
         - jacob.network
-        - ki5vmf.radio
+        - jacob.pub
+        - kubewg.net
         - mcswain.cloud
+        - mcswain.dev
         - mcswain.photography
         - mcswain.wiki
         - thisspacedoesnotexist.com
-        - dmrhub.app
-        - dmrhub.cloud
-        - dmrhub.org
-        - dmrhub.net
-        - dmrhub.network
-        - jacob.pub
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer

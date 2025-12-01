@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mcswain.dev
+spec:
+  secretName: mcswain.dev-tls
+  issuerRef:
+    name: cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - mcswain.dev
+    - '*.mcswain.dev'
