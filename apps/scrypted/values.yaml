@@ -72,54 +72,34 @@ persistence:
     size: 30Gi
     accessMode: ReadWriteOnce
 
-ingress:
-  nginx:
+route:
+  scrypted:
     enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      nginx.ingress.kubernetes.io/proxy-buffering: "off"
-      nginx.ingress.kubernetes.io/proxy-body-size: "0"
-      nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-    hosts:
-      - host: nvr.mcswain.dev
-        paths:
-          - path: /
-            service:
-              identifier: scrypted
-              port: http
-    tls:
-      - hosts:
-          - nvr.mcswain.dev
-        secretName: nvr-mcswain-dev
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - nvr.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: scrypted
+            port: 11080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
   cloud:
     enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      nginx.ingress.kubernetes.io/proxy-buffering: "off"
-      nginx.ingress.kubernetes.io/proxy-body-size: "0"
-      nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-    hosts:
-      - host: cloud.nvr.mcswain.dev
-        paths:
-          - path: /
-            service:
-              identifier: scrypted
-              port: cloud
-    tls:
-      - hosts:
-          - cloud.nvr.mcswain.dev
-        secretName: cloud-nvr-mcswain-dev
+    kind: TLSRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - cloud.nvr.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: scrypted
+            port: 12443
