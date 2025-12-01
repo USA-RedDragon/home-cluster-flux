@@ -20,6 +20,8 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
+          - name: envoy-gateway-cert
+            kind: Secret
           - name: dmrhub-tls
             namespace: cert-manager
             kind: Secret
