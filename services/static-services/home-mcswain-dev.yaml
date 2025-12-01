@@ -5,6 +5,7 @@ metadata:
   namespace: static-services
   labels:
     kubernetes.io/service-name: home-mcswain-dev
+    endpointslice.kubernetes.io/managed-by: cluster-admins
 addressType: IPv4
 endpoints:
   - addresses:
