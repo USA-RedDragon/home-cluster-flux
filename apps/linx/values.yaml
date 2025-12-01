@@ -79,42 +79,24 @@ service:
       http:
         port: 8080
 
-
-ingress:
+route:
   linx:
     enabled: true
-    className: nginx
-    annotations:
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/proxy-body-size: "0"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "900"
-    hosts:
-      - host: files.mcswain.dev
-        paths:
-          - path: /
-            pathType: Prefix
-            service:
-              identifier: linx
-              port: http
-    tls: &tls
-      - hosts:
-          - files.mcswain.dev
-        secretName: files-mcswain-dev
-  robots:
-      enabled: true
-      annotations:
-        nginx.ingress.kubernetes.io/configuration-snippet: |
-          add_header Content-Type text/plain;
-          return 200 "User-Agent: *\nDisallow: /\n";
-      hosts:
-        - host: files.mcswain.dev
-          paths:
-            - path: /robots.txt
-              pathType: ImplementationSpecific
-              service:
-                identifier: linx
-                port: http
-      tls: *tls
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - files.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: linx
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
 
 networkpolicies:
   linx:
