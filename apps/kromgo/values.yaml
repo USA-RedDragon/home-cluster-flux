@@ -101,8 +101,8 @@ persistence:
     type: configMap
     name: kromgo
     advancedMounts:
-      zot:
-        zot:
+      kromgo:
+        kromgo:
           - path: /kromgo/config.yaml
             subPath: config.yaml
 
