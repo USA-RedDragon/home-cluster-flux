@@ -312,6 +312,10 @@ route:
           - path:
               type: PathPrefix
               value: /
+        tls:
+          certificateRefs:
+            - name: jacob-pub
+              kind: Secret
 
 ingress:
   nginx:
