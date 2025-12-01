@@ -44,6 +44,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#device-plugin">device-plugin</a></li>
   <li><a href="#dmrhub">dmrhub</a></li>
   <li><a href="#dump978">dump978</a></li>
+  <li><a href="#envoy-gateway">envoy-gateway</a></li>
   <li><a href="#ephemeris">ephemeris</a></li>
   <li><a href="#external-dns-internal">external-dns-internal</a></li>
   <li><a href="#ffmpeg-printer-webcam">ffmpeg-printer-webcam</a></li>
@@ -453,6 +454,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>dump978</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/dump978/helm.yaml">dump978</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>envoy-gateway</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>astro-processing</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/envoy-gateway/resources/helm.yaml">envoy-gateway</a></td>
     <td></td>
   </tr>
 </table>
