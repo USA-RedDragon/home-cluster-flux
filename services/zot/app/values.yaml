@@ -306,8 +306,8 @@ route:
       - jacob.pub
     rules:
       - backendRefs:
-          - name: zot
-            port: 5000
+          - name: docker-proxy
+            port: 8080
         matches:
           - path:
               type: PathPrefix
