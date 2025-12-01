@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: envoy-gateway
+  name: public
   namespace: envoy-gateway-system
 spec:
   gatewayClassName: envoy-gateway
@@ -9,7 +9,7 @@ spec:
     parametersRef:
       group: gateway.envoyproxy.io
       kind: EnvoyProxy
-      name: gateway-proxy
+      name: public-proxy
   listeners:
     - name: http
       protocol: HTTP

@@ -1,7 +1,7 @@
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: EnvoyProxy
 metadata:
-  name: gateway-proxy
+  name: public-proxy
   namespace: envoy-gateway-system
 spec:
   provider:
