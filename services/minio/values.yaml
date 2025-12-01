@@ -1,155 +1,89 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 1
-
-image:
-  repository: ghcr.io/usa-reddragon/minio
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: RELEASE.2025-08-29T21-27-49Z@sha256:fbf5d03f263ea24866c351a9aad8da591b0a9f29eea02a275a4b49f95f966d87
-
-nameOverride: ""
-fullnameOverride: ""
-
-args:
-  - server
-  - /data
-  - --console-address
-  - ":443"
-  - --address
-  - ":9000"
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom:
-- secretRef:
-    name: minio-user
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: MINIO_BROWSER_REDIRECT_URL
-  value: https://minio.mcswain.dev
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+controllers:
+  minio:
+    replicas: 1
+    containers:
+      minio:
+        args:
+          - server
+          - /data
+          - --console-address
+          - ":443"
+          - --address
+          - ":9000"
+        image:
+          repository: ghcr.io/usa-reddragon/minio
+          tag: RELEASE.2025-08-29T21-27-49Z@sha256:fbf5d03f263ea24866c351a9aad8da591b0a9f29eea02a275a4b49f95f966d87
+          pullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 6Gi
+          requests:
+            cpu: '1'
+            memory: 3Gi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          - name: MINIO_BROWSER_REDIRECT_URL
+            value: https://minio.mcswain.dev
+        envFrom:
+          - secretRef:
+              name: minio-user
 
 service:
-  type: ClusterIP
-  ports:
-  - name: console
-    port: 443
-  - name: s3
-    port: 9000
+  minio:
+    controller: minio
+    ports:
+      console:
+        port: 443
+      s3:
+        port: 9000
 
-persistentVolumes:
-- name: data
-  mountPath: /data
-  size: 1Ti
-  persistentVolumeClaim:
-    name: minio-data
+persistence:
+  data:
+    enabled: true
     storageClass: minio-data
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+    accessMode: ReadWriteOnce
+    size: 1Ti
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
-  ingressClassName: nginx
-  hosts:
-  - host: minio.mcswain.dev
-    paths:
-    - port: 443
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: minio-mcswain-dev-tls
-    hosts:
+route:
+  console:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
       - minio.mcswain.dev
-
-probes:
-  liveness:
-    tcpSocket:
-      port: 9000
-  readiness:
-    tcpSocket:
-      port: 9000
-
-resources:
-  limits:
-    memory: 6Gi
-  requests:
-    cpu: '1'
-    memory: 3Gi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+    rules:
+      - backendRefs:
+          - name: minio
+            port: 443
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+  s3:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - s3.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: minio
+            port: 9000
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
