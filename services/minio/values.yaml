@@ -48,10 +48,10 @@ service:
 persistence:
   data:
     enabled: true
-    storageClass: minio-data
+    storageClass: data
+    existingClaim: minio-data
     accessMode: ReadWriteOnce
     size: 1Ti
-    name: minio-data
 
 route:
   console:
