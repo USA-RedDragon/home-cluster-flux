@@ -96,36 +96,6 @@ persistence:
     server: 192.168.1.135
 
 ingress:
-  jellyfin:
-    enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/proxy-buffering: "off"
-      nginx.ingress.kubernetes.io/proxy-body-size: "0"
-      nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-      nginx.ingress.kubernetes.io/server-snippet: |
-        location /metrics {
-            deny all;
-            return 404;
-        }
-    hosts:
-      - host: jellyfin.mcswain.dev
-        paths:
-          - path: /
-            pathType: Prefix
-            service:
-              identifier: jellyfin
-              port: http
-    tls:
-      - hosts:
-          - jellyfin.mcswain.dev
-        secretName: jellyfin-mcswain-dev
   tailscale:
     enabled: true
     className: tailscale
@@ -140,6 +110,25 @@ ingress:
     tls:
       - hosts:
           - jellyfin
+
+route:
+  jellyfin:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - jellyfin.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: jellyfin
+            port: 8096
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
 
 serviceMonitor:
   jellyfin:
