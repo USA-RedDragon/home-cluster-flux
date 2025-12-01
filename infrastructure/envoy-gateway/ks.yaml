@@ -2,10 +2,10 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: envoy-gateway
-  namespace: envoy-gateway
+  namespace: envoy-gateway-system
 spec:
   interval: 1h
-  targetNamespace: envoy-gateway
+  targetNamespace: envoy-gateway-system
   path: ./infrastructure/envoy-gateway/resources
   prune: true
   sourceRef:
