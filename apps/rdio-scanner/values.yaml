@@ -19,6 +19,13 @@ controllers:
           requests:
             cpu: 150m
             memory: 100Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
         env:
           - name: TZ
             value: America/Chicago
