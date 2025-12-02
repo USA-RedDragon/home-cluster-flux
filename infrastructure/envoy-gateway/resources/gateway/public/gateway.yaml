@@ -76,6 +76,15 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - name: nginx-rtmp
+      protocol: TCP
+      port: 1935
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: nginx-rtmp
     - name: dmrhub-hbrp
       protocol: UDP
       port: 62031
