@@ -43,5 +43,8 @@ spec:
       name: nvr.mcswain.dev-tls
       group: ""
     - kind: Secret
+      name: obico.mcswain.dev-tls
+      group: ""
+    - kind: Secret
       name: thisspacedoesnotexist.com-tls
       group: ""
