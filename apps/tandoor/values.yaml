@@ -143,4 +143,5 @@ route:
               scheme: https
               hostname: recipes.mcswain.dev
               path:
-                value: /accounts/oidc/authentik/login
+                type: ReplaceFullPath
+                replaceFullPath: /accounts/oidc/authentik/login
