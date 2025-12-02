@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: aredn.mcswain.dev
+spec:
+  secretName: aredn.mcswain.dev-tls
+  issuerRef:
+    name: cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - aredn.mcswain.dev
+    - '*.aredn.mcswain.dev'

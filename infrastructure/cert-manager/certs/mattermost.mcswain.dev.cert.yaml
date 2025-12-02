@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mattermost.mcswain.dev
+spec:
+  secretName: mattermost.mcswain.dev-tls
+  issuerRef:
+    name: cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - mattermost.mcswain.dev
+    - '*.mattermost.mcswain.dev'
