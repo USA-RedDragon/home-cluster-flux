@@ -267,19 +267,4 @@ service:
   annotations: {}
 
 ingress:
-  enabled: true
-
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  ingressClassName: nginx
-  hosts:
-    renovate.mcswain.dev:
-      paths:
-        - path: "/"
-          pathType: Prefix
-  tls:
-    - secretName: renovate-mcswain-dev-tls
-      hosts:
-        - renovate.mcswain.dev
+  enabled: false
