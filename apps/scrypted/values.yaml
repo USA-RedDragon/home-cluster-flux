@@ -7,29 +7,12 @@ controllers:
       priorityClassName: system-cluster-critical
       nodeSelector:
         google.feature.node.kubernetes.io/coral: "true"
-    initContainers:
-      certificate:
-        image:
-          repository: ghcr.io/usa-reddragon/alpine
-          tag: 3.21.3
-          pullPolicy: IfNotPresent
-        resources:
-          requests:
-            cpu: 250m
-            memory: 512Mi
-        command:
-          - sh
-          - -c
-          - |
-            set -e
-            apk add --no-cache jq
-            jq -n --arg key "$(cat /certs/tls.key)" --arg cert "$(cat /certs/tls.crt)" '{ "cert": $cert, "key": $key }' > /tmp/https-options.json
     containers:
       scrypted:
         securityContext:
           privileged: true
         image:
-          repository: ghcr.io/koush/scrypted
+          repository: jacob.pub/ghcr.io/koush/scrypted
           tag: v0.123.58-jammy-full@sha256:d84d2a8cc897e3ddd0635aecb681900f551e3f5bf702200df4b92e4014bc22b3
           pullPolicy: IfNotPresent
         resources:
@@ -57,8 +40,6 @@ service:
         port: 10443
       http-insecure:
         port: 11080
-      cloud:
-        port: 12443
 
 persistence:
   nvr:
@@ -66,19 +47,6 @@ persistence:
     type: nfs
     path: /mnt/data/nvr
     server: 192.168.1.135
-  tmp:
-    enabled: true
-    type: emptyDir
-    medium: Memory
-    sizeLimit: 1Gi
-  certs:
-    enabled: true
-    type: secret
-    name: scrypted-cert
-    advancedMounts:
-      scrypted:
-        certificate:
-          - path: /certs
   usb:
     enabled: true
     type: hostPath
@@ -114,27 +82,11 @@ route:
         sectionName: https
     hostnames:
       - nvr.mcswain.dev
-    rules:
-      - backendRefs:
-          - name: scrypted
-            port: 11080
-        matches:
-          - path:
-              type: PathPrefix
-              value: /
-  cloud:
-    enabled: true
-    kind: HTTPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: https
-    hostnames:
       - cloud.nvr.mcswain.dev
     rules:
       - backendRefs:
           - name: scrypted
-            port: 12443
+            port: 11080
         matches:
           - path:
               type: PathPrefix
