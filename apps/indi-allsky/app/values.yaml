@@ -167,58 +167,70 @@ persistence:
         gunicorn:
           - path: /home/allsky/indi-allsky/html/images
 
-ingress:
-  nginx:
+route:
+  allsky:
     enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/proxy-buffering: "off"
-      nginx.ingress.kubernetes.io/proxy-body-size: "0"
-      nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-    hosts:
-      - host: allsky.mcswain.dev
-        paths:
-          - path: /indi-allsky
-            service:
-              identifier: gunicorn
-              port: http
-    tls:
-      - hosts:
-          - allsky.mcswain.dev
-        secretName: allsky-mcswain-dev
-  redirects:
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - allsky.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: gunicorn
+            port: 8000
+        matches:
+          - path:
+              type: PathPrefix
+              value: /indi-allsky
+  allsky-redirects:
     enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/permanent-redirect: https://allsky.mcswain.dev/indi-allsky
-    hosts:
-      - host: allsky.mcswain.dev
-        paths:
-          - path: /allsky
-            pathType: Exact
-            service:
-              identifier: gunicorn
-              port: http
-          - path: /allsky/
-            pathType: Exact
-            service:
-              identifier: gunicorn
-              port: http
-          - path: /
-            pathType: Exact
-            service:
-              identifier: gunicorn
-              port: http
-    tls:
-      - hosts:
-          - allsky.mcswain.dev
-        secretName: allsky-mcswain-dev
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - allsky.mcswain.dev
+    rules:
+      - matches:
+          - path:
+              type: Exact
+              value: /allsky
+        filters:
+          - type: RequestRedirect
+            requestRedirect:
+              scheme: https
+              hostname: allsky.mcswain.dev
+              statusCode: 301
+              path:
+                type: ReplaceFullPath
+                replaceFullPath: /indi-allsky
+      - matches:
+          - path:
+              type: Exact
+              value: /allsky/
+        filters:
+          - type: RequestRedirect
+            requestRedirect:
+              scheme: https
+              hostname: allsky.mcswain.dev
+              statusCode: 301
+              path:
+                type: ReplaceFullPath
+                replaceFullPath: /indi-allsky
+      - matches:
+          - path:
+              type: Exact
+              value: /
+        filters:
+          - type: RequestRedirect
+            requestRedirect:
+              scheme: https
+              hostname: allsky.mcswain.dev
+              statusCode: 301
+              path:
+                type: ReplaceFullPath
+                replaceFullPath: /indi-allsky
