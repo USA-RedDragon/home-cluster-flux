@@ -16,6 +16,9 @@ spec:
       name: dmrhub-tls
       group: ""
     - kind: Secret
+      name: flux.mcswain.dev-tls
+      group: ""
+    - kind: Secret
       name: jacob.network-tls
       group: ""
     - kind: Secret

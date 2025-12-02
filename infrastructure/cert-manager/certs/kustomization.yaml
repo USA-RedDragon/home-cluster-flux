@@ -5,6 +5,7 @@ resources:
   - clusterissuer.yaml
   - aredn.mcswain.dev.cert.yaml
   - dmrhub.cert.yaml
+  - flux.mcswain.dev.cert.yaml
   - jacob.network.cert.yaml
   - jacob.pub.cert.yaml
   - kubewg.net.cert.yaml
