@@ -4,6 +4,7 @@ namespace: mattermost
 resources:
   - helm.yaml
   - postgres.yaml
+  - route.yaml
   - push-proxy-helm.yaml
 configMapGenerator:
   - name: chart-values
