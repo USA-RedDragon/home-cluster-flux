@@ -59,29 +59,25 @@ server:
       mountPath: /config
       name: immich-config
       readOnly: true
-  ingress:
+  route:
     main:
       enabled: true
-      ingressClassName: nginx
-      annotations:
-        # proxy-body-size is set to 0 to remove the body limit on file uploads
-        nginx.ingress.kubernetes.io/proxy-body-size: "0"
-        # SSL
-        kubernetes.io/tls-acme: "true"
-        cert-manager.io/cluster-issuer: cloudflare
-        nginx.ingress.kubernetes.io/ssl-redirect: "true"
-        # 5-minute timeouts
-        nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
-        nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
-        nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
-      hosts:
-        - host: photos.mcswain.dev
-          paths:
-            - path: "/"
-      tls:
-        - secretName: photos-mcswain-dev-tls
-          hosts:
-            - photos.mcswain.dev
+      kind: HTTPRoute
+      parentRefs:
+        - name: public
+          namespace: envoy-gateway-system
+          sectionName: https
+      hostnames:
+        - photos.mcswain.dev
+      rules:
+        - backendRefs:
+            - name: immich-server
+              port: 2283
+          matches:
+            - path:
+                type: PathPrefix
+                value: /
+
   resources:
     requests:
       memory: 750Mi
