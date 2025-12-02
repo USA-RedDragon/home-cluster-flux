@@ -4,20 +4,24 @@
 
 # These entries are shared between all the Immich components
 
-env:
-  REDIS_HOSTNAME: redis-app
-  DB_HOSTNAME: postgresql-rw
-  DB_DATABASE_NAME: immich
-  DB_USERNAME: immich
-  DB_PASSWORD:
-    secretKeyRef:
-      name: postgresql-app
-      key: password
-  IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
-  TZ: America/Chicago
-
+controllers:
+  main:
+    containers:
+      main:
+        env:
+          REDIS_HOSTNAME: redis-app
+          DB_HOSTNAME: postgresql-rw
+          DB_DATABASE_NAME: immich
+          DB_USERNAME: immich
+          DB_PASSWORD:
+            secretKeyRef:
+              name: postgresql-app
+              key: password
+          IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
 
 immich:
+  metrics:
+    enabled: true
   persistence:
     # Main data store for all photos shared between different components.
     library:
@@ -29,21 +33,28 @@ immich:
 
 server:
   enabled: true
-  controller:
-    strategy: Recreate
-  image:
-    repository: jacob.pub/ghcr.io/immich-app/immich-server
-    tag: v1.144.1
-    pullPolicy: IfNotPresent
-  env:
-    CPU_CORES: '1'
-    TZ: America/Chicago
-    IMMICH_CONFIG_FILE: /config/config.json
-    IMMICH_TRUSTED_PROXIES: 172.17.0.0/16
-    IMMICH_METRICS: 'true'
-    IMMICH_API_METRICS: 'true'
-    IMMICH_IO_METRICS: 'true'
-    IMMICH_JOB_METRICS: 'true'
+  controllers:
+    main:
+      strategy: Recreate
+      containers:
+        main:
+          image:
+            repository: jacob.pub/ghcr.io/immich-app/immich-server
+            tag: v1.144.1
+            pullPolicy: IfNotPresent
+          env:
+            CPU_CORES: '1'
+            TZ: America/Chicago
+            IMMICH_CONFIG_FILE: /config/config.json
+            IMMICH_TRUSTED_PROXIES: 172.17.0.0/16
+            IMMICH_METRICS: 'true'
+            IMMICH_API_METRICS: 'true'
+            IMMICH_IO_METRICS: 'true'
+            IMMICH_JOB_METRICS: 'true'
+          resources:
+            requests:
+              memory: 750Mi
+              cpu: 300m
   persistence:
     config:
       enabled: true
@@ -70,34 +81,28 @@ server:
                 type: PathPrefix
                 value: /
 
-  resources:
-    requests:
-      memory: 750Mi
-      cpu: 300m
-
-microservices:
-  enabled: true
-  image:
-    repository: jacob.pub/ghcr.io/immich-app/immich-server
-    tag: v1.144.1
-    pullPolicy: IfNotPresent
-  resources:
-    requests:
-      memory: 4Gi
-      cpu: 300m
-    limits:
-      memory: 6Gi
-
 machine-learning:
   enabled: true
-  controller:
-    strategy: Recreate
-  image:
-    repository: jacob.pub/ghcr.io/immich-app/immich-machine-learning
-    tag: v1.144.1
-    pullPolicy: IfNotPresent
-  env:
-    TRANSFORMERS_CACHE: /cache
+  controllers:
+    main:
+      strategy: Recreate
+      containers:
+        main:
+          image:
+            repository: jacob.pub/ghcr.io/immich-app/immich-machine-learning
+            tag: v1.144.1
+            pullPolicy: IfNotPresent
+          env:
+            TRANSFORMERS_CACHE: /cache
+            HF_XET_CACHE: /cache/huggingface-xet
+            MPLCONFIGDIR: /cache/matplotlib-config
+          resources:
+            requests:
+              memory: 600Mi
+              cpu: '1'
+            limits:
+              memory: 1.3Gi
+              cpu: '1'
   persistence:
     cache:
       enabled: true
@@ -105,10 +110,3 @@ machine-learning:
       type: persistentVolumeClaim
       accessMode: ReadWriteOnce
       storageClass: longhorn-ssd
-  resources:
-    requests:
-      memory: 600Mi
-      cpu: '1'
-    limits:
-      memory: 1.3Gi
-      cpu: '1'
