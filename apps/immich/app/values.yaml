@@ -27,9 +27,6 @@ immich:
 
 # Dependencies
 
-postgresql:
-  enabled: false
-
 redis:
   enabled: false
 
