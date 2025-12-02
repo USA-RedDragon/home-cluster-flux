@@ -25,11 +25,6 @@ immich:
       # You have to specify an existing PVC to use
       existingClaim: immich-photos
 
-# Dependencies
-
-redis:
-  enabled: false
-
 # Immich components
 
 server:
