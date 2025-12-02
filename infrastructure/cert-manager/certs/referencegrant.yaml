@@ -10,6 +10,9 @@ spec:
       namespace: envoy-gateway-system
   to:
     - kind: Secret
+      name: aredn.mcswain.dev-tls
+      group: ""
+    - kind: Secret
       name: dmrhub-tls
       group: ""
     - kind: Secret
@@ -22,6 +25,9 @@ spec:
       name: kubewg.net-tls
       group: ""
     - kind: Secret
+      name: mattermost.mcswain.dev-tls
+      group: ""
+    - kind: Secret
       name: mcswain.cloud-tls
       group: ""
     - kind: Secret
@@ -32,6 +38,9 @@ spec:
       group: ""
     - kind: Secret
       name: mcswain.wiki-tls
+      group: ""
+    - kind: Secret
+      name: nvr.mcswain.dev-tls
       group: ""
     - kind: Secret
       name: thisspacedoesnotexist.com-tls

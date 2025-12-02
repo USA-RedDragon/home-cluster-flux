@@ -3,13 +3,16 @@ kind: Kustomization
 namespace: cert-manager
 resources:
   - clusterissuer.yaml
+  - aredn.mcswain.dev.cert.yaml
   - dmrhub.cert.yaml
   - jacob.network.cert.yaml
   - jacob.pub.cert.yaml
   - kubewg.net.cert.yaml
+  - mattermost.mcswain.dev.cert.yaml
   - mcswain.cloud.cert.yaml
   - mcswain.dev.cert.yaml
   - mcswain.photography.cert.yaml
   - mcswain.wiki.cert.yaml
+  - nvr.mcswain.dev.cert.yaml
   - thisspacedoesnotexist.com.cert.yaml
   - referencegrant.yaml
