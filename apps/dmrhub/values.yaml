@@ -186,7 +186,7 @@ route:
         sectionName: dmrhub-hbrp
     rules:
       - backendRefs:
-          - name: hbrp
+          - name: dmrhub
             port: 62031
   openbridge:
     enabled: true
@@ -197,7 +197,7 @@ route:
         sectionName: dmrhub-openbridge
     rules:
       - backendRefs:
-          - name: openbridge
+          - name: dmrhub
             port: 62035
 
 serviceMonitor:
