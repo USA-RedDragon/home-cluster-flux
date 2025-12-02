@@ -88,24 +88,7 @@ mattermostApp:
 
   ingress:
     # Used to create Ingress record (should be used with service.type: ClusterIP).
-    enabled: true
-    hosts:
-      - mattermost.mcswain.dev
-    tls:
-      # Secrets must be manually created in the namespace.
-      - secretName: mattermost-mcswain-dev-tls
-        hosts:
-          - mattermost.mcswain.dev
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/proxy-buffering: "off"
-      nginx.ingress.kubernetes.io/proxy-body-size: "0"
-      nginx.ingress.kubernetes.io/proxy-connect-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
-      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-    ingressClassName: nginx
+    enabled: false
 
   ## Pod Security Context
   ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
