@@ -74,7 +74,11 @@ persistence:
   certs:
     enabled: true
     type: secret
-    secretName: scrypted-cert
+    name: scrypted-cert
+    advancedMounts:
+      scrypted:
+        certificate:
+          - path: /certs
   usb:
     enabled: true
     type: hostPath
