@@ -10,8 +10,8 @@ controllers:
     initContainers:
       certificate:
         image:
-          repository: jacob.pub/docker.io/library/alpine
-          tag: 3.22.2
+          repository: jacob.pub/ghcr.io/usa-reddragon/alpine
+          tag: 3.21.3
           pullPolicy: IfNotPresent
         resources:
           requests:
