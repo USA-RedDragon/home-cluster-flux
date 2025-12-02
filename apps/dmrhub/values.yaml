@@ -140,7 +140,7 @@ route:
         namespace: envoy-gateway-system
         sectionName: https
     hostnames:
-      - dmrhub.mcswain.dev
+      - dmrhub.net
     rules:
       - backendRefs:
           - name: dmrhub
