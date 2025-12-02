@@ -121,6 +121,7 @@ service:
     ports:
       http:
         port: 3005
+        primary: true
       metrics:
         port: 9001
       hbrp:
