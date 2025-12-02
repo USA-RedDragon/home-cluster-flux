@@ -29,8 +29,6 @@ controllers:
         env:
           - name: SCRYPTED_NVR_VOLUME
             value: /nvr
-          - name: SCRYPTED_HTTPS_OPTIONS_FILE
-            value: /tmp/https-options.json
 
 service:
   scrypted:
