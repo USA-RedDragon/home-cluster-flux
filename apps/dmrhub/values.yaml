@@ -177,27 +177,28 @@ route:
               scheme: https
               hostname: dmrhub.net
               statusCode: 301
-  udp:
-    dmrhub-hbrp:
-      enabled: true
-      kind: UDPRoute
-      parentRefs:
-        - name: public
-          namespace: envoy-gateway-system
-      rules:
-        - backendRefs:
-            - name: dmrhub
-              port: 62031
-    dmrhub-openbridge:
-      enabled: true
-      kind: UDPRoute
-      parentRefs:
-        - name: public
-          namespace: envoy-gateway-system
-      rules:
-        - backendRefs:
-            - name: dmrhub
-              port: 62035
+  hbrp:
+    enabled: true
+    kind: UDPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: dmrhub-hbrp
+    rules:
+      - backendRefs:
+          - name: hbrp
+            port: 62031
+  openbridge:
+    enabled: true
+    kind: UDPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: dmrhub-openbridge
+    rules:
+      - backendRefs:
+          - name: openbridge
+            port: 62035
 
 serviceMonitor:
   dmrhub:
