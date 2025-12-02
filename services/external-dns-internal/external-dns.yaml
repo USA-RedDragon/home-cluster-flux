@@ -32,7 +32,7 @@ spec:
   values:
     image:
       repository: jacob.pub/registry.k8s.io/external-dns/external-dns
-    sources: [service, ingress, gateway-grpcroute, gateway-httproute, gateway-tcproute, gateway-tlsroute, gateway-udproute]
+    sources: [service, gateway-grpcroute, gateway-httproute, gateway-tcproute, gateway-tlsroute, gateway-udproute]
     provider:
       name: webhook
       webhook:
@@ -64,8 +64,6 @@ spec:
 
     extraArgs:
       - --webhook-provider-url=http://localhost:8888
-      - --ingress-class=nginx
-      - --source=ingress
       - --source=gateway-grpcroute
       - --source=gateway-httproute
       - --source=gateway-tlsroute
