@@ -26,13 +26,9 @@ spec:
         namespace: external-dns-internal
         name: external-dns
       interval: 1h
-  # TODO: Enable schema validation when new chart version is released
   install:
-    disableSchemaValidation: true
     remediation:
       retries: -1
-  upgrade:
-    disableSchemaValidation: true
   values:
     image:
       repository: jacob.pub/registry.k8s.io/external-dns/external-dns
