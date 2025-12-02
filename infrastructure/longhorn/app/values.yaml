@@ -29,35 +29,35 @@ image:
   longhorn:
     engine:
       repository: longhornio/longhorn-engine
-      tag: v1.9.1
+      tag: v1.10.1
     manager:
       repository: longhornio/longhorn-manager
-      tag: v1.9.2
+      tag: v1.10.1
     ui:
       repository: longhornio/longhorn-ui
-      tag: v1.9.2
+      tag: v1.10.1
     instanceManager:
       repository: longhornio/longhorn-instance-manager
-      tag: v1.9.2
+      tag: v1.10.1
     shareManager:
       repository: longhornio/longhorn-share-manager
-      tag: v1.9.2
+      tag: v1.10.1
     backingImageManager:
       repository: longhornio/backing-image-manager
-      tag: v1.9.2
+      tag: v1.10.1
     supportBundleKit:
       repository: longhornio/support-bundle-kit
-      tag: v0.0.69
+      tag: v0.0.71
   csi:
     attacher:
       repository: longhornio/csi-attacher
-      tag: v4.9.0
+      tag: v4.10.0
     provisioner:
       repository: longhornio/csi-provisioner
       tag: v5.3.0
     nodeDriverRegistrar:
       repository: longhornio/csi-node-driver-registrar
-      tag: v2.14.0
+      tag: v2.15.0
     resizer:
       repository: longhornio/csi-resizer
       tag: v1.14.0
@@ -66,7 +66,7 @@ image:
       tag: v8.3.0
     livenessProbe:
       repository: longhornio/livenessprobe
-      tag: v2.16.0
+      tag: v2.17.0
   openshift:
     oauthProxy:
       repository: longhornio/openshift-origin-oauth-proxy
