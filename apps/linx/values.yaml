@@ -45,7 +45,7 @@ controllers:
           - name: LINX_CLEANUP_EVERY
             value: "0"
           - name: LINX_S3_ENDPOINT
-            value: http://minio-app.minio.svc.cluster.local:9000
+            value: http://minio.minio.svc.cluster.local:9000
           - name: LINX_S3_BUCKET
             value: linx
           - name: LINX_S3_FORCE_PATH_STYLE
