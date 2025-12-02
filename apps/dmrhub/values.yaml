@@ -1,222 +1,211 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 2
-
-image:
-  repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "test"
-
-deploymentStrategy:
-  type: RollingUpdate
-  rollingUpdate:
-    maxUnavailable: 1
-    maxSurge: 1
-
-podLabels:
-  valkey-client: "true"
-args: []
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-secrets: []
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom:
-- secretRef:
-    name: secrets
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: HTTP_CORS_ENABLED
-  value: "true"
-- name: HTTP_CORS_EXTRA_HOSTS
-  value: "http://10.54.25.5,http://ki5vmf-dmrhub.local.mesh,https://dmr.mcswain.dev,https://dmrhub.app,https://dmrhub.cloud,https://dmrhub.net,https://dmrhub.org,https://dmrhub.network,https://www.dmrhub.app,https://www.dmrhub.cloud,https://www.dmrhub.net,https://www.dmrhub.org,https://www.dmrhub.network,http://localhost:5173"
-- name: DATABASE_DRIVER
-  value: "postgres"
-- name: DATABASE_DATABASE
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: dbname
-- name: HTTP_TRUSTED_PROXIES
-  value: "172.17.0.0/16"
-- name: DATABASE_HOST
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: host
-- name: DATABASE_EXTRA_PARAMETERS
-  value: "[]"
-- name: DATABASE_PORT
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: port
-- name: REDIS_ENABLED
-  value: "true"
-- name: REDIS_HOST
-  value: valkey
-- name: REDIS_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: valkey
-      key: valkey-password
-- name: NETWORK_NAME
-  value: "Official DMRHub"
-- name: HTTP_ROBOTS_TXT_MODE
-  value: "allow"
-# - name: METRICS_OTLP_ENDPOINT
-#   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
-- name: DMR_OPENBRIDGE_PORT
-  value: "62035"
-- name: METRICS_ENABLED
-  value: "true"
-- name: METRICS_PORT
-  value: "9001"
-- name: DATABASE_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: password
-- name: DATABASE_USERNAME
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: username
-- name: SMTP_ENABLED
-  value: "true"
-- name: SMTP_HOST
-  value: email.mcswain.dev
-- name: SMTP_PORT
-  value: "465"
-- name: SMTP_USERNAME
-  value: dmrhub
-- name: SMTP_FROM
-  value: dmrhub@mcswain.dev
-- name: SMTP_TLS
-  value: "implicit"
-- name: SMTP_AUTH_METHOD
-  value: "plain"
-- name: HTTP_CANONICAL_HOST
-  value: https://dmrhub.net
-
-podAnnotations: {}
-
-securityContext:
-  fsGroup: 65534
-
-podSecurityContext:
-  runAsNonRoot: true
-  runAsUser: 65534
-  runAsGroup: 65534
-  readOnlyRootFilesystem: true
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop:
-      - ALL
+controllers:
+  dmrhub:
+    replicas: 2
+    strategy: RollingUpdate
+    rollingUpdate:
+      unavailable: 1
+      surge: 25%
+    pod:
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+      labels:
+        valkey-client: "true"
+    containers:
+      dmrhub:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
+          tag: test
+          pullPolicy: IfNotPresent
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          limits:
+            memory: 1000Mi
+          requests:
+            cpu: 250m
+            memory: 600Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        envFrom:
+          - secretRef:
+              name: secrets
+        env:
+          - name: HTTP_CORS_ENABLED
+            value: "true"
+          - name: HTTP_CORS_EXTRA_HOSTS
+            value: "http://10.54.25.5,http://ki5vmf-dmrhub.local.mesh,https://dmr.mcswain.dev,https://dmrhub.app,https://dmrhub.cloud,https://dmrhub.net,https://dmrhub.org,https://dmrhub.network,https://www.dmrhub.app,https://www.dmrhub.cloud,https://www.dmrhub.net,https://www.dmrhub.org,https://www.dmrhub.network,http://localhost:5173"
+          - name: DATABASE_DRIVER
+            value: "postgres"
+          - name: DATABASE_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: dbname
+          - name: HTTP_TRUSTED_PROXIES
+            value: "172.17.0.0/16"
+          - name: DATABASE_HOST
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: host
+          - name: DATABASE_EXTRA_PARAMETERS
+            value: "[]"
+          - name: DATABASE_PORT
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: port
+          - name: REDIS_ENABLED
+            value: "true"
+          - name: REDIS_HOST
+            value: valkey
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: valkey
+                key: valkey-password
+          - name: NETWORK_NAME
+            value: "Official DMRHub"
+          - name: HTTP_ROBOTS_TXT_MODE
+            value: "allow"
+          # - name: METRICS_OTLP_ENDPOINT
+          #   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
+          - name: DMR_OPENBRIDGE_PORT
+            value: "62035"
+          - name: METRICS_ENABLED
+            value: "true"
+          - name: METRICS_PORT
+            value: "9001"
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: password
+          - name: DATABASE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: username
+          - name: SMTP_ENABLED
+            value: "true"
+          - name: SMTP_HOST
+            value: email.mcswain.dev
+          - name: SMTP_PORT
+            value: "465"
+          - name: SMTP_USERNAME
+            value: dmrhub
+          - name: SMTP_FROM
+            value: dmrhub@mcswain.dev
+          - name: SMTP_TLS
+            value: "implicit"
+          - name: SMTP_AUTH_METHOD
+            value: "plain"
+          - name: HTTP_CANONICAL_HOST
+            value: https://dmrhub.net
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 3005
-  - name: metrics
-    port: 9001
-  - name: dmr-udp
-    port: 62031
-    protocol: UDP
-  - name: openbridge-udp
-    port: 62035
-    protocol: UDP
+  dmrhub:
+    controller: dmrhub
+    ports:
+      http:
+        port: 3005
+      metrics:
+        port: 9001
+      hbrp:
+        port: 62031
+        protocol: UDP
+      openbridge:
+        port: 62035
+        protocol: UDP
 
-persistentVolumes: []
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+route:
+  dmrhub:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - dmrhub.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: dmrhub
+            port: 3005
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+  dmrhub-redirects:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - dmr.mcswain.dev
+      - dmrhub.app
+      - dmrhub.cloud
+      - dmrhub.network
+      - dmrhub.org
+      - www.dmrhub.app
+      - www.dmrhub.cloud
+      - www.dmrhub.net
+      - www.dmrhub.network
+      - www.dmrhub.org
+    rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /
+        filters:
+          - type: RequestRedirect
+            requestRedirect:
+              scheme: https
+              hostname: dmrhub.net
+              statusCode: 301
+  udp:
+    dmrhub-hbrp:
+      enabled: true
+      kind: UDPRoute
+      parentRefs:
+        - name: public
+          namespace: envoy-gateway-system
+      rules:
+        - backendRefs:
+            - name: dmrhub
+              port: 62031
+    dmrhub-openbridge:
+      enabled: true
+      kind: UDPRoute
+      parentRefs:
+        - name: public
+          namespace: envoy-gateway-system
+      rules:
+        - backendRefs:
+            - name: dmrhub
+              port: 62035
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains; preload";
-  ingressClassName: nginx
-  hosts:
-  - host: dmrhub.net
-    paths:
-    - port: 3005
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: dmrhub-net-tls
-    hosts:
-      - dmrhub.net
-
-probes:
-  liveness:
-    httpGet:
-      path: /api/v1/ping
-      port: http
-  readiness:
-    httpGet:
-      path: /api/v1/ping
-      port: http
-
-resources:
-  limits:
-    memory: 1000Mi
-  requests:
-    cpu: 250m
-    memory: 600Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+serviceMonitor:
+  dmrhub:
+    enabled: true
+    serviceName: dmrhub
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
