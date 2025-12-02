@@ -1,21 +1,4 @@
 apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: authentik
-  labels:
-    app.kubernetes.io/instance: authentik
-    app.kubernetes.io/name: app
-spec:
-  endpoints:
-    - port: metrics
-      scrapeTimeout: 3s
-      interval: 30s
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: authentik
-      app.kubernetes.io/name: app
----
-apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: authentik
