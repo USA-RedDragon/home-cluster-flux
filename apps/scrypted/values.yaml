@@ -130,7 +130,7 @@ route:
         namespace: envoy-gateway-system
         sectionName: https
     hostnames:
-      - nvr.mcswain.dev
+      - cloud.nvr.mcswain.dev
     rules:
       - backendRefs:
           - name: scrypted
