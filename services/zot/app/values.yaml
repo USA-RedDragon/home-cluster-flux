@@ -242,7 +242,7 @@ configMaps:
           dedupe: true
           storageDriver:
             name: s3
-            regionendpoint: minio-app.minio.svc.cluster.local:9000
+            regionendpoint: minio.minio.svc.cluster.local:9000
             forcepathstyle: true
             region: us-east-1
             bucket: zot
