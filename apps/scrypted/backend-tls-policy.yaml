@@ -10,9 +10,8 @@ spec:
       name: scrypted
       sectionName: "12443"
   validation:
-    trust:
-      certificateRefs:
-        - name: scrypted-ca
-          kind: Secret
-          group: cert-manager.io
+    caCertificateRefs:
+      - name: scrypted-ca
+        kind: Secret
+        group: cert-manager.io
     hostname: cloud.nvr.mcswain.dev
