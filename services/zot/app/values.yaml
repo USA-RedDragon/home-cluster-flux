@@ -67,17 +67,17 @@ controllers:
             drop: ["ALL"]
         probes:
           liveness:
-            enabled: false
+            enabled: true
             spec:
-              initialDelaySeconds: 60
+              initialDelaySeconds: 1800
           readiness:
-            enabled: false
+            enabled: true
             spec:
-              initialDelaySeconds: 60
+              initialDelaySeconds: 1800
           startup:
-            enabled: false
+            enabled: true
             spec:
-              initialDelaySeconds: 60
+              initialDelaySeconds: 1800
         env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
