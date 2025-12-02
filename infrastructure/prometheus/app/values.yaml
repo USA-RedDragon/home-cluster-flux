@@ -998,43 +998,40 @@ grafana:
     ##
     pspEnabled: false
 
+  route:
+    main:
+      enabled: true
+
+      # -- Set the route apiVersion, e.g. gateway.networking.k8s.io/v1 or gateway.networking.k8s.io/v1alpha2
+      apiVersion: gateway.networking.k8s.io/v1
+      # -- Set the route kind
+      # Valid options are GRPCRoute, HTTPRoute, TCPRoute, TLSRoute, UDPRoute
+      kind: HTTPRoute
+
+      annotations: {}
+      labels: {}
+
+      hostnames: [grafana.mcswain.dev]
+      parentRefs:
+        - name: public
+          namespace: envoy-gateway-system
+          sectionName: https
+
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+
+      ## Filters define the filters that are applied to requests that match this rule.
+      filters: []
+
+      ## Additional custom rules that can be added to the route
+      additionalRules: []
+
   ingress:
     ## If true, Grafana Ingress will be created
     ##
-    enabled: true
-
-    ## IngressClassName for Grafana Ingress.
-    ## Should be provided if Ingress is enable.
-    ##
-    ingressClassName: nginx
-
-    ## Annotations for Grafana Ingress
-    ##
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-
-    ## Labels to be added to the Ingress
-    ##
-    labels: {}
-
-    ## Hostnames.
-    ## Must be provided if Ingress is enable.
-    ##
-    hosts:
-      - grafana.mcswain.dev
-
-    ## Path for grafana ingress
-    path: /
-
-    ## TLS configuration for grafana Ingress
-    ## Secret must be manually created in the namespace
-    ##
-    tls:
-    - secretName: grafana-mcswain-dev-tls
-      hosts:
-      - grafana.mcswain.dev
+    enabled: false
 
   sidecar:
     image:
