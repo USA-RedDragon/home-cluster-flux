@@ -110,7 +110,7 @@ machine-learning:
     cache:
       enabled: true
       size: 10Gi
-      type: pvc
+      type: persistentVolumeClaim
       accessMode: ReadWriteOnce
       storageClass: longhorn-ssd
   resources:
