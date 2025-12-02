@@ -14,7 +14,9 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
-          kubernetes.io/metadata.name: nginx
+          kubernetes.io/metadata.name: envoy-gateway-system
+          gateway.envoyproxy.io/owning-gateway-name: public
+          gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway-system
   - from:
     - namespaceSelector:
         matchLabels:
@@ -31,7 +33,9 @@ spec:
   - to:
     - namespaceSelector:
         matchLabels:
-          kubernetes.io/metadata.name: nginx
+          kubernetes.io/metadata.name: envoy-gateway-system
+          gateway.envoyproxy.io/owning-gateway-name: public
+          gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway-system
     - ipBlock:
         cidr: 0.0.0.0/0
         except:
