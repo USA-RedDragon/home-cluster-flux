@@ -135,7 +135,7 @@ route:
       - authentik.mcswain.dev
     rules:
       - backendRefs:
-          - name: server
+          - name: authentik
             port: 9000
         matches:
           - path:
