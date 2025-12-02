@@ -67,15 +67,15 @@ controllers:
             drop: ["ALL"]
         probes:
           liveness:
-            enabled: true
+            enabled: false
             spec:
               initialDelaySeconds: 60
           readiness:
-            enabled: true
+            enabled: false
             spec:
               initialDelaySeconds: 60
           startup:
-            enabled: true
+            enabled: false
             spec:
               initialDelaySeconds: 60
         env:
