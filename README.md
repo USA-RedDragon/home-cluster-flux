@@ -287,14 +287,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">authentik</td>
+    <td>authentik</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/authentik/helm.yaml">authentik</a></td>
-    <td rowspan="2"><a href="services/authentik/postgres.yaml">postgresql</a>, <a href="services/authentik/redis-helm.yaml">redis</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="services/authentik/helm.yaml">authentik-workers</a></td>
+    <td><a href="services/authentik/postgres.yaml">postgresql</a>, <a href="services/authentik/redis-helm.yaml">redis</a></td>
   </tr>
 </table>
 
