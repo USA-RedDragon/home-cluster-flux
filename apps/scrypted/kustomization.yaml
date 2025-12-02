@@ -4,7 +4,6 @@ namespace: scrypted
 resources:
   - ns.yaml
   - helm.yaml
-  - backend-tls-policy.yaml
 configMapGenerator:
   - name: chart-values
     files:

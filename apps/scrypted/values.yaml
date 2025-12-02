@@ -90,20 +90,3 @@ route:
           - path:
               type: PathPrefix
               value: /
-  cloud:
-    enabled: true
-    kind: HTTPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: https
-    hostnames:
-      - cloud.nvr.mcswain.dev
-    rules:
-      - backendRefs:
-          - name: scrypted
-            port: 12443
-        matches:
-          - path:
-              type: PathPrefix
-              value: /
