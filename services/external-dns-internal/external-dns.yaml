@@ -70,3 +70,8 @@ spec:
       - --webhook-provider-url=http://localhost:8888
       - --ingress-class=nginx
       - --source=ingress
+      - --source=gateway-grpcroute
+      - --source=gateway-httproute
+      - --source=gateway-tlsroute
+      - --source=gateway-udproute
+      - --source=gateway-tcproute
