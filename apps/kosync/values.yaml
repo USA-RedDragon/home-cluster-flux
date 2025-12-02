@@ -77,32 +77,26 @@ service:
       pprof:
         port: 9999
 
-ingress:
+route:
   kosync:
     enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/server-snippet: |
-        location /metrics {
-            deny all;
-            return 404;
-        }
-    hosts:
-      - host: kosync.mcswain.dev
-        paths:
-          - path: /
-            pathType: Prefix
-            service:
-              identifier: kosync
-              port: http
-    tls:
-      - hosts:
-          - kosync.mcswain.dev
-        secretName: kosync-mcswain-dev
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - kosync.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: kosync
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
 
+ingress:
   tailscale:
     enabled: true
     className: tailscale
