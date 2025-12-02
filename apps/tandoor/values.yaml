@@ -114,36 +114,33 @@ persistence:
     enabled: true
     type: emptyDir
 
-ingress:
+route:
   tandoor:
     enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    hosts:
-      - host: recipes.mcswain.dev
-        paths:
-          - path: /
-            service: &svc
-              identifier: tandoor
-              port: http
-    tls: &tls
-      - hosts:
-          - recipes.mcswain.dev
-        secretName: recipes-mcswain-dev
-  redirect-login:
-    enabled: true
-    className: nginx
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      cert-manager.io/cluster-issuer: cloudflare
-      nginx.ingress.kubernetes.io/temporal-redirect: https://recipes.mcswain.dev/accounts/oidc/authentik/login
-    hosts:
-      - host: recipes.mcswain.dev
-        paths:
-          - path: /accounts/login
-            service: *svc
-    tls: *tls
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - recipes.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: tandoor
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+      - matches:
+          - path:
+              type: Exact
+              value: /accounts/login
+        filters:
+          - type: RequestRedirect
+            requestRedirect:
+              statusCode: 302
+              scheme: https
+              hostname: recipes.mcswain.dev
+              path:
+                value: /accounts/oidc/authentik/login
