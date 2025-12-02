@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: obico.mcswain.dev
+spec:
+  secretName: obico.mcswain.dev-tls
+  issuerRef:
+    name: cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - obico.mcswain.dev
+    - '*.obico.mcswain.dev'

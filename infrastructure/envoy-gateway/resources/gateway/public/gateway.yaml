@@ -64,6 +64,9 @@ spec:
           - name: nvr.mcswain.dev-tls
             namespace: cert-manager
             kind: Secret
+          - name: obico.mcswain.dev-tls
+            namespace: cert-manager
+            kind: Secret
           - name: thisspacedoesnotexist.com-tls
             namespace: cert-manager
             kind: Secret
