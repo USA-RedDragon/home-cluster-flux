@@ -8,10 +8,10 @@ spec:
     - group: ""
       kind: Service
       name: scrypted
-      sectionName: "12443"
+      sectionName: cloud
   validation:
     caCertificateRefs:
       - name: scrypted-ca
         kind: Secret
-        group: cert-manager.io
+        group: ""
     hostname: cloud.nvr.mcswain.dev
