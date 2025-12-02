@@ -1,187 +1,143 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 2
+controllers:
+  server:
+    replicas: 2
+    strategy: RollingUpdate
+    rollingUpdate:
+      unavailable: 1
+      surge: 25%
+    serviceAccount:
+      name: rbac-authentik-remote-cluster
+    pod:
+      labels:
+        app.kubernetes.io/component: server
+    containers:
+      server:
+        image:
+          repository: jacob.pub/ghcr.io/goauthentik/server
+          tag: 2025.8.4
+          pullPolicy: IfNotPresent
+        args: [server]
+        resources:
+          limits:
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 600Mi
+        env: &authentik-postgres-envs
+          - name: AUTHENTIK_POSTGRESQL__PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: password
+          - name: AUTHENTIK_POSTGRESQL__USER
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: username
+          - name: AUTHENTIK_POSTGRESQL__HOST
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: host
+          - name: AUTHENTIK_POSTGRESQL__NAME
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: dbname
+        envFrom: &authentik-envfrom
+          - secretRef:
+              name: authentik-secrets
+          - configMapRef:
+              name: authentik
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+  worker:
+    replicas: 2
+    strategy: RollingUpdate
+    rollingUpdate:
+      unavailable: 1
+      surge: 25%
+    serviceAccount:
+      name: rbac-authentik-remote-cluster
+    pod:
+      labels:
+        app.kubernetes.io/component: worker
+    containers:
+      worker:
+        image:
+          repository: jacob.pub/ghcr.io/goauthentik/server
+          tag: 2025.8.4
+          pullPolicy: IfNotPresent
+        args: [worker]
+        resources:
+          limits:
+            memory: 700Mi
+          requests:
+            cpu: 10m
+            memory: 600Mi
+        env: *authentik-postgres-envs
+        envFrom: *authentik-envfrom
 
-image:
-  repository: jacob.pub/ghcr.io/goauthentik/server
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: 2025.8.4
-
-nameOverride: ""
-fullnameOverride: ""
-
-args:
-- server
-
-selectorLabels:
-- app.kubernetes.io/component=server
-
-serviceAccountName: rbac-authentik-remote-cluster
-
-deploymentStrategy:
-  rollingUpdate:
-    maxUnavailable: 1
-  type: RollingUpdate
-
-secrets: []
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs:
-- name: authentik-config
-  data:
-    AUTHENTIK_REDIS__HOST: redis-app.authentik.svc.cluster.local
-    AUTHENTIK_EMAIL__HOST: email.mcswain.dev
-    AUTHENTIK_EMAIL__PORT: '465'
-    AUTHENTIK_EMAIL__USERNAME: authentik
-    AUTHENTIK_EMAIL__USE_TLS: "false"
-    AUTHENTIK_EMAIL__USE_SSL: "true"
-    AUTHENTIK_EMAIL__FROM: authentik@mcswain.dev
-    AUTHENTIK_ERROR_REPORTING__ENABLED: 'false'
-    AUTHENTIK_DISABLE_STARTUP_ANALYTICS: 'true'
-    AUTHENTIK_AVATARS: initials
-    AUTHENTIK_DISABLE_UPDATE_CHECK: "true"
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom:
-- secretRef:
-    name: authentik-secrets
-- configMapRef:
-    name: authentik-config
-
-env:
-- name: AUTHENTIK_POSTGRESQL__PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: password
-- name: AUTHENTIK_POSTGRESQL__USER
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: username
-- name: AUTHENTIK_POSTGRESQL__HOST
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: host
-- name: AUTHENTIK_POSTGRESQL__NAME
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: dbname
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+configMaps:
+  config:
+    data:
+      AUTHENTIK_REDIS__HOST: redis-app.authentik.svc.cluster.local
+      AUTHENTIK_EMAIL__HOST: email.mcswain.dev
+      AUTHENTIK_EMAIL__PORT: '465'
+      AUTHENTIK_EMAIL__USERNAME: authentik
+      AUTHENTIK_EMAIL__USE_TLS: "false"
+      AUTHENTIK_EMAIL__USE_SSL: "true"
+      AUTHENTIK_EMAIL__FROM: authentik@mcswain.dev
+      AUTHENTIK_ERROR_REPORTING__ENABLED: 'false'
+      AUTHENTIK_DISABLE_STARTUP_ANALYTICS: 'true'
+      AUTHENTIK_AVATARS: initials
+      AUTHENTIK_DISABLE_UPDATE_CHECK: "true"
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 9000
-  - name: https
-    port: 9443
-  - name: metrics
-    port: 9300
+  server:
+    controller: server
+    ports:
+      http:
+        port: 9000
+        primary: true
+      https:
+        port: 9443
+      metrics:
+        port: 9300
 
-persistentVolumes: []
-# - name: media
-#   mountPath: /usr/share/nginx/html/data
-#   size: 1Gi
-#   persistentVolumeClaim:
-#     name: media
-#     storageClass: longhorn-nvme
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+serviceMonitor:
+  server:
+    enabled: true
+    serviceName: server
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  ingressClassName: nginx
-  hosts:
-  - host: authentik.mcswain.dev
-    paths:
-    - port: 9000
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: authentik-mcswain-dev-tls
-    hosts:
+route:
+  server:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
       - authentik.mcswain.dev
-
-probes:
-  liveness:
-    httpGet:
-      path: /-/health/live/
-      port: 9000
-    failureThreshold: 5
-    periodSeconds: 30
-    timeoutSeconds: 10
-  readiness:
-    httpGet:
-      path: /-/health/ready/
-      port: 9000
-    failureThreshold: 5
-    periodSeconds: 30
-    timeoutSeconds: 10
-
-resources:
-  limits:
-    memory: 1Gi
-  requests:
-    cpu: 100m
-    memory: 600Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+    rules:
+      - backendRefs:
+          - name: server
+            port: 9000
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
