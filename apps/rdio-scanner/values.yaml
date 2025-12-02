@@ -1,175 +1,91 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
-replicaCount: 1
-
-image:
-  repository: jacob.pub/ghcr.io/usa-reddragon/rdio-scanner
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "v7.2.23"
-
-args: []
-
-nameOverride: ""
-fullnameOverride: ""
-
-podLabels:
-  policy.mcswain.dev/egress-coredns: "true"
-  policy.mcswain.dev/egress-namespace: "true"
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: TZ
-  value: America/Chicago
-- name: METRICS_PORT
-  value: '9108'
-- name: DB_HOST
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: host
-- name: DB_TYPE
-  value: postgresql
-- name: DB_PORT
-  value: "5432"
-- name: DB_NAME
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: dbname
-- name: DB_SSLMODE
-  value: "require"
-- name: DB_PASS
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: password
-- name: DB_USER
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: username
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
+controllers:
+  rdio-scanner:
+    replicas: 1
+    pod:
+      labels:
+        policy.mcswain.dev/egress-coredns: "true"
+        policy.mcswain.dev/egress-namespace: "true"
+    containers:
+      rdio-scanner:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/rdio-scanner
+          tag: v7.2.23
+          pullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 150Mi
+          requests:
+            cpu: 150m
+            memory: 100Mi
+        env:
+          - name: TZ
+            value: America/Chicago
+          - name: METRICS_PORT
+            value: '9108'
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: host
+          - name: DB_TYPE
+            value: postgresql
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: dbname
+          - name: DB_SSLMODE
+            value: "require"
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: password
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: username
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 3000
-  - name: metrics
-    port: 9108
+  rdio-scanner:
+    controller: rdio-scanner
+    ports:
+      http:
+        port: 3000
+      metrics:
+        port: 9108
 
-persistentVolumes: []
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
-
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    # 5-minute timeouts
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
-  ingressClassName: nginx
-  hosts:
-  - host: scanner.mcswain.dev
-    paths:
-    - port: 3000
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: scanner-mcswain-dev-tls
-    hosts:
+route:
+  rdio-scanner:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
       - scanner.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: rdio-scanner
+            port: 3000
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
 
-probes:
-  liveness:
-    httpGet:
-      path: /
-      port: 3000
-  readiness:
-    httpGet:
-      path: /
-      port: 3000
-
-resources:
-  limits:
-    memory: 150Mi
-  requests:
-    cpu: 150m
-    memory: 100Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+serviceMonitor:
+  rdio-scanner:
+    enabled: true
+    serviceName: rdio-scanner
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
