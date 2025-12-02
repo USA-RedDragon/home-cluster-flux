@@ -68,10 +68,16 @@ controllers:
         probes:
           liveness:
             enabled: true
+            spec:
+              initialDelaySeconds: 60
           readiness:
             enabled: true
+            spec:
+              initialDelaySeconds: 60
           startup:
             enabled: true
+            spec:
+              initialDelaySeconds: 60
         env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
