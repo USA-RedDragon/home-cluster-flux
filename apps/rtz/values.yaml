@@ -1,240 +1,180 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 3
-
-deploymentStrategy:
-  type: RollingUpdate
-
-image:
-  repository: jacob.pub/ghcr.io/usa-reddragon/rtz-server
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.248"
-
-args: []
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-secrets: []
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - secretRef:
-#     name: secrets
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: HTTP__CORS_HOSTS
-  value: "https://openpilot.jacob.network,http://localhost:5173,https://rtz.pages.dev,https://*.rtz.pages.dev,http://localhost:4173,https://*.new-rtz.pages.dev,https://new-rtz.pages.dev"
-- name: HTTP__TRUSTED_PROXIES
-  value: "172.17.0.0/16"
-- name: PERSISTENCE__DATABASE__DRIVER
-  value: "postgres"
-- name: PERSISTENCE__DATABASE__DATABASE
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: dbname
-- name: PERSISTENCE__DATABASE__USERNAME
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: username
-- name: PERSISTENCE__DATABASE__PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: password
-- name: PERSISTENCE__DATABASE__PORT
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: port
-- name: PERSISTENCE__DATABASE__HOST
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: host
-
-- name: PERSISTENCE__UPLOADS__DRIVER
-  value: "s3"
-- name: PERSISTENCE__UPLOADS__S3_OPTIONS__BUCKET
-  value: rtz-uploads
-- name: PERSISTENCE__UPLOADS__S3_OPTIONS__ENDPOINT
-  value: https://s3.mcswain.dev
-- name: PERSISTENCE__UPLOADS__S3_OPTIONS__REGION
-  value: us-east-1
-- name: AWS_ACCESS_KEY_ID
-  valueFrom:
-    secretKeyRef:
-      name: rtz
-      key: minio-access-key
-- name: AWS_SECRET_ACCESS_KEY
-  valueFrom:
-    secretKeyRef:
-      name: rtz
-      key: minio-secret-key
-
-- name: LOG_LEVEL
-  value: "info"
-
-- name: AUTH__CUSTOM__ENABLED
-  value: "true"
-- name: AUTH__CUSTOM__CLIENT_ID
-  valueFrom:
-    secretKeyRef:
-      name: rtz
-      key: custom-client-id
-- name: AUTH__CUSTOM__CLIENT_SECRET
-  valueFrom:
-    secretKeyRef:
-      name: rtz
-      key: custom-client-secret
-- name: AUTH__CUSTOM__TOKEN_URL
-  value: https://authentik.mcswain.dev/login/oauth/access_token
-- name: AUTH__CUSTOM__USER_URL
-  value: https://authentik.mcswain.dev/user
-
-- name: HTTP__BACKEND_URL
-  value: 'https://openpilot.jacob.network'
-- name: JWT__SECRET
-  valueFrom:
-    secretKeyRef:
-      name: rtz
-      key: jwt-secret
-
-- name: NATS__ENABLED
-  value: "true"
-- name: NATS__TOKEN
-  valueFrom:
-    secretKeyRef:
-      name: rtz
-      key: nats-token
-- name: NATS__URL
-  value: nats://nats:4222
-
-- name: HTTP__METRICS__ENABLED
-  value: "true"
-- name: HTTP__METRICS__IPV4_HOST
-  value: "0.0.0.0"
-- name: HTTP__PPROF__ENABLED
-  value: "false"
-# - name: HTTP__TRACING__ENABLED
-#   value: "true"
-# - name: HTTP__TRACING__OTLP_ENDPOINT
-#   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
-- name: MAPBOX__PUBLIC_TOKEN
-  valueFrom:
-    secretKeyRef:
-      name: rtz
-      key: mapbox-public-token
-- name: MAPBOX__SECRET_TOKEN
-  valueFrom:
-    secretKeyRef:
-      name: rtz
-      key: mapbox-secret-token
-
-podAnnotations: {}
-
-podSecurityContext:
-  fsGroup: 65534
-
-securityContext:
-  capabilities:
-    drop:
-    - ALL
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 65534
-  runAsGroup: 65534
-  fsGroup: 65534
+controllers:
+  rtz:
+    replicas: 3
+    strategy: RollingUpdate
+    rollingUpdate:
+      unavailable: 1
+      surge: 25%
+    pod:
+      securityContext:
+        fsGroup: 65534
+    containers:
+      rtz:
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          runAsGroup: 65534
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/rtz-server
+          tag: v0.0.248
+          pullPolicy: IfNotPresent
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        resources:
+          limits:
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: HTTP__CORS_HOSTS
+          value: "https://openpilot.jacob.network,http://localhost:5173,https://rtz.pages.dev,https://*.rtz.pages.dev,http://localhost:4173,https://*.new-rtz.pages.dev,https://new-rtz.pages.dev"
+        - name: HTTP__TRUSTED_PROXIES
+          value: "172.17.0.0/16"
+        - name: PERSISTENCE__DATABASE__DRIVER
+          value: "postgres"
+        - name: PERSISTENCE__DATABASE__DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-app
+              key: dbname
+        - name: PERSISTENCE__DATABASE__USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-app
+              key: username
+        - name: PERSISTENCE__DATABASE__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-app
+              key: password
+        - name: PERSISTENCE__DATABASE__PORT
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-app
+              key: port
+        - name: PERSISTENCE__DATABASE__HOST
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-app
+              key: host
+        - name: PERSISTENCE__UPLOADS__DRIVER
+          value: "s3"
+        - name: PERSISTENCE__UPLOADS__S3_OPTIONS__BUCKET
+          value: rtz-uploads
+        - name: PERSISTENCE__UPLOADS__S3_OPTIONS__ENDPOINT
+          value: https://s3.mcswain.dev
+        - name: PERSISTENCE__UPLOADS__S3_OPTIONS__REGION
+          value: us-east-1
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: rtz
+              key: minio-access-key
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: rtz
+              key: minio-secret-key
+        - name: LOG_LEVEL
+          value: "info"
+        - name: AUTH__CUSTOM__ENABLED
+          value: "true"
+        - name: AUTH__CUSTOM__CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: rtz
+              key: custom-client-id
+        - name: AUTH__CUSTOM__CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: rtz
+              key: custom-client-secret
+        - name: AUTH__CUSTOM__TOKEN_URL
+          value: https://authentik.mcswain.dev/login/oauth/access_token
+        - name: AUTH__CUSTOM__USER_URL
+          value: https://authentik.mcswain.dev/user
+        - name: HTTP__BACKEND_URL
+          value: 'https://openpilot.jacob.network'
+        - name: JWT__SECRET
+          valueFrom:
+            secretKeyRef:
+              name: rtz
+              key: jwt-secret
+        - name: NATS__ENABLED
+          value: "true"
+        - name: NATS__TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: rtz
+              key: nats-token
+        - name: NATS__URL
+          value: nats://nats:4222
+        - name: HTTP__METRICS__ENABLED
+          value: "true"
+        - name: HTTP__METRICS__IPV4_HOST
+          value: "0.0.0.0"
+        - name: HTTP__PPROF__ENABLED
+          value: "false"
+        # - name: HTTP__TRACING__ENABLED
+        #   value: "true"
+        # - name: HTTP__TRACING__OTLP_ENDPOINT
+        #   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
+        - name: MAPBOX__PUBLIC_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: rtz
+              key: mapbox-public-token
+        - name: MAPBOX__SECRET_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: rtz
+              key: mapbox-secret-token
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 8080
-  - name: metrics
-    port: 8081
+  rtz:
+    controller: rtz
+    ports:
+      http:
+        port: 8080
+      metrics:
+        port: 8081
 
-persistentVolumes: []
-
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: 32M
-    # 2-minute timeouts
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "120"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
-    nginx.ingress.kubernetes.io/service-upstream: "true"
-  ingressClassName: nginx
-  hosts:
-  - host: openpilot.jacob.network
-    paths:
-    - port: 8080
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: openpilot-jacob-network-tls
-    hosts:
+route:
+  rtz:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
       - openpilot.jacob.network
+    rules:
+      - backendRefs:
+          - name: rtz
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
 
-probes:
-  liveness:
-    httpGet:
-      path: /health
-      port: http
-  readiness:
-    httpGet:
-      path: /health
-      port: http
-
-resources:
-  limits:
-    memory: 500Mi
-  requests:
-    cpu: 100m
-    memory: 100Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+serviceMonitor:
+  rtz:
+    enabled: true
+    serviceName: rtz
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s

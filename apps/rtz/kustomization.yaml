@@ -4,7 +4,6 @@ namespace: rtz
 resources:
   - ns.yaml
   - helm.yaml
-  - prom.yaml
   - postgres.yaml
   - nats.helm.yaml
 configMapGenerator:
