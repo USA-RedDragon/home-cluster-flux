@@ -10,7 +10,7 @@ controllers:
     initContainers:
       certificate:
         image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/alpine
+          repository: ghcr.io/usa-reddragon/alpine
           tag: 3.21.3
           pullPolicy: IfNotPresent
         resources:
@@ -29,7 +29,7 @@ controllers:
         securityContext:
           privileged: true
         image:
-          repository: jacob.pub/ghcr.io/koush/scrypted
+          repository: ghcr.io/koush/scrypted
           tag: v0.123.58-jammy-full@sha256:d84d2a8cc897e3ddd0635aecb681900f551e3f5bf702200df4b92e4014bc22b3
           pullPolicy: IfNotPresent
         resources:
