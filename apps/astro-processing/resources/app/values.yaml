@@ -113,7 +113,6 @@ service:
       pprof:
         port: 9999
 
-
 persistence:
   nginx-tmp:
     enabled: true

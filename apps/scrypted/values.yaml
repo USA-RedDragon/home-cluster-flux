@@ -7,6 +7,23 @@ controllers:
       priorityClassName: system-cluster-critical
       nodeSelector:
         google.feature.node.kubernetes.io/coral: "true"
+    initContainers:
+      certificate:
+        image:
+          repository: jacob.pub/docker.io/library/alpine
+          tag: 3.22.2
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+        command:
+          - sh
+          - -c
+          - |
+            set -e
+            apk add --no-cache jq
+            jq -n --arg key "$(cat /certs/tls.key)" --arg cert "$(cat /certs/tls.crt)" '{ "cert": $cert, "key": $key }' > /tmp/https-options.json
     containers:
       scrypted:
         securityContext:
@@ -29,6 +46,8 @@ controllers:
         env:
           - name: SCRYPTED_NVR_VOLUME
             value: /nvr
+          - name: SCRYPTED_HTTPS_OPTIONS_FILE
+            value: /tmp/https-options.json
 
 service:
   scrypted:
@@ -47,6 +66,15 @@ persistence:
     type: nfs
     path: /mnt/data/nvr
     server: 192.168.1.135
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
+  certs:
+    enabled: true
+    type: secret
+    secretName: scrypted-cert
   usb:
     enabled: true
     type: hostPath
@@ -86,6 +114,23 @@ route:
       - backendRefs:
           - name: scrypted
             port: 11080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+  cloud:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - nvr.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: scrypted
+            port: 12443
         matches:
           - path:
               type: PathPrefix
