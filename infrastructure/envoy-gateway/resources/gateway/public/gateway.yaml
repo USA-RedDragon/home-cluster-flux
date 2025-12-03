@@ -73,6 +73,9 @@ spec:
           - name: thisspacedoesnotexist.com-tls
             namespace: cert-manager
             kind: Secret
+          - name: rmfakecloud-tls
+            namespace: rmfakecloud
+            kind: Secret
       allowedRoutes:
         namespaces:
           from: All

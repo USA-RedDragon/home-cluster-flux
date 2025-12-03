@@ -1,0 +1,25 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: rmfakecloud-backend
+  namespace: rmfakecloud
+spec:
+  endpoints:
+    - fqdn:
+        hostname: rmfakecloud.rmfakecloud.svc.cluster.local
+        port: 3000
+  tls:
+    insecureSkipVerify: true
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: rmfakecloud-backend-mqtt
+  namespace: rmfakecloud
+spec:
+  endpoints:
+    - fqdn:
+        hostname: rmfakecloud.rmfakecloud.svc.cluster.local
+        port: 8883
+  tls:
+    insecureSkipVerify: true
