@@ -70,7 +70,7 @@ route:
               value: /
         timeouts:
           request: 1d
-          backendRequest: 1d
+          backendRequest: 23h
   s3:
     enabled: true
     kind: HTTPRoute
@@ -90,4 +90,4 @@ route:
               value: /
         timeouts:
           request: 1d
-          backendRequest: 1d
+          backendRequest: 23h

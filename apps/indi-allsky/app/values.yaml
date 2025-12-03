@@ -187,7 +187,7 @@ route:
               value: /indi-allsky
         timeouts:
           request: 1d
-          backendRequest: 1d
+          backendRequest: 23h
   allsky-redirects:
     enabled: true
     kind: HTTPRoute
