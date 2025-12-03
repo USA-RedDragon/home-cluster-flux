@@ -97,6 +97,9 @@ route:
           - path:
               type: PathPrefix
               value: /
+        timeouts:
+          request: 15m
+          backendRequest: 15m
 
 networkpolicies:
   linx:

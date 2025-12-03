@@ -185,6 +185,9 @@ route:
           - path:
               type: PathPrefix
               value: /indi-allsky
+        timeouts:
+          request: 1d
+          backendRequest: 1d
   allsky-redirects:
     enabled: true
     kind: HTTPRoute

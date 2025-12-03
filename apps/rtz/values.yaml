@@ -167,6 +167,9 @@ route:
           - path:
               type: PathPrefix
               value: /
+        timeouts:
+          request: 2m
+          backendRequest: 2m
 
 serviceMonitor:
   rtz:

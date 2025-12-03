@@ -89,3 +89,6 @@ route:
           - path:
               type: PathPrefix
               value: /
+        timeouts:
+          request: 1d
+          backendRequest: 1d
