@@ -69,7 +69,7 @@ route:
               type: PathPrefix
               value: /
         timeouts:
-          request: 1d
+          request: 24h
           backendRequest: 23h
   s3:
     enabled: true
@@ -89,5 +89,5 @@ route:
               type: PathPrefix
               value: /
         timeouts:
-          request: 1d
+          request: 24h
           backendRequest: 23h
