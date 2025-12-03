@@ -118,7 +118,7 @@ route:
               value: /
         timeouts:
           request: 1d
-          backendRequest: 1d
+          backendRequest: 23h
   git:
     enabled: true
     kind: TCPRoute

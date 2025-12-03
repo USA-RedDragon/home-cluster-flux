@@ -82,7 +82,7 @@ server:
                 value: /
           timeouts:
             request: 1d
-            backendRequest: 1d
+            backendRequest: 23h
 
 machine-learning:
   enabled: true

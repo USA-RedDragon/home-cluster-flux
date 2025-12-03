@@ -99,7 +99,7 @@ route:
               value: /
         timeouts:
           request: 15m
-          backendRequest: 15m
+          backendRequest: 14m
 
 networkpolicies:
   linx:

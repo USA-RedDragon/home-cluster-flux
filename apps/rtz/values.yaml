@@ -169,7 +169,7 @@ route:
               value: /
         timeouts:
           request: 2m
-          backendRequest: 2m
+          backendRequest: 1m
 
 serviceMonitor:
   rtz:
