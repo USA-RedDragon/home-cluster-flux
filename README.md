@@ -98,7 +98,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#tfe">tfe</a></li>
   <li><a href="#trunk-recorder">trunk-recorder</a></li>
   <li><a href="#ultrafeeder">ultrafeeder</a></li>
-  <li><a href="#uptime-kuma">uptime-kuma</a></li>
   <li><a href="#vaultwarden">vaultwarden</a></li>
   <li><a href="#weave-gitops">weave-gitops</a></li>
   <li><a href="#weewx">weewx</a></li>
@@ -1358,22 +1357,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>ultrafeeder</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/ultrafeeder/helm.yaml">ultrafeeder</a></td>
-    <td></td>
-  </tr>
-</table>
-
-<h4>uptime-kuma</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>uptime-kuma</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/uptime-kuma/helm.yaml">uptime-kuma</a></td>
     <td></td>
   </tr>
 </table>
