@@ -6,7 +6,6 @@ resources:
   - data.yaml
   - helm.yaml
   - networkpolicy.yaml
-  - s3-ingress.yaml
 configMapGenerator:
   - name: chart-values
     files:
