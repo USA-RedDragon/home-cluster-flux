@@ -13,7 +13,7 @@ controllers:
           - --address
           - ":9000"
         image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/http-logger
+          repository: ghcr.io/usa-reddragon/http-logger
           tag: beta@sha256:56b41f79b68aaa743ba36324b039bc135a1287c8d0f5a6672b75af47a57a63f3
           pullPolicy: IfNotPresent
         resources:
