@@ -58,7 +58,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#imagescraper-sfro-allsky">imagescraper-sfro-allsky</a></li>
   <li><a href="#immich">immich</a></li>
   <li><a href="#indi-allsky">indi-allsky</a></li>
-  <li><a href="#ingress-nginx">ingress-nginx</a></li>
   <li><a href="#intel-device-plugin">intel-device-plugin</a></li>
   <li><a href="#jellyfin">jellyfin</a></li>
   <li><a href="#json-exporter">json-exporter</a></li>
@@ -682,22 +681,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/indi-allsky/mariadb/helm.yaml">indi-allsky-mariadb</a></td>
-  </tr>
-</table>
-
-<h4>ingress-nginx</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>nginx</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/ingress-nginx/app/helm.yaml">nginx</a></td>
-    <td></td>
   </tr>
 </table>
 
