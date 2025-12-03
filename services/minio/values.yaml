@@ -14,7 +14,7 @@ controllers:
           - ":9000"
         image:
           repository: ghcr.io/usa-reddragon/minio
-          tag: RELEASE.2025-08-29T21-27-49Z@sha256:fbf5d03f263ea24866c351a9aad8da591b0a9f29eea02a275a4b49f95f966d87
+          tag: RELEASE.2025-08-29T21-27-49Z@sha256:208f3028b036349ba612219722a83be960185ce31a83cd48287e1a4d3a2fedf8
           pullPolicy: IfNotPresent
         resources:
           limits:
