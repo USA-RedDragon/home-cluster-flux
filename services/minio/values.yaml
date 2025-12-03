@@ -13,8 +13,8 @@ controllers:
           - --address
           - ":9000"
         image:
-          repository: ghcr.io/usa-reddragon/minio
-          tag: RELEASE.2025-08-29T21-27-49Z@sha256:fbf5d03f263ea24866c351a9aad8da591b0a9f29eea02a275a4b49f95f966d87
+          repository: jacob.pub/ghcr.io/usa-reddragon/http-logger
+          tag: beta@sha256:56b41f79b68aaa743ba36324b039bc135a1287c8d0f5a6672b75af47a57a63f3
           pullPolicy: IfNotPresent
         resources:
           limits:
@@ -40,10 +40,8 @@ service:
   minio:
     controller: minio
     ports:
-      console:
-        port: 443
       s3:
-        port: 9000
+        port: 8080
 
 persistence:
   data:
@@ -51,23 +49,6 @@ persistence:
     existingClaim: minio-data
 
 route:
-  console:
-    enabled: true
-    kind: HTTPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: https
-    hostnames:
-      - minio.mcswain.dev
-    rules:
-      - backendRefs:
-          - name: minio
-            port: 443
-        matches:
-          - path:
-              type: PathPrefix
-              value: /
   s3:
     enabled: true
     kind: HTTPRoute
@@ -80,7 +61,7 @@ route:
     rules:
       - backendRefs:
           - name: minio
-            port: 9000
+            port: 8080
         matches:
           - path:
               type: PathPrefix
