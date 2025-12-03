@@ -78,7 +78,7 @@ spec:
         name: (notification-controller|source-controller)
     - patch: |
         - op: add
-          path: /spec/template/metadata/labels/policy.mcswain.dev~1ingress-nginx
+          path: /spec/template/metadata/labels/policy.mcswain.dev~1public-gateway
           value: "true"
       target:
         kind: Deployment

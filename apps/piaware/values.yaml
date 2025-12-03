@@ -6,7 +6,7 @@ controllers:
     pod:
       labels:
         policy.mcswain.dev/egress-coredns: "true"
-        policy.mcswain.dev/ingress-nginx: "true"
+        policy.mcswain.dev/public-gateway: "true"
     containers:
       piaware:
         image:
