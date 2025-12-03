@@ -4,6 +4,8 @@ namespace: rmfakecloud
 resources:
   - helm.yaml
   - cert.yaml
+  - backends.yaml
+  - referencegrant.yaml
 configMapGenerator:
   - name: chart-values
     files:
