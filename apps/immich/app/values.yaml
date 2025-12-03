@@ -80,6 +80,9 @@ server:
             - path:
                 type: PathPrefix
                 value: /
+          timeouts:
+            request: 1d
+            backendRequest: 1d
 
 machine-learning:
   enabled: true

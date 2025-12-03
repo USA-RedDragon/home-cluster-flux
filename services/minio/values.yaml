@@ -68,6 +68,9 @@ route:
           - path:
               type: PathPrefix
               value: /
+        timeouts:
+          request: 1d
+          backendRequest: 1d
   s3:
     enabled: true
     kind: HTTPRoute
@@ -85,3 +88,6 @@ route:
           - path:
               type: PathPrefix
               value: /
+        timeouts:
+          request: 1d
+          backendRequest: 1d
