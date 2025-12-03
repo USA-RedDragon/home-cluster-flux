@@ -1,0 +1,12 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: tfe-backend
+  namespace: tfe
+spec:
+  endpoints:
+    - fqdn:
+        hostname: terraform-enterprise.tfe.svc.cluster.local
+        port: 443
+  tls:
+    insecureSkipVerify: true

@@ -26,34 +26,7 @@ tls:
 # Ingress allows ingress services to be created to allow external access
 # from Kubernetes to access Terraform Enterprise pods.
 ingress:
-  enabled: true
-  className: "nginx"
-  annotations:
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    cert-manager.io/cluster-issuer: cloudflare
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: tfe.mcswain.dev
-      paths:
-      - portNumber: 443
-        serviceName: "terraform-enterprise"
-        path: /
-        pathType: Prefix
-    - host: tfe-external.mcswain.dev
-      paths:
-      - portNumber: 443
-        serviceName: "terraform-enterprise"
-        path: /
-        pathType: Prefix
-  tls:
-    - hosts:
-      - tfe.mcswain.dev
-      secretName: tfe-mcswain-dev-tls
-    - hosts:
-      - tfe-external.mcswain.dev
-      secretName: tfe-external-mcswain-dev-tls
+  enabled: false
 
 # Injector service specific configurations
 service:
@@ -78,16 +51,12 @@ env:
   variables:
     TFE_OPERATIONAL_MODE: external
     TFE_HOSTNAME: tfe.mcswain.dev
-    TFE_HOSTNAME_SECONDARY: tfe-external.mcswain.dev
-    TFE_OIDC_HOSTNAME_CHOICE: secondary
     TFE_OBJECT_STORAGE_TYPE: "s3"
     TFE_OBJECT_STORAGE_S3_ACCESS_KEY_ID: LgUhs4wSxp2eVT7AtJvN
     TFE_OBJECT_STORAGE_S3_BUCKET: tfe
     TFE_OBJECT_STORAGE_S3_ENDPOINT: https://s3.mcswain.dev
     TFE_OBJECT_STORAGE_S3_REGION: us-east-1
     TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
-    TFE_TLS_KEY_FILE_SECONDARY: /etc/secondary-certs/tls.key
-    TFE_TLS_CERT_FILE_SECONDARY: /etc/secondary-certs/tls.crt
     TFE_RUN_PIPELINE_KUBERNETES_OPEN_SHIFT_ENABLED: "true"
 
 securityContext:
@@ -116,9 +85,6 @@ extraVolumes:
     name: logs
   - emptyDir: {}
     name: tfe-task-worker-cache
-  - name: secondary-certs
-    secret:
-      secretName: tfe-external-mcswain-dev-tls
 
 extraVolumeMounts:
   - mountPath: /var/run
@@ -129,5 +95,3 @@ extraVolumeMounts:
     name: logs
   - mountPath: /var/cache/tfe-task-worker
     name: tfe-task-worker-cache
-  - mountPath: /etc/secondary-certs
-    name: secondary-certs
