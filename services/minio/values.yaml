@@ -14,7 +14,7 @@ controllers:
           - ":9000"
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/http-logger
-          tag: beta@sha256:56b41f79b68aaa743ba36324b039bc135a1287c8d0f5a6672b75af47a57a63f3
+          tag: beta@sha256:e218ebb72471ba9961db57f071e1b03c49ff61cf8645ebd729cefb4dc5147e64
           pullPolicy: IfNotPresent
         resources:
           limits:
