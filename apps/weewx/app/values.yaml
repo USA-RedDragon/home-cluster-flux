@@ -10,7 +10,7 @@ controllers:
         policy.mcswain.dev/egress-coredns: "true"
         policy.mcswain.dev/egress-internet: "true"
         policy.mcswain.dev/egress-namespace: "true"
-        policy.mcswain.dev/ingress-nginx: "true"
+        policy.mcswain.dev/public-gateway: "true"
         mariadb-client: "true"
       securityContext:
         fsGroup: 1000

@@ -46,7 +46,7 @@ spec:
             path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-internet
             value: "true"
           - op: add
-            path: /spec/template/metadata/labels/policy.mcswain.dev~1ingress-nginx
+            path: /spec/template/metadata/labels/policy.mcswain.dev~1public-gateway
             value: "true"
         target:
           kind: Deployment
