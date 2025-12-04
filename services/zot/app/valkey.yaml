@@ -23,7 +23,7 @@ spec:
           valkey:
             image:
               repository: valkey/valkey
-              tag: 8.1.5-alpine@sha256:6f43b6aae0ac36ea7d7915eefe828cadd5747566ac118ec5bfec22e4625b9121
+              tag: 8.1.5-alpine@sha256:70aa61b8e741ee66d8976eab1418d408067df3624c3a3732d91f95fdddd4f0e8
 
     persistence:
       data:
