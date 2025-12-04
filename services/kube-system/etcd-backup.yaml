@@ -13,7 +13,7 @@ spec:
           - name: registry-zot
           containers:
           - name: backup
-            image: jacob.pub/docker.io/alpine:3.22.2
+            image: jacob.pub/docker.io/alpine:3.23.0
             imagePullPolicy: IfNotPresent
             volumeMounts:
             - name: backups
