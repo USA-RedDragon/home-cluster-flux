@@ -20,7 +20,7 @@ controllers:
               - ALL
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/rtz-server
-          tag: v0.0.248
+          tag: v0.0.249
           pullPolicy: IfNotPresent
         probes:
           liveness:
