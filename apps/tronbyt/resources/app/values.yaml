@@ -77,3 +77,42 @@ ingress:
     tls:
       - hosts:
           - tronbyt
+
+route:
+  meshmap:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - tronbyt.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: tronbyt
+            port: 80
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+
+rawResources:
+  allowlist:
+    apiVersion: gateway.envoyproxy.io/v1alpha1
+    kind: SecurityPolicy
+    spec:
+      spec:
+        targetRefs:
+          - group: gateway.networking.k8s.io
+            kind: HTTPRoute
+            name: "{{ .Release.Name }}"
+        authorization:
+          defaultAction: Deny
+          rules:
+            - action: Allow
+              principal:
+                clientCIDRs:
+                  - 172.39.1.1/24
+                  - 192.168.1.1/16
+                  - 100.64.0.0/10
