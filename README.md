@@ -95,7 +95,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#tandoor">tandoor</a></li>
   <li><a href="#tdarr">tdarr</a></li>
   <li><a href="#tfe">tfe</a></li>
-  <li><a href="#tronbyt">tronbyt</a></li>
   <li><a href="#trunk-recorder">trunk-recorder</a></li>
   <li><a href="#ultrafeeder">ultrafeeder</a></li>
   <li><a href="#vaultwarden">vaultwarden</a></li>
@@ -1310,28 +1309,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/tfe/hashicorp-helm.yaml">tfe</a></td>
     <td><a href="apps/tfe/postgres.yaml">postgresql</a>, <a href="apps/tfe/redis-helm.yaml">redis</a></td>
-  </tr>
-</table>
-
-<h4>tronbyt</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td><a href="apps/tronbyt/resources/valkey/helm.yaml">valkey</a></td>
-  </tr>
-  <tr>
-    <td>tronbyt</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/tronbyt/resources/app/helm.yaml">tronbyt</a></td>
-    <td></td>
   </tr>
 </table>
 
