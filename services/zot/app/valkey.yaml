@@ -22,7 +22,7 @@ spec:
         containers:
           valkey:
             image:
-              repository: valkey/valkey
+              repository: ghcr.io/valkey-io/valkey
               tag: 8.1.5-alpine@sha256:6f43b6aae0ac36ea7d7915eefe828cadd5747566ac118ec5bfec22e4625b9121
 
     persistence:
