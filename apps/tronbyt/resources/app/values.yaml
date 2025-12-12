@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  tronbyt:
+    replicas: 1
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      labels:
+        valkey-client: "true"
+    containers:
+      tronbyt:
+        image:
+          repository: ghcr.io/tronbyt/server
+          tag: 1.6.4@sha256:3de309d0209ba997d4bd91f395bd99c25b4726c4480ab97d347549358d8fc9b4
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        env:
+          TZ: America/Chicago
+          PRODUCTION: "1"
+          SERVER_PROTOCOL: https
+          TRONBYT_PORT: "80"
+          WEB_CONCURRENCY: "2"
+          REDIS_URL: redis://valkey:6379
+
+service:
+  tronbyt:
+    controller: tronbyt
+    ports:
+      http:
+        port: 80
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 4Gi
+    storageClass: longhorn-ssd
+    globalMounts:
+      - path: /app/data
+        subPath: data
+      - path: /app/users
+        subPath: users
+  tmp:
+    type: emptyDir
+    medium: Memory
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: tronbyt
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: tronbyt
+              port: http
+    tls:
+      - hosts:
+          - tronbyt
