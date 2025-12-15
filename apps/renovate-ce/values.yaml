@@ -5,7 +5,7 @@ license:
 renovateWorker:
   image:
     repository: jacob.pub/ghcr.io/usa-reddragon/renovate-ee-worker
-    version: v11.5
+    version: v11.5@sha256:2ebf08f5fbc49106e17812f75d68435e452abbce74a2e0ca2c38c006eb88481f
 
   existingSecret: renovate-secrets
   replicas: 2
@@ -145,7 +145,7 @@ renovateWorker:
 renovateServer:
   image:
     repository: jacob.pub/ghcr.io/usa-reddragon/renovate-ee
-    version: 11.5.0
+    version: 11.5.0@sha256:91b006978db1413251a121492bf6b400c12db22269d53241dc9be09ec51e99d9
 
   replicas: 2
 
