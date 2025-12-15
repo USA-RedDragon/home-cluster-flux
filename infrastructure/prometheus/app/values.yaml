@@ -591,7 +591,7 @@ alertmanager:
     image:
       registry: jacob.pub
       repository: quay.io/prometheus/alertmanager
-      tag: v0.28.1
+      tag: v0.30.0@sha256:abb750ac7b63116761c16dd481ae92496fbe04721686c0920f0fa4d0728cd4a6
 
     ## If true then the user will be responsible to provide a secret with alertmanager configuration
     ## So when true the config part will be ignored (including templateFiles) and the one in the secret will be used
