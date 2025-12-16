@@ -29,25 +29,12 @@ controllers:
 service:
   iperf3:
     controller: iperf3
+    annotations:
+      tailscale.com/expose: "true"
+      tailscale.com/hostname: "iperf3"
     ports:
       iperf:
         port: 5201
-
-ingress:
-  tailscale:
-    enabled: true
-    className: tailscale
-    hosts:
-      - host: iperf3
-        paths:
-        - path: /
-          pathType: Prefix
-          service:
-              identifier: iperf3
-              port: iperf
-    tls:
-      - hosts:
-          - iperf3
 
 route:
   iperf3:
