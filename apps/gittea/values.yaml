@@ -125,7 +125,7 @@ route:
     parentRefs:
       - name: public
         namespace: envoy-gateway-system
-        sectionName: ssh
+        sectionName: git-ssh
     rules:
       - backendRefs:
           - name: gitea
