@@ -52,3 +52,10 @@ route:
       - backendRefs:
           - name: iperf3
             port: 5201
+
+persistence:
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
