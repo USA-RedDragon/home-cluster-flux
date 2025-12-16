@@ -91,9 +91,7 @@ persistence:
       - path: /tmp/jellyfin
   media:
     enabled: true
-    type: nfs
-    path: /mnt/data/media
-    server: 192.168.1.135
+    existingClaim: media
 
 ingress:
   tailscale:
