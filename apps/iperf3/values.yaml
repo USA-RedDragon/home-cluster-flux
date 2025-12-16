@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  iperf3:
+    replicas: 1
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65535
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+    containers:
+      iperf3:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/iperf3
+          tag: 3.19.1@sha256:956a46ca794850eb139231ac2ec3adc84000c6d0435b573276591e640297cbcd
+          pullPolicy: IfNotPresent
+        resources:
+          requests: {}
+          limits: {}
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        securityContext:
+          fsGroup: 65534
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+
+service:
+  iperf3:
+    controller: iperf3
+    ports:
+      iperf:
+        port: 5201
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: iperf3
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: iperf3
+              port: iperf
+    tls:
+      - hosts:
+          - iperf3
+
+route:
+  iperf3:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: iperf3
+    rules:
+      - backendRefs:
+          - name: iperf3
+            port: 5201
