@@ -16,6 +16,10 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/iperf3
           tag: 3.19.1@sha256:956a46ca794850eb139231ac2ec3adc84000c6d0435b573276591e640297cbcd
           pullPolicy: IfNotPresent
+        args:
+          - -s
+          - --idle-timeout
+          - "3"
         resources:
           requests: {}
           limits: {}
