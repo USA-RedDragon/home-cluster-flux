@@ -19,13 +19,6 @@ controllers:
         resources:
           requests: {}
           limits: {}
-        probes:
-          liveness:
-            enabled: true
-          readiness:
-            enabled: true
-          startup:
-            enabled: true
         securityContext:
           fsGroup: 65534
           readOnlyRootFilesystem: true
