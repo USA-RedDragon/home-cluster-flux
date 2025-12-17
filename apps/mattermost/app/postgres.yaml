@@ -27,7 +27,7 @@ spec:
     retentionPolicy: "4w"
   storage:
     size: 80Gi
-    storageClass: "longhorn-nvme-no-replicas"
+    storageClass: "longhorn-nvme"
   monitoring:
     enablePodMonitor: true
   resources:
