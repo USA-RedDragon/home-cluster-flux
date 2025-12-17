@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/ghcr.io/usa-reddragon/mqtt-wx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:c1cb156a8d3f3a466f6b85df6403f745fccc607093957e18fe19d26634d793cc"
+  tag: "main@sha256:54803216e56bc07bbe3ce3d73118b9d8dfa0f582b5b4369b71160ae137a9cb8c"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -61,6 +61,8 @@ env:
   value: weather-esphome/weather
 - name: INPUT_TOPIC_PARTICLE_SENSOR
   value: weather-esphome/particle-sensor
+- name: INPUT_TOPIC_CO2
+  value: weather-esphome/living-room-scd40
 - name: OUTPUT_TOPIC
   value: weather/station
 # - name: SPECIAL_KEY
