@@ -90,7 +90,7 @@ persistence:
           subPath: mosquitto.conf
   data:
     enabled: true
-    storageClass: longhorn-nvme-no-replicas
+    storageClass: longhorn-nvme
     accessMode: ReadWriteOnce
     size: 1Gi
     advancedMounts:
