@@ -66,7 +66,7 @@ persistence:
           - path: /server/volume
   scrub:
     type: persistentVolumeClaim
-    storageClass: longhorn-nvme-no-replicas
+    storageClass: longhorn-nvme
     size: 30Gi
     accessMode: ReadWriteOnce
 
