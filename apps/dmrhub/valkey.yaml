@@ -33,7 +33,7 @@ spec:
 
     persistence:
       data:
-        storageClass: longhorn-nvme-no-replicas
+        storageClass: longhorn-nvme
         accessMode: ReadWriteOnce
         size: 2Gi
         retain: true
