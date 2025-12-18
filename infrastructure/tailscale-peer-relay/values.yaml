@@ -4,12 +4,12 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/tailscale/tailscale
-          tag: v1.90.9
+          tag: v1.92.3
         env:
           TS_HOSTNAME: home-peer-relay
           TS_EXTRA_ARGS: --relay-server-port=40000
           TS_KUBE_SECRET: tailscale-state
-          TS_USERSPACE: "false"
+          TS_USERSPACE: "true"
         envFrom:
           - secretRef:
               name: tailscale-env
