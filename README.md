@@ -93,6 +93,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#ses-email-service">ses-email-service</a></li>
   <li><a href="#site-inspector">site-inspector</a></li>
   <li><a href="#tailscale-operator">tailscale-operator</a></li>
+  <li><a href="#tailscale-peer-relay">tailscale-peer-relay</a></li>
   <li><a href="#tandoor">tandoor</a></li>
   <li><a href="#tdarr">tdarr</a></li>
   <li><a href="#tfe">tfe</a></li>
@@ -1277,6 +1278,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>tailscale-operator</td>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/tailscale-operator/app/helm.yaml">tailscale</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>tailscale-peer-relay</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>tailscale-peer-relay</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/tailscale-peer-relay/helm.yaml">tailscale-peer-relay</a></td>
     <td></td>
   </tr>
 </table>
