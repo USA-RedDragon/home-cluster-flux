@@ -1,5 +1,12 @@
 controllers:
   tailscale:
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
     containers:
       app:
         image:
@@ -14,8 +21,25 @@ controllers:
           - secretRef:
               name: tailscale-env
         securityContext:
-          runAsUser: 1000
-          runAsGroup: 1000
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+
+persistence:
+  run:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 1Gi
+    medium: Memory
+    globalMounts:
+      - name: /var/run/tailscale
+        mountPath: /var/run/tailscale
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
 
 serviceAccount:
   tailscale-peer-relay:
