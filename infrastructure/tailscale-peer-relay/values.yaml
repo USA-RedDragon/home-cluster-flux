@@ -1,0 +1,73 @@
+controllers:
+  tailscale:
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/tailscale/tailscale
+          tag: v1.90.9
+        env:
+          TS_HOSTNAME: home-peer-relay
+          TS_EXTRA_ARGS: --relay-server-port=40000
+          TS_KUBE_SECRET: tailscale-state
+          TS_USERSPACE: "false"
+        envFrom:
+          - secretRef:
+              name: tailscale-env
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+
+serviceAccount:
+  tailscale:
+    enabled: true
+
+rbac:
+  roles:
+    tailscale:
+      enabled: true
+      type: Role
+      rules:
+        - apiGroups: [""]
+          resources:
+            - secrets
+          # Create can not be restricted to a resource name.
+          verbs:
+            - create
+        - apiGroups: [""]
+          resources:
+            - secrets
+          verbs:
+            - get
+            - update
+            - patch
+          resourceNames:
+            - tailscale-state
+  bindings:
+    tailscale:
+      enabled: true
+      type: RoleBinding
+      roleRef:
+        identifier: tailscale
+      subjects:
+        - identifier: tailscale
+
+service:
+  tailscale:
+    controller: tailscale
+    ports:
+      relay:
+        port: 40000
+        protocol: UDP
+
+route:
+  tailscale:
+    enabled: true
+    kind: UDPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: tailscale-peer-relay
+    rules:
+      - backendRefs:
+          - name: tailscale
+            port: 40000

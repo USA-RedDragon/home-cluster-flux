@@ -29,6 +29,15 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: gitea
+    - name: tailscale-peer-relay
+      protocol: UDP
+      port: 40000
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: tailscale-peer-relay
     - name: http
       protocol: HTTP
       port: 80
