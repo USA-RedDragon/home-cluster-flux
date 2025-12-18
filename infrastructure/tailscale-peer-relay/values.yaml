@@ -33,8 +33,7 @@ persistence:
     sizeLimit: 1Gi
     medium: Memory
     globalMounts:
-      - name: /var/run/tailscale
-        mountPath: /var/run/tailscale
+      - path: /var/run/tailscale
   tmp:
     enabled: true
     type: emptyDir
