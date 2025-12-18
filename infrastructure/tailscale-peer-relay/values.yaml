@@ -14,7 +14,6 @@ controllers:
           tag: v1.92.4@sha256:d6734d69fd7d31b1861589e347463954aa6097f9a61aa4f8f763ba94bfe0e5b9
         env:
           TS_HOSTNAME: home-peer-relay
-          TS_EXTRA_ARGS: --relay-server-port=40000
           TS_KUBE_SECRET: tailscale-state
           TS_USERSPACE: "true"
         envFrom:
