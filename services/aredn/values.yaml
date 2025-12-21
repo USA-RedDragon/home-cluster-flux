@@ -23,8 +23,10 @@ command:
   sysctl -w net.ipv4.ip_forward=1 && \
   sysctl -w net.ipv6.conf.all.forwarding=1 && \
   ip link add dev br-wan type bridge && \
+  ip link add dev br-dtdlink type bridge && \
   ip link set dev eth0 master br-wan && \
   ip link set br-wan up && \
+  ip link set br-dtdlink up && \
   GW=$(ip route list 0/0 | awk '{ print $3 }') && \
   IP6_GW=$(ip -6 route list ::/0 | awk '{ print $3 }') && \
   IPV4_ADDRS=$(ip address show eth0 | grep 'inet ' | awk '{ print $2 }') && \
