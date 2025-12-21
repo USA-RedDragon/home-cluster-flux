@@ -62,13 +62,13 @@ command:
   ip rule add pref 30260 lookup main && \
   ip rule add pref 30280 lookup 28 && \
   ip rule add pref 30290 lookup 31 && \
-  ip rule add pref 20030 iif tunnel lookup 30 && \
-  ip rule add pref 20040 iif tunnel lookup 21 && \
-  ip rule add pref 20050 iif tunnel lookup 22 && \
-  ip rule add pref 20060 iif tunnel lookup 28 && \
-  ip rule add pref 20070 iif tunnel lookup 31 && \
-  ip rule add pref 20099 iif tunnel unreachable && \
-  ip -6 addr add fe80::ac1f:bf09/64 dev tunnel && \
+  ip rule add pref 20030 iif wgc1 lookup 30 && \
+  ip rule add pref 20040 iif wgc1 lookup 21 && \
+  ip rule add pref 20050 iif wgc1 lookup 22 && \
+  ip rule add pref 20060 iif wgc1 lookup 28 && \
+  ip rule add pref 20070 iif wgc1 lookup 31 && \
+  ip rule add pref 20099 iif wgc1 unreachable && \
+  ip -6 addr add fe80::200:aff:fe36:1904/64 dev wgc1 && \
   iptables -A INPUT -i br-wan -p udp --dport 51820 -j ACCEPT && \
   ip6tables -A INPUT -i br-wan -p udp --dport 51820 -j ACCEPT && \
   iptables -A FORWARD -i lan -o br-wan -j DROP && \
@@ -106,14 +106,17 @@ configs:
       router-id 02:44:c0:a6:cb:05
       interface br-dtdlink type wired
       interface br-dtdlink rxcost 96
+      interface br-dtdlink enable-timestamps false
       interface br-dtdlink split-horizon true
-      interface tunnel type tunnel
-      interface tunnel rxcost 206
-      interface tunnel hello-interval 10
-      interface tunnel rtt-min 10
-      interface tunnel rtt-max 400
-      interface tunnel max-rtt-penalty 400
-      redistribute anyproto if tunnel deny
+      interface wgc1 type tunnel
+      interface wgc1 rxcost 206
+      interface wgc1 update-interval 120
+      interface wgc1 hello-interval 10
+      interface wgc1 split-horizon true
+      interface wgc1 rtt-min 10
+      interface wgc1 rtt-max 400
+      interface wgc1 max-rtt-penalty 400
+      redistribute anyproto if wgc1 deny
       redistribute anyproto ip 10.0.0.0/8 ge 24 allow
       redistribute anyproto ip 44.0.0.0/8 ge 24 allow
       redistribute anyproto ip 172.31.0.0/16 eq 32 deny
@@ -163,7 +166,7 @@ configs:
         PlParam "timeout" "300"
         PlParam "name" "KI5VMF-KUBERNETES"
       }
-      Interface "tunnel"
+      Interface "wgc1"
       {
         Ip4Broadcast 255.255.255.255
         Mode "ether"
@@ -255,29 +258,29 @@ initContainers:
     sleep 10 && \
     ip l del lan 2>/dev/null || true && \
     wg-quick up /etc/wireguard/lan.conf && \
-    ip l del tunnel 2>/dev/null || true && \
-    wg-quick up /etc/wireguard/tunnel.conf && \
+    ip l del wgc1 2>/dev/null || true && \
+    wg-quick up /etc/wireguard/wgc1.conf && \
     ip6tables -P INPUT DROP && \
     ip6tables -P FORWARD DROP && \
     iptables -P INPUT DROP && \
     iptables -P FORWARD DROP && \
     iptables -A INPUT -i lo -j ACCEPT && \
-    iptables -A INPUT -i tunnel -j ACCEPT && \
+    iptables -A INPUT -i wgc1 -j ACCEPT && \
     iptables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
     iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     ip6tables -A INPUT -i lo -j ACCEPT && \
-    ip6tables -A INPUT -i tunnel -j ACCEPT && \
+    ip6tables -A INPUT -i wgc1 -j ACCEPT && \
     ip6tables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
     ip6tables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     iptables -A INPUT -i lan -j ACCEPT && \
     iptables -A FORWARD -i lan -o eth0 -j DROP && \
     ip6tables -A FORWARD -i lan -o eth0 -j DROP && \
-    iptables -A FORWARD -i lan -o tunnel -j ACCEPT && \
-    ip6tables -A FORWARD -i lan -o tunnel -j ACCEPT && \
+    iptables -A FORWARD -i lan -o wgc1 -j ACCEPT && \
+    ip6tables -A FORWARD -i lan -o wgc1 -j ACCEPT && \
     iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
-    iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o tunnel -j SNAT --to-source 10.54.25.4 && \
-    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE
+    iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o wgc1 -j SNAT --to-source $NODE_IP && \
+    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o wgc1 -j MASQUERADE
   volumeMounts:
   - mountPath: /etc/wireguard
     name: server-wireguard-config
