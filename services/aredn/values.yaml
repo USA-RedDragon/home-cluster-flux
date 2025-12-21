@@ -279,7 +279,7 @@ initContainers:
     ip6tables -A FORWARD -i lan -o wgc1 -j ACCEPT && \
     iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
-    iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o wgc1 -j SNAT --to-source $NODE_IP && \
+    iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o wgc1 -j SNAT --to-source 10.54.25.4 && \
     iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o wgc1 -j MASQUERADE
   volumeMounts:
   - mountPath: /etc/wireguard
