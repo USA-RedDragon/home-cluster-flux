@@ -48,7 +48,9 @@ command:
   echo "28 wan_out" >> /etc/iproute2/rt_tables && \
   echo "29 local_lan" >> /etc/iproute2/rt_tables && \
   echo "99 blackhole" >> /etc/iproute2/rt_tables && \
+  ip r add $GW dev br-wan scope link table 28 && \
   ip route add default via $GW dev br-wan table 28 && \
+  ip -6 route add $IP6_GW dev br-wan table 28 && \
   ip -6 route del default via $IP6_GW dev eth0 && \
   ip -6 route add default via $IP6_GW dev br-wan table 28 && \
   WAN_NET=$(ip route show dev br-wan | grep "proto kernel" | awk '{print $1}') && \
