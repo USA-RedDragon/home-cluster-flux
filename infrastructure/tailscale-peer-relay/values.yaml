@@ -11,7 +11,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/tailscale/tailscale
-          tag: v1.90.9
+          tag: v1.90.9@sha256:9975353aae933e8fbd1a81226d092a9225b9a0f98b173d365a9d525eca1cc298
         env:
           TS_HOSTNAME: home-peer-relay
           TS_KUBE_SECRET: tailscale-state
