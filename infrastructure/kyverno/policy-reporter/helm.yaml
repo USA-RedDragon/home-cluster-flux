@@ -27,7 +27,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: kyverno-policy-reporter
-      version: '3.7.0'
+      version: '3.7.1'
       interval: 1m0s
   values:
     image:
