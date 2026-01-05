@@ -27,7 +27,7 @@ agentWorkerPodTemplate:
   spec:
     containers:
     - env:
-      - name: ECS_TEST_VAR
+      - name: THIS_IS_MY_ECS_TEST_VAR
         value: testing
 
 # Ingress allows ingress services to be created to allow external access
@@ -65,7 +65,7 @@ env:
     TFE_OBJECT_STORAGE_S3_REGION: us-east-1
     TFE_REDIS_HOST: redis-app.tfe.svc.cluster.local
     TFE_RUN_PIPELINE_KUBERNETES_OPEN_SHIFT_ENABLED: "true"
-    TFE_RUN_PIPELINE_IMAGE: jacob.pub/public/tfc-agent:test2
+    TFE_RUN_PIPELINE_IMAGE: jacob.pub/public/tfc-agent:test3
 
 securityContext:
   runAsNonRoot: true
