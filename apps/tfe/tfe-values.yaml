@@ -23,6 +23,13 @@ resources:
 tls:
   certificateSecret: tfe-mcswain-dev-tls
 
+agentWorkerPodTemplate:
+  spec:
+    containers:
+    - env:
+      - name: ECS_TEST_VAR
+        value: testing
+
 # Ingress allows ingress services to be created to allow external access
 # from Kubernetes to access Terraform Enterprise pods.
 ingress:
