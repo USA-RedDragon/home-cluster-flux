@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  bitbucket:
+    replicas: 1
+    containers:
+      bitbucket:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/bitbucket
+          tag: 10.1.3@sha256:60153fea66b255033e1d2c57c5f849cf44aff79bce03d69e438436a2f8860399
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 10m
+            memory: 30Mi
+        probes:
+          liveness:
+            enabled: true
+            spec:
+              initialDelaySeconds: 60
+          readiness:
+            enabled: true
+            spec:
+              initialDelaySeconds: 60
+          startup:
+            enabled: true
+            spec:
+              initialDelaySeconds: 60
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 16Gi
+    storageClass: longhorn-ssd
+    globalMounts:
+      - path: /var/atlassian/application-data/bitbucket
+
+service:
+  bitbucket:
+    controller: bitbucket
+    ports:
+      http:
+        port: 7990
+        primary: true
+      ssh:
+        port: 7999
+
+route:
+  bitbucket:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - bitbucket.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: bitbucket
+            port: 7990
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+  ssh:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: bitbucket-ssh
+    rules:
+      - backendRefs:
+          - name: bitbucket
+            port: 7999
