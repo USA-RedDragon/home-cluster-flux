@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  relax-sounds:
+    replicas: 1
+    pod:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      labels:
+        valkey-client: "true"
+    containers:
+      relax-sounds:
+        image:
+          repository: jacob.pub/ghcr.io/gabe565/relax-sounds
+          tag: 1.8.0@sha256:b8ce5cb04b708501f3a4d880c95eb443f4591a2714f572e2367f6d43273d9724
+          pullPolicy: IfNotPresent
+        env:
+          RELAX_VALKEY_ENABLED: "true"
+          RELAX_VALKEY_HOST: valkey
+          RELAX_VALKEY_PASSWORD:
+            secretKeyRef:
+              name: valkey
+              key: valkey-password
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 30Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+persistence:
+  data:
+    suffix: data
+    storageClass: longhorn-nvme
+    accessMode: ReadWriteOnce
+    size: 8Gi
+    retain: true
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
+
+service:
+  relax-sounds:
+    controller: relax-sounds
+    ports:
+      http:
+        port: 80
+        primary: true
+      metrics:
+        port: 9090
+
+route:
+  relax-sounds:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - relax.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: relax-sounds
+            port: 8000
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+
+serviceMonitor:
+  relax-sounds:
+    enabled: true
+    serviceName: relax-sounds
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
