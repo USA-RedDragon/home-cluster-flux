@@ -29,6 +29,15 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: gitea
+    - name: bitbucket-ssh
+      protocol: TCP
+      port: 7999
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: bitbucket
     - name: tailscale-peer-relay
       protocol: UDP
       port: 40000
