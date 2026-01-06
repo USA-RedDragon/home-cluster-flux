@@ -85,6 +85,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#rdio-scanner">rdio-scanner</a></li>
   <li><a href="#redis">redis</a></li>
   <li><a href="#reflector">reflector</a></li>
+  <li><a href="#relax-sounds">relax-sounds</a></li>
   <li><a href="#renovate-ce">renovate-ce</a></li>
   <li><a href="#rmfakecloud">rmfakecloud</a></li>
   <li><a href="#rtl-433">rtl-433</a></li>
@@ -1147,6 +1148,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/reflector/app/helm.yaml">reflector</a></td>
     <td></td>
+  </tr>
+</table>
+
+<h4>relax-sounds</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>relax-sounds</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/relax-sounds/helm.yaml">relax-sounds</a></td>
+    <td><a href="apps/relax-sounds/valkey.yaml">valkey</a></td>
   </tr>
 </table>
 
