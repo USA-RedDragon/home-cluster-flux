@@ -8,6 +8,7 @@ controllers:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
       labels:
         valkey-client: "true"
     containers:
@@ -28,7 +29,6 @@ controllers:
             cpu: 10m
             memory: 30Mi
         securityContext:
-          readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
@@ -76,7 +76,7 @@ route:
     rules:
       - backendRefs:
           - name: relax-sounds
-            port: 8000
+            port: 80
         matches:
           - path:
               type: PathPrefix
