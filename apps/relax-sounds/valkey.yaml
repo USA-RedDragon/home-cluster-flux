@@ -23,7 +23,7 @@ spec:
           valkey:
             image:
               repository: jacob.pub/docker.io/valkey/valkey
-              tag: 8.1.5-alpine@sha256:6f43b6aae0ac36ea7d7915eefe828cadd5747566ac118ec5bfec22e4625b9121
+              tag: 8.1.5-alpine@sha256:3c3ccc8571d4866ec5ac5ffb2519b6b6a1fdbf6b5ff5fdab075413026fbff273
 
     persistence:
       data:
