@@ -55,7 +55,7 @@ route:
     enabled: true
     kind: TCPRoute
     parentRefs:
-      - name: public-tcp
+      - name: public
         namespace: envoy-gateway-system
         sectionName: nginx-rtmp
     rules:
