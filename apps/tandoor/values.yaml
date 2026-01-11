@@ -13,7 +13,7 @@ controllers:
       tandoor:
         image:
           repository: jacob.pub/docker.io/vabene1111/recipes
-          tag: 1.5.35@sha256:188da7487f777101c6abe996284df7966d9dd58c9b676447d5f880a5268a4393
+          tag: 2.3.6@sha256:5cd01ba0473a48878db3ed9b2c6f2c5db12b68649e169ce9cfa43f052fb0aa95
           pullPolicy: IfNotPresent
         resources:
           limits:
