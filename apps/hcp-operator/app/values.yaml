@@ -12,7 +12,7 @@ operator:
 kubeRbacProxy:
   image:
     repository: jacob.pub/quay.io/brancz/kube-rbac-proxy
-    tag: v0.20.1
+    tag: v0.20.2@sha256:ad0fa9f0adc928b557663297bd22c610533960d77acdec289ce8a636f0ea2114
 
 controllers:
   agentPool:
