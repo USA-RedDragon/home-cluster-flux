@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/ghcr.io/hertzg/rtl_433_docker
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "24.10-alpine@sha256:7bcfeb1c6f1077105776c78d598387dc0bbddfc51441b7681b086de4daa16e43"
+  tag: "24.10-alpine@sha256:945fc54498e92fbafb5aed26cc6d6904d5f0c1b9a70465d640c58756f8db7f5b"
 
 imagePullSecrets: []
 nameOverride: ""
