@@ -7,7 +7,7 @@ controllers:
       bitbucket:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/bitbucket
-          tag: 10.1.4@sha256:77d2bc371cb7fce555a1aee7fabb99a3174ee8d25f68ab9dcab2cd9f03db63b8
+          tag: 10.1.4@sha256:ce4f3fe697343a04220ebaaae37c641cf2e33b4c26e5d0ab9eeba654e1e7a3f8
           pullPolicy: IfNotPresent
         resources:
           requests:
