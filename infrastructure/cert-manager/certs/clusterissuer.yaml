@@ -5,6 +5,7 @@ metadata:
 spec:
   acme:
     email: acme@mcswain.dev
+    profile: shortlived
     preferredChain: ""
     privateKeySecretRef:
       name: cloudflare-issuer-account-key
