@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/docker.io/alexxit/go2rtc
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.9.13-hardware"
+  tag: "1.9.14-hardware@sha256:7fce3ffefe663753510ff4671d8b7496dead49b46c87392898ddef152c25687d"
 
 nameOverride: ""
 fullnameOverride: ""
