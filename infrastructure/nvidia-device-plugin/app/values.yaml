@@ -49,7 +49,7 @@ image:
   repository: jacob.pub/nvcr.io/nvidia/k8s-device-plugin
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.18.1@sha256:50ac011ab941ab0140d52f56aa0e2fdc553bca96836ab3b26be394fc823fd9e7"
+  tag: "v0.18.2@sha256:b5788e29e7ae5272de8de863ebe386d6611e608421a6ecc5b4e7d5952aba637f"
 
 updateStrategy:
   type: RollingUpdate
