@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/ghcr.io/usa-reddragon/fabric
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.19.2@sha256:b9a80bef1c3155ed6d4c59e141fbe35094bb0dbece22c9079d91acb676ac8bce"
+  tag: "1.19.2@sha256:4275c0f3187e7a17c9382b11903d9479143f977127fb544c96fca1f0a2322ac8"
 
 imagePullSecrets: []
 nameOverride: ""
