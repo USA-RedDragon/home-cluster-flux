@@ -58,7 +58,7 @@ controllers:
         - /etc/zot/config.yaml
         image:
           repository: ghcr.io/project-zot/zot
-          tag: v2.1.13@sha256:d3cde44fa759bf7f3d25b479e2b33ed5d4d3f1d6fdad01b204d15a9c3af2db3c
+          tag: v2.1.14@sha256:4183bd731bcc515dcf12f545d18245cfa568d338a986e4b92b7a9d89d2cc5463
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
