@@ -86,6 +86,16 @@
             "automerge": false
         },
         {
+            "description": "Avoid duplicate digest pinning in Cilium helm values",
+            "matchFileNames": [
+                "**/clusters/home/cilium/app/values.yaml"
+            ],
+            "matchManagers": [
+                "helm-values"
+            ],
+            "pinDigests": false
+        },
+        {
             "automerge": false,
             "matchPackageNames": [
                 "/^ghcr.io\\/usa-reddragon\\/papermc$/"
