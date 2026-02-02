@@ -14,7 +14,7 @@ controllers:
       ping-exporter:
         image:
           repository: jacob.pub/docker.io/czerwonk/ping_exporter
-          tag: v1.1.4@sha256:bb748e3ec728d779544dca8207321abbdf4121a15d259c6df7563db332dc6b38
+          tag: v1.1.5@sha256:241811c2595d710e4ffb05ae489496669507acd9a5963b1caaa7aa638f41ba55
           pullPolicy: IfNotPresent
         resources:
           requests:
