@@ -46,7 +46,7 @@ spec:
       enabled: true
       image:
         repository: jacob.pub/docker.io/natsio/prometheus-nats-exporter
-        tag: 0.18.0
+        tag: 0.19.0@sha256:85c0f746a1bbd8bb08ab4678f81c75b741b59728e3bab2d3cdbb694c2d897a11
       podMonitor:
         enabled: true
     natsBox:
