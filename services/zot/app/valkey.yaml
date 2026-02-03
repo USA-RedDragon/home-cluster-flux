@@ -23,7 +23,7 @@ spec:
           valkey:
             image:
               repository: ghcr.io/valkey-io/valkey
-              tag: 8.1.5-alpine@sha256:6f43b6aae0ac36ea7d7915eefe828cadd5747566ac118ec5bfec22e4625b9121
+              tag: 9.0.2-alpine@sha256:68677f85c863830af7836ff07c4a13b7f085ebeff62f4dedb71499ca27d229f2
 
     persistence:
       data:
