@@ -9,7 +9,7 @@ spec:
   enableSuperuserAccess: true
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/dmrhub"
+      destinationPath: "s3://cnpg/dmrhub-2"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:
@@ -23,7 +23,7 @@ spec:
     retentionPolicy: "4w"
   externalClusters:
   - barmanObjectStore:
-      destinationPath: s3://cnpg/dmrhub-1
+      destinationPath: s3://cnpg/dmrhub
       endpointURL: https://s3.mcswain.dev
       s3Credentials:
         accessKeyId:
