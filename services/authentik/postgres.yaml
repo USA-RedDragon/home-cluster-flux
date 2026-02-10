@@ -8,10 +8,9 @@ spec:
   imageName: jacob.pub/ghcr.io/cloudnative-pg/postgresql:17.5-22
   enableSuperuserAccess: true
   bootstrap:
-    recovery:
+    initdb:
       database: authentik
       owner: authentik
-      source: postgresql
   backup:
     barmanObjectStore:
       destinationPath: "s3://cnpg/authentik"
@@ -26,22 +25,8 @@ spec:
       wal:
         compression: gzip
     retentionPolicy: "4w"
-  externalClusters:
-  - barmanObjectStore:
-      destinationPath: s3://cnpg/authentik-2
-      endpointURL: https://s3.mcswain.dev
-      s3Credentials:
-        accessKeyId:
-          key: AWS_ACCESS_KEY_ID
-          name: cnpg-minio
-        secretAccessKey:
-          key: AWS_SECRET_ACCESS_KEY
-          name: cnpg-minio
-      wal:
-        compression: gzip
-    name: postgresql
   storage:
-    size: 55Gi
+    size: 5Gi
   monitoring:
     enablePodMonitor: true
   resources:
