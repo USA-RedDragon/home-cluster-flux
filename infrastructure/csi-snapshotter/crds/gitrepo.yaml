@@ -6,6 +6,6 @@ metadata:
 spec:
   interval: 60m0s
   ref:
-    tag: v8.4.0
+    tag: v8.5.0
   timeout: 60s
   url: https://github.com/kubernetes-csi/external-snapshotter.git
