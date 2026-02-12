@@ -18,7 +18,7 @@ controllers:
       dmrhub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.2.9@sha256:aa9d80b313defb3c9a4c78254a333d0b638a3687dba12a804e342120f891c47b
+          tag: v1.2.10@sha256:8c34165da65717d1a3ff0832aa5a0b28fddaab25b10706944be9ac36aef15f2f
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
@@ -84,6 +84,10 @@ controllers:
           #   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
           - name: DMR_OPENBRIDGE_PORT
             value: "62035"
+          - name: DMR_IPSC_ENABLED
+            value: "true"
+          - name: DMR_IPSC_NETWORK_ID
+            value: "1"
           - name: METRICS_ENABLED
             value: "true"
           - name: METRICS_PORT
@@ -126,6 +130,9 @@ service:
         port: 9001
       hbrp:
         port: 62031
+        protocol: UDP
+      ipsc:
+        port: 50000
         protocol: UDP
       openbridge:
         port: 62035
@@ -189,6 +196,17 @@ route:
       - backendRefs:
           - name: dmrhub
             port: 62031
+  ipsc:
+    enabled: true
+    kind: UDPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: dmrhub-ipsc
+    rules:
+      - backendRefs:
+          - name: dmrhub
+            port: 50000
   openbridge:
     enabled: true
     kind: UDPRoute

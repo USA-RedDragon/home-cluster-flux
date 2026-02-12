@@ -124,6 +124,15 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: dmrhub
+    - name: dmrhub-ipsc
+      protocol: UDP
+      port: 50000
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: dmrhub
     - name: dmrhub-openbridge
       protocol: UDP
       port: 62035
