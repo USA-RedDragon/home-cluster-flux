@@ -4,7 +4,7 @@ controllers:
       mariadb:
         image:
           repository: jacob.pub/docker.io/mariadb
-          tag: 12.1.2@sha256:eb37f58646a901dc7727cf448cae36daaefaba79de33b5058dab79aa4c04aefb
+          tag: 12.2.2@sha256:3ba727e641ef0ea24054e47c72a831b1067da32d5139c0405b629c25b115eb89
         env:
           MARIADB_DATABASE: weewx
           MARIADB_USER: weewx
