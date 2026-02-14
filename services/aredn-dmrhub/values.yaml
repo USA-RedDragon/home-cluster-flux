@@ -314,15 +314,13 @@ initContainers:
     iptables -P FORWARD DROP && \
     iptables -A INPUT -i lo -j ACCEPT && \
     iptables -A INPUT -i wgc1 -j ACCEPT && \
-    iptables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
     iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     ip6tables -A INPUT -i lo -j ACCEPT && \
     ip6tables -A INPUT -i wgc1 -j ACCEPT && \
-    ip6tables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
     ip6tables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
     ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
-    iptables -t nat -A POSTROUTING -o wg+ ! -d 255.255.255.255 -j SNAT --to-source 10.54.25.4 && \
+    iptables -t nat -A POSTROUTING -o wg+ ! -d 255.255.255.255 -j SNAT --to-source 10.54.25.5 && \
     iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o wgc1 -j MASQUERADE
   volumeMounts:
   - mountPath: /etc/wireguard
