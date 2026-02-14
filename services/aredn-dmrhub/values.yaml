@@ -242,8 +242,8 @@ persistentVolumes:
   configMap:
     name: server-babel-config
 - name: server-wireguard-config
-  mountPath: /etc/wireguard/wg0.conf
-  subPath: wg0.conf
+  mountPath: /etc/wireguard/wgc1.conf
+  subPath: wgc1.conf
   secret:
     secretName: dmrhub-wireguard-config
 - name: nginx-config
