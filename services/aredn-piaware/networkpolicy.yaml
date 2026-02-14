@@ -12,6 +12,13 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: piaware
             app.kubernetes.io/instance: piaware
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
@@ -21,5 +28,5 @@ spec:
             - 100.64.0.0/10
       toPorts:
       - ports:
-          - port: "5525"
-            protocol: TCP
+          - port: "5621"
+            protocol: UDP

@@ -14,20 +14,77 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-podLabels:
-  policy.mcswain.dev/egress-coredns: "true"
-
 command:
 - /bin/sh
 - -c
 - |
-  ip addr add 10.54.25.43/32 dev eth0 \
-  && sysctl -w net.ipv4.ip_forward=1 \
-  && rsyslogd -n & \
-  cat /etc/resolv.conf > /tmp/resolv.conf.auto \
-  && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
-  && echo -e "#!/bin/sh\nexec vtund -n -f /etc/vtundsrv.conf KI5VMF-ADSB-SKYAWARE-172-31-180-92 oklahoma.aredn.mcswain.cloud" > /etc/s6/vtund/run \
-  && exec s6-svscan /etc/s6
+  set -x && \
+  NODE_NAME=KI5VMF-ADSB-SKYAWARE && \
+  sysctl -w net.ipv4.ip_forward=1 && \
+  sysctl -w net.ipv6.conf.all.forwarding=1 && \
+  ip link add dev br-wan type bridge && \
+  ip link add dev br-dtdlink type bridge && \
+  ip link set dev eth0 master br-wan && \
+  ip link set br-wan up && \
+  ip link set br-dtdlink up && \
+  GW=$(ip route list 0/0 | awk '{ print $3 }') && \
+  IP6_GW=$(ip -6 route list ::/0 | awk '{ print $3 }') && \
+  IPV4_ADDRS=$(ip address show eth0 | grep 'inet ' | awk '{ print $2 }') && \
+  for IPV4_ADDR in $IPV4_ADDRS; do \
+      ip address del dev eth0 $IPV4_ADDR && \
+      ip address add dev br-wan $IPV4_ADDR ; \
+  done && \
+  IPV6_ADDRS=$(ip address show eth0 | grep 'inet6 ' | awk '{ print $2 }') && \
+  for IPV6_ADDR in $IPV6_ADDRS; do \
+      if [[ $IPV6_ADDR == fe80:* ]]; then \
+          continue ; \
+      fi && \
+      ip address del dev eth0 $IPV6_ADDR && \
+      ip address add dev br-wan $IPV6_ADDR ; \
+  done && \
+  mkdir -p /etc/iproute2/ && \
+  echo "20 babel_in" >> /etc/iproute2/rt_tables && \
+  echo "21 babel_super" >> /etc/iproute2/rt_tables && \
+  echo "22 wan_in" >> /etc/iproute2/rt_tables && \
+  echo "27 local_wan" >> /etc/iproute2/rt_tables && \
+  echo "28 wan_out" >> /etc/iproute2/rt_tables && \
+  echo "29 local_lan" >> /etc/iproute2/rt_tables && \
+  echo "99 blackhole" >> /etc/iproute2/rt_tables && \
+  ip r add $GW dev br-wan scope link table 28 && \
+  ip route add default via $GW dev br-wan table 28 && \
+  ip -6 route add $IP6_GW dev br-wan table 28 && \
+  ip -6 route del default via $IP6_GW dev eth0 && \
+  ip -6 route add default via $IP6_GW dev br-wan table 28 && \
+  WAN_NET=$(ip route show dev br-wan | grep "proto kernel" | awk '{print $1}') && \
+  if [ -n "$WAN_NET" ]; then \
+      ip route add $WAN_NET dev br-wan table 27 ; \
+  fi && \
+  ip route add blackhole 0.0.0.0/0 table 99 && \
+  ip address add dev br-dtdlink $NODE_IP/8 && \
+  ip rule add pref 10 iif br-dtdlink lookup 29 && \
+  ip rule add pref 20 iif br-dtdlink lookup 20 && \
+  ip rule add pref 30 iif br-dtdlink lookup 21 && \
+  ip rule add pref 60 iif br-dtdlink lookup 22 && \
+  ip rule add pref 70 iif br-dtdlink lookup 99 && \
+  ip rule add pref 110 lookup 29 && \
+  ip rule add pref 120 lookup 20 && \
+  ip rule add pref 130 lookup 21 && \
+  ip rule add pref 140 lookup 27 && \
+  ip rule add pref 150 lookup 28 && \
+  ip rule add pref 160 lookup 22 && \
+  ip -6 addr add fe80::200:aff:fe36:1943/64 dev wgc1 && \
+  mkdir -p /etc/meshlink && \
+  echo "${NODE_IP} ${NODE_NAME}" >> /etc/meshlink/hosts && \
+  echo "${NODE_IP} dtdlink.${NODE_NAME}.local.mesh" >> /etc/meshlink/hosts && \
+  echo "http://${NODE_NAME}:80/skyaware/|tcp|SkyAware ADS-B" >> /etc/meshlink/services && \
+  rsyslogd -n & \
+  cat /etc/resolv.conf > /tmp/resolv.conf.auto && \
+  echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf && \
+  rm -rf /etc/s6/vtund && \
+  rm -rf /etc/s6/olsrd && \
+  cp /etc/babel/babel.conf /tmp/babel-generated.conf && \
+  sleep 10 && \
+  exec s6-svscan /etc/s6
 
 secrets: []
 # - name: app-creds
@@ -93,60 +150,35 @@ configs:
           }
         }
       }
-- name: olsrd-config
+- name: server-babel-config
   data:
-    olsrd.conf: |
-      DebugLevel 0
-      AllowNoInt yes
-      IpVersion 4
-      MainIp 10.54.25.43
-      LinkQualityAlgorithm "etx_ffeth"
-
-      LoadPlugin "olsrd_arprefresh.so.0.1"
-      {
-      }
-
-      LoadPlugin "olsrd_txtinfo.so.1.1"
-      {
-          PlParam "accept" "0.0.0.0"
-      }
-
-      LoadPlugin "olsrd_jsoninfo.so.1.1"
-      {
-          PlParam "accept" "0.0.0.0"
-      }
-
-      LoadPlugin "olsrd_dot_draw.so.0.3"
-      {
-          PlParam "accept" "0.0.0.0"
-          PlParam "port" "2004"
-      }
-
-      LoadPlugin "olsrd_watchdog.so.0.1"
-      {
-          PlParam "file" "/tmp/olsrd.watchdog"
-          PlParam "interval" "5"
-      }
-
-      LoadPlugin "olsrd_nameservice.so.0.4"
-      {
-          PlParam "sighup-pid-file" "/var/run/dnsmasq/dnsmasq.pid"
-          PlParam "interval" "30"
-          PlParam "timeout" "300"
-          PlParam "name" "KI5VMF-ADSB-SKYAWARE"
-          PlParam "service" "http://KI5VMF-ADSB-SKYAWARE.local.mesh:80/skyaware/|tcp|SkyAware ADS-B"
-      }
-
-      Interface "tun60"
-      {
-          Ip4Broadcast 255.255.255.255
-          Mode "ether"
-      }
-
-      Interface "eth0"
-      {
-          Mode "ether"
-      }
+    babel.conf: |
+      router-id 02:44:c0:a6:cb:43
+      smoothing-half-life 10
+      protocol-buffer-size 65536
+      interface br-dtdlink type wired
+      interface br-dtdlink rxcost 96
+      interface br-dtdlink enable-timestamps false
+      interface br-dtdlink split-horizon true
+      interface wgc1 type tunnel
+      interface wgc1 rxcost 206
+      interface wgc1 update-interval 120
+      interface wgc1 hello-interval 10
+      interface wgc1 split-horizon true
+      interface wgc1 rtt-min 10
+      interface wgc1 rtt-max 400
+      interface wgc1 max-rtt-penalty 400
+      redistribute anyproto if wgc1 deny
+      redistribute anyproto ip 10.0.0.0/8 ge 24 allow
+      redistribute anyproto ip 44.0.0.0/8 ge 24 allow
+      redistribute anyproto ip 172.31.0.0/16 eq 32 deny
+      redistribute deny
+      install ip 10.0.0.0/8 eq 8 allow table 21
+      install ip 44.0.0.0/8 le 23 allow table 21
+      install ip 0.0.0.0/0 eq 0 allow table 22
+      install ip 10.0.0.0/8 ge 24 allow table 20
+      install ip 44.0.0.0/8 ge 24 allow table 20
+      install ip 0.0.0.0/0 ge 0 deny
 
 envFrom: []
 # - secretRef:
@@ -154,12 +186,9 @@ envFrom: []
 # - configMapRef:
 #     name: app-config
 
-env: {}
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
+env:
+- name: NODE_IP
+  value: 10.54.25.43
 
 podSecurityContext:
   privileged: true
@@ -171,15 +200,15 @@ service:
   type: ClusterIP
 
 persistentVolumes:
-- name: olsrd-config
-  mountPath: /etc/olsrd
+- name: server-babel-config
+  mountPath: /etc/babel
   configMap:
-    name: olsrd-config
-- name: server-vtun-config
-  mountPath: /etc/vtundsrv.conf
-  subPath: vtundsrv.conf
+    name: server-babel-config
+- name: server-wireguard-config
+  mountPath: /etc/wireguard/wgc1.conf
+  subPath: wgc1.conf
   secret:
-    secretName: server-vtun-config
+    secretName: aredn-piaware-wireguard-config
 - name: nginx-config
   mountPath: /etc/nginx/nginx.conf
   configMap:
@@ -227,7 +256,40 @@ resources:
     cpu: 10m
     memory: 6Mi
 
-initContainers: []
+initContainers:
+- image: jacob.pub/ghcr.io/usa-reddragon/wireguard:main@sha256:1fca4f1fc917a46e1443dffc1201ed9f516e12fb29dba9471e74762834901cc6
+  name: wireguard-init
+  securityContext:
+    privileged: true
+    capabilities:
+      add:
+      - NET_ADMIN
+  command:
+  - /bin/sh
+  - -c
+  - |
+    set -x && \
+    sleep 10 && \
+    ip l del wgc1 2>/dev/null || true && \
+    wg-quick up /etc/wireguard/wgc1.conf && \
+    ip6tables -P INPUT DROP && \
+    ip6tables -P FORWARD DROP && \
+    iptables -P INPUT DROP && \
+    iptables -P FORWARD DROP && \
+    iptables -A INPUT -i lo -j ACCEPT && \
+    iptables -A INPUT -i wgc1 -j ACCEPT && \
+    iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    ip6tables -A INPUT -i lo -j ACCEPT && \
+    ip6tables -A INPUT -i wgc1 -j ACCEPT && \
+    ip6tables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    iptables -t nat -A POSTROUTING -o wg+ ! -d 255.255.255.255 -j SNAT --to-source 10.54.25.43 && \
+    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o wgc1 -j MASQUERADE
+  volumeMounts:
+  - mountPath: /etc/wireguard
+    name: server-wireguard-config
+  imagePullPolicy: IfNotPresent
 
 nodeSelector: {}
 
