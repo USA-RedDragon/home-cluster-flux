@@ -28,4 +28,3 @@ spec:
         - ports:
             - port: "5620"
               protocol: UDP
-
