@@ -10,16 +10,22 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: aredn-scanner
+    - toEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: rdio-scanner
             app.kubernetes.io/instance: rdio-scanner
-    - toCIDRSet:
-        - cidr: 0.0.0.0/0
-          except:
-            - 10.0.0.0/8
-            - 172.16.0.0/12
-            - 192.168.0.0/16
-            - 100.64.0.0/10
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
       toPorts:
-      - ports:
-          - port: "5525"
-            protocol: TCP
+        - ports:
+            - port: "53"
+    - toCIDR:
+        - 107.221.156.131/32
+      toPorts:
+        - ports:
+            - port: "5620"
+              protocol: UDP
+
