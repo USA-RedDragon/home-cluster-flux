@@ -27,6 +27,10 @@ spec:
     - namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: trunk-recorder
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: aredn-scanner
   egress:
   - to:
     - namespaceSelector:
