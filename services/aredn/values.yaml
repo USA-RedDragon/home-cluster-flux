@@ -107,7 +107,7 @@ configs:
 - name: server-babel-config
   data:
     babel.conf: |
-      router-id 02:44:c0:a6:cb:05
+      router-id 02:44:c0:a6:cb:04
       smoothing-half-life 10
       protocol-buffer-size 65536
       interface br-dtdlink type wired
@@ -133,50 +133,6 @@ configs:
       install ip 10.0.0.0/8 ge 24 allow table 20
       install ip 44.0.0.0/8 ge 24 allow table 20
       install ip 0.0.0.0/0 ge 0 deny
-- name: server-olsr-config
-  data:
-    olsrd.conf: |
-      DebugLevel 0
-      AllowNoInt yes
-      RtTable '30'
-      RtTableDefault '31'
-      IpVersion 4
-      MainIp 10.54.25.4
-      LinkQualityAlgorithm "etx_ffeth"
-
-      LoadPlugin "olsrd_arprefresh.so.0.1"
-      {
-      }
-      LoadPlugin "olsrd_txtinfo.so.1.1"
-      {
-        PlParam "accept" "0.0.0.0"
-      }
-      LoadPlugin "olsrd_jsoninfo.so.1.1"
-      {
-        PlParam "accept" "0.0.0.0"
-      }
-      LoadPlugin "olsrd_dot_draw.so.0.3"
-      {
-        PlParam "accept" "0.0.0.0"
-        PlParam "port" "2004"
-      }
-      LoadPlugin "olsrd_watchdog.so.0.1"
-      {
-        PlParam "file" "/tmp/olsrd.watchdog"
-        PlParam "interval" "5"
-      }
-      LoadPlugin "olsrd_nameservice.so.0.4"
-      {
-        PlParam "sighup-pid-file" "/var/run/dnsmasq/dnsmasq.pid"
-        PlParam "interval" "30"
-        PlParam "timeout" "300"
-        PlParam "name" "KI5VMF-KUBERNETES"
-      }
-      Interface "wgc1"
-      {
-        Ip4Broadcast 255.255.255.255
-        Mode "ether"
-      }
 
 envFrom: []
 # - secretRef:
@@ -207,10 +163,6 @@ service:
     port: 51820
 
 persistentVolumes:
-- name: server-olsr-config
-  mountPath: /etc/olsrd
-  configMap:
-    name: server-olsr-config
 - name: server-babel-config
   mountPath: /etc/babel
   configMap:
