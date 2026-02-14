@@ -141,7 +141,7 @@ configs:
       }
       http {
         upstream dmrhub {
-          server dmrhub-app.dmrhub.svc.cluster.local:3005;
+          server dmrhub.dmrhub.svc.cluster.local:3005;
         }
         include mime.types;
         server {
