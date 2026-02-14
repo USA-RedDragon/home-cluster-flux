@@ -7,6 +7,22 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: piaware
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: envoy-gateway-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: aredn-piaware
   egress:
     - toEndpoints:
         - matchLabels:
