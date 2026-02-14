@@ -73,8 +73,6 @@ command:
   ip rule add pref 150 lookup 28 && \
   ip rule add pref 160 lookup 22 && \
   ip -6 addr add fe80::200:aff:fe36:1905/64 dev wgc1 && \
-  iptables -A FORWARD -i lan -o br-wan -j DROP && \
-  ip6tables -A FORWARD -i lan -o br-wan -j DROP && \
   mkdir -p /etc/meshlink && \
   echo "${NODE_IP} ${NODE_NAME}" >> /etc/meshlink/hosts && \
   echo "${NODE_IP} dtdlink.${NODE_NAME}.local.mesh" >> /etc/meshlink/hosts && \
@@ -293,7 +291,43 @@ resources:
     cpu: 10m
     memory: 20Mi
 
-initContainers: []
+
+initContainers:
+- image: jacob.pub/ghcr.io/usa-reddragon/wireguard:main@sha256:1fca4f1fc917a46e1443dffc1201ed9f516e12fb29dba9471e74762834901cc6
+  name: wireguard-init
+  securityContext:
+    privileged: true
+    capabilities:
+      add:
+      - NET_ADMIN
+  command:
+  - /bin/sh
+  - -c
+  - |
+    set -x && \
+    sleep 10 && \
+    ip l del wgc1 2>/dev/null || true && \
+    wg-quick up /etc/wireguard/wgc1.conf && \
+    ip6tables -P INPUT DROP && \
+    ip6tables -P FORWARD DROP && \
+    iptables -P INPUT DROP && \
+    iptables -P FORWARD DROP && \
+    iptables -A INPUT -i lo -j ACCEPT && \
+    iptables -A INPUT -i wgc1 -j ACCEPT && \
+    iptables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
+    iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    ip6tables -A INPUT -i lo -j ACCEPT && \
+    ip6tables -A INPUT -i wgc1 -j ACCEPT && \
+    ip6tables -A INPUT -i eth0 -p udp --dport 51820 -j ACCEPT && \
+    ip6tables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+    iptables -t nat -A POSTROUTING -o wg+ ! -d 255.255.255.255 -j SNAT --to-source 10.54.25.4 && \
+    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o wgc1 -j MASQUERADE
+  volumeMounts:
+  - mountPath: /etc/wireguard
+    name: server-wireguard-config
+  imagePullPolicy: IfNotPresent
 
 nodeSelector: {}
 
