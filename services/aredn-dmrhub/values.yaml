@@ -113,15 +113,15 @@ configs:
       }
       stream {
         upstream mmdvm {
-          server dmr-udp-input.dmrhub.svc.cluster.local:62031;
+          server dmrhub.dmrhub.svc.cluster.local:62031;
         }
 
         upstream openbridge {
-          server dmr-udp-input.dmrhub.svc.cluster.local:62035;
+          server dmrhub.dmrhub.svc.cluster.local:62035;
         }
 
         upstream ipsc {
-          server dmr-udp-input.dmrhub.svc.cluster.local:50000;
+          server dmrhub.dmrhub.svc.cluster.local:50000;
         }
 
         server {
