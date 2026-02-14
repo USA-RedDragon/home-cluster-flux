@@ -76,10 +76,10 @@ command:
   mkdir -p /etc/meshlink && \
   echo "${NODE_IP} ${NODE_NAME}" >> /etc/meshlink/hosts && \
   echo "${NODE_IP} dtdlink.${NODE_NAME}.local.mesh" >> /etc/meshlink/hosts && \
-  echo "http://KI5VMF-DMRHUB.local.mesh:80/|tcp|DMRHub WebUI" >> /etc/meshlink/services && \
-  echo "udp://KI5VMF-DMRHUB.local.mesh:0/|tcp|DMR MMDVM Port 62031" >> /etc/meshlink/services && \
-  echo "udp://KI5VMF-DMRHUB.local.mesh:0/|tcp|DMR IPSC Port 50000" >> /etc/meshlink/services && \
-  echo "udp://KI5VMF-DMRHUB.local.mesh:0/|tcp|DMR OpenBridge Port 62035" >> /etc/meshlink/services && \
+  echo "http://KI5VMF-DMRHUB:80/|tcp|DMRHub WebUI" >> /etc/meshlink/services && \
+  echo "udp://KI5VMF-DMRHUB:0/|tcp|DMR MMDVM Port 62031" >> /etc/meshlink/services && \
+  echo "udp://KI5VMF-DMRHUB:0/|tcp|DMR IPSC Port 50000" >> /etc/meshlink/services && \
+  echo "udp://KI5VMF-DMRHUB:0/|tcp|DMR OpenBridge Port 62035" >> /etc/meshlink/services && \
   rsyslogd -n & \
   cat /etc/resolv.conf > /tmp/resolv.conf.auto && \
   echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf && \
