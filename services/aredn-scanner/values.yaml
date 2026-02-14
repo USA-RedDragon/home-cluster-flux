@@ -76,7 +76,7 @@ command:
   mkdir -p /etc/meshlink && \
   echo "${NODE_IP} ${NODE_NAME}" >> /etc/meshlink/hosts && \
   echo "${NODE_IP} dtdlink.${NODE_NAME}.local.mesh" >> /etc/meshlink/hosts && \
-  echo "http://KI5VMF-OKWIN-P25-SCANNER.local.mesh:80/|tcp|OKWIN P25 Scanner" >> /etc/meshlink/services && \
+  echo "http://KI5VMF-OKWIN-P25-SCANNER:80/|tcp|OKWIN P25 Scanner" >> /etc/meshlink/services && \
   rsyslogd -n & \
   cat /etc/resolv.conf > /tmp/resolv.conf.auto && \
   echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf && \
