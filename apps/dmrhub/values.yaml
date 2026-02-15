@@ -18,7 +18,7 @@ controllers:
       dmrhub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: test@sha256:d1c540a4e257f3259f6b379e3b0f03b0d3a31e6e6d476ce5c38b85dc2297c1c0
+          tag: test@sha256:240614cbbedd4593652b38024252a5be189a1bc45b50bd1567ba9ae14ab145c1
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
