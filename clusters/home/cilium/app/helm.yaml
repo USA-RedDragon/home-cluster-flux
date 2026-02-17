@@ -30,7 +30,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: cilium
-      version: '1.19.0'
+      version: '1.19.1'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
