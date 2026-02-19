@@ -6,6 +6,7 @@ resources:
   - data.yaml
   - helm.yaml
   - networkpolicy.yaml
+  - backend-traffic-policy.yaml
 configMapGenerator:
   - name: chart-values
     files:
