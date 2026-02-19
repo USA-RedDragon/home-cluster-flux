@@ -23,7 +23,7 @@ spec:
           valkey:
             image:
               repository: jacob.pub/docker.io/valkey/valkey
-              tag: 8.1.5-alpine@sha256:6f43b6aae0ac36ea7d7915eefe828cadd5747566ac118ec5bfec22e4625b9121
+              tag: 8.1.5-alpine@sha256:918228e4ff7da6b3a4213cb18067f6e09d9f0503d0a08868699ba227cff71861
             resources:
               limits:
                 memory: 50Mi
