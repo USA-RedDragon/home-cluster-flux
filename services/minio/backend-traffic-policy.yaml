@@ -7,4 +7,4 @@ spec:
   targetRef:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
-    name: minio
+    name: minio-s3
