@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  http-logger:
+    replicas: 1
+    containers:
+      http-logger:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/http-logger
+          tag: beta@sha256:e218ebb72471ba9961db57f071e1b03c49ff61cf8645ebd729cefb4dc5147e64
+          pullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 30Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+service:
+  http-logger:
+    controller: http-logger
+    ports:
+      http:
+        port: 8080
+
+route:
+  http-logger:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - echo.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: http-logger
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
