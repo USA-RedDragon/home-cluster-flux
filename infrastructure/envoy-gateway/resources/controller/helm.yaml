@@ -33,7 +33,7 @@ spec:
         kind: HelmRepository
         name: envoyproxy
         namespace: envoy-gateway-system
-      version: '1.7.0'
+      version: '1.6.3'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
