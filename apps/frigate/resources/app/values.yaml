@@ -83,7 +83,7 @@ persistence:
 route:
   frigate:
     enabled: true
-    kind: TLSRoute
+    kind: HTTPRoute
     parentRefs:
       - name: public
         namespace: envoy-gateway-system
