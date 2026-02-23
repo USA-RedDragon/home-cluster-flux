@@ -91,6 +91,16 @@ rules:
       - list
       - patch
   - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - httproutes
+    verbs:
+      - get
+      - create
+      - delete
+      - list
+      - patch
+  - apiGroups:
       - monitoring.coreos.com
     resources:
       - servicemonitors
