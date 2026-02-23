@@ -4,6 +4,7 @@ namespace: frigate
 resources:
   - helm.yaml
   - backends.yaml
+  - forward-auth.yaml
 configMapGenerator:
   - name: frigate-chart-values
     files:
