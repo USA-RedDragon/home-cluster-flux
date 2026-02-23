@@ -49,6 +49,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#ephemeris">ephemeris</a></li>
   <li><a href="#external-dns-internal">external-dns-internal</a></li>
   <li><a href="#ffmpeg-printer-webcam">ffmpeg-printer-webcam</a></li>
+  <li><a href="#frigate">frigate</a></li>
   <li><a href="#gittea">gittea</a></li>
   <li><a href="#go2rtc">go2rtc</a></li>
   <li><a href="#golink">golink</a></li>
@@ -533,6 +534,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>ffmpeg-printer-webcam</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/ffmpeg-printer-webcam/helm.yaml">ffmpeg-printer-webcam</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>frigate</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>frigate</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/frigate/resources/app/helm.yaml">frigate</a></td>
     <td></td>
   </tr>
 </table>
