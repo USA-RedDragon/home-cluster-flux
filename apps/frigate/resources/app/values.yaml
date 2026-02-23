@@ -155,11 +155,11 @@ configMaps:
           trusted_proxies:
             - "172.17.0.0/16"
 
-        proxy:
-          auth_secret: "{FRIGATE_PROXY_SECRET}"
-          header_map:
-            user: X-authentik-username
-            role: x-frigate-role
+        # proxy:
+        #   auth_secret: "{FRIGATE_PROXY_SECRET}"
+        #   header_map:
+        #     user: X-authentik-username
+        #     role: x-frigate-role
 
         go2rtc:
           webrtc:
