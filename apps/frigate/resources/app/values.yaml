@@ -116,8 +116,6 @@ configMaps:
           coral:
             type: edgetpu
             device: usb
-          cpu1:
-            type: cpu
 
         cameras:
           doorbell:
