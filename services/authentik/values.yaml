@@ -16,7 +16,7 @@ controllers:
       server:
         image:
           repository: jacob.pub/ghcr.io/goauthentik/server
-          tag: 2025.8.4
+          tag: 2025.10.4
           pullPolicy: IfNotPresent
         args: [server]
         resources:
@@ -73,7 +73,7 @@ controllers:
       worker:
         image:
           repository: jacob.pub/ghcr.io/goauthentik/server
-          tag: 2025.8.4
+          tag: 2025.10.4
           pullPolicy: IfNotPresent
         args: [worker]
         resources:
@@ -88,7 +88,6 @@ controllers:
 configMaps:
   config:
     data:
-      AUTHENTIK_REDIS__HOST: redis-app.authentik.svc.cluster.local
       AUTHENTIK_EMAIL__HOST: email.mcswain.dev
       AUTHENTIK_EMAIL__PORT: '465'
       AUTHENTIK_EMAIL__USERNAME: authentik
