@@ -172,7 +172,7 @@ configMaps:
                     - detect
             detect:
               enabled: True
-          back-porch:
+          back_porch:
             ffmpeg:
               inputs:
                 - path: rtsp://127.0.0.1:8554/back_porch
@@ -185,7 +185,7 @@ configMaps:
                     - detect
             detect:
               enabled: True
-          front-gate:
+          front_gate:
             ffmpeg:
               inputs:
                 - path: rtsp://127.0.0.1:8554/front_gate
