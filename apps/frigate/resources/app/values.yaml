@@ -26,7 +26,7 @@ service:
   frigate:
     controller: frigate
     ports:
-      http:
+      https:
         port: 8971
         primary: true
       http-unauthenticated:
@@ -91,7 +91,7 @@ ingress:
           pathType: Prefix
           service:
               identifier: frigate
-              port: http
+              port: https
     tls:
       - hosts:
           - frigate
