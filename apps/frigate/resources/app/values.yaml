@@ -60,11 +60,6 @@ controllers:
               secretKeyRef:
                 name: frigate
                 key: amcrest-password
-          - name: FRIGATE_AMCREST_PASSWORD_URLENCODED
-            valueFrom:
-              secretKeyRef:
-                name: frigate
-                key: amcrest-password-urlencoded
           - name: FRIGATE_BACK_PORCH_ADDRESS
             valueFrom:
               secretKeyRef:
