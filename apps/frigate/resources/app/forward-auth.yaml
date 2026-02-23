@@ -16,3 +16,17 @@ spec:
     clientSecret:
       name: oidc
     scopes: [frigate, openid, offline_access]
+    forwardAccessToken: true
+  jwt:
+    providers:
+      - name: authentik
+        issuer: https://authentik.mcswain.dev/application/o/frigate/
+        remoteJWKS:
+          uri: https://authentik.mcswain.dev/application/o/frigate/jwks/
+        claimToHeaders:
+          - header: x-frigate-username
+            claim: preferred_username
+          - header: x-frigate-role
+            claim: x-frigate-role
+          - header: X-Proxy-Secret
+            claim: ak_proxy.frigate_proxy_secret
