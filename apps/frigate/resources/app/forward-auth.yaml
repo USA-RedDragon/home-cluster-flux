@@ -1,0 +1,25 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: forward-auth
+spec:
+  targetRefs:
+    - kind: HTTPRoute
+      name: frigate
+      group: gateway.networking.k8s.io
+  extAuth:
+    failOpen: false
+    headersToExtAuth:
+      - cookie
+      - X-authentik-*
+    http:
+      backendRefs:
+      - name: ak-outpost-authentik-embedded-outpost
+        namespace: authentik
+        port: 9000
+      path: /outpost.goauthentik.io/auth/envoy
+      headersToBackend:
+      - X-authentik-username
+      - X-authentik-groups
+      - X-Proxy-Secret
+      - Set-Cookie
