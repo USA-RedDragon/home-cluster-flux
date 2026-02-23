@@ -1,0 +1,108 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  frigate:
+    replicas: 1
+
+    pod:
+      priorityClassName: system-cluster-critical
+      nodeSelector:
+        google.feature.node.kubernetes.io/coral: "true"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+    containers:
+      frigate:
+        image:
+          repository: jacob.pub/ghcr.io/blakeblackshear/frigate
+          tag: "0.16.4@sha256:1f8dbaaa4c7c2855c2aef711842d13b0c20bfdc3f28ad88faf66aa1bc219b108"
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+service:
+  frigate:
+    controller: frigate
+    ports:
+      http:
+        port: 8971
+        primary: true
+      http-unauthenticated:
+        port: 5000
+      rtsp-restream:
+        port: 8554
+      webrtc-tcp:
+        port: 8555
+        protocol: TCP
+      webrtc-udp:
+        port: 8555
+        protocol: UDP
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
+  shm:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 2Gi
+    globalMounts:
+      - path: /dev/shm
+  nvr:
+    enabled: true
+    type: nfs
+    path: /mnt/data/frigate
+    server: 192.168.1.135
+    globalMounts:
+      - path: /media/frigate
+  usb:
+    enabled: true
+    type: hostPath
+    hostPath: /dev/bus/usb
+    hostPathType: Directory
+    globalMounts:
+      - path: /dev/bus/usb
+  usb-sys:
+    enabled: true
+    type: hostPath
+    hostPath: /sys/bus/usb
+    hostPathType: Directory
+    globalMounts:
+      - path: /sys/bus/usb
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: frigate
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: frigate
+              port: http
+    tls:
+      - hosts:
+          - frigate
