@@ -55,7 +55,9 @@ metadata:
 spec:
   secretName: mcswain.internal-tls
   issuerRef:
-    name: envoy-gateway-ca
+    name: envoy-gateway-issuer
+    kind: Issuer
+    group: cert-manager.io
   dnsNames:
     - "*.mcswain.internal"
     - "mcswain.internal"
