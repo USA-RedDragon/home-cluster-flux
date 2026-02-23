@@ -46,3 +46,16 @@ spec:
     - "envoy-gateway.mcswain.dev"
   duration: 8760h # 1 year
   renewBefore: 360h # 15 days
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mcswain.internal-tls
+  namespace: envoy-gateway-system
+spec:
+  secretName: mcswain.internal-tls
+  issuerRef:
+    name: envoy-gateway-ca
+  dnsNames:
+    - "*.mcswain.internal"
+    - "mcswain.internal"

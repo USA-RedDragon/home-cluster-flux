@@ -11,15 +11,6 @@ spec:
       kind: EnvoyProxy
       name: internal-proxy
   listeners:
-    - name: frigate-unauthenticated
-      protocol: TCP
-      port: 5000
-      allowedRoutes:
-        namespaces:
-          from: Selector
-          selector:
-              matchLabels:
-                  kubernetes.io/metadata.name: frigate
     - name: frigate-rtsp
       protocol: TCP
       port: 8554
@@ -50,6 +41,19 @@ spec:
     - name: http
       protocol: HTTP
       port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: envoy-gateway-cert
+            kind: Secret
+          - name: mcswain.internal-tls
+            kind: Secret
       allowedRoutes:
         namespaces:
           from: All
