@@ -294,7 +294,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>authentik</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/authentik/helm.yaml">authentik</a></td>
-    <td><a href="services/authentik/postgres.yaml">postgresql</a>, <a href="services/authentik/redis-helm.yaml">redis</a></td>
+    <td><a href="services/authentik/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
