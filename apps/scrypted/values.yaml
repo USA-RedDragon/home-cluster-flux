@@ -2,7 +2,7 @@
 
 controllers:
   scrypted:
-    replicas: 1
+    replicas: 0
     pod:
       priorityClassName: system-cluster-critical
       nodeSelector:
