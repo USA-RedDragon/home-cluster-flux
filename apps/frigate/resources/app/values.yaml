@@ -151,7 +151,9 @@ configMaps:
             default: 90
 
         auth:
-          enabled: False
+          enabled: True
+          trusted_proxies:
+            - "172.17.0.0/16"
 
         proxy:
           auth_secret: "{FRIGATE_PROXY_SECRET}"
