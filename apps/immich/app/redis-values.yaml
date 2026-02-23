@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/docker.io/redis
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "8.6.0-alpine@sha256:fd83658b0e40e2164617d262f13c02ca9ee9e1e6b276fd2fa06617e09bd5c780"
+  tag: "8.6.1-alpine@sha256:eb37f58646a901dc7727cf448cae36daaefaba79de33b5058dab79aa4c04aefb"
 
 nameOverride: ""
 fullnameOverride: ""
