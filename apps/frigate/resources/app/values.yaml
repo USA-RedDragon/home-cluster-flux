@@ -104,10 +104,10 @@ configMaps:
     data:
       config.yml: |
         mqtt:
-          # Required: host name
           host: mosquitto.mosquitto
           port: 1883
           topic_prefix: frigate
+          password: {FRIGATE_MQTT_PASSWORD}
           client_id: frigate
           user: frigate
           stats_interval: 60
