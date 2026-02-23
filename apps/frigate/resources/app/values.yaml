@@ -91,7 +91,8 @@ ingress:
           pathType: Prefix
           service:
               identifier: frigate
-              port: https
+              port:
+                name: https
     tls:
       - hosts:
           - frigate
