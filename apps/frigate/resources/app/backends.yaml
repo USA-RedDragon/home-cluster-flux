@@ -1,0 +1,12 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: frigate
+  namespace: frigate
+spec:
+  endpoints:
+    - fqdn:
+        hostname: frigate.frigate.svc.cluster.local
+        port: 8971
+  tls:
+    insecureSkipVerify: true

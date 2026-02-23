@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: frigate
 resources:
   - helm.yaml
+  - backends.yaml
 configMapGenerator:
   - name: frigate-chart-values
     files:
