@@ -305,3 +305,53 @@ route:
           - path:
               type: PathPrefix
               value: /
+  frigate-unauthenticated:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - frigate.mcswain.internal
+    rules:
+      - backendRefs:
+          - name: frigate
+            port: 5000
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+  frigate-rtsp:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: frigate-rtsp
+    rules:
+      - backendRefs:
+          - name: frigate
+            port: 8554
+  frigate-webrtc-tcp:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: frigate-webrtc-tcp
+    rules:
+      - backendRefs:
+          - name: frigate
+            port: 8555
+  frigate-webrtc-udp:
+    enabled: true
+    kind: UDPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: frigate-webrtc-udp
+    rules:
+      - backendRefs:
+          - name: frigate
+            port: 8555
