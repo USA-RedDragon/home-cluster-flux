@@ -80,19 +80,21 @@ persistence:
     globalMounts:
       - path: /sys/bus/usb
 
-ingress:
-  tailscale:
+route:
+  frigate:
     enabled: true
-    className: tailscale
-    hosts:
-      - host: frigate
-        paths:
-        - path: /
-          pathType: Prefix
-          service:
-              identifier: frigate
-              port:
-                name: https
-    tls:
-      - hosts:
-          - frigate
+    kind: TLSRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - frigate.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: frigate
+            port: 8971
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
