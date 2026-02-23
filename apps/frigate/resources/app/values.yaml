@@ -119,6 +119,10 @@ configMaps:
             type: edgetpu
             device: usb
 
+        birdseye:
+          enabled: True
+          mode: continuous
+
         record:
           enabled: True
           retain:
