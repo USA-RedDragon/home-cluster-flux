@@ -15,8 +15,9 @@ spec:
       name: oidc
     clientSecret:
       name: oidc
-    scopes: [frigate, openid, offline_access]
+    scopes: [frigate, openid, profile, offline_access]
     forwardAccessToken: true
+    disableTokenEncryption: true
   jwt:
     providers:
       - name: authentik
@@ -27,6 +28,6 @@ spec:
           - header: x-frigate-username
             claim: preferred_username
           - header: x-frigate-role
-            claim: x-frigate-role
+            claim: frigate-role
           - header: X-Proxy-Secret
             claim: ak_proxy.frigate_proxy_secret

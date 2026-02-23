@@ -156,7 +156,7 @@ configMaps:
             - "172.17.0.0/16"
 
         proxy:
-        #   auth_secret: "{FRIGATE_PROXY_SECRET}"
+          auth_secret: "{FRIGATE_PROXY_SECRET}"
           header_map:
             user: x-frigate-username
             role: x-frigate-role
