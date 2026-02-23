@@ -175,6 +175,17 @@ configMaps:
                     - detect
             detect:
               enabled: True
+          front-gate:
+            ffmpeg:
+              inputs:
+                - path: "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=0"
+                  roles:
+                    - record
+                - path: "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=1"
+                  roles:
+                    - detect
+            detect:
+              enabled: True
 
 persistence:
   configmap:
