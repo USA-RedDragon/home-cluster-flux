@@ -40,6 +40,11 @@ controllers:
               secretKeyRef:
                 name: frigate
                 key: doorbell-password
+          - name: FRIGATE_DOORBELL_PASSWORD_URLENCODED
+            valueFrom:
+              secretKeyRef:
+                name: frigate
+                key: doorbell-password-urlencoded
           - name: FRIGATE_DOORBELL_ADDRESS
             valueFrom:
               secretKeyRef:
@@ -55,6 +60,11 @@ controllers:
               secretKeyRef:
                 name: frigate
                 key: amcrest-password
+          - name: FRIGATE_AMCREST_PASSWORD_URLENCODED
+            valueFrom:
+              secretKeyRef:
+                name: frigate
+                key: amcrest-password-urlencoded
           - name: FRIGATE_BACK_PORCH_ADDRESS
             valueFrom:
               secretKeyRef:
@@ -139,11 +149,11 @@ configMaps:
         go2rtc:
           streams:
             doorbell:
-              - "ffmpeg:http://{FRIGATE_DOORBELL_ADDRESS}/flv?port=1935&app=bcs&stream=channel0_main.bcs&user={FRIGATE_DOORBELL_USERNAME}&password={FRIGATE_DOORBELL_PASSWORD}#video=copy#audio=copy#audio=opus"
-              - "rtsp://{FRIGATE_DOORBELL_USERNAME}:{FRIGATE_DOORBELL_PASSWORD}@{FRIGATE_DOORBELL_ADDRESS}/Preview_01_sub"
+              - "ffmpeg:http://{FRIGATE_DOORBELL_ADDRESS}/flv?port=1935&app=bcs&stream=channel0_main.bcs&user={FRIGATE_DOORBELL_USERNAME}&password={FRIGATE_DOORBELL_PASSWORD_URLENCODED}#video=copy#audio=copy#audio=opus"
+              - "rtsp://{FRIGATE_DOORBELL_USERNAME}:{FRIGATE_DOORBELL_PASSWORD_URLENCODED}@{FRIGATE_DOORBELL_ADDRESS}/Preview_01_sub"
             doorbell_sub:
-              - "ffmpeg:http://{FRIGATE_DOORBELL_ADDRESS}/flv?port=1935&app=bcs&stream=channel0_ext.bcs&user={FRIGATE_DOORBELL_USERNAME}&password={FRIGATE_DOORBELL_PASSWORD}"
-              - "rtsp://{FRIGATE_DOORBELL_USERNAME}:{FRIGATE_DOORBELL_PASSWORD}@{FRIGATE_DOORBELL_ADDRESS}/Preview_01_sub"
+              - "ffmpeg:http://{FRIGATE_DOORBELL_ADDRESS}/flv?port=1935&app=bcs&stream=channel0_ext.bcs&user={FRIGATE_DOORBELL_USERNAME}&password={FRIGATE_DOORBELL_PASSWORD_URLENCODED}"
+              - "rtsp://{FRIGATE_DOORBELL_USERNAME}:{FRIGATE_DOORBELL_PASSWORD_URLENCODED}@{FRIGATE_DOORBELL_ADDRESS}/Preview_01_sub"
 
         cameras:
           doorbell:
