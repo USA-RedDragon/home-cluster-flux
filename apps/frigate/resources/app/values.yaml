@@ -158,7 +158,7 @@ configMaps:
         proxy:
         #   auth_secret: "{FRIGATE_PROXY_SECRET}"
           header_map:
-            user: X-authentik-username
+            user: x-frigate-username
             role: x-frigate-role
 
         go2rtc:
