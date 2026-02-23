@@ -148,14 +148,15 @@ configMaps:
         cameras:
           doorbell:
             ffmpeg:
-              - path: rtsp://127.0.0.1:8554/doorbell
-                input_args: preset-rtsp-restream
-                roles:
-                  - record
-              - path: rtsp://127.0.0.1:8554/doorbell_sub
-                input_args: preset-rtsp-restream
-                roles:
-                  - detect
+              inputs:
+                - path: rtsp://127.0.0.1:8554/doorbell
+                  input_args: preset-rtsp-restream
+                  roles:
+                    - record
+                - path: rtsp://127.0.0.1:8554/doorbell_sub
+                  input_args: preset-rtsp-restream
+                  roles:
+                    - detect
             detect:
               enabled: True
 
