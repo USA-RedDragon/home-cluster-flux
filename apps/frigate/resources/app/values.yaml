@@ -150,6 +150,9 @@ configMaps:
           retain:
             default: 90
 
+        auth:
+          enabled: False
+
         proxy:
           auth_secret: "{FRIGATE_PROXY_SECRET}"
           separator: "|"
