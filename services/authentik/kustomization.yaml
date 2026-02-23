@@ -9,6 +9,7 @@ resources:
   - helm.yaml
   - redis-helm.yaml
   - postgres.yaml
+  - reference-grant.yaml
 configMapGenerator:
   - name: chart-values
     files:
