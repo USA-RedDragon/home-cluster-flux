@@ -146,6 +146,13 @@ configMaps:
             default: 90
 
         go2rtc:
+          webrtc:
+            candidates:
+              - frigate.mcswain.dev:8555
+              - 192.168.254.254:8555
+              - frigate.mcswain.internal:8555
+              - 192.168.254.253:8555
+              - stun:8555
           streams:
             doorbell:
               - "ffmpeg:http://{FRIGATE_DOORBELL_ADDRESS}/flv?port=1935&app=bcs&stream=channel0_main.bcs&user={FRIGATE_DOORBELL_USERNAME}&password={FRIGATE_DOORBELL_PASSWORD}#video=copy#audio=copy#audio=opus"
@@ -337,7 +344,7 @@ route:
     enabled: true
     kind: TCPRoute
     parentRefs:
-      - name: internal
+      - name: public
         namespace: envoy-gateway-system
         sectionName: frigate-webrtc-tcp
     rules:
@@ -345,6 +352,28 @@ route:
           - name: frigate
             port: 8555
   frigate-webrtc-udp:
+    enabled: true
+    kind: UDPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: frigate-webrtc-udp
+    rules:
+      - backendRefs:
+          - name: frigate
+            port: 8555
+  frigate-internal-webrtc-tcp:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: frigate-webrtc-tcp
+    rules:
+      - backendRefs:
+          - name: frigate
+            port: 8555
+  frigate-internal-webrtc-udp:
     enabled: true
     kind: UDPRoute
     parentRefs:

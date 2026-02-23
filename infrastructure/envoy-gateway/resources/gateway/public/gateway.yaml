@@ -11,6 +11,24 @@ spec:
       kind: EnvoyProxy
       name: public-proxy
   listeners:
+    - name: frigate-webrtc-udp
+      protocol: UDP
+      port: 8555
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: frigate
+    - name: frigate-webrtc-tcp
+      protocol: TCP
+      port: 8555
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: frigate
     - name: iperf3
       protocol: TCP
       port: 5201
