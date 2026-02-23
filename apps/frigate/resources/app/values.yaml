@@ -158,8 +158,8 @@ configMaps:
         proxy:
           auth_secret: "{FRIGATE_PROXY_SECRET}"
           header_map:
-            user: x-frigate-username
-            role: x-frigate-role
+            user: X-authentik-username
+            role: X-authentik-groups
 
         go2rtc:
           webrtc:

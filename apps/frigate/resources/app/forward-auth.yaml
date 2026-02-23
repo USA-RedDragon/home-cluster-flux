@@ -17,7 +17,6 @@ spec:
       name: oidc
     scopes: [frigate, openid, profile, offline_access]
     forwardAccessToken: true
-    disableTokenEncryption: true
   jwt:
     providers:
       - name: authentik
@@ -25,9 +24,9 @@ spec:
         remoteJWKS:
           uri: https://authentik.mcswain.dev/application/o/frigate/jwks/
         claimToHeaders:
-          - header: x-frigate-username
+          - header: X-authentik-username
             claim: preferred_username
-          - header: x-frigate-role
+          - header: X-authentik-groups
             claim: frigate-role
           - header: X-Proxy-Secret
             claim: ak_proxy.frigate_proxy_secret
