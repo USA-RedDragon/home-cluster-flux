@@ -136,7 +136,7 @@ configMaps:
         record:
           enabled: True
           retain:
-            days: 90
+            days: 30
             mode: all
           alerts:
             retain:
