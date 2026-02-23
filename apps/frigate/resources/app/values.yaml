@@ -149,6 +149,14 @@ configMaps:
             doorbell_sub:
               - "ffmpeg:http://{FRIGATE_DOORBELL_ADDRESS}/flv?port=1935&app=bcs&stream=channel0_ext.bcs&user={FRIGATE_DOORBELL_USERNAME}&password={FRIGATE_DOORBELL_PASSWORD_URLENCODED}"
               - "rtsp://{FRIGATE_DOORBELL_USERNAME}:{FRIGATE_DOORBELL_PASSWORD_URLENCODED}@{FRIGATE_DOORBELL_ADDRESS}/Preview_01_sub"
+            back_porch:
+              - "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_BACK_PORCH_ADDRESS}/cam/realmonitor?channel=1&subtype=0"
+            back_porch_sub:
+              - "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_BACK_PORCH_ADDRESS}/cam/realmonitor?channel=1&subtype=1"
+            front_gate:
+              - "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=0"
+            front_gate_sub:
+              - "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=1"
 
         cameras:
           doorbell:
@@ -167,10 +175,12 @@ configMaps:
           back-porch:
             ffmpeg:
               inputs:
-                - path: "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_BACK_PORCH_ADDRESS}/cam/realmonitor?channel=1&subtype=0"
+                - path: rtsp://127.0.0.1:8554/back_porch
+                  input_args: preset-rtsp-restream
                   roles:
                     - record
-                - path: "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_BACK_PORCH_ADDRESS}/cam/realmonitor?channel=1&subtype=1"
+                - path: rtsp://127.0.0.1:8554/back_porch_sub
+                  input_args: preset-rtsp-restream
                   roles:
                     - detect
             detect:
@@ -178,10 +188,12 @@ configMaps:
           front-gate:
             ffmpeg:
               inputs:
-                - path: "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=0"
+                - path: rtsp://127.0.0.1:8554/front_gate
+                  input_args: preset-rtsp-restream
                   roles:
                     - record
-                - path: "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=1"
+                - path: rtsp://127.0.0.1:8554/front_gate_sub
+                  input_args: preset-rtsp-restream
                   roles:
                     - detect
             detect:
