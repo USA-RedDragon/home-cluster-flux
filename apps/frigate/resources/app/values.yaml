@@ -111,6 +111,17 @@ service:
         port: 8555
         protocol: UDP
 
+serviceMonitor:
+  frigate:
+    enabled: true
+    serviceName: frigate
+    endpoints:
+      - port: http-unauthenticated
+        scheme: http
+        path: /api/metrics
+        interval: 10s
+        scrapeTimeout: 10s
+
 configMaps:
   config:
     data:
