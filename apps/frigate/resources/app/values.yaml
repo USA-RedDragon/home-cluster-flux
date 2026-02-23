@@ -15,7 +15,7 @@ controllers:
           repository: busybox
           tag: 1.36.1
           pullPolicy: IfNotPresent
-        command: ["sh", "-c", "cp", "/configmap/config.yml", "/config/config.yml"]
+        command: ["sh", "-c", "cp /configmap/config.yml /config/config.yml"]
 
     containers:
       frigate:
