@@ -57,6 +57,11 @@ persistence:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 10Gi
+  run:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 100Mi
   tmp:
     enabled: true
     type: emptyDir
