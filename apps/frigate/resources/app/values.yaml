@@ -9,11 +9,25 @@ controllers:
       nodeSelector:
         google.feature.node.kubernetes.io/coral: "true"
 
+    initContainers:
+      config-copy:
+        image:
+          repository: busybox
+          tag: 1.36.1
+          pullPolicy: IfNotPresent
+        command: ["sh", "-c", "cp /configmap/config.yml", "/config/config.yml"]
+
     containers:
       frigate:
         image:
           repository: jacob.pub/ghcr.io/blakeblackshear/frigate
           tag: "0.16.4@sha256:1f8dbaaa4c7c2855c2aef711842d13b0c20bfdc3f28ad88faf66aa1bc219b108"
+        env:
+          - name: FRIGATE_MQTT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: frigate
+                key: mqtt-password
         probes:
           liveness:
             enabled: true
@@ -40,7 +54,48 @@ service:
         port: 8555
         protocol: UDP
 
+configMaps:
+  config:
+    data:
+      config.yml: |
+        mqtt:
+          # Required: host name
+          host: mosquitto.mosquitto
+          port: 1883
+          topic_prefix: frigate
+          client_id: frigate
+          user: frigate
+          stats_interval: 60
+
+        detectors:
+          coral:
+            type: edgetpu
+            device: usb
+          cpu1:
+            type: cpu
+
+        # cameras:
+        #   # Name of your camera
+        #   front_door:
+        #     ffmpeg:
+        #       inputs:
+        #         - path: rtsp://{FRIGATE_RSTP_USERNAME}:{FRIGATE_RTSP_PASSWORD}@10.0.10.10:554/cam/realmonitor?channel=1&subtype=2
+        #           roles:
+        #             - detect
+        #             - rtmp
+        #     width: 1280
+        #     height: 720
+        #     fps: 5
+
 persistence:
+  configmap:
+    enabled: true
+    type: configMap
+    name: frigate
+    advancedMounts:
+      frigate:
+        config-copy:
+          - path: /configmap
   config:
     enabled: true
     type: persistentVolumeClaim
