@@ -157,6 +157,14 @@ configMaps:
               - "ffmpeg:rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=0#video=copy#audio=copy"
             front_gate_sub:
               - "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=1"
+            left_driveway:
+              - "ffmpeg:rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_LEFT_DRIVEWAY_ADDRESS}/cam/realmonitor?channel=1&subtype=0#video=copy#audio=copy"
+            left_driveway_sub:
+              - "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_LEFT_DRIVEWAY_ADDRESS}/cam/realmonitor?channel=1&subtype=1"
+            side_gate:
+              - "ffmpeg:rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_SIDE_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=0#video=copy#audio=copy"
+            side_gate_sub:
+              - "rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_SIDE_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=1"
 
         cameras:
           doorbell:
@@ -193,6 +201,32 @@ configMaps:
                   roles:
                     - record
                 - path: rtsp://127.0.0.1:8554/front_gate_sub
+                  input_args: preset-rtsp-restream
+                  roles:
+                    - detect
+            detect:
+              enabled: True
+          left_driveway:
+            ffmpeg:
+              inputs:
+                - path: rtsp://127.0.0.1:8554/left_driveway
+                  input_args: preset-rtsp-restream
+                  roles:
+                    - record
+                - path: rtsp://127.0.0.1:8554/left_driveway_sub
+                  input_args: preset-rtsp-restream
+                  roles:
+                    - detect
+            detect:
+              enabled: True
+          side_gate:
+            ffmpeg:
+              inputs:
+                - path: rtsp://127.0.0.1:8554/side_gate
+                  input_args: preset-rtsp-restream
+                  roles:
+                    - record
+                - path: rtsp://127.0.0.1:8554/side_gate_sub
                   input_args: preset-rtsp-restream
                   roles:
                     - detect
