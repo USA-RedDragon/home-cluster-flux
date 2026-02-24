@@ -424,21 +424,15 @@ route:
               value: /
   frigate-unauthenticated:
     enabled: true
-    kind: HTTPRoute
+    kind: TCPRoute
     parentRefs:
       - name: internal
         namespace: envoy-gateway-system
-        sectionName: https
-    hostnames:
-      - frigate.mcswain.internal
+        sectionName: frigate-unauthenticated
     rules:
       - backendRefs:
           - name: frigate
             port: 5000
-        matches:
-          - path:
-              type: PathPrefix
-              value: /
   frigate-rtsp:
     enabled: true
     kind: TCPRoute
