@@ -287,6 +287,11 @@ configMaps:
                 required_zones:
                   - Back_Yard
                   - Back_Porch
+            objects:
+              filters:
+                person:
+                  mask:
+                    0.626,0.707,0.603,0.78,0.617,0.839,0.66,0.849,0.705,0.834,0.719,0.766,0.684,0.705
           front_gate:
             ffmpeg:
               inputs:
