@@ -165,7 +165,7 @@ configMaps:
           enabled: true
           model_size: small
         face_recognition:
-          enabled: false
+          enabled: true
           model_size: small
         lpr:
           enabled: false
