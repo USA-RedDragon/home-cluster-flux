@@ -161,6 +161,18 @@ configMaps:
           retain:
             default: 90
 
+        semantic_search:
+          enabled: true
+          model_size: small
+        face_recognition:
+          enabled: false
+          model_size: small
+        lpr:
+          enabled: false
+        classification:
+          bird:
+            enabled: false
+
         auth:
           enabled: false
           trusted_proxies:
