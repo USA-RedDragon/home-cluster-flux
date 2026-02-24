@@ -190,19 +190,19 @@ configMaps:
             back_porch:
               - ffmpeg:rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_BACK_PORCH_ADDRESS}/cam/realmonitor?channel=1&subtype=0#video=copy#audio=copy
             back_porch_sub:
-              - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_BACK_PORCH_ADDRESS}/cam/realmonitor?channel=1&subtype=1
+              - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_BACK_PORCH_ADDRESS}/cam/realmonitor?channel=1&subtype=2
             front_gate:
               - ffmpeg:rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=0#video=copy#audio=copy
             front_gate_sub:
-              - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=1
+              - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=2
             left_driveway:
               - ffmpeg:rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_LEFT_DRIVEWAY_ADDRESS}/cam/realmonitor?channel=1&subtype=0#video=copy#audio=copy
             left_driveway_sub:
-              - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_LEFT_DRIVEWAY_ADDRESS}/cam/realmonitor?channel=1&subtype=1
+              - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_LEFT_DRIVEWAY_ADDRESS}/cam/realmonitor?channel=1&subtype=2
             side_gate:
               - ffmpeg:rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_SIDE_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=0#video=copy#audio=copy
             side_gate_sub:
-              - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_SIDE_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=1
+              - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_SIDE_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=2
 
         cameras:
           doorbell:
