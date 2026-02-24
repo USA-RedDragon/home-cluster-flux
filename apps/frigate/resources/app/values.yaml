@@ -240,6 +240,12 @@ configMaps:
               filters:
                 person:
                   mask: 0.319,0.527,0.317,0.56,0.36,0.564,0.362,0.53
+            review:
+              alerts:
+                required_zones:
+                  - Yard
+                  - Porch
+                  - Street
           back_porch:
             ffmpeg:
               inputs:
@@ -264,6 +270,11 @@ configMaps:
                 inertia: 3
             motion:
               mask: 0.192,0.024,0.19,0.114,0.574,0.128,1,0.38,1,0.105
+            review:
+              alerts:
+                required_zones:
+                  - Back_Yard
+                  - Back_Porch
           front_gate:
             ffmpeg:
               inputs:
@@ -290,6 +301,12 @@ configMaps:
                 coordinates:
                   0.454,0.151,0.548,0.248,0.708,0.407,0.906,0.607,0.998,0.697,0.998,0.359,0.946,0.311,0.944,0.274,0.954,0.226,0.949,0.216,0.759,0.163,0.696,0.156
                 loitering_time: 0
+            review:
+              alerts:
+                required_zones:
+                  - Yard
+                  - Street
+                  - Neighbor_Yard
           left_driveway:
             ffmpeg:
               inputs:
@@ -328,6 +345,14 @@ configMaps:
               filters:
                 person:
                   mask: 0.704,0.148,0.706,0.203,0.751,0.228,0.753,0.158
+            review:
+              alerts:
+                required_zones:
+                  - Far_Yard
+                  - Driveway
+                  - Near_Yard
+                  - Street
+                  - Clint_Yard
           side_gate:
             ffmpeg:
               inputs:
@@ -350,6 +375,9 @@ configMaps:
               mask:
                 - 0.673,0.002,0.676,0.101,0.763,0.117,0.773,0.005
                 - 0.848,0.031,0.851,0.144,0.997,0.234,0.998,0.093
+            review:
+              alerts:
+                required_zones: Side_Yard
         detect:
           enabled: true
         version: 0.16-0
