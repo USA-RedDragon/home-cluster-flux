@@ -10,8 +10,7 @@ operator:
   tfeAddress: "https://tfe.mcswain.dev"
 
   env:
-    - name: TF_LOG_OPERATOR
-      value: debug
+    TF_LOG_OPERATOR: debug
 
 kubeRbacProxy:
   image:
