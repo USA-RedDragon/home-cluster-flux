@@ -9,6 +9,10 @@ operator:
 
   tfeAddress: "https://tfe.mcswain.dev"
 
+  env:
+    - name: TF_LOG_OPERATOR
+      value: debug
+
 kubeRbacProxy:
   image:
     repository: jacob.pub/quay.io/brancz/kube-rbac-proxy
