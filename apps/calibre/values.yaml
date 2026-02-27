@@ -10,7 +10,7 @@ controllers:
       calibre:
         image:
           repository: jacob.pub/lscr.io/linuxserver/calibre
-          tag: v7.26.0@sha256:13c4fe0bce1367cb309f74be422d6e38480dee4742a6c3b6c976c3aed3cdad1e
+          tag: 9.4.0@sha256:ec82029d6968b26982647b340d32592edaa6de90dd4dcc2c2dd603a75ee66da2
           pullPolicy: IfNotPresent
         resources:
           requests:
