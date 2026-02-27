@@ -49,6 +49,8 @@ controllers:
             value: all
           - name: NVIDIA_DRIVER_CAPABILITIES
             value: all
+          - name: JELLYFIN_LOG_DIR
+            value: "/log"
         securityContext:
           fsGroup: 568
           readOnlyRootFilesystem: true
@@ -83,6 +85,10 @@ persistence:
     sizeLimit: 10Gi
     globalMounts:
       - path: /cache/transcodes
+  log:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 10Gi
   jellyfin-tmp:
     enabled: true
     type: emptyDir
