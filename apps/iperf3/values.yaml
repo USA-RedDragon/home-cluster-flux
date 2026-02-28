@@ -4,8 +4,6 @@ controllers:
   iperf3:
     replicas: 1
     pod:
-      nodeSelector:
-        kubernetes.io/hostname: alpha
       securityContext:
         runAsNonRoot: true
         runAsUser: 65535
@@ -22,10 +20,6 @@ controllers:
           - -s
           - --idle-timeout
           - "3"
-        ports:
-          - containerPort: 5201
-            hostPort: 5202
-            protocol: TCP
         resources:
           requests: {}
           limits: {}
