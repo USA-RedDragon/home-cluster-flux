@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: openspeedtest
+  namespace: openspeedtest
+spec:
+  interval: 1h
+  targetNamespace: openspeedtest
+  path: ./apps/openspeedtest/resources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
