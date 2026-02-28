@@ -49,8 +49,8 @@ enableIPv6Masquerade: false
 
 global:
   encryption:
-    enabled: false
-    nodeEncryption: false
+    enabled: true
+    nodeEncryption: true
 
 policyEnforcementMode: default
 
