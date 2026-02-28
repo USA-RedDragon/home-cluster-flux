@@ -81,6 +81,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#nginx-rtmp">nginx-rtmp</a></li>
   <li><a href="#nvidia-device-plugin">nvidia-device-plugin</a></li>
   <li><a href="#obico">obico</a></li>
+  <li><a href="#openspeedtest">openspeedtest</a></li>
   <li><a href="#paperless-ngx">paperless-ngx</a></li>
   <li><a href="#piaware">piaware</a></li>
   <li><a href="#ping-exporter">ping-exporter</a></li>
@@ -1087,6 +1088,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/obico/helm.yaml">obico</a></td>
     <td><a href="apps/obico/valkey.yaml">valkey</a></td>
+  </tr>
+</table>
+
+<h4>openspeedtest</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>openspeedtest</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/openspeedtest/resources/app/helm.yaml">openspeedtest</a></td>
+    <td></td>
   </tr>
 </table>
 
