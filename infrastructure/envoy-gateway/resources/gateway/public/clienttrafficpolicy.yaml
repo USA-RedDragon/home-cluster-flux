@@ -1,0 +1,17 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: public-client-policy
+  namespace: envoy-gateway-system
+spec:
+  connection:
+    bufferLimit: 4Mi
+    maxAcceptPerSocketEvent: 1
+  targetRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: public
+  tcpKeepalive:
+    idleTime: 60s
+    interval: 10s
+    probes: 3
