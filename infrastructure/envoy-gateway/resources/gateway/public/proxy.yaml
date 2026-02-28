@@ -4,6 +4,7 @@ metadata:
   name: public-proxy
   namespace: envoy-gateway-system
 spec:
+  concurrency: 4
   backendTLS:
     alpnProtocols:
       - http/1.1
@@ -17,3 +18,12 @@ spec:
         loadBalancerClass: metallb
         annotations:
           metallb.universe.tf/loadBalancerIPs: "192.168.254.254"
+      envoyDeployment:
+        container:
+          resources:
+            requests:
+              cpu: "1"
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 1Gi
