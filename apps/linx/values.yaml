@@ -17,7 +17,7 @@ controllers:
       linx: &app
         image:
           repository: jacob.pub/ghcr.io/gabe565/linx-server
-          tag: beta@sha256:fcf169c90bb2764387edba2acc1fe28b91f12ec264e5df058804f8750c7e7134
+          tag: beta@sha256:a8a97cf0f1b49356d93c4a452af090fecc4b41e7a09cf67ada5d2b8cb5a6ee2e
           pullPolicy: IfNotPresent
         resources:
           requests: {}
