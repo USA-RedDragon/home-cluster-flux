@@ -29,7 +29,6 @@ controllers:
             cpu: 1000m
             memory: 5Gi
           limits:
-            cpu: 2000m
             memory: 8Gi
         env:
           - name: GOGC
