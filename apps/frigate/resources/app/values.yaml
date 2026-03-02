@@ -262,7 +262,7 @@ configMaps:
             objects:
               filters:
                 person:
-                  mask: 0.282,0.514,0.275,0.564,0.376,0.561,0.378,0.52
+                  mask: 0.282,0.514,0.271,0.574,0.344,0.569,0.349,0.517
             review:
               alerts:
                 required_zones:
