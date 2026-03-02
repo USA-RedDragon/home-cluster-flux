@@ -215,7 +215,7 @@ configMaps:
             front_gate_sub:
               - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_FRONT_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=2
             left_driveway:
-              - ffmpeg:rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_LEFT_DRIVEWAY_ADDRESS}/cam/realmonitor?channel=1&subtype=0#video=copy#audio=copy
+              - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_LEFT_DRIVEWAY_ADDRESS}/cam/realmonitor?channel=1&subtype=0
             left_driveway_sub:
               - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_LEFT_DRIVEWAY_ADDRESS}/cam/realmonitor?channel=1&subtype=2
             side_gate:
