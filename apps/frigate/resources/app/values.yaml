@@ -32,6 +32,10 @@ controllers:
             cpu: 2000m
             memory: 8Gi
         env:
+          - name: GOGC
+            value: "400"
+          - name: GOMEMLIMIT
+            value: "512MiB"
           - name: FRIGATE_JWT_SECRET
             valueFrom:
               secretKeyRef:
