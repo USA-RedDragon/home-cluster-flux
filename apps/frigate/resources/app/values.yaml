@@ -24,6 +24,13 @@ controllers:
         image:
           repository: jacob.pub/ghcr.io/blakeblackshear/frigate
           tag: "0.17.0@sha256:5be5ce3b79f8b09a52957afea9d4a23ad62c9f077a05d9047e3404eb78c304a8"
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 5Gi
+          limits:
+            cpu: 2000m
+            memory: 8Gi
         env:
           - name: FRIGATE_JWT_SECRET
             valueFrom:
