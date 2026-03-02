@@ -1,13 +1,13 @@
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
 metadata:
-  name: response-compression
+  name: internal-backend-policy
   namespace: envoy-gateway-system
 spec:
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
-      name: public
+      name: internal
   connection:
     bufferLimit: 4Mi
   tcpKeepalive:
