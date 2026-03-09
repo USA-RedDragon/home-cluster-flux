@@ -198,6 +198,7 @@ configMaps:
         objects:
           track:
           - person
+          - face
           - car
 
         auth:
@@ -208,11 +209,13 @@ configMaps:
         review:
           alerts:
             labels:
+            - face
             - car
             - person
           detections:
             labels:
             - car
+            - face
             - person
 
         proxy:
