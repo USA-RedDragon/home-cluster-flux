@@ -145,6 +145,17 @@ configMaps:
           user: frigate
           stats_interval: 60
 
+        model:
+          attributes_map:
+            person:
+            - amazon
+            - face
+            car:
+            - amazon
+            - fedex
+            - ups
+            - usps
+
         detectors:
           coral:
             type: edgetpu
@@ -184,10 +195,25 @@ configMaps:
           bird:
             enabled: false
 
+        objects:
+          track:
+          - person
+          - car
+
         auth:
           enabled: false
           trusted_proxies:
             - 172.17.0.0/16
+
+        review:
+          alerts:
+            labels:
+            - car
+            - person
+          detections:
+            labels:
+            - car
+            - person
 
         proxy:
           auth_secret: '{FRIGATE_PROXY_SECRET}'
