@@ -24,7 +24,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
       - uses: actions/setup-python@v6
         with:
-          python-version: 3.13.7
+          python-version: 3.14.3
       - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
       - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
