@@ -210,7 +210,6 @@ configMaps:
           alerts:
             labels:
             - face
-            - car
             - person
           detections:
             labels:
