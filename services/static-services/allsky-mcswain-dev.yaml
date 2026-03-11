@@ -1,10 +1,54 @@
-apiVersion: tailscale.com/v1alpha1
-kind: Connector
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: allsky
+  namespace: static-services
+  labels:
+    kubernetes.io/service-name: allsky
+    endpointslice.kubernetes.io/managed-by: cluster-admins
+addressType: IPv4
+endpoints:
+  - addresses:
+    - 172.28.1.226
+    conditions:
+      ready: true
+ports:
+  - name: http
+    port: 80
+---
+apiVersion: v1
+kind: Service
 metadata:
   name: allsky
   namespace: static-services
 spec:
-  proxyClass: tailscale
-  subnetRouter:
-    advertiseRoutes:
-    - 172.38.1.226/32
+  internalTrafficPolicy: Cluster
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: allsky
+  namespace: static-services
+spec:
+  ingressClassName: tailscale
+  rules:
+  - host: allsky
+    http:
+      paths:
+      - backend:
+          service:
+            name: allsky
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - allsky
