@@ -1,10 +1,54 @@
-apiVersion: tailscale.com/v1alpha1
-kind: Connector
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: rayhunter
+  namespace: static-services
+  labels:
+    kubernetes.io/service-name: rayhunter
+    endpointslice.kubernetes.io/managed-by: cluster-admins
+addressType: IPv4
+endpoints:
+  - addresses:
+    - 192.168.55.1
+    conditions:
+      ready: true
+ports:
+  - name: http
+    port: 8080
+---
+apiVersion: v1
+kind: Service
 metadata:
   name: rayhunter
   namespace: static-services
 spec:
-  proxyClass: tailscale
-  subnetRouter:
-    advertiseRoutes:
-    - 192.168.55.1/32
+  internalTrafficPolicy: Cluster
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rayhunter
+  namespace: static-services
+spec:
+  ingressClassName: tailscale
+  rules:
+  - host: rayhunter
+    http:
+      paths:
+      - backend:
+          service:
+            name: rayhunter
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - rayhunter
