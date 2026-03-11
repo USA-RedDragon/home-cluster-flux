@@ -261,7 +261,7 @@ persistentVolumes:
 
 extraContainers:
 - name: nginx
-  image: jacob.pub/docker.io/nginx:mainline-alpine@sha256:42a516af16b852e33b7682d5ef8acbd5d13fe08fecadc7ed98605ba5e3b26ab8
+  image: jacob.pub/docker.io/nginx:mainline-alpine@sha256:f46cb72c7df02710e693e863a983ac42f6a9579058a59a35f1ae36c9958e4ce0
   imagePullPolicy: IfNotPresent
   ports:
     - containerPort: 80
