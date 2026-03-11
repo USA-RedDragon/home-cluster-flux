@@ -15,7 +15,7 @@ controllers:
       relax-sounds:
         image:
           repository: jacob.pub/ghcr.io/gabe565/relax-sounds
-          tag: 1.8.0@sha256:b8ce5cb04b708501f3a4d880c95eb443f4591a2714f572e2367f6d43273d9724
+          tag: 1.8.1@sha256:992f5372b39ed0f238712375bf38742e480c013e7d51db801cdaaba943fbadfc
           pullPolicy: IfNotPresent
         env:
           RELAX_VALKEY_ENABLED: "true"
