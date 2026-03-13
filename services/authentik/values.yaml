@@ -16,7 +16,7 @@ controllers:
       server:
         image:
           repository: jacob.pub/ghcr.io/goauthentik/server
-          tag: 2025.10.4
+          tag: 2026.2.1@sha256:46a71d75dfd3eec9bd0fb42e5e13a245394e1be2d0828eebfbb2662421e66a35
           pullPolicy: IfNotPresent
         args: [server]
         resources:
@@ -73,7 +73,7 @@ controllers:
       worker:
         image:
           repository: jacob.pub/ghcr.io/goauthentik/server
-          tag: 2025.10.4
+          tag: 2026.2.1@sha256:46a71d75dfd3eec9bd0fb42e5e13a245394e1be2d0828eebfbb2662421e66a35
           pullPolicy: IfNotPresent
         args: [worker]
         resources:
