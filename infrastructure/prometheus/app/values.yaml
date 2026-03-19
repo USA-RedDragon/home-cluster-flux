@@ -2453,7 +2453,7 @@ prometheusOperator:
     registry: jacob.pub
     repository: quay.io/prometheus-operator/prometheus-operator
     # if not set appVersion field from Chart.yaml is used
-    tag: v0.89.0@sha256:fea93ca9be807eee2f51f4d997b7a2bf073d4051d9012b45b3c84a7b9e8b3f25
+    tag: v0.90.0@sha256:523a78e5b9c83bb8659cb399cfb863f3b29c7d79cea17ce604ecf53482e88709
     pullPolicy: IfNotPresent
 
   ## Prometheus image to use for prometheuses managed by the operator
