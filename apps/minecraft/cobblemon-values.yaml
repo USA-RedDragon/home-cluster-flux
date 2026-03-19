@@ -57,6 +57,11 @@ persistence:
     accessMode: ReadWriteOnce
     size: 20Gi
     storageClass: longhorn-nvme
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 4Gi
 
 route:
   server:
