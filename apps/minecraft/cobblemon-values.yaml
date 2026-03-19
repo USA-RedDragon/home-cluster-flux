@@ -3,7 +3,7 @@
 controllers:
   cobblemon:
     replicas: 1
-    strategy: RollingUpdate
+    strategy: Recreate
 
     pod:
       securityContext:
