@@ -35,9 +35,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#atuin">atuin</a></li>
   <li><a href="#authentik">authentik</a></li>
   <li><a href="#bitbucket">bitbucket</a></li>
-  <li><a href="#calibre">calibre</a></li>
   <li><a href="#cert-manager">cert-manager</a></li>
-  <li><a href="#changedetection">changedetection</a></li>
   <li><a href="#cnpg">cnpg</a></li>
   <li><a href="#csi-snapshotter">csi-snapshotter</a></li>
   <li><a href="#cyberchef">cyberchef</a></li>
@@ -48,10 +46,8 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#envoy-gateway">envoy-gateway</a></li>
   <li><a href="#ephemeris">ephemeris</a></li>
   <li><a href="#external-dns-internal">external-dns-internal</a></li>
-  <li><a href="#ffmpeg-printer-webcam">ffmpeg-printer-webcam</a></li>
   <li><a href="#frigate">frigate</a></li>
   <li><a href="#gittea">gittea</a></li>
-  <li><a href="#go2rtc">go2rtc</a></li>
   <li><a href="#golink">golink</a></li>
   <li><a href="#hcp-operator">hcp-operator</a></li>
   <li><a href="#healthchecks">healthchecks</a></li>
@@ -100,7 +96,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#tailscale-operator">tailscale-operator</a></li>
   <li><a href="#tailscale-peer-relay">tailscale-peer-relay</a></li>
   <li><a href="#tandoor">tandoor</a></li>
-  <li><a href="#tdarr">tdarr</a></li>
   <li><a href="#tfe">tfe</a></li>
   <li><a href="#trunk-recorder">trunk-recorder</a></li>
   <li><a href="#ultrafeeder">ultrafeeder</a></li>
@@ -315,22 +310,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
 </table>
 
-<h4>calibre</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>calibre</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/calibre/helm.yaml">calibre</a></td>
-    <td></td>
-  </tr>
-</table>
-
 <h4>cert-manager</h2>
 <table>
   <tr>
@@ -343,22 +322,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>cert-manager</td>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/cert-manager/app/helm.yaml">cert-manager</a></td>
-    <td></td>
-  </tr>
-</table>
-
-<h4>changedetection</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>changedetection</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/changedetection/helm.yaml">changedetection</a></td>
     <td></td>
   </tr>
 </table>
@@ -523,22 +486,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
 </table>
 
-<h4>ffmpeg-printer-webcam</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>ffmpeg-printer-webcam</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/ffmpeg-printer-webcam/helm.yaml">ffmpeg-printer-webcam</a></td>
-    <td></td>
-  </tr>
-</table>
-
 <h4>frigate</h2>
 <table>
   <tr>
@@ -568,26 +515,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/gittea/helm.yaml">gitea</a></td>
     <td><a href="apps/gittea/postgres.yaml">postgresql</a></td>
-  </tr>
-</table>
-
-<h4>go2rtc</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td rowspan="2">go2rtc</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/go2rtc/helm.yaml">go2rtc</a></td>
-    <td rowspan="2"></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/go2rtc/helm.yaml">go2rtc-real</a></td>
   </tr>
 </table>
 
@@ -1396,22 +1323,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/tandoor/helm.yaml">tandoor</a></td>
     <td><a href="apps/tandoor/postgres.yaml">postgresql</a></td>
-  </tr>
-</table>
-
-<h4>tdarr</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>tdarr</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/tdarr/helm.yaml">tdarr</a></td>
-    <td></td>
   </tr>
 </table>
 
