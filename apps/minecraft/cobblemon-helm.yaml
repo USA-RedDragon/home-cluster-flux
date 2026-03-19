@@ -9,7 +9,6 @@ spec:
       retries: -1
   interval: 60m0s
   releaseName: cobblemon
-  suspend: true
   driftDetection:
     mode: enabled
   chart:
