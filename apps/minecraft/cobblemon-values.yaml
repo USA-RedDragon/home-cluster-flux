@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  cobblemon:
+    replicas: 1
+    strategy: RollingUpdate
+
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
+    containers:
+      cobblemon:
+        image:
+          repository: jacob.pub/minecraft
+          tag: "fabric-1.20.1@sha256:67ee9e9c2fca7ff0b162166d8855284f466a9ef6c7037bada9fba17febac1650"
+        env:
+          ACCEPT_EULA: "true"
+          MEMORY_OPTS: "-Xms8G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true"
+        resources:
+          requests:
+            cpu: 4
+            memory: 9500Mi
+          limits:
+            memory: 10Gi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+service:
+  cobblemon:
+    controller: cobblemon
+    ports:
+      server:
+        port: 25565
+        primary: true
+      rcon:
+        port: 25575
+
+persistence:
+  minecraft:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 20Gi
+    storageClass: longhorn-nvme
+
+route:
+  server:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: minecraft-server
+    rules:
+      - backendRefs:
+          - name: cobblemon
+            port: 25565
+  rcon:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: minecraft-rcon
+    rules:
+      - backendRefs:
+          - name: cobblemon
+            port: 25575

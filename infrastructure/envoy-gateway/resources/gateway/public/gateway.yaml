@@ -65,6 +65,24 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: tailscale-peer-relay
+    - name: minecraft-server
+      protocol: TCP
+      port: 25565
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: minecraft
+    - name: minecraft-rcon
+      protocol: TCP
+      port: 25575
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: minecraft
     - name: http
       protocol: HTTP
       port: 80
