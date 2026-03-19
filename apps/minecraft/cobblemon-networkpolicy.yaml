@@ -1,12 +1,12 @@
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: origins
+  name: cobblemon
   namespace: minecraft
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/instance: origins
+      app.kubernetes.io/instance: cobblemon
   policyTypes:
   - Ingress
   - Egress
