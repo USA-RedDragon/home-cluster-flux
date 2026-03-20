@@ -40,7 +40,7 @@ server:
         main:
           image:
             repository: jacob.pub/ghcr.io/immich-app/immich-server
-            tag: v1.144.1
+            tag: v2.6.1@sha256:aa7fe8eec3130742d07498dac7e02baa2d32a903573810ba95ed11f155c7eac1
             pullPolicy: IfNotPresent
           env:
             CPU_CORES: '1'
