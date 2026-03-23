@@ -148,13 +148,13 @@ configMaps:
         model:
           attributes_map:
             person:
-            - amazon
-            - face
+              - amazon
+              - face
             car:
-            - amazon
-            - fedex
-            - ups
-            - usps
+              - amazon
+              - fedex
+              - ups
+              - usps
 
         detectors:
           coral:
@@ -197,9 +197,9 @@ configMaps:
 
         objects:
           track:
-          - person
-          - face
-          - car
+            - person
+            - face
+            - car
 
         auth:
           enabled: false
@@ -209,13 +209,13 @@ configMaps:
         review:
           alerts:
             labels:
-            - face
-            - person
+              - face
+              - person
           detections:
             labels:
-            - car
-            - face
-            - person
+              - car
+              - face
+              - person
 
         proxy:
           auth_secret: '{FRIGATE_PROXY_SECRET}'
@@ -274,12 +274,12 @@ configMaps:
               improve_contrast: true
             zones:
               Yard:
-                coordinates:
+                coordinates: 
                   0.002,0.998,0.071,0.998,0.205,0.863,0.234,0.868,0.413,0.637,0.643,0.627,0.582,0.585,0.291,0.595,0.001,0.713
                 loitering_time: 0
                 inertia: 3
               Porch:
-                coordinates:
+                coordinates: 
                   0.409,0.644,0.648,0.635,1,0.976,0.999,0.998,0.073,1,0.203,0.866,0.234,0.865
                 loitering_time: 0
               Street:
@@ -317,7 +317,7 @@ configMaps:
                 coordinates: 0.163,0.501,0.49,0.421,0.958,1,0.209,1
                 loitering_time: 0
               Back_Yard:
-                coordinates:
+                coordinates: 
                   0.175,0.495,0.491,0.419,0.961,1,0.998,1,1,0.533,0.652,0.287,0.585,0.296,0.556,0.22,0.441,0.241,0.395,0.211,0.178,0.245
                 loitering_time: 0
                 inertia: 3
@@ -349,15 +349,15 @@ configMaps:
               enabled: true
             zones:
               Yard:
-                coordinates:
+                coordinates: 
                   0.203,0.224,0.197,0.362,0.248,0.997,0.96,0.996,0.996,0.853,0.998,0.703,0.451,0.156
                 loitering_time: 0
               Street:
-                coordinates:
+                coordinates: 
                   0.193,0.221,0.188,0.16,0.386,0.111,0.569,0.095,0.726,0.113,0.861,0.152,0.911,0.166,0.936,0.179,0.952,0.211,0.928,0.211,0.84,0.18,0.747,0.158,0.552,0.147,0.452,0.15
                 loitering_time: 0
               Neighbor_Yard:
-                coordinates:
+                coordinates: 
                   0.454,0.151,0.548,0.248,0.708,0.407,0.906,0.607,0.998,0.697,0.998,0.359,0.946,0.311,0.944,0.274,0.954,0.226,0.949,0.216,0.759,0.163,0.696,0.156
                 loitering_time: 0
             review:
@@ -367,8 +367,13 @@ configMaps:
                   - Street
                   - Neighbor_Yard
             motion:
-              mask:
+              mask: 
                 0.185,0.035,0.188,0.155,0.376,0.11,0.57,0.094,0.751,0.117,0.927,0.17,0.935,0.095,0.781,0.007,0.402,0.003,0.192,0.001
+            objects:
+              filters:
+                person:
+                  mask: 
+                    0.418,0.009,0.421,0.107,0.451,0.147,0.703,0.151,0.92,0.289,0.943,0.306,0.964,0.118,0.778,0
           left_driveway:
             ffmpeg:
               inputs:
@@ -384,18 +389,18 @@ configMaps:
               enabled: true
             zones:
               Driveway:
-                coordinates:
+                coordinates: 
                   0.257,0.29,0.324,0.283,0.353,0.397,0.816,0.379,0.998,0.568,0.842,0.802,0.623,0.998,0.267,0.996,0.257,0.952,0.241,0.898,0.241,0.43,0.259,0.415
                 loitering_time: 0
               Far_Yard:
-                coordinates:
+                coordinates: 
                   0.256,0.235,0.607,0.223,0.803,0.372,0.354,0.397,0.327,0.283,0.256,0.289
                 loitering_time: 0
               Near_Yard:
                 coordinates: 0.998,0.575,0.853,0.792,0.63,0.998,0.998,0.997
                 loitering_time: 0
               Street:
-                coordinates:
+                coordinates: 
                   0.435,0.095,0.503,0.125,0.58,0.155,0.71,0.208,0.825,0.278,1,0.428,0.998,0.559,0.806,0.367,0.611,0.223,0.392,0.114
                 loitering_time: 0
               Clint_Yard:
@@ -409,7 +414,8 @@ configMaps:
             objects:
               filters:
                 person:
-                  mask: 0.704,0.148,0.706,0.203,0.751,0.228,0.753,0.158
+                  mask: 
+                    0.427,0.029,0.239,0.059,0.254,0.187,0.51,0.167,0.756,0.235,0.759,0.051
             review:
               alerts:
                 required_zones:
@@ -432,7 +438,7 @@ configMaps:
               enabled: true
             zones:
               Side_Yard:
-                coordinates:
+                coordinates: 
                   0.248,0.291,0.281,0.673,0.336,0.997,0.998,0.992,0.998,0.45,0.495,0.168,0.251,0.229
                 loitering_time: 0
             motion:
@@ -443,6 +449,12 @@ configMaps:
             review:
               alerts:
                 required_zones: Side_Yard
+            objects:
+              filters:
+                person:
+                  mask:
+                    - 0.307,0.059,0.317,0.209,0.491,0.163,0.483,0.081,0.535,0.074,0.529,0.036,0.483,0,0.425,0
+                    - 0.844,0.029,1,0.081,1,0.228,0.845,0.145
         detect:
           enabled: true
         version: 0.17-0
