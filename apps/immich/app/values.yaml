@@ -93,7 +93,7 @@ machine-learning:
         main:
           image:
             repository: jacob.pub/ghcr.io/immich-app/immich-machine-learning
-            tag: v1.144.1
+            tag: v2.6.3@sha256:33b17015c3d14f2565e9b8cd36b48a70027b14b5cd20da7fbfff21a370b0309c
             pullPolicy: IfNotPresent
           env:
             TRANSFORMERS_CACHE: /cache
