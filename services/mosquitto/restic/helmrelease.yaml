@@ -37,7 +37,7 @@ spec:
         containers:
           restic: &container
             image:
-              repository: ghcr.io/gabe565/restic
+              repository: jacob.pub/ghcr.io/gabe565/restic
               tag: 0.18.1@sha256:bd0fed3ab5e55f4267cc75c218f3dfa27e3edd490cddb6ec0a27fd2cd85927f8
             workingDir: /data
             envFrom:
