@@ -83,7 +83,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#ping-exporter">ping-exporter</a></li>
   <li><a href="#prometheus">prometheus</a></li>
   <li><a href="#rdio-scanner">rdio-scanner</a></li>
-  <li><a href="#redis">redis</a></li>
   <li><a href="#reflector">reflector</a></li>
   <li><a href="#relax-sounds">relax-sounds</a></li>
   <li><a href="#renovate-ce">renovate-ce</a></li>
@@ -1111,22 +1110,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/rdio-scanner/helm.yaml">rdio-scanner</a></td>
     <td><a href="apps/rdio-scanner/postgres.yaml">postgresql</a></td>
-  </tr>
-</table>
-
-<h4>redis</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>redis</td>
-    <td></td>
-    <td></td>
-    <td><a href="services/redis/helm.yaml">redis</a></td>
   </tr>
 </table>
 
