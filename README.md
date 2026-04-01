@@ -494,10 +494,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>frigate</td>
+    <td rowspan="2">frigate</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/frigate/resources/app/helm.yaml">frigate</a></td>
-    <td></td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/frigate/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
