@@ -946,10 +946,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>mosquitto</td>
+    <td rowspan="2">mosquitto</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/mosquitto/app/helm.yaml">mosquitto</a></td>
-    <td></td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/mosquitto/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
