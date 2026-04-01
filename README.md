@@ -1154,10 +1154,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>relax-sounds</td>
+    <td rowspan="2">relax-sounds</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/relax-sounds/helm.yaml">relax-sounds</a></td>
-    <td><a href="apps/relax-sounds/valkey.yaml">valkey</a></td>
+    <td rowspan="2"><a href="apps/relax-sounds/valkey.yaml">valkey</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/relax-sounds/restic.yaml">restic</a></td>
   </tr>
 </table>
 
