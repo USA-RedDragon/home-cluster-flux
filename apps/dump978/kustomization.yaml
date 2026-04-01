@@ -4,6 +4,7 @@ namespace: dump978
 resources:
   - ns.yaml
   - helm.yaml
+  - restic.yaml
 configMapGenerator:
   - name: chart-values
     files:
