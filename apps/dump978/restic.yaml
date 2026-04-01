@@ -25,7 +25,7 @@ spec:
             - topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/name: dump978
+                  app.kubernetes.io/name: app
 
     controllers:
       restic:
