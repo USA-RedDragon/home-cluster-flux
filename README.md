@@ -430,10 +430,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>dump978</td>
+    <td rowspan="2">dump978</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/dump978/helm.yaml">dump978</a></td>
-    <td></td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/dump978/restic.yaml">restic</a></td>
   </tr>
 </table>
 
