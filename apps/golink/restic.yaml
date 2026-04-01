@@ -25,7 +25,7 @@ spec:
             - topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/name: golink-app
+                  app.kubernetes.io/name: app
 
     controllers:
       restic:
