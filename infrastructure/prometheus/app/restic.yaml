@@ -25,7 +25,7 @@ spec:
             - topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/name: prometheus-stack-grafana
+                  app.kubernetes.io/name: grafana
 
     controllers:
       restic:
