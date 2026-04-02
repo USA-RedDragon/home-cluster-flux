@@ -88,9 +88,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#rmfakecloud">rmfakecloud</a></li>
   <li><a href="#rtl-433">rtl-433</a></li>
   <li><a href="#rtz">rtz</a></li>
-  <li><a href="#scrypted">scrypted</a></li>
   <li><a href="#ses-email-service">ses-email-service</a></li>
-  <li><a href="#site-inspector">site-inspector</a></li>
   <li><a href="#tailscale-operator">tailscale-operator</a></li>
   <li><a href="#tailscale-peer-relay">tailscale-peer-relay</a></li>
   <li><a href="#tandoor">tandoor</a></li>
@@ -1268,22 +1266,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
 </table>
 
-<h4>scrypted</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>scrypted</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/scrypted/helm.yaml">scrypted</a></td>
-    <td></td>
-  </tr>
-</table>
-
 <h4>ses-email-service</h2>
 <table>
   <tr>
@@ -1297,22 +1279,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>GitRepository</code></td>
     <td><a href="https://github.com/USA-RedDragon/ses-email-service">ses-email-service</a></td>
     <td></td>
-  </tr>
-</table>
-
-<h4>site-inspector</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>site-inspector</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/site-inspector/helm.yaml">site-inspector</a></td>
-    <td><a href="apps/site-inspector/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
