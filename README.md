@@ -274,10 +274,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>atuin</td>
+    <td rowspan="2">atuin</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/atuin/helm.yaml">atuin</a></td>
-    <td><a href="apps/atuin/postgres.yaml">postgresql</a></td>
+    <td rowspan="2"><a href="apps/atuin/postgres.yaml">postgresql</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/atuin/restic.yaml">restic</a></td>
   </tr>
 </table>
 
