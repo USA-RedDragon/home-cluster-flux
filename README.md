@@ -1110,10 +1110,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>monitoring</td>
+    <td rowspan="2">monitoring</td>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/prometheus/app/helm.yaml">prometheus-stack</a></td>
-    <td></td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/prometheus/app/restic.yaml">restic</a></td>
   </tr>
 </table>
 
