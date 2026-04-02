@@ -1354,10 +1354,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>tandoor</td>
+    <td rowspan="2">tandoor</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/tandoor/restic.yaml">restic</a></td>
+    <td rowspan="2"><a href="apps/tandoor/postgres.yaml">postgresql</a></td>
+  </tr>
+  <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/tandoor/helm.yaml">tandoor</a></td>
-    <td><a href="apps/tandoor/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
