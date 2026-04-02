@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: monitoring
 resources:
   - helm.yaml
+  - restic.yaml
 configMapGenerator:
   - name: chart-values
     files:
