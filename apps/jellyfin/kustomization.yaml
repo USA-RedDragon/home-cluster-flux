@@ -5,6 +5,7 @@ resources:
   - ns.yaml
   - helm.yaml
   - pvc.yaml
+  - restic.yaml
 configMapGenerator:
   - name: chart-values
     files:
