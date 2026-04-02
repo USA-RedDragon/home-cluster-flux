@@ -34,7 +34,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#astroframe">astroframe</a></li>
   <li><a href="#atuin">atuin</a></li>
   <li><a href="#authentik">authentik</a></li>
-  <li><a href="#bitbucket">bitbucket</a></li>
   <li><a href="#cert-manager">cert-manager</a></li>
   <li><a href="#cnpg">cnpg</a></li>
   <li><a href="#csi-snapshotter">csi-snapshotter</a></li>
@@ -302,22 +301,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/authentik/restic.yaml">restic</a></td>
-  </tr>
-</table>
-
-<h4>bitbucket</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>bitbucket</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/bitbucket/helm.yaml">bitbucket</a></td>
-    <td></td>
   </tr>
 </table>
 
