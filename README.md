@@ -116,10 +116,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>apprise</td>
+    <td rowspan="2">apprise</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/apprise/helm.yaml">apprise</a></td>
-    <td></td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/apprise/restic.yaml">restic</a></td>
   </tr>
 </table>
 
