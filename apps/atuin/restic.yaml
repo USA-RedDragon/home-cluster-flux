@@ -18,15 +18,6 @@ spec:
   driftDetection:
     mode: enabled
   values:
-    defaultPodOptions:
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: vaultwarden
-
     controllers:
       restic:
         type: cronjob
