@@ -16,6 +16,7 @@ controllers:
           TS_HOSTNAME: home-peer-relay
           TS_KUBE_SECRET: tailscale-state
           TS_USERSPACE: "true"
+          TS_AUTH_ONCE: "true"
         envFrom:
           - secretRef:
               name: tailscale-env
