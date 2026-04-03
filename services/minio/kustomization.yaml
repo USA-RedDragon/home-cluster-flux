@@ -7,6 +7,7 @@ resources:
   - helm.yaml
   - networkpolicy.yaml
   - backend-traffic-policy.yaml
+  - backup-astro.yaml
 configMapGenerator:
   - name: chart-values
     files:
