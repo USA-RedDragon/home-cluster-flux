@@ -54,7 +54,6 @@ spec:
             args:
               - --config
               - /rclone.conf
-              - -v
               - --stats=30s
               - sync
               - minio:tandoor
