@@ -927,10 +927,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">minio</td>
+    <td rowspan="5">minio</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/minio/backup-astro.yaml">backup-astro</a></td>
-    <td rowspan="2"></td>
+    <td rowspan="5"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/minio/backup-mattermost.yaml">backup-mattermost</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/minio/backup-rtz-uploads.yaml">backup-rtz-uploads</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/minio/backup-tandoor.yaml">backup-tandoor</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
