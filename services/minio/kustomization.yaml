@@ -8,6 +8,9 @@ resources:
   - networkpolicy.yaml
   - backend-traffic-policy.yaml
   - backup-astro.yaml
+  - backup-mattermost.yaml
+  - backup-rtz-uploads.yaml
+  - backup-tandoor.yaml
 configMapGenerator:
   - name: chart-values
     files:
