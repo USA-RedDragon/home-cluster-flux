@@ -55,6 +55,7 @@ spec:
               - --config
               - /rclone.conf
               - --stats=30s
+              - --stats-one-line-date
               - sync
               - minio:tandoor
               - b2:mcswain-minio/tandoor
