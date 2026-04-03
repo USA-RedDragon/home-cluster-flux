@@ -54,6 +54,7 @@ spec:
             args:
               - --config
               - /rclone.conf
+              - --log-level=INFO
               - --stats=30s
               - --stats-one-line-date
               - sync
