@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: backup-sync
+  namespace: backup-sync
+spec:
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.2
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        namespace: flux-system
+        name: bjw-s
+  interval: 1h
+  driftDetection:
+    mode: enabled
+  values:
+    controllers:
+      backup-sync:
+        type: cronjob
+        cronjob:
+          schedule: 0 6 * * *
+          concurrencyPolicy: Replace
+          ttlSecondsAfterFinished: 3600
+        containers:
+          backup-sync:
+            image:
+              repository: jacob.pub/docker.io/rclone/rclone
+              tag: 1.73.3@sha256:66af24d7c8809af336dc16068149257cf447c80f8c60aa9f5679153f42017b85
+            env:
+              - name: AWS_ACCESS_KEY_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: s3-backup-credentials
+                    key: accesskey
+              - name: AWS_SECRET_ACCESS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: s3-backup-credentials
+                    key: secretkey
+              - name: RCLONE_CONFIG_B2_ACCOUNT
+                valueFrom:
+                  secretKeyRef:
+                    name: b2-backup-credentials
+                    key: account
+              - name: RCLONE_CONFIG_B2_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: b2-backup-credentials
+                    key: key
+            args:
+              - --config
+              - /rclone.conf
+              - --log-level=NOTICE
+              - --stats-log-level=NOTICE
+              - --stats=30s
+              - --stats-one-line-date
+              - --s3-storage-class
+              - DEEP_ARCHIVE
+              - sync
+              - b2:mcswain-git-backups
+              - s3:mcswain-backup/mcswain-git-backups
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 1000m
+                memory: 1Gi
+
+    configMaps:
+      config:
+        data:
+          rclone.conf: |
+            [b2]
+            type = b2
+            hard_delete = true
+            [s3]
+            type = s3
+            provider = AWS
+            env_auth = true
+
+    persistence:
+      config:
+        enabled: true
+        type: configMap
+        name: backup-sync
+        advancedMounts:
+          backup-sync:
+            backup-sync:
+              - path: /rclone.conf
+                subPath: rclone.conf

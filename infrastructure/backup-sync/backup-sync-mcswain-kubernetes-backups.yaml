@@ -51,40 +51,18 @@ spec:
                   secretKeyRef:
                     name: b2-backup-credentials
                     key: key
-            command:
-              - /bin/sh
-              - -c
-              - |
-                rclone --config /rclone.conf \
-                  --log-level=NOTICE --stats-log-level=NOTICE \
-                  --stats=30s --stats-one-line-date \
-                  --s3-storage-class DEEP_ARCHIVE \
-                  sync b2:mcswain-backup s3:mcswain-backup/mcswain-backup
-                rclone --config /rclone.conf \
-                  --log-level=NOTICE --stats-log-level=NOTICE \
-                  --stats=30s --stats-one-line-date \
-                  --s3-storage-class DEEP_ARCHIVE \
-                  sync b2:mcswain-git-backups s3:mcswain-backup/mcswain-git-backups
-                rclone --config /rclone.conf \
-                  --log-level=NOTICE --stats-log-level=NOTICE \
-                  --stats=30s --stats-one-line-date \
-                  --s3-storage-class DEEP_ARCHIVE \
-                  sync b2:mcswain-home-assistant s3:mcswain-backup/mcswain-home-assistant
-                rclone --config /rclone.conf \
-                  --log-level=NOTICE --stats-log-level=NOTICE \
-                  --stats=30s --stats-one-line-date \
-                  --s3-storage-class DEEP_ARCHIVE \
-                  sync b2:mcswain-kubernetes-backups s3:mcswain-backup/mcswain-kubernetes-backups
-                rclone --config /rclone.conf \
-                  --log-level=NOTICE --stats-log-level=NOTICE \
-                  --stats=30s --stats-one-line-date \
-                  --s3-storage-class DEEP_ARCHIVE \
-                  sync b2:mcswain-minio s3:mcswain-backup/mcswain-minio
-                rclone --config /rclone.conf \
-                  --log-level=NOTICE --stats-log-level=NOTICE \
-                  --stats=30s --stats-one-line-date \
-                  --s3-storage-class DEEP_ARCHIVE \
-                  sync b2:mcswain-router-backups s3:mcswain-backup/mcswain-router-backups
+            args:
+              - --config
+              - /rclone.conf
+              - --log-level=NOTICE
+              - --stats-log-level=NOTICE
+              - --stats=30s
+              - --stats-one-line-date
+              - --s3-storage-class
+              - DEEP_ARCHIVE
+              - sync
+              - b2:mcswain-kubernetes-backups
+              - s3:mcswain-backup/mcswain-kubernetes-backups
             resources:
               requests:
                 cpu: 100m
