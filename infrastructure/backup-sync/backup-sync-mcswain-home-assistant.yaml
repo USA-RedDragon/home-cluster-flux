@@ -62,7 +62,7 @@ spec:
               - DEEP_ARCHIVE
               - sync
               - b2:mcswain-home-assistant
-              - s3:mcswain-backup/mcswain-home-assistant
+              - s3:mcswain-backups/mcswain-home-assistant
             resources:
               requests:
                 cpu: 100m

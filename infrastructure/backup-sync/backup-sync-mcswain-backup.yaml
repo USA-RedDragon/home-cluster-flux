@@ -62,7 +62,7 @@ spec:
               - DEEP_ARCHIVE
               - sync
               - b2:mcswain-backup
-              - s3:mcswain-backup/mcswain-backup
+              - s3:mcswain-backups/mcswain-backup
             resources:
               requests:
                 cpu: 100m
