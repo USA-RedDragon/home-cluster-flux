@@ -314,7 +314,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>backup-sync</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/backup-sync/backup-sync.yaml">backup-sync</a></td>
+    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-router-backups.yaml">backup-sync</a></td>
     <td></td>
   </tr>
 </table>
