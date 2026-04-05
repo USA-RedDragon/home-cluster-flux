@@ -87,7 +87,7 @@ spec:
       config:
         enabled: true
         type: configMap
-        name: backup-sync
+        name: backup-sync-mcswain-home-assistant
         advancedMounts:
           backup-sync:
             backup-sync:
