@@ -312,10 +312,30 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>backup-sync</td>
+    <td rowspan="6">backup-sync</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-router-backups.yaml">backup-sync</a></td>
-    <td></td>
+    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-git-backups.yaml">backup-sync-git-backups</a></td>
+    <td rowspan="6"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-home-assistant.yaml">backup-sync-home-assistant</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-kubernetes-backups.yaml">backup-sync-kubernetes-backups</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-backup.yaml">backup-sync-mcswain-backup</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-minio.yaml">backup-sync-mcswain-minio</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-router-backups.yaml">backup-sync-mcswain-router-backups</a></td>
   </tr>
 </table>
 
