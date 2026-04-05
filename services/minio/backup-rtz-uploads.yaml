@@ -51,6 +51,16 @@ spec:
                   secretKeyRef:
                     name: b2-backup-credentials
                     key: key
+              - name: RCLONE_CONFIG_B2CRYPT_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: b2-backup-credentials
+                    key: password
+              - name: RCLONE_CONFIG_B2CRYPT_PASSWORD2
+                valueFrom:
+                  secretKeyRef:
+                    name: b2-backup-credentials
+                    key: password2
             args:
               - --config
               - /rclone.conf
@@ -60,7 +70,7 @@ spec:
               - --stats-one-line-date
               - sync
               - minio:rtz-uploads
-              - b2:mcswain-minio/rtz-uploads
+              - "b2crypt:"
             resources:
               requests:
                 cpu: 100m
@@ -81,6 +91,11 @@ spec:
             provider = Minio
             env_auth = true
             endpoint = https://s3.mcswain.dev
+            [b2crypt]
+            type = crypt
+            remote = b2:mcswain-minio/rtz-uploads
+            filename_encryption = standard
+            directory_name_encryption = true
 
     persistence:
       config:
