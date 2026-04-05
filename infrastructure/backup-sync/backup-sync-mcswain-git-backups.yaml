@@ -58,6 +58,7 @@ spec:
               - --stats-log-level=NOTICE
               - --stats=30s
               - --stats-one-line-date
+              - --immutable
               - --s3-storage-class
               - DEEP_ARCHIVE
               - sync
