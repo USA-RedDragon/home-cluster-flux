@@ -62,7 +62,7 @@ spec:
               - DEEP_ARCHIVE
               - sync
               - b2:mcswain-git-backups
-              - s3:mcswain-backup/mcswain-git-backups
+              - s3:mcswain-backups/mcswain-git-backups
             resources:
               requests:
                 cpu: 100m

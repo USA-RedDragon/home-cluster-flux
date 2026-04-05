@@ -62,7 +62,7 @@ spec:
               - DEEP_ARCHIVE
               - sync
               - b2:mcswain-minio
-              - s3:mcswain-backup/minio
+              - s3:mcswain-backups/minio
             resources:
               requests:
                 cpu: 100m
