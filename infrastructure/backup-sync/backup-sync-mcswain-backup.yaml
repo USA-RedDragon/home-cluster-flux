@@ -87,7 +87,7 @@ spec:
       config:
         enabled: true
         type: configMap
-        name: backup-sync
+        name: backup-sync-mcswain-backup
         advancedMounts:
           backup-sync:
             backup-sync:

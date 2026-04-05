@@ -87,7 +87,7 @@ spec:
       config:
         enabled: true
         type: configMap
-        name: backup-sync
+        name: backup-sync-mcswain-kubernetes-backups
         advancedMounts:
           backup-sync:
             backup-sync:
