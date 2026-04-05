@@ -82,6 +82,7 @@ spec:
             type = s3
             provider = AWS
             env_auth = true
+            no_check_bucket = true
 
     persistence:
       config:
