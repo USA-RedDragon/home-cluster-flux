@@ -153,7 +153,7 @@ renovateServer:
 
   extraEnvVars:
   - name: MEND_RNV_REPORTING_ENABLED
-    value: 'true'
+    value: 'false'
 
   mendRnvPlatform: github
   mendRnvEndpoint: https://api.github.com/
