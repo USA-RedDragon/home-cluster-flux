@@ -79,7 +79,7 @@ renovateWorker:
       onboardingConfigFileName: ".github/renovate.json",
       onboardingRebaseCheckbox: true,
       allowedPostUpgradeCommands: ["^bash \\.github/scripts/update-alpine-packages\\.sh"],
-      allowPostUpgradeCommandTemplating: true
+      allowPostUpgradeCommandTemplating: true,
       hostRules: [
         {
           hostType: 'docker',
