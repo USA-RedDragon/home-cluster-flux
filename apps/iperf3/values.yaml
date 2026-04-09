@@ -14,7 +14,7 @@ controllers:
       iperf3:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/iperf3
-          tag: 3.19.1@sha256:956a46ca794850eb139231ac2ec3adc84000c6d0435b573276591e640297cbcd
+          tag: 3.19.1@sha256:f2ee0a27d3a89d748077c6b67e80457a3d407b0f1134754a2119ba0fc2429a5f
           pullPolicy: IfNotPresent
         args:
           - -s
