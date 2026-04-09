@@ -2004,7 +2004,7 @@ prometheus-node-exporter:
     registry: jacob.pub
     repository: quay.io/prometheus/node-exporter
     # Overrides the image tag whose default is {{ printf "v%s" .Chart.AppVersion }}
-    tag: v1.10.2
+    tag: v1.11.1@sha256:0f422f62c15f154af8d8572b23d623aebfb10cec73a5c654d18f911f3f9df241
   podLabels:
     ## Add the 'node-exporter' label to be used by serviceMonitor to match standard common usage in rules and grafana dashboards
     ##
