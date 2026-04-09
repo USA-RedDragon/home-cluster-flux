@@ -1027,7 +1027,7 @@ grafana:
     image:
       registry: jacob.pub
       repository: quay.io/kiwigrid/k8s-sidecar
-      tag: 1.30.11
+      tag: 2.6.0@sha256:a6c101156d42ef1050c536fcbcc03bf314544a63ee2daafe45280bc8dbab398f
     dashboards:
       enabled: true
       label: grafana_dashboard
