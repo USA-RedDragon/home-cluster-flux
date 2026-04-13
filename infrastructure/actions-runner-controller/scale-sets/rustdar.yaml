@@ -24,6 +24,7 @@ spec:
   values:
     githubConfigSecret: github-app
     githubConfigUrl: "https://github.com/USA-RedDragon/rustdar"
+    maxRunners: 10
     template:
       spec:
         containers:

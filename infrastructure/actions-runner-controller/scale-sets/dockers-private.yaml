@@ -24,6 +24,7 @@ spec:
   values:
     githubConfigSecret: github-app
     githubConfigUrl: "https://github.com/USA-RedDragon/dockers-private"
+    maxRunners: 10
     template:
       spec:
         containers:
