@@ -31,7 +31,7 @@ spec:
           fsGroup: 1001
         containers:
         - name: runner
-          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.333.1@sha256:9eb9833c8a33d72960e6dafb9e945b79cbf272dec1b5b57b88a1a225143e0ff9
+          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.333.1@sha256:6f72c958c91d92897d753c32641c2262da36dedef0568ddc716c2d07a0b23a3a
           command: ["/home/runner/run.sh"]
           env:
             - name: ACTIONS_RUNNER_CONTAINER_HOOKS
@@ -41,7 +41,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: ACTIONS_RUNNER_IMAGE
-              value: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.333.1@sha256:9eb9833c8a33d72960e6dafb9e945b79cbf272dec1b5b57b88a1a225143e0ff9
+              value: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.333.1@sha256:6f72c958c91d92897d753c32641c2262da36dedef0568ddc716c2d07a0b23a3a
             - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
               value: "false"
           securityContext:
