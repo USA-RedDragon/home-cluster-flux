@@ -6,7 +6,7 @@ metrics:
   proxy:
     image:
       repository: jacob.pub/quay.io/brancz/kube-rbac-proxy
-      tag: v0.13.1
+      tag: v0.21.2@sha256:23bf4d4ddbb6827ede3a26d98814e3f3733b257e8b70de54c77e78eb7ed6d719
 
 actionsMetrics:
   serviceMonitor:
@@ -14,7 +14,7 @@ actionsMetrics:
   proxy:
     image:
       repository: jacob.pub/quay.io/brancz/kube-rbac-proxy
-      tag: v0.13.1
+      tag: v0.21.2@sha256:23bf4d4ddbb6827ede3a26d98814e3f3733b257e8b70de54c77e78eb7ed6d719
 
 image:
   repository: "jacob.pub/docker.io/summerwind/actions-runner-controller"
