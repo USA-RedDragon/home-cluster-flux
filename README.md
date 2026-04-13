@@ -117,7 +117,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>actions-runner-system</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/actions-runner-controller/app/helm.yaml">actions-runner-controller</a></td>
+    <td><a href="infrastructure/actions-runner-controller/app/helm.yaml">gha-runner-scale-set-controller</a></td>
     <td></td>
   </tr>
 </table>
