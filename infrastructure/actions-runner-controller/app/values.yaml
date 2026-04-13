@@ -1,0 +1,5 @@
+dockerRegistryMirror: "https://jacob.pub/docker/"
+
+metrics:
+  serviceMonitor:
+    enable: true
