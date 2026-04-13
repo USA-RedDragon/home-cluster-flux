@@ -3,6 +3,18 @@ dockerRegistryMirror: "https://jacob.pub/docker.io/"
 metrics:
   serviceMonitor:
     enable: true
+  proxy:
+    image:
+      repository: jacob.pub/quay.io/brancz/kube-rbac-proxy
+      tag: v0.13.1
+
+actionsMetrics:
+  serviceMonitor:
+    enable: true
+  proxy:
+    image:
+      repository: jacob.pub/quay.io/brancz/kube-rbac-proxy
+      tag: v0.13.1
 
 image:
   repository: "jacob.pub/docker.io/summerwind/actions-runner-controller"
