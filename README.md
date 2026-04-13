@@ -23,6 +23,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
 <!-- Begin apps section -->
 <h3>Clusters</h3>
 <ul>
+  <li><a href="#actions-runner-controller">actions-runner-controller</a></li>
   <li><a href="#apprise">apprise</a></li>
   <li><a href="#aredn">aredn</a></li>
   <li><a href="#aredn-dmrhub">aredn-dmrhub</a></li>
@@ -104,6 +105,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
 </ul>
 
 <h3>Apps</h2>
+
+<h4>actions-runner-controller</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>actions-runner-system</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/actions-runner-controller/app/helm.yaml">actions-runner-controller</a></td>
+    <td></td>
+  </tr>
+</table>
 
 <h4>apprise</h2>
 <table>
