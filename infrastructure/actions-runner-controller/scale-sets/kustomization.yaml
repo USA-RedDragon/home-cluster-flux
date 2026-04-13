@@ -4,3 +4,4 @@ namespace: actions-runners
 resources:
   - dockers-private.yaml
   - rustdar.yaml
+  - networkpolicy.yaml
