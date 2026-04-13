@@ -1,12 +1,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: actions-runner-controller
+  name: scale-set-controller
   namespace: actions-runner-system
 spec:
   interval: 1h
   targetNamespace: actions-runner-system
-  path: ./infrastructure/actions-runner-controller/app
+  path: ./infrastructure/actions-runner-controller/scale-set-controller
   prune: true
   sourceRef:
     kind: GitRepository
