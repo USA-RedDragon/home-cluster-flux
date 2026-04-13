@@ -1,0 +1,43 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dockers-private-runner-set
+  namespace: actions-runners
+spec:
+  interval: 1m0s
+  driftDetection:
+    mode: enabled
+  releaseName: dockers-private-runner-set
+  chart:
+    spec:
+      chart: gha-runner-scale-set
+      sourceRef:
+        kind: HelmRepository
+        namespace: actions-runner-system
+        name: actions-runner-controller
+      version: 0.14.0
+      interval: 1m0s
+  install:
+    remediation:
+      retries: -1
+  values:
+    githubConfigSecret: github-app
+    githubConfigUrl: "https://github.com/USA-RedDragon/dockers-private"
+    template:
+      spec:
+        containers:
+        - name: runner
+          image: jacob.pub/ghcr.io/actions/actions-runner:2.333.1@sha256:b57864c9fcda15ea4a270446aa9cfb108b819a26f6e71fc515f6caf6c27989c6
+          command: ["/home/runner/run.sh"]
+          env:
+            - name: ACTIONS_RUNNER_CONTAINER_HOOKS
+              value: /home/runner/k8s-novolume/index.js
+            - name: ACTIONS_RUNNER_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ACTIONS_RUNNER_IMAGE
+              value: jacob.pub/ghcr.io/actions/actions-runner:2.333.1@sha256:b57864c9fcda15ea4a270446aa9cfb108b819a26f6e71fc515f6caf6c27989c6
+            - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+              value: "false"
