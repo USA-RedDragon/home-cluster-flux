@@ -2,13 +2,13 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: arc-runner-set
+  name: rustdar-runner-set
   namespace: actions-runners
 spec:
   interval: 1m0s
   driftDetection:
     mode: enabled
-  releaseName: arc-runner-set
+  releaseName: rustdar-runner-set
   chart:
     spec:
       chart: gha-runner-scale-set
@@ -21,6 +21,6 @@ spec:
   install:
     remediation:
       retries: -1
-  valuesFrom:
-    - kind: ConfigMap
-      name: chart-values
+  values:
+    githubConfigSecret: github-app
+    githubConfigUrl: "https://github.com/USA-RedDragon/rustdar"
