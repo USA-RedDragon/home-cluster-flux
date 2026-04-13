@@ -25,6 +25,7 @@ spec:
   prune: true
   dependsOn:
     - name: scale-set-controller
+      namespace: actions-runner-system
   sourceRef:
     kind: GitRepository
     namespace: flux-system
