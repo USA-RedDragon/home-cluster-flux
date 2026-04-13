@@ -27,6 +27,8 @@ spec:
     maxRunners: 10
     template:
       spec:
+        securityContext:
+          fsGroup: 65535
         containers:
         - name: runner
           image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.333.1@sha256:3200dd3cb16f446798fe1e207bf74fbc08d49a0db5044f9a81d9ffdeff9b11c2
@@ -42,3 +44,10 @@ spec:
               value: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.333.1@sha256:3200dd3cb16f446798fe1e207bf74fbc08d49a0db5044f9a81d9ffdeff9b11c2
             - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
               value: "false"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65535
+            capabilities:
+              drop:
+                - ALL
