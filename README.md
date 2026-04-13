@@ -123,7 +123,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>actions-runners</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/actions-runner-controller/scale-set/helm.yaml">arc-runner-set</a></td>
+    <td><a href="infrastructure/actions-runner-controller/scale-sets/rustdar.yaml">rustdar-runner-set</a></td>
     <td></td>
   </tr>
 </table>
