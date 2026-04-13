@@ -28,7 +28,7 @@ spec:
     template:
       spec:
         securityContext:
-          fsGroup: 65535
+          fsGroup: 1001
         containers:
         - name: runner
           image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.333.1@sha256:d1056417e90781b3e6adcbef95408ab4745bb8313ee331c0bf1d211a8d1e026d
@@ -46,8 +46,8 @@ spec:
               value: "false"
           securityContext:
             runAsNonRoot: true
-            runAsUser: 65534
-            runAsGroup: 65535
+            runAsUser: 1001
+            runAsGroup: 1001
             capabilities:
               drop:
                 - ALL
