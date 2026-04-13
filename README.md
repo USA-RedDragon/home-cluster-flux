@@ -120,6 +120,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><a href="infrastructure/actions-runner-controller/scale-set-controller/helm.yaml">gha-runner-scale-set-controller</a></td>
     <td></td>
   </tr>
+  <tr>
+    <td>actions-runners</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/actions-runner-controller/scale-set/helm.yaml">arc-runner-set</a></td>
+    <td></td>
+  </tr>
 </table>
 
 <h4>apprise</h2>
