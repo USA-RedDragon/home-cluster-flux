@@ -24,7 +24,8 @@ spec:
       chart: gha-runner-scale-set-controller
       sourceRef:
         kind: HelmRepository
-        name: gha-runner-scale-set-controller
+        namespace: actions-runner-system
+        name: actions-runner-controller
       version: 0.14.0
       interval: 1m0s
   install:
