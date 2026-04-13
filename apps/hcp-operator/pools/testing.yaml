@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: tfc-agent
-          image: "jacob.pub/docker.io/hashicorp/tfc-agent:1.28.5@sha256:9223593fac82ef4b3391f5eda2e32aead72a2a194f42c27cdb6c7793d5d69ece"
+          image: "jacob.pub/docker.io/hashicorp/tfc-agent:1.28.6@sha256:ca9e63e6fefa2f01a7a894b0481952e150b906276fcf04e8e9261f9072ec47e8"
   autoscaling:
     minReplicas: 1
     maxReplicas: 2
