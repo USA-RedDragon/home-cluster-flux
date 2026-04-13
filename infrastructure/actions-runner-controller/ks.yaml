@@ -12,3 +12,20 @@ spec:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: scale-set
+  namespace: actions-runners
+spec:
+  interval: 1h
+  targetNamespace: actions-runners
+  path: ./infrastructure/actions-runner-controller/scale-set
+  prune: true
+  dependsOn:
+    - name: scale-set-controller
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
