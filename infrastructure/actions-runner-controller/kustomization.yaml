@@ -4,3 +4,4 @@ namespace: actions-runner-system
 resources:
   - ns.yaml
   - ks.yaml
+  - helmrepo.yaml
