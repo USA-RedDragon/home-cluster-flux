@@ -1,5 +1,10 @@
-dockerRegistryMirror: "https://jacob.pub/docker/"
+dockerRegistryMirror: "https://jacob.pub/docker.io/"
 
 metrics:
   serviceMonitor:
     enable: true
+
+image:
+  repository: "jacob.pub/docker.io/summerwind/actions-runner-controller"
+  actionsRunnerRepositoryAndTag: "jacob.pub/docker.io/summerwind/actions-runner:latest"
+  dindSidecarRepositoryAndTag: "jacob.pub/docker.io/docker:dind"
