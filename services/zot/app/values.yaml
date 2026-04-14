@@ -68,16 +68,13 @@ controllers:
         probes:
           liveness:
             enabled: true
-            spec:
-              initialDelaySeconds: 1800
           readiness:
             enabled: true
-            spec:
-              initialDelaySeconds: 1800
           startup:
             enabled: true
             spec:
-              initialDelaySeconds: 1800
+              periodSeconds: 10
+              failureThreshold: 720
         env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
@@ -240,7 +237,7 @@ configMaps:
                     destination: "/registry.k8s.io"
 
         storage:
-          rootDirectory: /tmp/zot
+          rootDirectory: /zot
           remoteCache: true
           cacheDriver:
             name: redis
@@ -291,14 +288,16 @@ persistence:
         zot:
           - path: /ssl/tls.crt
             subPath: tls.crt
-  tmp-zot:
+  zot:
     enabled: true
-    type: emptyDir
-    medium: Memory
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    storageClass: longhorn-ssd
     advancedMounts:
       zot:
         zot:
-          - path: /tmp/zot
+          - path: /zot
 
 route:
   zot:
