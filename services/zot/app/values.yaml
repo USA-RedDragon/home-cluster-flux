@@ -142,7 +142,7 @@ configMaps:
           sync:
             enable: true
             credentialsFile: /etc/zot/registry-credentials/credentials.json
-            DownloadDir: /tmp/zot
+            DownloadDir: /zot
             registries:
               - urls:
                   - https://ghcr.io
