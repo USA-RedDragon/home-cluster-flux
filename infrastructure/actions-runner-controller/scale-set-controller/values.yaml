@@ -1,3 +1,3 @@
 image:
   repository: "jacob.pub/ghcr.io/actions/gha-runner-scale-set-controller"
-  tag: "0.14.0@sha256:4e704fc6c59db122e4156c8a8247b8b1eb89b746ebbc14925fdf9d867f72e29a"
+  tag: "0.14.1@sha256:4f589b93e55a0e20c12ff51c35249877c15429bbfe6a2c531072af18dfce7d00"
