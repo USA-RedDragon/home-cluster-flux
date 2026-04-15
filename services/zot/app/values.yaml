@@ -242,7 +242,7 @@ configMaps:
           cacheDriver:
             name: redis
             url: redis://:${valkey_password}@valkey:6379
-          dedupe: true
+          dedupe: false
           storageDriver:
             name: s3
             regionendpoint: minio.minio.svc.cluster.local:9000
