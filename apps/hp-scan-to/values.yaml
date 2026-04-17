@@ -10,7 +10,7 @@ image:
   repository: jacob.pub/docker.io/manuc66/node-hp-scan-to
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest@sha256:758921034cd4ff49c270a791093c5a66bc524b0539b9712541a90f72acad3422"
+  tag: "latest@sha256:c66889379d4afb0be2442ac926db73dad3b56c350446f0e18cad73c5ad016c5b"
 
 nameOverride: ""
 fullnameOverride: ""
