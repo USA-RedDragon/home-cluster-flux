@@ -12,7 +12,7 @@ x-scrape-job: &scrapejob
     process-and-upload: &scrapejob-container
       image:
         repository: jacob.pub/ghcr.io/usa-reddragon/magick-s3
-        tag: 7.1.1.41@sha256:b29e651570230f8bbfd6060f654d147cc60ef4738018615d63417fa50c7f45c5
+        tag: 7.1.1.41@sha256:86670c15c5dee4e59ff6d61ce91398fbdb41d196dce80f0ef17dc99d306520a7
         pullPolicy: IfNotPresent
       securityContext:
         runAsNonRoot: true
