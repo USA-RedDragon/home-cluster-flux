@@ -25,7 +25,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: hashicorp
-      version: 1.6.7
+      version: 1.6.8
       interval: 1m0s
   valuesFrom:
     - kind: ConfigMap
