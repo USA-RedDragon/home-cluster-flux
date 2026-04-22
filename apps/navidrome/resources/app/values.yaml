@@ -39,7 +39,7 @@ controllers:
           - name: ND_EXTAUTH_LOGOUTURL
             value: "https://authentik.mcswain.dev/application/o/navidrome/end-session/"
           - name: ND_LOGLEVEL
-            value: "info"
+            value: "trace"
           - name: ND_ENABLEINSIGHTSCOLLECTOR
             value: "false"
           - name: ND_MUSICFOLDER
