@@ -31,3 +31,43 @@ spec:
             claim: frigate-role
           - header: X-Proxy-Secret
             claim: ak_proxy.frigate_proxy_secret
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyExtensionPolicy
+metadata:
+  name: strip-oidc-cookies
+  namespace: frigate
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: frigate
+  lua:
+    - type: Inline
+      inline: |
+        function envoy_on_request(handle)
+          -- Drop the huge Bearer JWT; Frigate uses X-authentik-* / X-Proxy-Secret instead
+          handle:headers():remove("authorization")
+
+          local cookie = handle:headers():get("cookie")
+          if cookie == nil then return end
+          local kept = {}
+          for pair in string.gmatch(cookie, "([^;]+)") do
+            local trimmed = pair:match("^%s*(.-)%s*$")
+            local name = trimmed:match("^([^=]+)=")
+            if name and not (
+                name == "AccessToken"
+              or name == "IdToken"
+              or name == "RefreshToken"
+              or name:match("^Oauth")
+              or name == "BearerToken"
+              or name == "Nonce"
+              or name == "CodeVerifier") then
+              table.insert(kept, trimmed)
+            end
+          end
+          handle:headers():remove("cookie")
+          if #kept > 0 then
+            handle:headers():add("cookie", table.concat(kept, "; "))
+          end
+        end
