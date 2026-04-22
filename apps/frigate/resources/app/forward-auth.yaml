@@ -46,8 +46,12 @@ spec:
     - type: Inline
       inline: |
         function envoy_on_request(handle)
-          -- Drop the huge Bearer JWT; Frigate uses X-authentik-* / X-Proxy-Secret instead
-          handle:headers():remove("authorization")
+          -- Only strip Authorization if it's the Bearer JWT Envoy injected.
+          -- Subsonic clients use Basic auth and must pass through.
+          local auth = handle:headers():get("authorization")
+          if auth ~= nil and auth:sub(1, 7):lower() == "bearer " then
+            handle:headers():remove("authorization")
+          end
 
           local cookie = handle:headers():get("cookie")
           if cookie == nil then return end
@@ -56,7 +60,7 @@ spec:
             local trimmed = pair:match("^%s*(.-)%s*$")
             local name = trimmed:match("^([^=]+)=")
             if name and not (
-                name == "AccessToken"
+                 name == "AccessToken"
               or name == "IdToken"
               or name == "RefreshToken"
               or name:match("^Oauth")
