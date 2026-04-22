@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  navidrome:
+    replicas: 1
+
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+    containers:
+      navidrome:
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        image:
+          repository: jacob.pub/docker.io/deluan/navidrome
+          tag: "0.61.2@sha256:9fa40b3d8dec43ceb2213d1fa551da3dcfef6ac6d19c2e534efb92527c2bafd2"
+        resources: {}
+        env:
+          - name: TZ
+            value: America/Chicago
+          - name: ND_PROMETHEUS_ENABLED
+            value: "true"
+          - name: ND_PROMETHEUS_METRICSPATH
+            value: "/metrics"
+          - name: ND_ENABLEUSEREDITING
+            value: "false"
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+service:
+  navidrome:
+    controller: navidrome
+    ports:
+      http:
+        port: 4533
+
+serviceMonitor:
+  navidrome:
+    enabled: true
+    serviceName: navidrome
+    endpoints:
+      - port: http
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+  music:
+    enabled: true
+    type: nfs
+    path: /mnt/data/media/music
+    server: 192.168.1.135
+
+route:
+  navidrome:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - navidrome.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: navidrome
+            port: 4533
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
