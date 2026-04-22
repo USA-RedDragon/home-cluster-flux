@@ -16,13 +16,6 @@ spec:
     clientSecret:
       name: navidrome-oidc
     scopes: [openid, profile, offline_access]
-    forwardAccessToken: true
-  jwt:
-    providers:
-      - name: authentik
-        issuer: https://authentik.mcswain.dev/application/o/navidrome/
-        remoteJWKS:
-          uri: https://authentik.mcswain.dev/application/o/navidrome/jwks/
-        claimToHeaders:
-          - header: Remote-User
-            claim: preferred_username
+    claimToHeaders:
+    - header: Remote-User
+      claim: preferred_username
