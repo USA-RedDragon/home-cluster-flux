@@ -7,7 +7,7 @@ spec:
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      name: navidrome
+      name: navidrome-web
   oidc:
     provider:
       issuer: https://authentik.mcswain.dev/application/o/navidrome/
@@ -24,5 +24,5 @@ spec:
         remoteJWKS:
           uri: https://authentik.mcswain.dev/application/o/navidrome/jwks/
         claimToHeaders:
-          - header: X-authentik-username
+          - header: Remote-User
             claim: preferred_username
