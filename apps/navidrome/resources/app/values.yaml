@@ -70,6 +70,11 @@ persistence:
     type: nfs
     path: /mnt/data/media/Music
     server: 192.168.1.135
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
 
 route:
   navidrome:
