@@ -31,7 +31,13 @@ controllers:
           - name: ND_PROMETHEUS_METRICSPATH
             value: "/metrics"
           - name: ND_ENABLEUSEREDITING
-            value: "false"
+            value: "true"
+          - name: ND_EXTAUTH_TRUSTEDSOURCES
+            value: "172.17.0.0/16"
+          - name: ND_EXTAUTH_USERHEADER
+            value: "Remote-User"
+          - name: ND_EXTAUTH_LOGOUTURL
+            value: "https://authentik.mcswain.dev/application/o/navidrome/end-session/"
         probes:
           liveness:
             enabled: true
@@ -78,7 +84,7 @@ persistence:
     sizeLimit: 1Gi
 
 route:
-  navidrome:
+  navidrome-web:
     enabled: true
     kind: HTTPRoute
     parentRefs:
@@ -95,3 +101,24 @@ route:
           - path:
               type: PathPrefix
               value: /
+
+  navidrome-subsonic:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - navidrome.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: navidrome
+            port: 4533
+        matches:
+          - path:
+              type: PathPrefix
+              value: /rest/
+          - path:
+              type: PathPrefix
+              value: /share/
