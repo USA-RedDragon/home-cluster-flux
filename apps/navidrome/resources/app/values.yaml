@@ -39,7 +39,7 @@ controllers:
           - name: ND_EXTAUTH_LOGOUTURL
             value: "https://authentik.mcswain.dev/application/o/navidrome/end-session/"
           - name: ND_LOGLEVEL
-            value: "debug"
+            value: "trace"
         probes:
           liveness:
             enabled: true
