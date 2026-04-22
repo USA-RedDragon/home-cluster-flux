@@ -15,7 +15,7 @@ spec:
       name: oidc
     clientSecret:
       name: oidc
-    scopes: [navidrome, openid, profile, offline_access]
+    scopes: [openid, profile, offline_access]
     forwardAccessToken: true
   jwt:
     providers:
@@ -26,7 +26,3 @@ spec:
         claimToHeaders:
           - header: X-authentik-username
             claim: preferred_username
-          - header: X-authentik-groups
-            claim: navidrome-role
-          - header: X-Proxy-Secret
-            claim: ak_proxy.navidrome_proxy_secret
