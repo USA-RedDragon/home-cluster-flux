@@ -12,9 +12,9 @@ spec:
     provider:
       issuer: https://authentik.mcswain.dev/application/o/frigate/
     clientIDRef:
-      name: oidc
+      name: frigate-oidc
     clientSecret:
-      name: oidc
+      name: frigate-oidc
     scopes: [frigate, openid, profile, offline_access]
     forwardAccessToken: true
   jwt:
