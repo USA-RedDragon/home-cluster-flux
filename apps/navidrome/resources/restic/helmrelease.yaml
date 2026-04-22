@@ -82,4 +82,4 @@ spec:
 
     persistence:
       data:
-        existingClaim: navidrome
+        existingClaim: navidrome-data
