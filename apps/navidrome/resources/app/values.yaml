@@ -106,6 +106,9 @@ persistence:
     type: emptyDir
     medium: Memory
     sizeLimit: 1Mi
+    globalMounts:
+      - readOnly: true
+        path: /tmp/music
 
 route:
   navidrome-web:
