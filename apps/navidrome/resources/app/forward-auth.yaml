@@ -1,0 +1,32 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: forward-auth
+  namespace: navidrome
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: navidrome
+  oidc:
+    provider:
+      issuer: https://authentik.mcswain.dev/application/o/navidrome/
+    clientIDRef:
+      name: oidc
+    clientSecret:
+      name: oidc
+    scopes: [navidrome, openid, profile, offline_access]
+    forwardAccessToken: true
+  jwt:
+    providers:
+      - name: authentik
+        issuer: https://authentik.mcswain.dev/application/o/navidrome/
+        remoteJWKS:
+          uri: https://authentik.mcswain.dev/application/o/navidrome/jwks/
+        claimToHeaders:
+          - header: X-authentik-username
+            claim: preferred_username
+          - header: X-authentik-groups
+            claim: navidrome-role
+          - header: X-Proxy-Secret
+            claim: ak_proxy.navidrome_proxy_secret
