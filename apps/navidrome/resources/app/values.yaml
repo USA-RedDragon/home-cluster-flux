@@ -101,6 +101,11 @@ persistence:
     type: emptyDir
     medium: Memory
     sizeLimit: 1Gi
+  tmp-music:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Mi
 
 route:
   navidrome-web:
