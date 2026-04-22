@@ -66,10 +66,11 @@ persistence:
     size: 10Gi
   music:
     enabled: true
-    readOnly: true
     type: nfs
     path: /mnt/data/media/Music
     server: 192.168.1.135
+    globalMounts:
+      - readOnly: true
   tmp:
     enabled: true
     type: emptyDir
