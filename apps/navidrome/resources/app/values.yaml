@@ -38,6 +38,8 @@ controllers:
             value: "Remote-User"
           - name: ND_EXTAUTH_LOGOUTURL
             value: "https://authentik.mcswain.dev/application/o/navidrome/end-session/"
+          - name: ND_LOGLEVEL
+            value: "debug"
         probes:
           liveness:
             enabled: true
