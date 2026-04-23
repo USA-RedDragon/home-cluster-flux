@@ -25,6 +25,9 @@ resources:
 #    memory: ""
 #    cpu: ""
 
+tfe:
+  adminHttpsPort: 4443
+
 # TLS for end-to-end encrypted transport
 tls:
   certificateSecret: tfe-mcswain-dev-tls
