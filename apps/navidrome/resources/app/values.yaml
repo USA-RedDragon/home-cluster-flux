@@ -58,6 +58,14 @@ controllers:
             value: "true"
           - name: ND_DEFAULTSHAREEXPIRATION
             value: "168h" # 7 days
+          - name: ND_IMAGECACHESIZE
+            value: "4096MB"
+          - name: ND_SCANNER_SCHEDULE
+            value: "24 * * * *"
+          - name: ND_SCANNER_PURGEMISSING
+            value: always
+          - name: ND_TRANSCODINGCACHESIZE
+            value: "4096MB"
         probes:
           liveness:
             enabled: true
