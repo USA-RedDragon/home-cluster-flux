@@ -3,7 +3,7 @@ replicaCount: 2
 operator:
   image:
     repository: jacob.pub/docker.io/hashicorp/hcp-terraform-operator
-    tag: "2.11.3@sha256:fb812a7ce1720bcdd88ae45658329a8141fedf4ff9477663782a9a1fb2c5beea"
+    tag: "2.11.4@sha256:8aaae8bbe11f6e2c0726f59395880172e1d1f2d620e5563891ee08fef0ce550e"
 
   syncPeriod: 1h
 
