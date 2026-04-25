@@ -1,45 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
 controllers:
-  docker-proxy:
-    strategy: RollingUpdate
-    replicas: 1
-    pod:
-      priorityClassName: system-cluster-critical
-      securityContext:
-        runAsUser: 65534
-        runAsGroup: 65534
-        fsGroup: 65534
-    containers:
-      docker-proxy:
-        image:
-          repository: ghcr.io/usa-reddragon/zot-docker-proxy
-          tag: v1.0.0@sha256:1b5f9e7775398dd6b6d56494f128db9d36360895fc56b370dd8dbfcee5458da9
-          pullPolicy: IfNotPresent
-        securityContext:
-          readOnlyRootFilesystem: true
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-        probes:
-          liveness:
-            enabled: true
-          readiness:
-            enabled: true
-          startup:
-            enabled: true
-        env:
-          - name: ZOT_URL
-            value: http://zot:5000
-          - name: MY_URL
-            value: https://jacob.pub
-          - name: CORS_ALLOWED_ORIGINS
-            value: https://jacob.pub
-          - name: SECRET
-            valueFrom:
-              secretKeyRef:
-                name: docker-proxy
-                key: secret
   zot:
     strategy: RollingUpdate
     replicas: 1
@@ -72,9 +33,6 @@ controllers:
             enabled: true
           startup:
             enabled: true
-            spec:
-              periodSeconds: 10
-              failureThreshold: 720
         env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
@@ -93,11 +51,6 @@ service:
     ports:
       http:
         port: 5000
-  docker-proxy:
-    controller: docker-proxy
-    ports:
-      http:
-        port: 8080
 
 configMaps:
   config:
@@ -311,8 +264,8 @@ route:
       - jacob.pub
     rules:
       - backendRefs:
-          - name: zot-docker-proxy
-            port: 8080
+          - name: zot
+            port: 5000
         matches:
           - path:
               type: PathPrefix
