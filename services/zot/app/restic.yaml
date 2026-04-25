@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: restic
+  namespace: zot
+spec:
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.2
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        namespace: flux-system
+        name: bjw-s
+  interval: 1h
+  driftDetection:
+    mode: enabled
+  values:
+    defaultPodOptions:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: zot
+
+    controllers:
+      restic:
+        type: cronjob
+        cronjob:
+          schedule: 0 0 * * *
+          concurrencyPolicy: Replace
+          ttlSecondsAfterFinished: 3600
+        containers:
+          restic:
+            image: &image
+              repository: jacob.pub/ghcr.io/gabe565/restic
+              tag: 0.18.1@sha256:bd0fed3ab5e55f4267cc75c218f3dfa27e3edd490cddb6ec0a27fd2cd85927f8
+            workingDir: /data
+            envFrom: &envFrom
+              - secretRef:
+                  name: restic-b2
+              - secretRef:
+                  name: restic-envs
+            env: &env
+              TZ: America/Chicago
+              RESTIC_HOST:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            command:
+              - sh
+              - -c
+              # language=sh
+              - |
+                exec > >(ts '%H:%M:%S') 2>&1
+                set -eu
+                restic backup --tag=files /data
+                restic forget --prune --keep-daily=90 --keep-weekly=24 --keep-monthly=24 --keep-yearly=20
+                restic cache --cleanup
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 1000m
+                memory: 1Gi
+      init:
+        type: job
+        annotations:
+          helm.sh/hook: post-install
+          helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+        containers:
+          init:
+            image: *image
+            workingDir: /data
+            envFrom: *envFrom
+            env: *env
+            command: [sh, -c, "restic init || true"]
+
+    persistence:
+      data:
+        existingClaim: zot
