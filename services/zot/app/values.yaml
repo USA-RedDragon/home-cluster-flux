@@ -23,6 +23,7 @@ controllers:
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
+          runAsNonRoot: true
           capabilities:
             drop: ["ALL"]
         probes:
@@ -32,6 +33,9 @@ controllers:
             enabled: true
           startup:
             enabled: true
+            spec:
+              periodSeconds: 10
+              failureThreshold: 720
         env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
@@ -270,5 +274,5 @@ route:
               type: PathPrefix
               value: /
         timeouts:
-          request: 24h
-          backendRequest: 23h
+          request: 0s
+          backendRequest: 0s
