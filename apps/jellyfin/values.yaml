@@ -134,8 +134,8 @@ route:
               type: PathPrefix
               value: /
         timeouts:
-          request: 24h
-          backendRequest: 23h
+          request: 0s
+          backendRequest: 0s
 
 serviceMonitor:
   jellyfin:
