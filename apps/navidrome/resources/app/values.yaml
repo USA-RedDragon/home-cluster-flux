@@ -83,7 +83,7 @@ controllers:
         runAsGroup: 65534
         fsGroup: 65534
     containers:
-      navidrome-proxy:
+      docker-proxy:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/navisteal
           tag: v0.0.1@sha256:aa5fb75471996f414c6c7552a770aa547c972c0dbb8ed855fd479f7cb490ee88
