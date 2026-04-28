@@ -105,8 +105,6 @@ controllers:
             value: http://navidrome:4533
           - name: METRICS_ENABLED
             value: "true"
-          - name: METRICS_BIND
-            value: "0.0.0.0"
 
 service:
   navidrome:
