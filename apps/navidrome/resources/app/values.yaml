@@ -103,8 +103,6 @@ controllers:
         env:
           - name: SUBSONIC
             value: http://navidrome:4533
-          - name: METRICS_ENABLED
-            value: "true"
 
 service:
   navidrome:
@@ -131,15 +129,15 @@ serviceMonitor:
         path: /metrics
         interval: 10s
         scrapeTimeout: 10s
-  proxy:
-    enabled: true
-    serviceName: proxy
-    endpoints:
-      - port: metrics
-        scheme: http
-        path: /metrics
-        interval: 10s
-        scrapeTimeout: 10s
+  # proxy:
+  #   enabled: true
+  #   serviceName: proxy
+  #   endpoints:
+  #     - port: metrics
+  #       scheme: http
+  #       path: /metrics
+  #       interval: 10s
+  #       scrapeTimeout: 10s
 
 persistence:
   data:
