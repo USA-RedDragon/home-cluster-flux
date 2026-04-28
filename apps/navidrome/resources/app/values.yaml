@@ -86,7 +86,7 @@ controllers:
       docker-proxy:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/navisteal
-          tag: v0.0.0@sha256:7ad0d510a76262cafe176c015af7638089f850e8a627cc4a0693ebd95e6f7ac0
+          tag: v0.0.1@sha256:aa5fb75471996f414c6c7552a770aa547c972c0dbb8ed855fd479f7cb490ee88
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
