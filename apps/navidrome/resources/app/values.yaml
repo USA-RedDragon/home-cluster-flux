@@ -74,50 +74,12 @@ controllers:
           startup:
             enabled: true
 
-  proxy:
-    strategy: RollingUpdate
-    replicas: 1
-    pod:
-      securityContext:
-        runAsUser: 65534
-        runAsGroup: 65534
-        fsGroup: 65534
-    containers:
-      docker-proxy:
-        image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/navisteal
-          tag: v0.0.0@sha256:7ad0d510a76262cafe176c015af7638089f850e8a627cc4a0693ebd95e6f7ac0
-          pullPolicy: IfNotPresent
-        securityContext:
-          readOnlyRootFilesystem: true
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-        probes:
-          liveness:
-            enabled: true
-          readiness:
-            enabled: true
-          startup:
-            enabled: true
-        env:
-          - name: SUBSONIC
-            value: http://navidrome:4533
-
 service:
   navidrome:
     controller: navidrome
     ports:
       http:
         port: 4533
-  proxy:
-    controller: proxy
-    ports:
-      http:
-        port: 8080
-        primary: true
-      metrics:
-        port: 9000
 
 serviceMonitor:
   navidrome:
@@ -129,15 +91,6 @@ serviceMonitor:
         path: /metrics
         interval: 10s
         scrapeTimeout: 10s
-  # proxy:
-  #   enabled: true
-  #   serviceName: proxy
-  #   endpoints:
-  #     - port: metrics
-  #       scheme: http
-  #       path: /metrics
-  #       interval: 10s
-  #       scrapeTimeout: 10s
 
 persistence:
   data:
@@ -145,29 +98,18 @@ persistence:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 10Gi
-    advancedMounts:
-      navidrome:
-        navidrome:
-          - path: /data
   cache:
     enabled: true
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 10Gi
-    advancedMounts:
-      navidrome:
-        navidrome:
-          - path: /cache
   music:
     enabled: true
     type: nfs
     path: /mnt/data/media/Music
     server: 192.168.1.135
-    advancedMounts:
-      navidrome:
-        navidrome:
-          - path: /music
-            readOnly: true
+    globalMounts:
+      - readOnly: true
   tmp:
     enabled: true
     type: emptyDir
@@ -178,11 +120,9 @@ persistence:
     type: emptyDir
     medium: Memory
     sizeLimit: 1Mi
-    advancedMounts:
-      navidrome:
-        navidrome:
-          - path: /tmp/music
-            readOnly: true
+    globalMounts:
+      - readOnly: true
+        path: /tmp/music
 
 route:
   navidrome-web:
@@ -213,7 +153,7 @@ route:
               type: PathPrefix
               value: /api/events
 
-  navidrome-sharing:
+  navidrome-subsonic:
     enabled: true
     kind: HTTPRoute
     parentRefs:
@@ -229,25 +169,7 @@ route:
         matches:
           - path:
               type: PathPrefix
-              value: /share/
-
-  navidrome-subsonic:
-    enabled: true
-    kind: HTTPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: https
-    hostnames:
-      - navidrome.mcswain.dev
-    rules:
-      - backendRefs:
-          - name: navidrome-proxy
-            port: 8080
-        timeouts:
-          request: 0s
-          backendRequest: 0s
-        matches:
+              value: /rest/
           - path:
               type: PathPrefix
-              value: /rest/
+              value: /share/
