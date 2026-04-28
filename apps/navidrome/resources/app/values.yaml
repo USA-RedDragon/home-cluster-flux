@@ -86,7 +86,7 @@ controllers:
       navidrome-proxy:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/navisteal
-          tag: v0.0.9@sha256:226620ce3bca4ca9eb968e9c3efd92875e8d72f795c165feb74126d4685ecdae
+          tag: v0.0.8@sha256:3a684002ceb1bf2100e0b1e0db25629ac5672d6167b0c808a926f59c7369f959
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
