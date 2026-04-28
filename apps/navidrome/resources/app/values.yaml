@@ -101,8 +101,6 @@ controllers:
           startup:
             enabled: true
         env:
-          - name: LOG_LEVEL
-            value: debug
           - name: SUBSONIC
             value: http://navidrome:4533
           - name: METRICS_ENABLED
