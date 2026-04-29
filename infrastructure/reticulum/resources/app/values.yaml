@@ -39,28 +39,39 @@ configMaps:
     data:
       config.toml: |
         [reticulum]
-          enable_transport = False
+          enable_transport = true
 
         [interfaces]
           [[Server]]
-            type = TCPServerInterface
-            enabled = yes
-            listen_ip = 0.0.0.0
-            listen_port = 4242
+            type = BackboneInterface
+            enabled = true
+            listen_on = 0.0.0.0
+            port = 4242
+
+            discoverable = true
+            discovery_name = "Central Oklahoma Reticulum Hub"
+            discovery_frequency = 925875000
+            discovery_bandwidth = 250000
+            discovery_encrypt = true
+            reachable_on = reticulum.mcswain.dev
+            discovery_stamp_value = 30
+            latitude = 35.324577
+            longitude = -97.4594459
+            height = 4
 
           [[RNode LoRa]]
             type = RNodeInterface
-            enabled = yes
+            enabled = true
             port = tcp://172.29.1.216
             frequency = 925875000
             bandwidth = 250000
             txpower = 22
             spreadingfactor = 9
             codingrate = 5
-            flow_control = True
+            flow_control = true
 
           [[g00n.cloud Hub]]
-            type = TCPClientInterface
+            type = BackboneInterface
             enabled = true
             target_host = dfw.us.g00n.cloud
             target_port = 6969
