@@ -53,22 +53,7 @@ configMaps:
 
             discoverable = true
             discovery_name = "Central Oklahoma Reticulum Hub"
-            announce_interval = 720
-            reachable_on = reticulum.mcswain.dev
-            latitude = 35.324577
-            longitude = -97.4594459
-            height = 4
-
-          [[Self]]
-            type = BackboneInterface
-            enabled = true
-            mode = gateway
-            target_host = 127.0.0.1
-            target_port = 4242
-
-            discoverable = true
-            discovery_name = "Central Oklahoma Reticulum Hub"
-            announce_interval = 720
+            announce_interval = 10
             reachable_on = reticulum.mcswain.dev
             latitude = 35.324577
             longitude = -97.4594459
@@ -86,13 +71,6 @@ configMaps:
             codingrate = 5
             flow_control = true
 
-            discoverable = true
-            discovery_name = "Central Oklahoma LoRa"
-            announce_interval = 720
-            latitude = 35.324577
-            longitude = -97.4594459
-            height = 4
-
           [[g00n.cloud Hub]]
             type = BackboneInterface
             enabled = true
@@ -102,16 +80,8 @@ configMaps:
           [[RMAP World]]
             type        = BackboneInterface
             enabled     = true
-            mode = gateway
             target_host = rmap.world
             target_port = 4242
-            discoverable = true
-            discovery_name = "Central Oklahoma Reticulum Hub"
-            announce_interval = 60
-            reachable_on = reticulum.mcswain.dev
-            latitude = 35.324577
-            longitude = -97.4594459
-            height = 4
 
 service:
   reticulum:
