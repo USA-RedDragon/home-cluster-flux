@@ -51,8 +51,6 @@ configMaps:
 
             discoverable = true
             discovery_name = "Central Oklahoma Reticulum Hub"
-            discovery_frequency = 925875000
-            discovery_bandwidth = 250000
             reachable_on = reticulum.mcswain.dev
             discovery_stamp_value = 30
             latitude = 35.324577
@@ -69,6 +67,13 @@ configMaps:
             spreadingfactor = 9
             codingrate = 5
             flow_control = true
+
+            discoverable = true
+            discovery_name = "Central Oklahoma LoRa"
+            discovery_stamp_value = 30
+            latitude = 35.324577
+            longitude = -97.4594459
+            height = 4
 
           [[g00n.cloud Hub]]
             type = BackboneInterface
