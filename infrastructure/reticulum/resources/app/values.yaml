@@ -60,6 +60,7 @@ configMaps:
           [[RNode LoRa]]
             type = RNodeInterface
             enabled = true
+            mode = access_point
             port = tcp://172.29.1.216
             frequency = 925875000
             bandwidth = 250000
