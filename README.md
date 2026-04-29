@@ -1317,10 +1317,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>reticulum</td>
+    <td rowspan="2">reticulum</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/reticulum/resources/restic/helmrelease.yaml">restic</a></td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/reticulum/resources/app/helm.yaml">reticulum</a></td>
-    <td></td>
   </tr>
 </table>
 
