@@ -23,6 +23,9 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/reticulum
           tag: "1.2.0@sha256:1870ad0f064752bca2ed4d7bc691b0faadb2ae1f29196632ec5002b3eb683c14"
         resources: {}
+        env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
         probes:
           liveness:
             enabled: true
