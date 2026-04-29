@@ -1,0 +1,127 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  lxmd:
+    replicas: 1
+
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+    containers:
+      lxmd:
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/reticulum
+          tag: "1.2.0@sha256:9599266bdc15c8aa2d7bc499a4140bab1b42ab5b34831a3b992a203c599ae0a8"
+        command:
+          - lxmd
+          - -p
+          - -s
+          - --rnsconfig
+          - /app/.reticulum-lxmd
+          - --config
+          - /app/.lxmd
+        resources: {}
+        env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
+        probes:
+          liveness:
+            enabled: false
+          readiness:
+            enabled: false
+          startup:
+            enabled: false
+
+configMaps:
+  config:
+    data:
+      config: |
+        [propagation]
+        enable_node = yes
+        node_name = Central Oklahoma Propagation Node
+        announce_interval = 360
+        announce_at_start = yes
+        autopeer = yes
+        autopeer_maxdepth = 6
+        message_storage_limit = 8000
+        propagation_message_max_accepted_size = 256
+        auth_required = no
+
+        [lxmf]
+        display_name = Central Oklahoma Propagation Node
+        announce_at_start = yes
+        announce_interval = 360
+        delivery_transfer_max_accepted_size = 1000
+
+        [logging]
+        loglevel = 4
+  rns:
+    data:
+      config.toml: |
+        [reticulum]
+          enable_transport = no
+          share_instance = no
+          panic_on_interface_error = no
+
+        [interfaces]
+          [[Hub]]
+            type = BackboneInterface
+            enabled = true
+            target_host = reticulum.reticulum.svc.cluster.local
+            target_port = 4242
+
+persistence:
+  config:
+    enabled: true
+    type: configMap
+    name: lxmd
+    advancedMounts:
+      lxmd:
+        lxmd:
+          - path: /app/.lxmd/config
+            subPath: config
+  rns-config:
+    enabled: true
+    type: configMap
+    name: rns
+    advancedMounts:
+      lxmd:
+        lxmd:
+          - path: /app/.reticulum-lxmd/config
+            subPath: config.toml
+  state:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    storageClass: longhorn-ssd
+    advancedMounts:
+      lxmd:
+        lxmd:
+          - path: /app/.lxmd
+            subPath: lxmd
+          - path: /app/.reticulum-lxmd/storage
+            subPath: rns-storage
+  rns-interfaces:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 256Mi
+    advancedMounts:
+      lxmd:
+        lxmd:
+          - path: /app/.reticulum-lxmd/interfaces
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 256Mi
