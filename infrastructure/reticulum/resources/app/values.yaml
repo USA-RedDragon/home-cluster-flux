@@ -86,6 +86,14 @@ persistence:
       reticulum:
         reticulum:
           - path: /app/.reticulum/storage
+  interfaces:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 1Gi
+    advancedMounts:
+      reticulum:
+        reticulum:
+          - path: /app/.reticulum/interfaces
   tmp:
     enabled: true
     type: emptyDir
