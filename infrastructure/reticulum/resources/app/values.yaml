@@ -45,6 +45,7 @@ configMaps:
           [[Server]]
             type = BackboneInterface
             enabled = true
+            mode = gateway
             listen_on = 0.0.0.0
             port = 4242
 
