@@ -87,6 +87,7 @@ configMaps:
           [[RMAP World]]
             type        = BackboneInterface
             enabled     = true
+            mode = gateway
             target_host = rmap.world
             target_port = 4242
             discoverable = true
