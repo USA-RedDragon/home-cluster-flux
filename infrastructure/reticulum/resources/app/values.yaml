@@ -42,6 +42,12 @@ configMaps:
           enable_transport = False
 
         [interfaces]
+          [[Server]]
+            type = TCPServerInterface
+            enabled = yes
+            listen_ip = 0.0.0.0
+            listen_port = 4242
+
           [[RNode LoRa]]
             type = RNodeInterface
             enabled = yes
