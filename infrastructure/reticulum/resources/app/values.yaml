@@ -76,6 +76,16 @@ persistence:
         reticulum:
         - path: /app/.reticulum/config
           subPath: config.toml
+  storage:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: longhorn-ssd
+    advancedMounts:
+      reticulum:
+        reticulum:
+          - path: /app/.reticulum/storage
   tmp:
     enabled: true
     type: emptyDir
