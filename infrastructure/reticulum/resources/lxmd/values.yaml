@@ -92,7 +92,7 @@ persistence:
   config:
     enabled: true
     type: configMap
-    name: lxmd
+    name: lxmd-config
     advancedMounts:
       lxmd:
         lxmd:
@@ -101,7 +101,7 @@ persistence:
   rns-config:
     enabled: true
     type: configMap
-    name: rns
+    name: lxmd-rns
     advancedMounts:
       lxmd:
         lxmd:
