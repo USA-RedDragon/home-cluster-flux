@@ -84,6 +84,12 @@ configMaps:
             target_host = dfw.us.g00n.cloud
             target_port = 6969
 
+          [[RMAP World]]
+            type        = BackboneInterface
+            enabled     = true
+            target_host = rmap.world
+            target_port = 4242
+
 service:
   reticulum:
     controller: reticulum
