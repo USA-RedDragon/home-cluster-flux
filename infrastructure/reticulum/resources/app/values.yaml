@@ -53,8 +53,8 @@ configMaps:
             discovery_name = "Central Oklahoma Reticulum Hub"
             discovery_frequency = 925875000
             discovery_bandwidth = 250000
-            discovery_encrypt = true
             reachable_on = reticulum.mcswain.dev
+            publish_ifac = true
             discovery_stamp_value = 30
             latitude = 35.324577
             longitude = -97.4594459
