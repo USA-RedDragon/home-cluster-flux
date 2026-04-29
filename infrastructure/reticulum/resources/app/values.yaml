@@ -59,6 +59,21 @@ configMaps:
             longitude = -97.4594459
             height = 4
 
+          [[Self]]
+            type = BackboneInterface
+            enabled = true
+            mode = gateway
+            target_host = 127.0.0.1
+            target_port = 4242
+
+            discoverable = true
+            discovery_name = "Central Oklahoma Reticulum Hub"
+            announce_interval = 720
+            reachable_on = reticulum.mcswain.dev
+            latitude = 35.324577
+            longitude = -97.4594459
+            height = 4
+
           [[RNode LoRa]]
             type = RNodeInterface
             enabled = true
