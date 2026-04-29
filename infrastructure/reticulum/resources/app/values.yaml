@@ -52,7 +52,7 @@ configMaps:
             discoverable = true
             discovery_name = "Central Oklahoma Reticulum Hub"
             reachable_on = reticulum.mcswain.dev
-            discovery_stamp_value = 30
+            discovery_stamp_value = 25
             latitude = 35.324577
             longitude = -97.4594459
             height = 4
@@ -71,7 +71,7 @@ configMaps:
 
             discoverable = true
             discovery_name = "Central Oklahoma LoRa"
-            discovery_stamp_value = 30
+            discovery_stamp_value = 25
             latitude = 35.324577
             longitude = -97.4594459
             height = 4
