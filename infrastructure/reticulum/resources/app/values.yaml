@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  reticulum:
+    replicas: 1
+
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+    containers:
+      reticulum:
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/reticulum
+          tag: "1.2.0@sha256:1870ad0f064752bca2ed4d7bc691b0faadb2ae1f29196632ec5002b3eb683c14"
+        resources: {}
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+configMaps:
+  config:
+    data:
+      config.toml: |
+        [reticulum]
+          enable_transport = False
+
+        [interfaces]
+          [[RNode LoRa]]
+            type = RNodeInterface
+            enabled = yes
+            port = tcp://172.29.1.216
+            frequency = 925875000
+            bandwidth = 250000
+            txpower = 22
+            spreadingfactor = 9
+            codingrate = 5
+            flow_control = True
+
+          [[g00n.cloud Hub]]
+            type = TCPClientInterface
+            enabled = true
+            target_host = dfw.us.g00n.cloud
+            target_port = 6969
+
+service:
+  reticulum:
+    controller: reticulum
+    ports:
+      data:
+        port: 4242
+
+persistence:
+  config:
+    enabled: true
+    type: configMap
+    name: reticulum
+    advancedMounts:
+      reticulum:
+        reticulum:
+        - path: /app/.reticulum/config
+          subPath: config.toml
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
+
+route:
+  data:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: reticulum-data
+    rules:
+      - backendRefs:
+          - name: reticulum
+            port: 4242
