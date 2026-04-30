@@ -248,7 +248,6 @@ persistence:
   zot:
     enabled: true
     type: emptyDir
-    accessMode: ReadWriteOnce
     sizeLimit: 10Gi
     advancedMounts:
       zot:
