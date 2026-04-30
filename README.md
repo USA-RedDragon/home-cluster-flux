@@ -52,7 +52,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#golink">golink</a></li>
   <li><a href="#hcp-operator">hcp-operator</a></li>
   <li><a href="#healthchecks">healthchecks</a></li>
-  <li><a href="#hp-scan-to">hp-scan-to</a></li>
   <li><a href="#http-logger">http-logger</a></li>
   <li><a href="#imagescraper-mesonet">imagescraper-mesonet</a></li>
   <li><a href="#imagescraper-sfro-allsky">imagescraper-sfro-allsky</a></li>
@@ -637,22 +636,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/healthchecks/helm.yaml">healthchecks</a></td>
     <td><a href="apps/healthchecks/postgres.yaml">postgresql</a></td>
-  </tr>
-</table>
-
-<h4>hp-scan-to</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>hp-scan-to</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/hp-scan-to/helm.yaml">hp-scan-to</a></td>
-    <td></td>
   </tr>
 </table>
 
