@@ -2003,7 +2003,6 @@ prometheus-node-exporter:
   image:
     registry: jacob.pub
     repository: quay.io/prometheus/node-exporter
-    # Overrides the image tag whose default is {{ printf "v%s" .Chart.AppVersion }}
     tag: v1.10.2
   podLabels:
     ## Add the 'node-exporter' label to be used by serviceMonitor to match standard common usage in rules and grafana dashboards
@@ -2452,7 +2451,6 @@ prometheusOperator:
   image:
     registry: jacob.pub
     repository: quay.io/prometheus-operator/prometheus-operator
-    # if not set appVersion field from Chart.yaml is used
     tag: v0.90.1@sha256:52a6a92d915ea2fa94314748d99db7a94922e3fe63274f6182fc033b9126b573
     pullPolicy: IfNotPresent
 
@@ -2478,7 +2476,6 @@ prometheusOperator:
     image:
       registry: jacob.pub
       repository: quay.io/prometheus-operator/prometheus-config-reloader
-      # if not set appVersion field from Chart.yaml is used
       tag: v0.90.1@sha256:693faa0b87243cddca2cffb13586e4e2778b0cdf319cb2e601ba7af3fd19ef7d
 
     # add prometheus config reloader liveness and readiness probe. Default: false
