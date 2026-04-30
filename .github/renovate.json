@@ -45,17 +45,6 @@
         {
             "customType": "regex",
             "managerFilePatterns": [
-                "/(^|/)infrastructure\\/longhorn\\/app\\/values\\.yaml/"
-            ],
-            "matchStrings": [
-                "repository:\\s+(?<depName>.*)\\n\\s*tag:\\s+(?<currentValue>.*)"
-            ],
-            "datasourceTemplate": "docker",
-            "versioningTemplate": "semver-coerced"
-        },
-        {
-            "customType": "regex",
-            "managerFilePatterns": [
                 "/(^|/)apps\\/renovate-ce\\/values\\.yaml/"
             ],
             "matchStrings": [
