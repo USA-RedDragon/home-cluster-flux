@@ -71,6 +71,10 @@ configMaps:
             codingrate = 5
             flow_control = true
 
+            discoverable = true
+            discovery_name = "Central Oklahoma Reticulum Hub"
+            announce_interval = 720
+
           [[g00n.cloud Hub]]
             type = BackboneInterface
             enabled = true
