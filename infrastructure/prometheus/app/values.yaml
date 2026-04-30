@@ -2003,7 +2003,7 @@ prometheus-node-exporter:
   image:
     registry: jacob.pub
     repository: quay.io/prometheus/node-exporter
-    tag: v1.10.2
+    tag: v1.11.1
   podLabels:
     ## Add the 'node-exporter' label to be used by serviceMonitor to match standard common usage in rules and grafana dashboards
     ##
