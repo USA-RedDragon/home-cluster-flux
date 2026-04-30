@@ -876,7 +876,7 @@ grafana:
   image:
     registry: jacob.pub
     repository: docker.io/grafana/grafana
-    tag: 12.4.3@sha256:2e986801428cd689c2358605289c90ab37d2b39e24808874971f54c99bcdc412
+    tag: 9799770991
 
   downloadDashboardsImage:
     registry: jacob.pub
