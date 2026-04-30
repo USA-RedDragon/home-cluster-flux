@@ -1572,14 +1572,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">zot</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="services/zot/app/restic.yaml">restic</a></td>
-    <td rowspan="2"><a href="services/zot/app/valkey.yaml">valkey</a></td>
-  </tr>
-  <tr>
+    <td>zot</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/zot/app/helm.yaml">zot</a></td>
+    <td><a href="services/zot/app/valkey.yaml">valkey</a></td>
   </tr>
 </table>
 <!-- End apps section -->
