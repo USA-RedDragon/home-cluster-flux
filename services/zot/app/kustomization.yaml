@@ -5,7 +5,6 @@ resources:
   - helm.yaml
   - valkey.yaml
   - auth-cert.yaml
-  - restic.yaml
 configMapGenerator:
   - name: chart-values
     files:
