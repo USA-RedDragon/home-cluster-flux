@@ -247,10 +247,9 @@ persistence:
             subPath: tls.crt
   zot:
     enabled: true
-    type: persistentVolumeClaim
+    type: emptyDir
     accessMode: ReadWriteOnce
-    size: 10Gi
-    storageClass: longhorn-ssd
+    sizeLimit: 10Gi
     advancedMounts:
       zot:
         zot:
