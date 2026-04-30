@@ -196,6 +196,7 @@ configMaps:
         storage:
           rootDirectory: /zot
           remoteCache: true
+          fastRestart: true
           cacheDriver:
             name: redis
             url: redis://:${valkey_password}@valkey:6379
