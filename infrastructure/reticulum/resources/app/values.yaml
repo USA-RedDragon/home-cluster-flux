@@ -53,7 +53,7 @@ configMaps:
 
             discoverable = true
             discovery_name = "Central Oklahoma Reticulum Hub"
-            announce_interval = 10
+            announce_interval = 720
             reachable_on = reticulum.mcswain.dev
             latitude = 35.324577
             longitude = -97.4594459
