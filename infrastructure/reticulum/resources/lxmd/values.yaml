@@ -33,7 +33,6 @@ controllers:
         command:
           - lxmd
           - -p
-          - -s
           - --rnsconfig
           - /app/.reticulum-lxmd
           - --config
