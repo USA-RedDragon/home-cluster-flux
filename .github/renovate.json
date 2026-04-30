@@ -121,6 +121,12 @@
             ]
         },
         {
+            "allowedVersions": "<=100",
+            "matchPackageNames": [
+                "/^docker.io\\/grafana\\/grafana$/"
+            ]
+        },
+        {
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"
