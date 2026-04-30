@@ -75,6 +75,18 @@
             "depNameTemplate": "sensy-one/S1",
             "datasourceTemplate": "github-releases",
             "versioningTemplate": "semver"
+        },
+        {
+            "description": "Detect Helm-style image: { registry, repository, tag } triplets where repository already contains a real registry (registry: line is a pull-through override and is ignored for dep resolution). Allows comments / pullPolicy / sha / other keys interleaved between the three fields.",
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/\\.yaml$/"
+            ],
+            "matchStrings": [
+                "registry:\\s+\\S+\\s+repository:\\s+(?<depName>\\S+)\\s+tag:\\s+['\"]?(?<currentValue>[^\\s'\"]+)['\"]?"
+            ],
+            "datasourceTemplate": "docker",
+            "versioningTemplate": "semver-coerced"
         }
     ],
     "packageRules": [
