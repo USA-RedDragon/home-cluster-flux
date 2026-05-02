@@ -5,6 +5,7 @@ resources:
   - ns.yaml
   - rayhunter.yaml
   - modem.yaml
+  - printer.yaml
   - allsky-mcswain-dev.yaml
   - home-mcswain-dev.yaml
   - vacuum-mcswain-dev.yaml
