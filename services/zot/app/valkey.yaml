@@ -29,5 +29,5 @@ spec:
       data:
         storageClass: longhorn-nvme
         accessMode: ReadWriteOnce
-        size: 2Gi
+        size: 4Gi
         retain: true
