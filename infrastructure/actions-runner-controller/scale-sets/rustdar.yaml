@@ -16,7 +16,7 @@ spec:
         kind: HelmRepository
         namespace: actions-runner-system
         name: actions-runner-controller
-      version: 0.14.0
+      version: 0.14.1
       interval: 1m0s
   install:
     remediation:
