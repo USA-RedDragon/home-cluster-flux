@@ -7,9 +7,10 @@ defaultSettings:
   logLevel: Warn
   backupTarget: s3://longhorn@us-east-1/
   backupTargetCredentialSecret: minio
-  guaranteedInstanceManagerCPU: '25'
+  guaranteedInstanceManagerCPU: '12'
   offlineReplicaRebuilding: true
   orphanResourceAutoDeletion: instance
+  concurrentAutomaticEngineUpgradePerNodeLimit: 3
 longhornManager:
   priorityClass: system-cluster-critical
   tolerations:
