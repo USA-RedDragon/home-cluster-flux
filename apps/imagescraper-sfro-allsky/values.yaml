@@ -69,7 +69,7 @@ controllers:
           - |
             set -euo pipefail
             TS=$(date +%s)
-            curl -fSsL -o "/tmp/${TS}.jpg" "https://zyssufjepmbhqznfuwcw.supabase.co/storage/v1/object/public/status-assets-public/building-0009/allsky/images/image.jpg?cache_bust=${TS}"
+            curl -fSsL -o "/tmp/${TS}.jpg" "https://files-api.tx.starfront.space/status-assets-public/building-0009/allsky/images/image.jpg?${TS}"
             aws s3 --endpoint-url https://s3.mcswain.dev cp "/tmp/${TS}.jpg" "s3://sfro-allsky/${TS}.jpg"
             aws s3 --endpoint-url https://s3.mcswain.dev cp "s3://sfro-allsky/list.txt" /tmp/list.txt || true
             echo "${TS}.jpg" >> /tmp/list.txt
