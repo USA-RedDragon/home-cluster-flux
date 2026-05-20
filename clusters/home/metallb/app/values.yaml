@@ -18,7 +18,7 @@ controller:
 speaker:
   image:
     repository: quay.io/metallb/speaker
-    tag: v0.15.3
+    tag: v0.16.0@sha256:70e7f83255af2e96acfd574ac9f049745639deb2746d35e988008afcc0b80dbd
   resources: {}
   updateStrategy:
     type: OnDelete
