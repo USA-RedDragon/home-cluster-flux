@@ -66,7 +66,7 @@ configMaps:
           [[RNode LoRa]]
             type = RNodeInterface
             enabled = true
-            mode = gateway
+            mode = boundary
             port = tcp://172.29.1.216
             frequency = 925875000
             bandwidth = 250000
@@ -75,21 +75,19 @@ configMaps:
             codingrate = 5
             flow_control = true
 
-            discoverable = true
+            #discoverable = true
             discovery_name = "Central Oklahoma Reticulum Hub"
             announce_interval = 720
 
           [[g00n.cloud Hub]]
             type = BackboneInterface
             enabled = true
-            mode = boundary
             target_host = dfw.us.g00n.cloud
             target_port = 6969
 
           [[RMAP World]]
             type        = BackboneInterface
             enabled     = true
-            mode = boundary
             target_host = rmap.world
             target_port = 4242
 
