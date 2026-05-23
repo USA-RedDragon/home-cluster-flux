@@ -82,12 +82,14 @@ configMaps:
           [[g00n.cloud Hub]]
             type = BackboneInterface
             enabled = true
+            mode = boundary
             target_host = dfw.us.g00n.cloud
             target_port = 6969
 
           [[RMAP World]]
             type        = BackboneInterface
             enabled     = true
+            mode = boundary
             target_host = rmap.world
             target_port = 4242
 
