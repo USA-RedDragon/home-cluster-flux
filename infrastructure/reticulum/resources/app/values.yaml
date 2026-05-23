@@ -38,10 +38,13 @@ configMaps:
   config:
     data:
       config.toml: |
+ 
         [reticulum]
           enable_transport = true
           enable_remote_management = true
           remote_management_allowed = 24cdc22514b8456c56399cb95bad021e
+
+        [logging]
           loglevel = 6
 
         [interfaces]
