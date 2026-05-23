@@ -38,7 +38,7 @@ configMaps:
   config:
     data:
       config.toml: |
- 
+
         [reticulum]
           enable_transport = true
           enable_remote_management = true
