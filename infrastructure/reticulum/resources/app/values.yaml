@@ -45,7 +45,7 @@ configMaps:
           remote_management_allowed = 24cdc22514b8456c56399cb95bad021e
 
         [logging]
-          loglevel = 6
+          loglevel = 7
 
         [interfaces]
           [[Server]]
