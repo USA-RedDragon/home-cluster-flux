@@ -17,7 +17,7 @@ controllers:
       jellyfin:
         image:
           repository: jacob.pub/ghcr.io/jellyfin/jellyfin
-          tag: 10.11.10@sha256:f66273e014b307e4ac46778845ebc1e9ee24b2e57c1fc17d5ec5ac3015649bfa
+          tag: 10.11.10@sha256:6497f0245de93fac642926c065b427362ca5e626e659f690516599c8c3817a38
           pullPolicy: IfNotPresent
         resources:
           requests:
