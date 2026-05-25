@@ -6,7 +6,7 @@ controllers:
     containers:
       gitea:
         image:
-          repository: jacob.pub/docker.io/gitea/gitea
+          repository: jacob.pub/docker.gitea.com/gitea
           tag: 1.26.2@sha256:7d13848af12645600a5f9d93ee2560daa9c6fa6b5b859b7bff3a5e1c0b661031
           pullPolicy: IfNotPresent
         resources:
