@@ -181,6 +181,16 @@ configMaps:
                   - prefix: "**"
                     stripPrefix: false
                     destination: "/registry.k8s.io"
+              - urls:
+                  - https://docker.gitea.com
+                onDemand: true
+                maxRetries: 5
+                retryDelay: 5m
+                onlySigned: false
+                content:
+                  - prefix: "**"
+                    stripPrefix: false
+                    destination: "/docker.gitea.com"
 
         storage:
           rootDirectory: /zot
