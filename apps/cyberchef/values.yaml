@@ -7,7 +7,7 @@ controllers:
       cyberchef:
         image:
           repository: jacob.pub/ghcr.io/gchq/cyberchef
-          tag: v10.24.0@sha256:58d2bcefe3f32b066eafca07353aae31b961ca7765fe4bcb913aba6bb8b8dd81
+          tag: 11.0.0@sha256:45082a0ac41d6beeea2daeb192d8b20c66520362854542f4fe340aab37635f66
           pullPolicy: IfNotPresent
         resources:
           limits:
