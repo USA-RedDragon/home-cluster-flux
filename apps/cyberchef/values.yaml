@@ -6,7 +6,7 @@ controllers:
     containers:
       cyberchef:
         image:
-          repository: jacob.pub/docker.io/mpepping/cyberchef
+          repository: jacob.pub/ghcr.io/gchq/cyberchef
           tag: v10.24.0@sha256:cff5537302cbc57936b888ce4e95eaab1c26c3c2ef2b02568d493d5dcfb1358b
           pullPolicy: IfNotPresent
         resources:
