@@ -16,7 +16,7 @@ controllers:
     containers:
       jellyfin:
         image:
-          repository: jacob.pub/docker.io/jellyfin/jellyfin
+          repository: jacob.pub/ghcr.io/jellyfin/jellyfin
           tag: 10.11.10@sha256:f66273e014b307e4ac46778845ebc1e9ee24b2e57c1fc17d5ec5ac3015649bfa
           pullPolicy: IfNotPresent
         resources:
