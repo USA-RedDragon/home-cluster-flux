@@ -22,8 +22,6 @@ speaker:
   resources: {}
   updateStrategy:
     type: OnDelete
-  frrk8s:
-    enabled: false
 
   reloader:
     resources: {}
@@ -32,6 +30,9 @@ speaker:
     resources: {}
 
   extraContainers: []
+
+frrk8s:
+  enabled: false
 
 crds:
   enabled: true
