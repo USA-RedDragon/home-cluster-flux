@@ -22,13 +22,8 @@ speaker:
   resources: {}
   updateStrategy:
     type: OnDelete
-  frr:
+  frrk8s:
     enabled: false
-    image:
-      repository: quay.io/frrouting/frr
-      tag: 10.6.1@sha256:813497af103e972600f6161012b3bf2a2a1c5ea10d09cd1eacd74f1dc510a57b
-    metricsPort: 7473
-    resources: {}
 
   reloader:
     resources: {}
