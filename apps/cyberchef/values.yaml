@@ -28,7 +28,7 @@ service:
     controller: cyberchef
     ports:
       http:
-        port: 8000
+        port: 8080
 
 route:
   cyberchef:
@@ -43,7 +43,7 @@ route:
     rules:
       - backendRefs:
           - name: cyberchef
-            port: 8000
+            port: 8080
         matches:
           - path:
               type: PathPrefix
