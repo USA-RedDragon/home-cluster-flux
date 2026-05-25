@@ -12,7 +12,7 @@ controllers:
     initContainers:
       config-copy:
         image:
-          repository: busybox
+          repository: jacob.pub/docker.io/busybox
           tag: 1.38.0@sha256:b6762ddf4a50aabb5f4d21aa6f447d05d5633fb09f09c08b33f22356a2f98be0
           pullPolicy: IfNotPresent
         command: ["sh", "-c", "cp /configmap/config.yml /config/config.yml"]
