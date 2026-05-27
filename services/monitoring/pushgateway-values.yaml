@@ -14,7 +14,7 @@ namespaceOverride: ""
 image:
   repository: jacob.pub/quay.io/prometheus/pushgateway
   # if not set appVersion field from Chart.yaml is used
-  tag: v1.11.2
+  tag: v1.11.3@sha256:74fa117cef2d7e383112d25139ff1c2d2e309c35389a9e0554a47136a1482e48
 
 # Optional pod imagePullSecrets
 imagePullSecrets:
