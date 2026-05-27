@@ -27,7 +27,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: nvdp
-      version: '0.19.1'
+      version: '0.19.2'
       interval: 1m0s
   valuesFrom:
     - kind: ConfigMap
