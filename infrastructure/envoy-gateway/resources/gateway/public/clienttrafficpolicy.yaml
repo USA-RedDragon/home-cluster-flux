@@ -4,6 +4,7 @@ metadata:
   name: public-client-policy
   namespace: envoy-gateway-system
 spec:
+  http3: {}
   connection:
     bufferLimit: 4Mi
     maxAcceptPerSocketEvent: 1
