@@ -4,7 +4,7 @@ controllers:
       mariadb:
         image:
           repository: jacob.pub/ghcr.io/mariadb/mariadb
-          tag: 12.2.2-noble@sha256:6f1227ab81fe4f96e4b5d22992808515abc35a4891b357d4e94c851e8c233b54
+          tag: 12.2.2-noble@sha256:71954573ee2d5d0a3658cf8d0bc4f34e87b90ffcd109752344ec6f29a49583ef
         env:
           MARIADB_DATABASE: indi_allsky
           MARIADB_USER: indi_allsky
