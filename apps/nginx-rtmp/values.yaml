@@ -7,7 +7,7 @@ controllers:
       nginx-rtmp:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/nginx-rtmp
-          tag: 1.31.0@sha256:b77ca5b3d24fd2e2a0123dbfbadb82b655e53f6a722c1359f1bc8dfbd826a3fb
+          tag: 1.31.0@sha256:1e33c11eed9fab83dec33da6b59aef1d3282422123c5b3e567c76127306fb8a8
           pullPolicy: IfNotPresent
         resources:
           limits:
