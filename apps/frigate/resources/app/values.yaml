@@ -351,7 +351,7 @@ configMaps:
             birdseye:
               enabled: false
             motion:
-              threshold: 35
+              threshold: 50
               contour_area: 10
               improve_contrast: true
               mask:
