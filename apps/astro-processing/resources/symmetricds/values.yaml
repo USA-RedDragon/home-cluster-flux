@@ -16,7 +16,7 @@ controllers:
       symmetricds:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/symmetricds
-          tag: "3.17.5@sha256:1fc4cd231ba846ebb99401ff0fad21a87051f5f9a58b97976f3b685384684a24"
+          tag: "3.17.6@sha256:803a1e56d3766456213e4dca0f61dd57ec8bd266fb1090a1f1a2e3c25ab5b668"
         probes:
           liveness:
             enabled: true
