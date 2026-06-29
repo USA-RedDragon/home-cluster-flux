@@ -33,7 +33,7 @@ spec:
     container:
       image:
         repository: jacob.pub/docker.io/nats
-        tag: 2.14.3-alpine@sha256:ca6e0b64f0caee7e1edd17bfa8a31161e73aa35c112b01b7ba6fc762ffa9dc01
+        tag: 2.14.3-alpine@sha256:c11af972c99ae542de8925e6a7d9c533aa1eb039660420d2074beed6089b3bf0
       env:
         TOKEN:
           valueFrom:
