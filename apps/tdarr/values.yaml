@@ -110,6 +110,11 @@ persistence:
     server: 192.168.1.135
     globalMounts:
       - path: /media
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
 
 ingress:
   tailscale:
