@@ -109,7 +109,7 @@ persistence:
     path: /mnt/data/media
     server: 192.168.1.135
     globalMounts:
-      - path: /media/anime
+      - path: /media
 
 ingress:
   tailscale:
