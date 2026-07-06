@@ -1436,10 +1436,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>tdarr</td>
+    <td rowspan="2">tdarr</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/tdarr/restic.yaml">restic</a></td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/tdarr/helm.yaml">tdarr</a></td>
-    <td></td>
   </tr>
 </table>
 
