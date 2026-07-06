@@ -78,7 +78,7 @@ persistence:
   transcode-cache:
     enabled: true
     type: emptyDir
-    sizeLimit: 150Gi
+    sizeLimit: 250Gi
     globalMounts:
       - path: /temp
   app-server:
