@@ -13,7 +13,7 @@ controllers:
       tdarr:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/tdarr
-          tag: 2.82.02
+          tag: 2.82.02@sha256:df4cc969e5c8f0cc4616b844fc43631525ef7fece0dace89701db11615841feb
           pullPolicy: IfNotPresent
         resources:
           requests:
