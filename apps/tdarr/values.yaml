@@ -25,16 +25,10 @@ controllers:
         probes:
           liveness:
             enabled: true
-            spec:
-              initialDelaySeconds: 20
           readiness:
             enabled: true
-            spec:
-              initialDelaySeconds: 20
           startup:
             enabled: true
-            spec:
-              initialDelaySeconds: 20
         env:
           - name: NVIDIA_VISIBLE_DEVICES
             value: all
