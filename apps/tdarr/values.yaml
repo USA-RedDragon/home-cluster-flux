@@ -5,8 +5,7 @@ controllers:
     replicas: 1
     pod:
       nodeSelector:
-        nvidia.com/gpu.product: NVIDIA-GeForce-GTX-1060-3GB
-      runtimeClassName: nvidia
+        gpu.intel.com/device-id.0300-56a5.present: "true"
       securityContext:
         fsGroup: 568
     containers:
@@ -21,7 +20,7 @@ controllers:
             memory: 22Gi
           limits:
             memory: 40Gi
-            nvidia.com/gpu: 1
+            gpu.intel.com/i915: 1
         probes:
           liveness:
             enabled: true
@@ -30,10 +29,6 @@ controllers:
           startup:
             enabled: true
         env:
-          - name: NVIDIA_VISIBLE_DEVICES
-            value: all
-          - name: NVIDIA_DRIVER_CAPABILITIES
-            value: all
           - name: TZ
             value: America/Chicago
           - name: internalNode
