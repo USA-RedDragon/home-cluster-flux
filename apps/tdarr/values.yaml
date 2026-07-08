@@ -73,7 +73,7 @@ persistence:
   app-server:
     enabled: true
     type: persistentVolumeClaim
-    size: 3Gi
+    size: 30Gi
     accessMode: ReadWriteOnce
     storageClass: longhorn-ssd
     globalMounts:
