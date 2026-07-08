@@ -2494,7 +2494,7 @@ prometheusOperator:
   thanosImage:
     registry: jacob.pub
     repository: quay.io/thanos/thanos
-    tag: v0.41.0@sha256:cf3e9b292e4302ad4a4955b56379703aea39516607d382a57604a3d003c35d10
+    tag: v0.42.0@sha256:cc1975aaeb64a744dc11319892345f4822f72860f0efcff030111fe08328bfa4
 
   ## Set a Label Selector to filter watched prometheus and prometheusAgent
   ##
@@ -3931,7 +3931,7 @@ thanosRuler:
     image:
       registry: jacob.pub
       repository: quay.io/thanos/thanos
-      tag: v0.41.0@sha256:cf3e9b292e4302ad4a4955b56379703aea39516607d382a57604a3d003c35d10
+      tag: v0.42.0@sha256:cc1975aaeb64a744dc11319892345f4822f72860f0efcff030111fe08328bfa4
 
     ## Namespaces to be selected for PrometheusRules discovery.
     ## If nil, select own namespace. Namespaces to be selected for ServiceMonitor discovery.
