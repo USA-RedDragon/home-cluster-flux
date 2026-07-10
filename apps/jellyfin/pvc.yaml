@@ -13,9 +13,10 @@ spec:
   storageClassName: jellyfin-media
   mountOptions:
     - hard
-    - nfsvers=4.1
+    - nfsvers=4.2
     - rsize=1048576
     - wsize=1048576
+    - nconnect=8
     - lookupcache=positive
   nfs:
     path: /mnt/data/media
