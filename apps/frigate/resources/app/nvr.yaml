@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: frigate-nvr
+  namespace: frigate
+spec:
+  capacity:
+    storage: 1Ti
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: frigate-nvr
+  mountOptions:
+    - hard
+    - nfsvers=4.2
+    - rsize=131072
+    - wsize=131072
+    - nconnect=8
+    - lookupcache=all
+    - nocto
+    - acregmin=60
+    - acregmax=120
+    - acdirmin=60
+    - acdirmax=120
+  nfs:
+    path: /mnt/data/frigate
+    server: 192.168.1.135
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frigate-nvr
+  namespace: frigate
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: frigate-nvr
+  resources:
+    requests:
+      storage: 1Ti
+  volumeName: frigate-nvr

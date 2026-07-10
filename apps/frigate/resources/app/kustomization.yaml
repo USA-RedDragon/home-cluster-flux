@@ -5,6 +5,7 @@ resources:
   - helm.yaml
   - backends.yaml
   - forward-auth.yaml
+  - nvr.yaml
 configMapGenerator:
   - name: frigate-chart-values
     files:
