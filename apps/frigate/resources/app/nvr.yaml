@@ -17,12 +17,6 @@ spec:
     - rsize=131072
     - wsize=131072
     - nconnect=8
-    - lookupcache=all
-    - nocto
-    - acregmin=60
-    - acregmax=120
-    - acdirmin=60
-    - acdirmax=120
   nfs:
     path: /mnt/data/frigate
     server: 192.168.1.135
