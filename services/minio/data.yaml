@@ -16,7 +16,13 @@ spec:
     - nfsvers=4.2
     - rsize=131072
     - wsize=131072
-    - lookupcache=positive
+    - nconnect=8
+    - lookupcache=all
+    - nocto
+    - acregmin=60
+    - acregmax=120
+    - acdirmin=60
+    - acdirmax=120
   nfs:
     path: /mnt/data/K8S/minio
     server: 192.168.1.135
