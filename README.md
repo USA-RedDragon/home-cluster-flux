@@ -55,7 +55,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#imagescraper-mesonet">imagescraper-mesonet</a></li>
   <li><a href="#imagescraper-sfro-allsky">imagescraper-sfro-allsky</a></li>
   <li><a href="#immich">immich</a></li>
-  <li><a href="#indi-allsky">indi-allsky</a></li>
   <li><a href="#intel-device-plugin">intel-device-plugin</a></li>
   <li><a href="#iperf3">iperf3</a></li>
   <li><a href="#jellyfin">jellyfin</a></li>
@@ -73,7 +72,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#monitoring">monitoring</a></li>
   <li><a href="#mosquitto">mosquitto</a></li>
   <li><a href="#mqtt-wx">mqtt-wx</a></li>
-  <li><a href="#navidrome">navidrome</a></li>
   <li><a href="#nginx-rtmp">nginx-rtmp</a></li>
   <li><a href="#nvidia-device-plugin">nvidia-device-plugin</a></li>
   <li><a href="#obico">obico</a></li>
@@ -691,26 +689,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
 </table>
 
-<h4>indi-allsky</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td rowspan="2">indi-allsky</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/indi-allsky/app/helm.yaml">indi-allsky</a></td>
-    <td rowspan="2"></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/indi-allsky/mariadb/helm.yaml">indi-allsky-mariadb</a></td>
-  </tr>
-</table>
-
 <h4>intel-device-plugin</h2>
 <table>
   <tr>
@@ -1044,26 +1022,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/mqtt-wx/helm.yaml">mqtt-wx</a></td>
     <td></td>
-  </tr>
-</table>
-
-<h4>navidrome</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td rowspan="2">navidrome</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/navidrome/resources/app/helm.yaml">navidrome</a></td>
-    <td rowspan="2"></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/navidrome/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
