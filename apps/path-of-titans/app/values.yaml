@@ -15,13 +15,24 @@ controllers:
         probes:
           liveness:
             enabled: true
+            spec:
+              failureThreshold: 10
           readiness:
             enabled: true
+            spec:
+              failureThreshold: 10
           startup:
             enabled: true
+            spec:
+              failureThreshold: 10
         env:
         - name: TZ
           value: America/Chicago
+        - name: SERVER_GUID
+          valueFrom:
+            secretKeyRef:
+              name: path-of-titans
+              key: server-guid
         - name: SERVER_NAME
           value: "JACOB TEST SERVER"
         - name: RCON_IP
