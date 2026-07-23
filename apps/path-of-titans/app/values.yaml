@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+controllers:
+  path-of-titans:
+    replicas: 1
+    containers:
+      path-of-titans:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
+          tag: 48554h25@sha256:85b5ab6df38b9f5d92b0be627b26987cd3d7282ee89110289e85058fdc2dd16b
+          pullPolicy: IfNotPresent
+        resources:
+          limits: {}
+          requests:
+            memory: 300Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+        - name: TZ
+          value: America/Chicago
+        - name: SERVER_NAME
+          value: "JACOB TEST SERVER"
+        - name: RCON_IP
+          value: "0.0.0.0"
+        - name: RCON_PORT
+          value: "3011"
+        - name: RCON_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: path-of-titans
+              key: rcon-password
+        - name: AUTH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: path-of-titans
+              key: auth-token
+
+service:
+  path-of-titans:
+    controller: path-of-titans
+    ports:
+      game:
+        port: 7777
+        primary: true
+      rcon:
+        port: 3011
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 8Gi
+    storageClass: longhorn-nvme
+    globalMounts:
+      - path: /opt/path-of-titans/PathOfTitans/Saved
+
+route:
+  game:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: path-of-titans
+    rules:
+      - backendRefs:
+          - name: path-of-titans
+            port: 7777
+  rcon:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: path-of-titans-rcon
+    rules:
+      - backendRefs:
+          - name: path-of-titans
+            port: 3011
