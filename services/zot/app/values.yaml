@@ -18,8 +18,8 @@ controllers:
         - serve
         - /etc/zot/config.yaml
         image:
-          repository: ghcr.io/usa-reddragon/zot
-          tag: test-fast-restart@sha256:15ac4b7c65047622ab8b54f63c09736cc9aecdf97689cdc32b49eacce8d3b672
+          repository: ghcr.io/project-zot/zot
+          tag: v2.1.18@sha256:6f7bf2b8e43437c7c3a121bc80214845c85f27321e66f2ff4be6bf4220775fd7
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
