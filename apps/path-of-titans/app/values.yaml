@@ -9,6 +9,26 @@ controllers:
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+    initContainers:
+      # BattlEye rewrites BEServer_x64.cfg on every boot, but its directory is on
+      # the read-only rootfs. Seed an emptyDir with the shipped BattlEye files so
+      # the directory can be mounted writable over the image's copy.
+      battleye-seed:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
+          tag: 48554h25@sha256:2ceb9469743da7b4c494c4178e3d308ca759ec5cda2f4f7f55251152873d59b2
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - cp -r /opt/path-of-titans/PathOfTitans/Binaries/Linux/BattlEye/* /battleye/
+        securityContext: &security-context
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
     containers:
       path-of-titans:
         image:
@@ -19,13 +39,7 @@ controllers:
           limits: {}
           requests:
             memory: 300Mi
-        securityContext:
-          readOnlyRootFilesystem: true
-          allowPrivilegeEscalation: false
-          seccompProfile:
-            type: RuntimeDefault
-          capabilities:
-            drop: ["ALL"]
+        securityContext: *security-context
         probes:
           liveness:
             enabled: true
@@ -82,6 +96,16 @@ persistence:
     storageClass: longhorn-nvme
     globalMounts:
       - path: /opt/path-of-titans/PathOfTitans/Saved
+  battleye:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 256Mi
+    advancedMounts:
+      path-of-titans:
+        battleye-seed:
+          - path: /battleye
+        path-of-titans:
+          - path: /opt/path-of-titans/PathOfTitans/Binaries/Linux/BattlEye
 
 route:
   game:
