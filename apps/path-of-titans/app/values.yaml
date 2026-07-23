@@ -2,6 +2,13 @@
 controllers:
   path-of-titans:
     replicas: 1
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
     containers:
       path-of-titans:
         image:
@@ -12,6 +19,11 @@ controllers:
           limits: {}
           requests:
             memory: 300Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
         probes:
           liveness:
             enabled: true
