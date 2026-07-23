@@ -1,0 +1,29 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: path-of-titans
+  namespace: path-of-titans
+spec:
+  interval: 1h
+  targetNamespace: path-of-titans
+  path: ./apps/path-of-titans/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: restic
+  namespace: path-of-titans
+spec:
+  interval: 1h
+  targetNamespace: path-of-titans
+  path: ./apps/path-of-titans/restic
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system

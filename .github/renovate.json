@@ -191,6 +191,16 @@
             "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)-(?<build>\\d+)$"
         },
         {
+            "description": "Path of Titans tags are <build>h<hotfix>, e.g. 48554h25",
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchPackageNames": [
+                "ghcr.io/usa-reddragon/path-of-titans"
+            ],
+            "versioning": "regex:^(?<major>\\d+)h(?<minor>\\d+)$"
+        },
+        {
             "matchUpdateTypes": [
                 "minor"
             ],
