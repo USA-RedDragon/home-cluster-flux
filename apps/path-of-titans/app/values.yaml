@@ -56,9 +56,10 @@ service:
     ports:
       game:
         port: 7777
-        primary: true
+        protocol: UDP
       rcon:
         port: 3011
+        primary: true
 
 persistence:
   data:
@@ -73,7 +74,7 @@ persistence:
 route:
   game:
     enabled: true
-    kind: TCPRoute
+    kind: UDPRoute
     parentRefs:
       - name: public
         namespace: envoy-gateway-system
