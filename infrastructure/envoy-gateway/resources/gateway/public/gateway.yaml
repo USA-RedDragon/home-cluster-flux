@@ -13,7 +13,7 @@ spec:
   listeners:
     - name: path-of-titans-rcon
       protocol: TCP
-      port: 3011
+      port: 7779
       allowedRoutes:
         namespaces:
           from: Selector
