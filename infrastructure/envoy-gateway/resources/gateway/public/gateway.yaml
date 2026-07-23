@@ -11,15 +11,6 @@ spec:
       kind: EnvoyProxy
       name: public-proxy
   listeners:
-    - name: path-of-titans-rcon
-      protocol: UDP
-      port: 7779
-      allowedRoutes:
-        namespaces:
-          from: Selector
-          selector:
-              matchLabels:
-                  kubernetes.io/metadata.name: path-of-titans
     - name: path-of-titans
       protocol: UDP
       port: 7777

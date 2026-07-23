@@ -101,6 +101,12 @@ service:
         port: 7777
         protocol: UDP
         primary: true
+  rcon:
+    controller: path-of-titans
+    annotations:
+      tailscale.com/expose: "true"
+      tailscale.com/hostname: "path-of-titans-rcon"
+    ports:
       rcon:
         port: 7779
         protocol: UDP
