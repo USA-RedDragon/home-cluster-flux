@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  tfc-agent:
+    replicas: 1
+    containers:
+      tfc-agent:
+        image:
+          repository: hashicorp/tfc-agent
+          tag: 1.29.0
+          pullPolicy: IfNotPresent
+        resources:
+          requests: {}
+          limits: {}
+        env:
+          TFC_ADDRESS: "https://tfe.mcswain.dev"
+          TFC_AGENT_TOKEN:
+            valueFrom:
+              secretKeyRef:
+                name: tfc-agent
+                key: token
+          TFC_AGENT_NAME: "tfc-agent"
