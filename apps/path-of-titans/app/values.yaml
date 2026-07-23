@@ -38,7 +38,8 @@ controllers:
         resources:
           limits: {}
           requests:
-            memory: 300Mi
+            cpu: 1000m
+            memory: 5500Mi
         securityContext: *security-context
         probes:
           liveness:
