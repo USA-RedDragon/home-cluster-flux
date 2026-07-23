@@ -77,6 +77,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#obico">obico</a></li>
   <li><a href="#openspeedtest">openspeedtest</a></li>
   <li><a href="#paperless-ngx">paperless-ngx</a></li>
+  <li><a href="#path-of-titans">path-of-titans</a></li>
   <li><a href="#piaware">piaware</a></li>
   <li><a href="#ping-exporter">ping-exporter</a></li>
   <li><a href="#prometheus">prometheus</a></li>
@@ -1106,6 +1107,26 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/paperless-ngx/restic.yaml">restic</a></td>
+  </tr>
+</table>
+
+<h4>path-of-titans</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td rowspan="2">path-of-titans</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/path-of-titans/app/helm.yaml">path-of-titans</a></td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/path-of-titans/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
