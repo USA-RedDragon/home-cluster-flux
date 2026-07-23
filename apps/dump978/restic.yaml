@@ -38,7 +38,7 @@ spec:
           restic:
             image: &image
               repository: jacob.pub/ghcr.io/gabe565/restic
-              tag: 0.19.1@sha256:3c42c281443525045d82dd46f8e020569b13b46bc60fefb25e1428a6cff53d25
+              tag: 0.19.1@sha256:04a99c97c6d088a853808d2cb376c63257ac610bb1f5a3387c2eceb7762c0809
             workingDir: /data
             envFrom: &envFrom
               - secretRef:
