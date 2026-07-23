@@ -57,4 +57,4 @@ persistence:
     name: dynatrace-otel-collector
     globalMounts:
     - path: /etc/otelcol/config.yaml
-      subpath: config.yml
+      subPath: config.yml
