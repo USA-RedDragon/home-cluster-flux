@@ -13,7 +13,7 @@ controllers:
       path-of-titans:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
-          tag: 48554h25@sha256:6973dce1ac2aff3350175e1577165460baabb134c90dbe042710321394e7039d
+          tag: 48554h25@sha256:2ceb9469743da7b4c494c4178e3d308ca759ec5cda2f4f7f55251152873d59b2
           pullPolicy: IfNotPresent
         resources:
           limits: {}
