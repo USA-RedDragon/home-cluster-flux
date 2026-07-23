@@ -35,8 +35,6 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
           tag: 48554h25@sha256:37afb7b9ca5f9a65f45d9372554672e6ec2cd20338502424466142cac7eb3f65
           pullPolicy: IfNotPresent
-        args:
-          - -SentryDisable
         resources:
           limits: {}
           requests:
@@ -45,16 +43,32 @@ controllers:
         probes:
           liveness:
             enabled: true
-            spec:
+            custom: true
+            spec: &probe
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  # /proc/net/udp lists ports in hex, so render 7777 as 1E61
+                  - 'grep -qE ":$(printf %04X 7777)[[:space:]]" /proc/net/udp'
+              periodSeconds: 10
               failureThreshold: 10
           readiness:
             enabled: true
-            spec:
-              failureThreshold: 10
+            custom: true
+            spec: *probe
           startup:
             enabled: true
+            custom: true
             spec:
-              failureThreshold: 10
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  # /proc/net/udp lists ports in hex, so render 7777 as 1E61
+                  - 'grep -qE ":$(printf %04X 7777)[[:space:]]" /proc/net/udp'
+              periodSeconds: 10
+              failureThreshold: 30
         env:
         - name: TZ
           value: America/Chicago
@@ -85,9 +99,10 @@ service:
       game:
         port: 7777
         protocol: UDP
+        primary: true
       rcon:
         port: 7779
-        primary: true
+        protocol: UDP
 
 persistence:
   data:
@@ -123,7 +138,7 @@ route:
             port: 7777
   rcon:
     enabled: true
-    kind: TCPRoute
+    kind: UDPRoute
     parentRefs:
       - name: public
         namespace: envoy-gateway-system
