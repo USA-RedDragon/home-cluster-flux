@@ -16,7 +16,7 @@ controllers:
       battleye-seed:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
-          tag: 48554h25@sha256:2ceb9469743da7b4c494c4178e3d308ca759ec5cda2f4f7f55251152873d59b2
+          tag: 48554h25@sha256:1727310a43fe08c5bc3143ffb1361d0c654485f89b9d32ebfa46145d46bbcfd7
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -33,7 +33,7 @@ controllers:
       path-of-titans:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
-          tag: 48554h25@sha256:2ceb9469743da7b4c494c4178e3d308ca759ec5cda2f4f7f55251152873d59b2
+          tag: 48554h25@sha256:1727310a43fe08c5bc3143ffb1361d0c654485f89b9d32ebfa46145d46bbcfd7
           pullPolicy: IfNotPresent
         resources:
           limits: {}
