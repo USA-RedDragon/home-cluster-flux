@@ -51,8 +51,6 @@ controllers:
           value: "JACOB TEST SERVER"
         - name: RCON_IP
           value: "0.0.0.0"
-        - name: RCON_PORT
-          value: "3011"
         - name: RCON_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -72,7 +70,7 @@ service:
         port: 7777
         protocol: UDP
       rcon:
-        port: 3011
+        port: 7779
         primary: true
 
 persistence:
@@ -107,4 +105,4 @@ route:
     rules:
       - backendRefs:
           - name: path-of-titans
-            port: 3011
+            port: 7779
