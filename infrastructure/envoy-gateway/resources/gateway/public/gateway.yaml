@@ -12,7 +12,7 @@ spec:
       name: public-proxy
   listeners:
     - name: path-of-titans-rcon
-      protocol: TCP
+      protocol: UDP
       port: 7779
       allowedRoutes:
         namespaces:
