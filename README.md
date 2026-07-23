@@ -95,6 +95,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#tailscale-peer-relay">tailscale-peer-relay</a></li>
   <li><a href="#tandoor">tandoor</a></li>
   <li><a href="#tdarr">tdarr</a></li>
+  <li><a href="#tfc-agent">tfc-agent</a></li>
   <li><a href="#tfe">tfe</a></li>
   <li><a href="#trunk-recorder">trunk-recorder</a></li>
   <li><a href="#ultrafeeder">ultrafeeder</a></li>
@@ -1440,6 +1441,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/tdarr/helm.yaml">tdarr</a></td>
+  </tr>
+</table>
+
+<h4>tfc-agent</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>tfc-agent</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/tfc-agent/helm.yaml">tfc-agent</a></td>
+    <td></td>
   </tr>
 </table>
 
