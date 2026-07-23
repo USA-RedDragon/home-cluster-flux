@@ -44,6 +44,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#device-plugin">device-plugin</a></li>
   <li><a href="#dmrhub">dmrhub</a></li>
   <li><a href="#dump978">dump978</a></li>
+  <li><a href="#dynatrace-otel-collector">dynatrace-otel-collector</a></li>
   <li><a href="#envoy-gateway">envoy-gateway</a></li>
   <li><a href="#ephemeris">ephemeris</a></li>
   <li><a href="#external-dns-internal">external-dns-internal</a></li>
@@ -499,6 +500,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/dump978/restic.yaml">restic</a></td>
+  </tr>
+</table>
+
+<h4>dynatrace-otel-collector</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>dynatrace-otel-collector</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/dynatrace-otel-collector/helm.yaml">dynatrace-otel-collector</a></td>
+    <td></td>
   </tr>
 </table>
 
