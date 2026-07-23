@@ -1,0 +1,29 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: path-of-titans
+  namespace: path-of-titans
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: path-of-titans
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: alderongames.com
+        - matchPattern: "*.alderongames.com"
+        - matchPattern: "*.pathoftitans.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
