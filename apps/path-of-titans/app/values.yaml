@@ -35,6 +35,8 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
           tag: 48554h25@sha256:327f5c216930dd6bff6f8ad18f493bfdb3bcc2695f2acfe473ecb9eb3bc20bde
           pullPolicy: IfNotPresent
+        args:
+          - -SentryDisable
         resources:
           limits: {}
           requests:
