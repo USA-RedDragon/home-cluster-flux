@@ -21,7 +21,7 @@ spec:
               matchLabels:
                   kubernetes.io/metadata.name: path-of-titans
     - name: path-of-titans
-      protocol: TCP
+      protocol: UDP
       port: 7777
       allowedRoutes:
         namespaces:
