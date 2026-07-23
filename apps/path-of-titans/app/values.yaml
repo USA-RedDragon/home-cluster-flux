@@ -143,14 +143,3 @@ route:
       - backendRefs:
           - name: path-of-titans
             port: 7777
-  rcon:
-    enabled: true
-    kind: UDPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: path-of-titans-rcon
-    rules:
-      - backendRefs:
-          - name: path-of-titans
-            port: 7779
