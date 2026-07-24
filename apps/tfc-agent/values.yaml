@@ -7,7 +7,7 @@ controllers:
       tfc-agent:
         image:
           repository: hashicorp/tfc-agent
-          tag: 1.29.0@sha256:8d4e9879083e183605b4eb8afcf62a4153660c0cb4c17ba00c5c94bd04a90a2a
+          tag: 1.30.0@sha256:555085f130fdab7c452204457030ce533a249a87dd73d80ee4d0a3bbc88ab82b
           pullPolicy: IfNotPresent
         resources:
           requests: {}
