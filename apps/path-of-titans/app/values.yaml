@@ -171,4 +171,4 @@ configMaps:
         RestartLengthInSeconds=10800
         ServerDeadBodyTime=0
         [BattlEye]
-        bEnabled=true
+        bEnabled=false
