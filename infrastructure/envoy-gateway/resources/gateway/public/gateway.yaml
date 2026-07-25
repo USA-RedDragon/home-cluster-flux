@@ -20,6 +20,69 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: path-of-titans
+    - name: path-of-titans-stats-tcp
+      protocol: TCP
+      port: 7780
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: path-of-titans
+    - name: path-of-titans-stats-udp
+      protocol: UDP
+      port: 7780
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: path-of-titans
+    - name: path-of-titans-rcon
+      protocol: UDP
+      port: 7779
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: path-of-titans
+    - name: path-of-titans-query-tcp
+      protocol: TCP
+      port: 7781
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: path-of-titans
+    - name: path-of-titans-query-udp
+      protocol: UDP
+      port: 7781
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: path-of-titans
+    - name: path-of-titans-reserved-udp
+      protocol: UDP
+      port: 7778
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: path-of-titans
+    - name: path-of-titans-reserved-tcp
+      protocol: TCP
+      port: 7778
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: path-of-titans
     - name: frigate-webrtc-udp
       protocol: UDP
       port: 8555
