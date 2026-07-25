@@ -130,6 +130,13 @@ persistence:
           - path: /battleye
         path-of-titans:
           - path: /opt/path-of-titans/PathOfTitans/Binaries/Linux/BattlEye
+  configmap:
+    enabled: true
+    type: configMap
+    name: path-of-titans
+    globalMounts:
+    - path: /opt/path-of-titans/PathOfTitans/Saved/Config/LinuxServer/Game.ini
+      subPath: Game.ini
 
 route:
   game:
@@ -143,3 +150,25 @@ route:
       - backendRefs:
           - name: path-of-titans
             port: 7777
+
+configMaps:
+  config:
+    data:
+      Game.ini: |
+        [/Script/PathOfTitans.IGameSession]
+        ServerName=Jacob Test Server
+        MaxPlayers=100
+        ServerPassword=
+        bServerPaidUsersOnly=false
+        bServerAllowChat=true
+        bServerGlobalChat=true
+        bServerFish=true
+        bServerWaterQualitySystem=true
+        bServerWaystoneCooldownRemoval=true
+        bServerFallDamage=true
+        ServerDiscord=
+        bServerAutoRestart=false
+        RestartLengthInSeconds=10800
+        ServerDeadBodyTime=0
+        [BattlEye]
+        bEnabled=true
