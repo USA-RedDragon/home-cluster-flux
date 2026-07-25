@@ -16,7 +16,7 @@ controllers:
       battleye-seed:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
-          tag: 48554h25@sha256:93cf8ee35c247c753496ba854cb95b2f51c052569c074c8ad102eaa1cf06694e
+          tag: 50012h5@sha256:99185b3896ecf5ba3a3fd20be892dfa02ae395491215427afcbcbb01ce740d4a
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
