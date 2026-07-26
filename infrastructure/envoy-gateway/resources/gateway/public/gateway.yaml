@@ -47,36 +47,9 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: path-of-titans
-    - name: path-of-titans-query-tcp
-      protocol: TCP
-      port: 7781
-      allowedRoutes:
-        namespaces:
-          from: Selector
-          selector:
-              matchLabels:
-                  kubernetes.io/metadata.name: path-of-titans
-    - name: path-of-titans-query-udp
+    - name: path-of-titans-query
       protocol: UDP
       port: 7781
-      allowedRoutes:
-        namespaces:
-          from: Selector
-          selector:
-              matchLabels:
-                  kubernetes.io/metadata.name: path-of-titans
-    - name: path-of-titans-reserved-udp
-      protocol: UDP
-      port: 7778
-      allowedRoutes:
-        namespaces:
-          from: Selector
-          selector:
-              matchLabels:
-                  kubernetes.io/metadata.name: path-of-titans
-    - name: path-of-titans-reserved-tcp
-      protocol: TCP
-      port: 7778
       allowedRoutes:
         namespaces:
           from: Selector
