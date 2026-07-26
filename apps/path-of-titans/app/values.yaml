@@ -107,6 +107,11 @@ controllers:
             secretKeyRef:
               name: path-of-titans
               key: server-guid
+        - name: RCON_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: path-of-titans
+              key: rcon-password
         - name: SERVER_LIST_IP
           valueFrom:
             secretKeyRef:
