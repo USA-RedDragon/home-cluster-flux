@@ -6,7 +6,7 @@ controllers:
       minAvailable: 1
     pod:
       priorityClassName: game-server
-      terminationGracePeriodSeconds: 360
+      terminationGracePeriodSeconds: 420
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
