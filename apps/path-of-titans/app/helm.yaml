@@ -4,9 +4,6 @@ metadata:
   name: path-of-titans
   namespace: path-of-titans
 spec:
-  install:
-    remediation:
-      retries: -1
   interval: 60m0s
   driftDetection:
     mode: enabled
