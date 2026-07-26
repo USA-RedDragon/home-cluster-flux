@@ -60,10 +60,12 @@ controllers:
                     -a 127.0.0.1:7779 -p "$RCON_PASSWORD" "Restart 300" || exit 0
                   sleep 300
         resources:
-          limits: {}
           requests:
-            cpu: 1000m
+            cpu: 2000m
             memory: 5500Mi
+          limits:
+            cpu: 2000m
+            memory: 10000Mi
         securityContext: *security-context
         probes:
           liveness:
