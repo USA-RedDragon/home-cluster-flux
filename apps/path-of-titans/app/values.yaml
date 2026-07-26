@@ -6,7 +6,7 @@ controllers:
       minAvailable: 1
     pod:
       priorityClassName: game-server
-      terminationGracePeriodSeconds: 420
+      terminationGracePeriodSeconds: 700
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -118,8 +118,8 @@ controllers:
                 - -c
                 - |
                   if /opt/bin/ld-musl-x86_64.so.1 /opt/bin/rcon \
-                       -a 127.0.0.1:7779 -p "$RCON_PASSWORD" "Restart 300"; then
-                    sleep 300
+                       -a 127.0.0.1:7779 -p "$RCON_PASSWORD" "Restart 600"; then
+                    sleep 600
                   else
                     echo "preStop: RCON restart failed, shutting down now" >&2
                     exit 1
