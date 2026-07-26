@@ -135,23 +135,11 @@ service:
         port: 7777
         protocol: UDP
         primary: true
-      rcon:
-        port: 7779
-        protocol: TCP
-      stats-tcp:
-        port: 7780
-        protocol: TCP
-      stats-udp:
-        port: 7780
-        protocol: UDP
       query:
         port: 7781
         protocol: UDP
   rcon:
     controller: path-of-titans
-    annotations:
-      tailscale.com/expose: "true"
-      tailscale.com/hostname: "path-of-titans-rcon"
     ports:
       rcon:
         port: 7779
@@ -204,17 +192,6 @@ route:
       - backendRefs:
           - name: path-of-titans
             port: 7777
-  rcon:
-    enabled: true
-    kind: TCPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: path-of-titans-rcon
-    rules:
-      - backendRefs:
-          - name: path-of-titans
-            port: 7779
   query:
     enabled: true
     kind: UDPRoute
