@@ -20,15 +20,6 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: path-of-titans
-    - name: path-of-titans-rcon
-      protocol: TCP
-      port: 7779
-      allowedRoutes:
-        namespaces:
-          from: Selector
-          selector:
-              matchLabels:
-                  kubernetes.io/metadata.name: path-of-titans
     - name: path-of-titans-query
       protocol: UDP
       port: 7781
