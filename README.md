@@ -46,7 +46,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#dump978">dump978</a></li>
   <li><a href="#dynatrace-otel-collector">dynatrace-otel-collector</a></li>
   <li><a href="#envoy-gateway">envoy-gateway</a></li>
-  <li><a href="#ephemeris">ephemeris</a></li>
   <li><a href="#external-dns-internal">external-dns-internal</a></li>
   <li><a href="#frigate">frigate</a></li>
   <li><a href="#gittea">gittea</a></li>
@@ -532,22 +531,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>envoy-gateway-system</td>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/envoy-gateway/resources/controller/helm.yaml">envoy-gateway</a></td>
-    <td></td>
-  </tr>
-</table>
-
-<h4>ephemeris</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>ephemeris</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/ephemeris/helm.yaml">ephemeris</a></td>
     <td></td>
   </tr>
 </table>
