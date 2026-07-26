@@ -32,7 +32,7 @@ controllers:
       filebrowser:
         image:
           repository: jacob.pub/docker.io/filebrowser/filebrowser
-          tag: v2.63.20
+          tag: v2.63.21@sha256:b1d9980d79d6d0ad334e327eea3501324a07fe2bce94a4cd84187bccbcfbe3f8
         args:
           - --database
           - /database/filebrowser.db
