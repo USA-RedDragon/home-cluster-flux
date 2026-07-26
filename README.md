@@ -1137,10 +1137,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">path-of-titans</td>
+    <td rowspan="3">path-of-titans</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/path-of-titans/filebrowser/helm.yaml">filebrowser</a></td>
+    <td rowspan="3"></td>
+  </tr>
+  <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/path-of-titans/app/helm.yaml">path-of-titans</a></td>
-    <td rowspan="2"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
