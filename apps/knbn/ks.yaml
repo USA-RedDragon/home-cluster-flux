@@ -17,11 +17,11 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: postgres
-  namespace: path-of-titans
+  namespace: knbn
 spec:
   interval: 1h
-  targetNamespace: postgres
-  path: ./apps/path-of-titans/postgres
+  targetNamespace: knbn
+  path: ./apps/knbn/postgres
   prune: true
   sourceRef:
     kind: GitRepository
@@ -32,11 +32,11 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: restic
-  namespace: path-of-titans
+  namespace: knbn
 spec:
   interval: 1h
-  targetNamespace: path-of-titans
-  path: ./apps/path-of-titans/restic
+  targetNamespace: knbn
+  path: ./apps/knbn/restic
   prune: true
   sourceRef:
     kind: GitRepository
