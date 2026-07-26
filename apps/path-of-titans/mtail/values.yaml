@@ -1,0 +1,153 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+controllers:
+  mtail:
+    replicas: 1
+    containers:
+      mtail:
+        image:
+          repository: jacob.pub/ghcr.io/jaqx0r/mtail
+          tag: 3.4.5@sha256:9258c2d5ed8b778c9a1e4a52a39ed610c36d156f08bfa962c90a57a440cfc2e1
+          pullPolicy: IfNotPresent
+        args:
+          - -progs
+          - /etc/mtail
+          - -logs
+          - /logs/PathOfTitans.log
+          - -port
+          - "3903"
+          - -logtostderr
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 64Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: false
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    pod:
+      labels:
+        policy.mcswain.dev/ingress-prometheus: "true"
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: path-of-titans
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
+service:
+  mtail:
+    controller: mtail
+    ports:
+      metrics:
+        port: 3903
+        primary: true
+        protocol: TCP
+
+serviceMonitor:
+  mtail:
+    enabled: true
+    serviceName: mtail
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 15s
+        scrapeTimeout: 5s
+
+persistence:
+  data:
+    existingClaim: path-of-titans
+    globalMounts:
+      - path: /logs
+        subPath: Logs
+        readOnly: true
+  config:
+    enabled: true
+    type: configMap
+    name: mtail
+    globalMounts:
+      - path: /etc/mtail
+        readOnly: true
+
+configMaps:
+  config:
+    data:
+      pot.mtail: |
+        # Path of Titans server health, parsed from the game server's own log.
+
+        gauge pot_tick_rate_current
+        gauge pot_tick_rate_average
+        gauge pot_tick_rate_max
+        gauge pot_players_logged
+
+        counter pot_rcon_commands_total by command
+        counter pot_player_connects_total
+        counter pot_player_disconnects_total
+
+        histogram pot_session_duration_seconds buckets 60, 300, 900, 1800, 3600, 7200
+
+        # Per-player connect time. `hidden` keeps it out of the exported
+        # metrics, so player names never become Prometheus label cardinality.
+        hidden gauge session_start by player
+
+        # Every line is timestamped; parse it so session durations are measured
+        # in log time rather than wall time. Nested patterns match the same line.
+        /^\[(?P<date>\d{4}\.\d{2}\.\d{2}-\d{2}\.\d{2}\.\d{2}):\d+\]/ {
+          strptime($date, "2006.01.02-15.04.05")
+
+          # Emitted every 15s. AverageTickRate falling away from MaxTickRate is
+          # the load signal that matters: it is what players experience as
+          # degradation, and it moves before CPU or memory show anything.
+          /ServerHealth: CurrentTickRate: (?P<current>\d+) AverageTickRate: (?P<average>\d+) MaxTickRate: (?P<maxrate>\d+) Players: (?P<players>\d+)/ {
+            pot_tick_rate_current = $current
+            pot_tick_rate_average = $average
+            pot_tick_rate_max = $maxrate
+            pot_players_logged = $players
+          }
+
+          # Connect lines carry an (ip:port); disconnect lines do not. Requiring
+          # the parenthesised address is what keeps these two patterns disjoint.
+          /Player #\d+ (?P<player>\S+) \(\S+\) connected/ {
+            pot_player_connects_total++
+            session_start[$player] = timestamp()
+          }
+
+          /Player #\d+ (?P<player>\S+) disconnected/ {
+            pot_player_disconnects_total++
+            # Only record a duration when the matching connect was seen.
+            # Sessions already in progress when the log starts would otherwise
+            # measure from the epoch and swamp the histogram.
+            session_start[$player] > 0 {
+              pot_session_duration_seconds = timestamp() - session_start[$player]
+              del session_start[$player]
+            }
+          }
+
+          # "Recieved" is misspelled in the game server's own log output. Match
+          # it verbatim — correcting the spelling here breaks the counter.
+          #
+          # The captured value is not always bare: real logs contain both
+          # "restart" and "/restart.", so consumers must substring-match.
+          /Recieved Command: (?P<command>\S+)/ {
+            pot_rcon_commands_total[$command]++
+          }
+        }

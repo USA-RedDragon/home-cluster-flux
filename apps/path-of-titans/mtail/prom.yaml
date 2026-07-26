@@ -1,0 +1,79 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mtail
+spec:
+  groups:
+    - name: path-of-titans-tickrate
+      rules:
+        # The load signal that matters. The game server targets 60 tick and
+        # reports what it actually achieved; players feel this long before CPU
+        # or memory show anything, because a saturated game thread degrades
+        # smoothly rather than hitting a resource ceiling.
+        #
+        # The (max > 0) guard filters rather than divides — if the server has
+        # not yet reported a MaxTickRate there is nothing to compare against,
+        # and dividing would yield +Inf and alert on a server that is merely
+        # starting up.
+        - alert: PathOfTitansTickRateDegraded
+          expr: |
+            pot_tick_rate_average / (pot_tick_rate_max > 0) < 0.8
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans tick rate is degraded"
+            description: "Average tick rate is {{ $value | humanizePercentage }} of target. Players will feel this as lag before any resource alert fires."
+
+        - alert: PathOfTitansTickRateCritical
+          expr: |
+            pot_tick_rate_average / (pot_tick_rate_max > 0) < 0.5
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Path of Titans tick rate has collapsed"
+            description: "Average tick rate is {{ $value | humanizePercentage }} of target. The server is not keeping up with simulation."
+
+    - name: path-of-titans-lifecycle
+      rules:
+        # Restarts are routine here — admins apply config changes by issuing an
+        # RCON restart, which exits the container cleanly and trips a naive
+        # restart alert every time. The unless clause suppresses exactly those:
+        # if mtail saw an RCON restart command in a window that covers the
+        # restart, the restart is explained and no alert fires.
+        #
+        # Fails safe. If mtail is down, pot_rcon_commands_total is absent, the
+        # unless suppresses nothing, and restarts alert — noisier, but never
+        # silent about an unexplained restart.
+        - alert: PathOfTitansUnexpectedRestart
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="path-of-titans",container="path-of-titans"}[10m]) > 0
+              unless on() (sum(increase(pot_rcon_commands_total{command=~"(?i).*restart.*"}[15m])) > 0)
+          for: 0m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans restarted without an RCON restart command"
+            description: "{{ $labels.pod }} restarted with no admin-issued restart to explain it. Check logs for a crash or probe failure."
+
+    - name: path-of-titans-sessions
+      rules:
+        # Players joining and leaving again within a couple of minutes means
+        # something is wrong at join time — failure to spawn, a crash on load,
+        # an unplayable tick rate — and the raw player count will not show it,
+        # because the seat gets refilled. Baseline here is a median around
+        # 7-8 minutes.
+        #
+        # Gated on disconnect volume so a single early leaver on a quiet server
+        # cannot drag the quantile below the threshold on its own.
+        - alert: PathOfTitansSessionsCollapsing
+          expr: |
+            histogram_quantile(0.5, sum by (le) (rate(pot_session_duration_seconds_bucket[15m]))) < 120
+              and sum(increase(pot_player_disconnects_total[15m])) >= 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans players are leaving almost immediately"
+            description: "Median session is {{ $value | humanizeDuration }}. Players are bouncing shortly after joining; check spawn, load times and tick rate."
