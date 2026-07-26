@@ -7,9 +7,19 @@ controllers:
         image:
           repository: jacob.pub/docker.io/filebrowser/filebrowser
           tag: v2.63.20
+        args:
+          - --database
+          - /database/filebrowser.db
         resources:
           limits: {}
           requests: {}
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
     pod:
       securityContext:
         runAsNonRoot: true
