@@ -57,3 +57,18 @@ spec:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: a2s-exporter
+  namespace: path-of-titans
+spec:
+  interval: 1h
+  targetNamespace: path-of-titans
+  path: ./apps/path-of-titans/a2s-exporter
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system

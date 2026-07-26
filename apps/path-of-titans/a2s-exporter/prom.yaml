@@ -1,0 +1,92 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: a2s-exporter
+spec:
+  groups:
+    - name: path-of-titans-server
+      rules:
+        # A2S query stops answering. Distinct from the pod being down — the
+        # process can be alive with the UDP socket bound while the game thread
+        # is wedged, which the container probes cannot see.
+        - alert: PathOfTitansServerDown
+          expr: a2s_server_up == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Path of Titans is not answering A2S queries"
+            description: "The server has not responded to an A2S query for 2 minutes."
+
+        # The event-day alert. Distinguishes "people are leaving" from "the
+        # server just dropped everyone", which is otherwise the exact ambiguity
+        # you end up debugging live.
+        # Fires when the drop exceeds max(10 players, 50% of the 2-minute peak).
+        #
+        # That single threshold is the piecewise rule: below a peak of 20 the
+        # flat 10 dominates, above it the percentage does, and at exactly 20
+        # they coincide (10 == 50% of 20), so there is no discontinuity to
+        # reason about. An absolute-only threshold goes stale as the server
+        # grows; a percentage-only one alerts hardest at low population, where
+        # two people logging off is a 100% drop.
+        #
+        # Peak-minus-current rather than delta(): delta extrapolates over the
+        # range and returns fractional values for what is an integer count.
+        # There is also no division here, so an empty server cannot produce a
+        # divide-by-zero — the drop is 0 and the floor is 10.
+        - alert: PathOfTitansMassDisconnect
+          expr: |
+            (max_over_time(a2s_server_players[2m]) - a2s_server_players)
+              >= clamp_min(0.5 * max_over_time(a2s_server_players[2m]), 10)
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Path of Titans lost {{ $value }} players in 2 minutes"
+            description: "Player count is down {{ $value }} from its 2-minute peak. Expected during a scheduled restart; otherwise investigate."
+
+        - alert: PathOfTitansNearSlotCap
+          expr: a2s_server_players / a2s_server_max_players > 0.9
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans is near its player slot cap"
+            description: "{{ $value | humanizePercentage }} of slots in use. Raise with RCON SetMaxPlayers if this is not intentional."
+
+    - name: path-of-titans-capacity
+      rules:
+        # CFS throttling stalls the UE game thread mid-tick, which players feel
+        # as simultaneous rubber-banding across the whole server.
+        - alert: PathOfTitansCPUThrottling
+          expr: |
+            rate(container_cpu_cfs_throttled_periods_total{namespace="path-of-titans",container="path-of-titans"}[5m])
+              / rate(container_cpu_cfs_periods_total{namespace="path-of-titans",container="path-of-titans"}[5m]) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans game thread is being CPU throttled"
+            description: "{{ $value | humanizePercentage }} of CPU periods throttled on {{ $labels.pod }}. Raise or remove the CPU limit."
+
+        # The limit comes from kube-state-metrics, not cadvisor:
+        # container_spec_memory_limit_bytes is dropped by this stack's default
+        # relabeling and returns no series, so an expression built on it would
+        # silently never fire. The on(...) join is needed because the two
+        # metrics carry different label sets.
+        #
+        # Evaluated per-pod on purpose. Aggregating with sum() across the
+        # namespace double-counts during a rolling update, when the old and new
+        # pods overlap, and reports a peak roughly twice the real one.
+        - alert: PathOfTitansMemoryPressure
+          expr: |
+            container_memory_working_set_bytes{namespace="path-of-titans",container="path-of-titans"}
+              / on(namespace,pod,container)
+                kube_pod_container_resource_limits{namespace="path-of-titans",container="path-of-titans",resource="memory"}
+              > 0.85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans is approaching its memory limit"
+            description: "{{ $labels.pod }} is at {{ $value | humanizePercentage }} of its memory limit. An OOM kill disconnects every player at once."
