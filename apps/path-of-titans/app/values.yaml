@@ -212,27 +212,3 @@ persistence:
       path-of-titans:
         wireguard:
           - path: /etc/wireguard
-
-route:
-  game:
-    enabled: true
-    kind: UDPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: path-of-titans
-    rules:
-      - backendRefs:
-          - name: path-of-titans
-            port: 7777
-  query:
-    enabled: true
-    kind: UDPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: path-of-titans-query
-    rules:
-      - backendRefs:
-          - name: path-of-titans
-            port: 7781
