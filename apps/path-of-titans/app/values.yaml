@@ -1,30 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 controllers:
-  filebrowser:
-    replicas: 1
-    containers:
-      filebrowser:
-        image:
-          repository: jacob.pub/docker.io/filebrowser/filebrowser
-          tag: v2.63.20
-        resources:
-          limits: {}
-          requests: {}
-    pod:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: path-of-titans
-
   path-of-titans:
     replicas: 1
     pod:
@@ -119,12 +94,6 @@ controllers:
               key: auth-token
 
 service:
-  filebrowser:
-    controller: filebrowser
-    ports:
-      http:
-        port: 80
-        protocol: TCP
   path-of-titans:
     controller: path-of-titans
     ports:
@@ -174,9 +143,6 @@ persistence:
       path-of-titans:
         path-of-titans:
         - path: /opt/path-of-titans/PathOfTitans/Saved
-      filebrowser:
-        filebrowser:
-        - path: /srv
   battleye:
     enabled: true
     type: emptyDir
