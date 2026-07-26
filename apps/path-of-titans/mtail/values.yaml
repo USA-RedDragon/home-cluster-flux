@@ -2,6 +2,7 @@
 controllers:
   mtail:
     replicas: 1
+    strategy: RollingUpdate
     containers:
       mtail:
         image:
@@ -145,9 +146,13 @@ configMaps:
           # "Recieved" is misspelled in the game server's own log output. Match
           # it verbatim — correcting the spelling here breaks the counter.
           #
-          # The captured value is not always bare: real logs contain both
-          # "restart" and "/restart.", so consumers must substring-match.
-          /Recieved Command: (?P<command>\S+)/ {
+          # The game logs the same command three different ways, all observed
+          # live: "restart 300." (with args), "/restart." (slash-prefixed) and
+          # "serverinfo." (bare, so the sentence's full stop ends up glued to
+          # the token). Capturing letters only, with an optional leading slash,
+          # normalises all three to the bare command name — otherwise each
+          # spelling becomes its own label value.
+          /Recieved Command: \/?(?P<command>[A-Za-z]+)/ {
             pot_rcon_commands_total[$command]++
           }
         }
