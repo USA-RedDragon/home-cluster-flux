@@ -59,9 +59,13 @@ controllers:
                 - /bin/sh
                 - -c
                 - |
-                  /opt/bin/ld-musl-x86_64.so.1 /opt/bin/rcon \
-                    -a 127.0.0.1:7779 -p "$RCON_PASSWORD" "Restart 300" || exit 0
-                  sleep 300
+                  if /opt/bin/ld-musl-x86_64.so.1 /opt/bin/rcon \
+                       -a 127.0.0.1:7779 -p "$RCON_PASSWORD" "Restart 300"; then
+                    sleep 300
+                  else
+                    echo "preStop: RCON restart failed, shutting down now" >&2
+                    exit 1
+                  fi
         resources:
           requests:
             cpu: 2000m
