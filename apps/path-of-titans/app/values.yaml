@@ -135,12 +135,6 @@ service:
         port: 7777
         protocol: UDP
         primary: true
-      reserved-tcp:
-        port: 7778
-        protocol: TCP
-      reserved-udp:
-        port: 7778
-        protocol: UDP
       rcon:
         port: 7779
         protocol: TCP
@@ -150,10 +144,7 @@ service:
       stats-udp:
         port: 7780
         protocol: UDP
-      query-tcp:
-        port: 7781
-        protocol: TCP
-      query-udp:
+      query:
         port: 7781
         protocol: UDP
   rcon:
@@ -248,45 +239,12 @@ route:
             port: 7779
   query:
     enabled: true
-    kind: TCPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: path-of-titans-query-tcp
-    rules:
-      - backendRefs:
-          - name: path-of-titans
-            port: 7781
-  query-udp:
-    enabled: true
     kind: UDPRoute
     parentRefs:
       - name: public
         namespace: envoy-gateway-system
-        sectionName: path-of-titans-query-udp
+        sectionName: path-of-titans-query
     rules:
       - backendRefs:
           - name: path-of-titans
             port: 7781
-  reserved:
-    enabled: true
-    kind: TCPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: path-of-titans-reserved-tcp
-    rules:
-      - backendRefs:
-          - name: path-of-titans
-            port: 7778
-  reserved-udp:
-    enabled: true
-    kind: UDPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: path-of-titans-reserved-udp
-    rules:
-      - backendRefs:
-          - name: path-of-titans
-            port: 7778
