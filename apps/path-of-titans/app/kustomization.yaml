@@ -4,6 +4,7 @@ namespace: path-of-titans
 resources:
   - helm.yaml
   - networkpolicy.yaml
+  - priorityclass.yaml
 configMapGenerator:
   - name: chart-values
     files:

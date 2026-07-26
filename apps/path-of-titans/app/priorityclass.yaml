@@ -1,0 +1,8 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: game-server
+value: 100000
+globalDefault: false
+preemptionPolicy: PreemptLowerPriority
+description: "Stateful game servers; evicted after ordinary workloads."
