@@ -588,10 +588,13 @@ alertmanager:
 
     ## Image of Alertmanager
     ##
+    # Deliberately not digest-pinned, and `sha` deliberately empty. Same reason
+    # as prometheusSpec.image above — see the full note there.
     image:
       registry: jacob.pub
       repository: quay.io/prometheus/alertmanager
-      tag: v0.33.1@sha256:9e082985f56f4c8c9f724e18f2288c6708f472e56a5286b8863d080434ea065d
+      tag: v0.33.1
+      sha: ""
 
     ## If true then the user will be responsible to provide a secret with alertmanager configuration
     ## So when true the config part will be ignored (including templateFiles) and the one in the secret will be used
@@ -2998,11 +3001,22 @@ prometheus:
 
     ## Image of Prometheus.
     ##
+    # Deliberately not digest-pinned; enforced by a packageRule in
+    # .github/renovate.json.
+    #
+    # prometheus-operator derives `spec.version` from `tag`, so a digest there
+    # fails its semver parse and silently halts reconciliation of this CR —
+    # meaning no ServiceMonitor or PrometheusRule change gets applied at all.
+    # The chart also renders `<registry>/<repository>:<tag>@sha256:<sha>`, so a
+    # digest in both fields yields an invalid double-digest reference.
+    #
+    # `sha` must stay empty: with pinDigests off Renovate bumps `tag` alone, and
+    # a leftover `sha` would pin the new tag to the old image without erroring.
     image:
       registry: jacob.pub
       repository: quay.io/prometheus/prometheus
-      tag: v3.13.1@sha256:3c42b892cf723fa54d2f262c37a0e1f80aa8c8ddb1da7b9b0df9455a35a7f893
-      sha: c0b857aead0d5793aa566adb8f49a9983d6f6031652098759d521a330cfa050f
+      tag: v3.13.1
+      sha: ""
 
     ## Tolerations for use with node taints
     ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
