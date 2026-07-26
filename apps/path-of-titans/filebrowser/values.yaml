@@ -18,7 +18,7 @@ controllers:
             cat > /opt/bin/pot-restart <<'SCRIPT'
             #!/bin/sh
             exec /opt/bin/ld-musl-x86_64.so.1 /opt/bin/rcon \
-              -a path-of-titans-rcon:7779 -p "$RCON_PASSWORD" "Restart 300"
+              -a path-of-titans-rcon:7779 -p "$RCON_PASSWORD" "Restart 600"
             SCRIPT
             chmod +x /opt/bin/pot-restart
         securityContext: &security-context
