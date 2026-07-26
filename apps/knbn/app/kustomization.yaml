@@ -4,7 +4,6 @@ namespace: knbn
 resources:
   - helm.yaml
   - networkpolicy.yaml
-  - priorityclass.yaml
 configMapGenerator:
   - name: chart-values
     files:
