@@ -204,28 +204,6 @@ route:
       - backendRefs:
           - name: path-of-titans
             port: 7777
-  stats:
-    enabled: true
-    kind: TCPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: path-of-titans-stats-tcp
-    rules:
-      - backendRefs:
-          - name: path-of-titans
-            port: 7780
-  stats-udp:
-    enabled: true
-    kind: UDPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: path-of-titans-stats-udp
-    rules:
-      - backendRefs:
-          - name: path-of-titans
-            port: 7780
   rcon:
     enabled: true
     kind: TCPRoute
