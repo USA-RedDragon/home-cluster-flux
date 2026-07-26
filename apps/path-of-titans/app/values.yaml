@@ -58,9 +58,13 @@ controllers:
             set -ex
             ip link del wg0 2>/dev/null || true
             wg-quick up /etc/wireguard/wg0.conf
-            DEF="$(ip -4 route show default | head -n1 | sed 's/^default //')"
-            ip route add 172.16.0.0/12 $DEF
-            ip route add 192.168.0.0/16 $DEF
+            ip -4 rule del not fwmark 51820 table 51820 2>/dev/null || true
+            ip -4 rule del table main suppress_prefixlength 0 2>/dev/null || true
+            ip route replace default dev wg0 table 51820
+            ip -4 rule add to 172.16.0.0/12 lookup main pref 100
+            ip -4 rule add to 192.168.0.0/16 lookup main pref 100
+            ip -4 rule add ipproto udp sport 7777 lookup 51820 pref 200
+            ip -4 rule add ipproto udp sport 7781 lookup 51820 pref 200
         securityContext:
           privileged: true
           runAsNonRoot: false
