@@ -59,6 +59,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#iperf3">iperf3</a></li>
   <li><a href="#jellyfin">jellyfin</a></li>
   <li><a href="#json-exporter">json-exporter</a></li>
+  <li><a href="#knbn">knbn</a></li>
   <li><a href="#kosync">kosync</a></li>
   <li><a href="#kromgo">kromgo</a></li>
   <li><a href="#kube-system">kube-system</a></li>
@@ -759,6 +760,28 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>json-exporter</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/json-exporter/app/helm.yaml">json-exporter</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>knbn</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>knbn</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/knbn/app/helm.yaml">knbn</a></td>
+    <td><a href="apps/knbn/postgres/postgres.yaml">postgresql</a></td>
+  </tr>
+  <tr>
+    <td>path-of-titans</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/knbn/restic/helmrelease.yaml">restic</a></td>
     <td></td>
   </tr>
 </table>
