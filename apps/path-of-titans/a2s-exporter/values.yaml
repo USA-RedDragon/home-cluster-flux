@@ -2,6 +2,7 @@
 controllers:
   a2s-exporter:
     replicas: 1
+    strategy: RollingUpdate
     containers:
       a2s-exporter:
         image:
