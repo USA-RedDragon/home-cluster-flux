@@ -57,7 +57,8 @@ spec:
               - |
                 exec > >(ts '%H:%M:%S') 2>&1
                 set -eu
-                restic backup /data
+                restic backup --tag=server /data
+                restic backup --tag=filebrowser /filebrowser
                 restic forget --prune --keep-daily=90 --keep-weekly=24 --keep-monthly=24 --keep-yearly=20
                 restic cache --cleanup
             resources:
@@ -83,3 +84,5 @@ spec:
     persistence:
       data:
         existingClaim: path-of-titans
+      filebrowser:
+        existingClaim: filebrowser
