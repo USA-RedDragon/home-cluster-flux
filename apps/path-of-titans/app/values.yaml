@@ -2,7 +2,10 @@
 controllers:
   path-of-titans:
     replicas: 1
+    podDisruptionBudget:
+      minAvailable: 1
     pod:
+      priorityClassName: game-server
       terminationGracePeriodSeconds: 360
       securityContext:
         runAsNonRoot: true
