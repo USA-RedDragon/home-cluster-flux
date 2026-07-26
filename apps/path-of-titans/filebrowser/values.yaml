@@ -10,6 +10,9 @@ controllers:
         args:
           - --database
           - /database/filebrowser.db
+          - --address
+          - 0.0.0.0
+          - --noauth
         resources:
           limits: {}
           requests: {}
