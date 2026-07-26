@@ -130,6 +130,11 @@ controllers:
 service:
   path-of-titans:
     controller: path-of-titans
+    type: LoadBalancer
+    loadBalancerClass: metallb
+    externalTrafficPolicy: Local
+    annotations:
+      metallb.io/loadBalancerIPs: 192.168.254.20
     ports:
       game:
         port: 7777
