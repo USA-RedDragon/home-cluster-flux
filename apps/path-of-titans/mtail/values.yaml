@@ -104,6 +104,16 @@ configMaps:
         counter pot_player_connects_total
         counter pot_player_disconnects_total
 
+        # Heartbeat to the Alderon server list, roughly every 26-30s. If this
+        # stops succeeding the server disappears from the public list and no new
+        # player can find it — while tick rate stays 60, A2S stays up and the
+        # container stays healthy. Nothing else we collect can see this failure.
+        counter pot_alderon_pulse_total by code
+
+        # BattlEye master reachability. Failures here mean bans stop being
+        # verified.
+        counter pot_battleye_master_events_total by event
+
         histogram pot_session_duration_seconds buckets 60, 300, 900, 1800, 3600, 7200
 
         # Per-player connect time. `hidden` keeps it out of the exported
@@ -154,5 +164,25 @@ configMaps:
           # spelling becomes its own label value.
           /Recieved Command: \/?(?P<command>[A-Za-z]+)/ {
             pot_rcon_commands_total[$command]++
+          }
+
+          # Matched narrowly on /pulse rather than any Alderon endpoint: the
+          # URLs carry opaque per-server tokens, and capturing a generic path
+          # segment would turn those into unbounded label values. Labelling by
+          # HTTP code keeps cardinality to the handful of statuses seen.
+          /AlderonLog: (Error: )?\((?P<code>\d+)\) https:\/\/servers\.alderongames\.com\/\S+\/pulse Success:/ {
+            pot_alderon_pulse_total[$code]++
+          }
+
+          # Split into three patterns so the label values are short and stable,
+          # rather than whole log sentences.
+          /LogBattlEyeServer: Could not connect to BE Master/ {
+            pot_battleye_master_events_total["connect_failed"]++
+          }
+          /LogBattlEyeServer: Disconnected from BE Master/ {
+            pot_battleye_master_events_total["disconnected"]++
+          }
+          /LogBattlEyeServer: Ban check timed out/ {
+            pot_battleye_master_events_total["ban_check_timeout"]++
           }
         }

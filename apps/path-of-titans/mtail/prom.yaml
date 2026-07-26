@@ -77,3 +77,39 @@ spec:
           annotations:
             summary: "Path of Titans players are leaving almost immediately"
             description: "Median session is {{ $value | humanizeDuration }}. Players are bouncing shortly after joining; check spawn, load times and tick rate."
+
+    - name: path-of-titans-external
+      rules:
+        - alert: PathOfTitansDelistedFromServerList
+          expr: |
+            increase(pot_alderon_pulse_total{code="200"}[5m]) == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Path of Titans has stopped heartbeating to the Alderon server list"
+            description: "No successful pulse in 5 minutes. The server is likely delisted and unfindable, even though it is still running."
+
+        - alert: PathOfTitansServerListErrors
+          expr: |
+            increase(pot_alderon_pulse_total{code!="200"}[10m]) > 0
+          for: 0m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans server-list heartbeat returning errors"
+            description: "{{ $value }} non-200 responses from the Alderon server list (HTTP {{ $labels.code }})."
+
+        # Ban checks time out when the BattlEye master is unreachable, which
+        # means bans silently stop being enforced. The egress CiliumNetworkPolicy
+        # only permits alderongames.com and pathoftitans.com on 443, so BattlEye
+        # traffic is blocked unless its domain is added.
+        - alert: PathOfTitansBattlEyeMasterUnreachable
+          expr: |
+            increase(pot_battleye_master_events_total{event="ban_check_timeout"}[15m]) > 3
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans cannot reach the BattlEye master"
+            description: "{{ $value }} ban checks timed out in 15 minutes. Bans are not being enforced."
