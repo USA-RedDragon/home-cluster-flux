@@ -108,7 +108,7 @@ ingress:
     enabled: true
     className: tailscale
     hosts:
-      - host: filebrowser
+      - host: path-files
         paths:
         - path: /
           pathType: Prefix
@@ -117,7 +117,7 @@ ingress:
               port: http
     tls:
       - hosts:
-          - filebrowser
+          - path-files
 
 configMaps:
   config:
