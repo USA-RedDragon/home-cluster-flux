@@ -2,6 +2,35 @@
 controllers:
   filebrowser:
     replicas: 1
+    initContainers:
+      rcon-seed:
+        image:
+          repository: jacob.pub/docker.io/outdead/rcon
+          tag: 0.10.2@sha256:7aca76877d05eb37f84c72533bdb7b806ef53d6269716a0abee4aeac3c52fcaf
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            set -eu
+            cp /rcon /opt/bin/rcon
+            cat > /opt/bin/pot-restart <<'SCRIPT'
+            #!/bin/sh
+            # after_save fires for every file under Saved/, so restart on Game.ini only.
+            # case "$FILE" in
+            # *Config/LinuxServer/Game.ini) ;;
+            # *) exit 0 ;;
+            # esac
+            exec /opt/bin/rcon -a path-of-titans:7779 -p "$RCON_PASSWORD" "Restart 60"
+            SCRIPT
+            chmod +x /opt/bin/pot-restart
+        securityContext: &security-context
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
     containers:
       filebrowser:
         image:
@@ -15,16 +44,16 @@ controllers:
           - --noauth
           - --root
           - /srv
+        env:
+          - name: RCON_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: path-of-titans
+                key: rcon-password
         resources:
           limits: {}
           requests: {}
-        securityContext:
-          readOnlyRootFilesystem: true
-          allowPrivilegeEscalation: false
-          seccompProfile:
-            type: RuntimeDefault
-          capabilities:
-            drop: ["ALL"]
+        securityContext: *security-context
     pod:
       securityContext:
         runAsNonRoot: true
@@ -66,6 +95,16 @@ persistence:
     accessMode: ReadWriteOnce
     size: 1Gi
     storageClass: longhorn-ssd
+  bin:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 32Mi
+    advancedMounts:
+      filebrowser:
+        rcon-seed:
+          - path: /opt/bin
+        filebrowser:
+          - path: /opt/bin
 
 ingress:
   tailscale:
@@ -87,4 +126,6 @@ configMaps:
   config:
     data:
       settings.json: |
-        {}
+        {
+          "disableExec": false
+        }

@@ -3,6 +3,7 @@ controllers:
   path-of-titans:
     replicas: 1
     pod:
+      terminationGracePeriodSeconds: 120
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -109,7 +110,7 @@ service:
         protocol: UDP
       rcon:
         port: 7779
-        protocol: UDP
+        protocol: TCP
       stats-tcp:
         port: 7780
         protocol: TCP
