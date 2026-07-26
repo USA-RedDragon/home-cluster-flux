@@ -85,6 +85,19 @@
             "pinDigests": false
         },
         {
+            "description": "prometheus-operator derives spec.version from the image tag and rejects a digest there, which silently halts reconciliation of the Prometheus and Alertmanager CRs (no ServiceMonitor or PrometheusRule changes get applied). Keep these two tags bare; every other image in this chart pins normally.",
+            "matchFileNames": [
+                "**/infrastructure/prometheus/app/values.yaml"
+            ],
+            "matchManagers": [
+                "helm-values"
+            ],
+            "matchPackageNames": [
+                "/prometheus\\/(prometheus|alertmanager)$/"
+            ],
+            "pinDigests": false
+        },
+        {
             "automerge": false,
             "matchPackageNames": [
                 "/^ghcr.io\\/usa-reddragon\\/papermc$/"
