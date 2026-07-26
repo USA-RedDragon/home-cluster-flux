@@ -14,6 +14,10 @@ controllers:
           - |
             set -eu
             cp /rcon /opt/bin/rcon
+            # This image's rcon is linked against musl, but the filebrowser image
+            # ships no dynamic loader at all, so carry musl's over and exec through
+            # it. (ld-musl is also libc, so it is the only library needed.)
+            cp /lib/ld-musl-x86_64.so.1 /opt/bin/
             cat > /opt/bin/pot-restart <<'SCRIPT'
             #!/bin/sh
             # after_save fires for every file under Saved/, so restart on Game.ini only.
@@ -21,7 +25,8 @@ controllers:
             # *Config/LinuxServer/Game.ini) ;;
             # *) exit 0 ;;
             # esac
-            exec /opt/bin/rcon -a path-of-titans:7779 -p "$RCON_PASSWORD" "Restart 60"
+            exec /opt/bin/ld-musl-x86_64.so.1 /opt/bin/rcon \
+              -a path-of-titans:7779 -p "$RCON_PASSWORD" "Restart 60"
             SCRIPT
             chmod +x /opt/bin/pot-restart
         securityContext: &security-context
