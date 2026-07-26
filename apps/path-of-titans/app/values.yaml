@@ -143,6 +143,9 @@ persistence:
       path-of-titans:
         path-of-titans:
         - path: /opt/path-of-titans/PathOfTitans/Saved
+        - path: /opt/path-of-titans/PathOfTitans/Saved/Config/LinuxServer/Game.ini
+          subPath: Config/LinuxServer/Game.ini
+          readOnly: true
   battleye:
     enabled: true
     type: emptyDir
