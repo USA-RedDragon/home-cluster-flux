@@ -72,6 +72,39 @@ controllers:
           capabilities:
             add: ["NET_ADMIN"]
     containers:
+      # Keeps Cilium's DNS cache warm for the BattlEye master, so the
+      # `toFQDNs: "*.battleye.com"` rule in networkpolicy.yaml authorises
+      # whatever address BattlEye currently uses rather than depending on a
+      # hardcoded CIDR that goes stale silently.
+      #
+      # This has to live in THIS pod. Cilium authorises toFQDNs per endpoint,
+      # using DNS that endpoint itself performed — a resolver in a separate pod
+      # is a separate endpoint and its lookups would not count. Verified by
+      # resolving from inside this pod and watching pot1.battleye.com appear in
+      # `cilium-dbg fqdn cache list`.
+      #
+      # 120s against the record's 261s TTL leaves ~2x headroom without relying
+      # on Cilium's min-TTL floor being generous.
+      battleye-dns-refresh:
+        image:
+          repository: jacob.pub/docker.io/outdead/rcon
+          tag: 0.10.2@sha256:7aca76877d05eb37f84c72533bdb7b806ef53d6269716a0abee4aeac3c52fcaf
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            while true; do
+              getent hosts pot1.battleye.com >/dev/null 2>&1 || true
+              sleep 120
+            done
+        resources:
+          requests:
+            cpu: 1m
+            memory: 8Mi
+          limits:
+            memory: 16Mi
+        securityContext: *security-context
       path-of-titans:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans

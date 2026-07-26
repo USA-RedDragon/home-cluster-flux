@@ -33,33 +33,6 @@ spec:
     # Observed via cilium drops: the game reaches for 57.129.90.115:7917 on BOTH
     # tcp and udp. That address is pot1.battleye.com -> master1.battleye.com as
     # of 2026-07-26.
-    #
-    # The /32 is a stopgap, not the intended end state. Whether BattlEye resolves
-    # by name is still unknown: Cilium's FQDN cache only retains names matching a
-    # configured toFQDNs selector, and until the rule below existed there was no
-    # battleye selector — so the cache could not have shown a lookup either way.
-    # (Confirmed by o34825.ingest.sentry.io being absent from the cache despite
-    # the game demonstrably posting there.)
-    #
-    # TODO: with the selector now in place, check whether a battleye.com entry
-    # appears in `cilium-dbg fqdn cache list` for this endpoint. If it does,
-    # BattlEye resolves by name, the toFQDNs rule stands on its own and this
-    # hardcoded CIDR should be deleted. If it does not, BattlEye really is
-    # dialling a literal IP, and the durable fix is a sidecar in THIS pod
-    # periodically resolving pot1.battleye.com — toFQDNs authorises per-endpoint
-    # from DNS that endpoint performed, so a co-located resolver keeps the
-    # mapping fresh and the policy tracks BattlEye's address automatically.
-    #
-    # Until then, PathOfTitansBattlEyeMasterUnreachable is the tripwire for the
-    # address moving.
-    - toCIDR:
-        - 57.129.90.115/32
-      toPorts:
-        - ports:
-            - port: "7917"
-              protocol: TCP
-            - port: "7917"
-              protocol: UDP
     - toFQDNs:
         - matchPattern: "*.battleye.com"
       toPorts:
