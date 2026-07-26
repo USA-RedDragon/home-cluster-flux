@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+controllers:
+  rcon:
+    replicas: 1
+    containers:
+      rcon:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/rcon-web
+          tag: v0.0.2
+        env:
+          - name: RCON_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: path-of-titans
+                key: rcon-password
+          - name: RCON_PORT
+            value: "7779"
+          - name: RCON_HOST
+            value: "path-of-titans-rcon.path-of-titans.svc.cluster.local"
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65535
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+service:
+  rcon:
+    controller: rcon
+    ports:
+      http:
+        port: 8080
+        protocol: TCP
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: path-rcon
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: rcon
+              port: http
+    tls:
+      - hosts:
+          - path-rcon
