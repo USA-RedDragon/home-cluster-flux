@@ -3,7 +3,7 @@ controllers:
   path-of-titans:
     replicas: 1
     pod:
-      terminationGracePeriodSeconds: 120
+      terminationGracePeriodSeconds: 360
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -30,12 +30,35 @@ controllers:
             type: RuntimeDefault
           capabilities:
             drop: ["ALL"]
+      rcon-seed:
+        image:
+          repository: jacob.pub/docker.io/outdead/rcon
+          tag: 0.10.2@sha256:7aca76877d05eb37f84c72533bdb7b806ef53d6269716a0abee4aeac3c52fcaf
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            set -eu
+            cp /rcon /opt/bin/rcon
+            cp /lib/ld-musl-x86_64.so.1 /opt/bin/
+        securityContext: *security-context
     containers:
       path-of-titans:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
           tag: 50012h5
           pullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  /opt/bin/ld-musl-x86_64.so.1 /opt/bin/rcon \
+                    -a 127.0.0.1:7779 -p "$RCON_PASSWORD" "Restart 300" || exit 0
+                  sleep 300
         resources:
           limits: {}
           requests:
@@ -153,6 +176,16 @@ persistence:
           - path: /battleye
         path-of-titans:
           - path: /opt/path-of-titans/PathOfTitans/Binaries/Linux/BattlEye
+  bin:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 32Mi
+    advancedMounts:
+      path-of-titans:
+        rcon-seed:
+          - path: /opt/bin
+        path-of-titans:
+          - path: /opt/bin
 
 route:
   game:
