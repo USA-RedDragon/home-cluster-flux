@@ -60,3 +60,19 @@ serviceMonitor:
         path: /metrics
         interval: 10s
         scrapeTimeout: 5s
+        # Path of Titans implements A2S only partially, so most of what this
+        # exporter emits is dead weight — verified against the live server:
+        #   player_duration      always 0 (field never populated)
+        #   player_score         the Marks currency; an economy value, not health
+        #   server_bots          always 0
+        #   server_vac,
+        #   server_visibility,
+        #   server_protocol      meaningless for a non-Steam title
+        #   server_the_ship_*,
+        #   player_the_ship_*    belong to an entirely different game
+        # server_info is kept for its map/version labels despite reporting
+        # server_os="Windows" on a Linux host.
+        metricRelabelings:
+          - sourceLabels: [__name__]
+            regex: a2s_(player_count|player_info|server_info|server_max_players|server_players|server_up)
+            action: keep
