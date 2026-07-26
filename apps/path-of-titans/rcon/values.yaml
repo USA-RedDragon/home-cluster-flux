@@ -6,7 +6,7 @@ controllers:
       rcon:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/rcon-web
-          tag: v0.0.2
+          tag: v0.0.3@sha256:d3414179e6e85fc5ab4c6b848986da61aeb40e3f0483fc30a6cc0601dcda4691
         env:
           - name: RCON_PASSWORD
             valueFrom:
