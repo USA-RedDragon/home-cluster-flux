@@ -39,7 +39,7 @@ spec:
               matchLabels:
                   kubernetes.io/metadata.name: path-of-titans
     - name: path-of-titans-rcon
-      protocol: UDP
+      protocol: TCP
       port: 7779
       allowedRoutes:
         namespaces:

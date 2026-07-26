@@ -130,7 +130,7 @@ service:
     ports:
       rcon:
         port: 7779
-        protocol: UDP
+        protocol: TCP
 
 persistence:
   data:
@@ -193,7 +193,7 @@ route:
             port: 7780
   rcon:
     enabled: true
-    kind: UDPRoute
+    kind: TCPRoute
     parentRefs:
       - name: public
         namespace: envoy-gateway-system
