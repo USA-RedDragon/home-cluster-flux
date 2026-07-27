@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+controllers:
+  path-map:
+    replicas: 1
+    containers:
+      path-map:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/path-map
+          tag: v0.0.1@sha256:4cb63f767ecaf10ad4a96023fc5b6301cfb2fa45345673fb859ba0b3157eb82a
+          pullPolicy: IfNotPresent
+        env:
+          - name: RCON_HOST
+            value: path-of-titans-rcon.path-of-titans.svc.cluster.local
+          - name: RCON_PORT
+            value: "7779"
+          - name: RCON_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: path-of-titans
+                key: rcon-password
+          - name: HTTP_PORT
+            value: "8080"
+          - name: MAP_IMAGEPATH
+            value: /maps
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: false
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+service:
+  path-map:
+    controller: path-map
+    ports:
+      http:
+        port: 8080
+        primary: true
+        protocol: TCP
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: path-map
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: path-map
+              port: http
+    tls:
+      - hosts:
+          - path-map
+
+persistence:
+  maps:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: longhorn-nvme
+    globalMounts:
+      - path: /maps
