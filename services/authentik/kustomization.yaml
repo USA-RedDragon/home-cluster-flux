@@ -6,6 +6,7 @@ resources:
   - pdb.yaml
   - prom.yaml
   - rbac.yaml
+  - referencegrant.yaml
   - helm.yaml
   - postgres.yaml
   - restic.yaml

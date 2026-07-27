@@ -132,6 +132,7 @@ route:
         sectionName: https
     hostnames:
       - authentik.mcswain.dev
+      - auth.srshost.ing
     rules:
       - backendRefs:
           - name: authentik

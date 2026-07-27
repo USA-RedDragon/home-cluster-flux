@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: srshost.ing
+spec:
+  secretName: srshost.ing-tls
+  issuerRef:
+    name: cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - srshost.ing
+    - '*.srshost.ing'
