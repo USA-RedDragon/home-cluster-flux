@@ -118,7 +118,7 @@ controllers:
             MANAGED=/opt/path-of-titans/PathOfTitans/Saved/managed
             LIVE=/opt/path-of-titans/PathOfTitans/Saved
             if [ -d "$MANAGED" ]; then
-              if cp -a "$MANAGED/." "$LIVE/"; then
+              if cp -R "$MANAGED/." "$LIVE/"; then
                 echo "config-overlay: applied managed config from $MANAGED"
               else
                 echo "config-overlay: FAILED to apply $MANAGED -- booting with live tree" >&2
