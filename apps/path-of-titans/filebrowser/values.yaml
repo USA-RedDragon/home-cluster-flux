@@ -76,7 +76,10 @@ persistence:
   data:
     existingClaim: path-of-titans
     globalMounts:
-    - path: /srv
+    - path: /srv/config
+      subPath: managed
+    - path: /srv/server
+      readOnly: true
   config:
     enabled: true
     type: configMap
