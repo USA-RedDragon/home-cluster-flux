@@ -127,9 +127,6 @@ controllers:
               echo "config-overlay: no managed/ dir present, live tree used as-is"
             fi
             exec /entrypoint.sh "$@"
-          - --
-        args:
-          - "-ini:Engine:[ConsoleVariables]:Misc.AnticheatProvider=none"
         lifecycle:
           preStop:
             exec:
