@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+controllers:
+  rcon-exporter:
+    replicas: 1
+    containers:
+      rcon-exporter:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/path-rcon-exporter
+          tag: v0.0.2@sha256:0f3528d614feba92985a6d00427dc20b4be16e73bacf6fab211596b7191078d7
+          pullPolicy: IfNotPresent
+        env:
+          - name: RCON_HOST
+            value: path-of-titans-rcon.path-of-titans.svc.cluster.local
+          - name: RCON_PORT
+            value: "7779"
+          - name: RCON_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: path-of-titans
+                key: rcon-password
+          - name: HTTP_PORT
+            value: "8080"
+          - name: EXPORTER_MININTERVALSECONDS
+            value: "60"
+          # Unreal units (cm), so 250m — roughly 3% of Gondwa's ~8.07km width.
+          # A stand-in for the engine's network relevancy distance; wants
+          # calibrating against pot_tick_rate_average during the 6-player run
+          # rather than being trusted as-is.
+          - name: EXPORTER_CLUSTERRADIUSUNITS
+            value: "25000"
+          - name: EXPORTER_GAMEDIR
+            value: /game
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 64Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: false
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    pod:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: path-of-titans
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65535
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+persistence:
+  game-config:
+    existingClaim: path-of-titans
+    globalMounts:
+      - path: /game
+        readOnly: true
+
+service:
+  rcon-exporter:
+    controller: rcon-exporter
+    ports:
+      metrics:
+        port: 8080
+        primary: true
+        protocol: TCP
+
+serviceMonitor:
+  rcon-exporter:
+    enabled: true
+    serviceName: rcon-exporter
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 60s
+        scrapeTimeout: 15s

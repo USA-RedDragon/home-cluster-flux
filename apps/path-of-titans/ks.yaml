@@ -87,3 +87,18 @@ spec:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: rcon-exporter
+  namespace: path-of-titans
+spec:
+  interval: 1h
+  targetNamespace: path-of-titans
+  path: ./apps/path-of-titans/rcon-exporter
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
