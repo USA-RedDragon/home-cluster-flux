@@ -1,0 +1,106 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: rcon-exporter
+spec:
+  groups:
+    - name: path-of-titans-rcon-integrity
+      rules:
+        # Non-zero means the record format moved and every metric derived from
+        # it is suspect.
+        - alert: PathOfTitansRCONParseFailures
+          expr: |
+            increase(pot_rcon_parse_failures_total[15m]) > 0
+          for: 0m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans RCON records are failing to parse"
+            description: "{{ $value }} player records failed to parse in 15 minutes. The PlayerInfoAll text format has probably changed."
+
+        # Disagreement between two independent sources — RCON and the A2S query
+        # protocol. Either one being wrong is worth knowing about, and neither
+        # can mask it alone.
+        - alert: PathOfTitansPlayerCountDisagreement
+          expr: |
+            abs(max(pot_rcon_players_reported) - max(a2s_server_players)) > 2
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "RCON and A2S disagree on player count"
+            description: "RCON and A2S differ by {{ $value }} players. One of the two is misreporting."
+
+    - name: path-of-titans-rcon-health
+      rules:
+        - alert: PathOfTitansRCONExporterDown
+          expr: |
+            pot_rcon_up == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans RCON exporter cannot reach the server"
+            description: "The exporter has been unable to complete an RCON exchange for 5 minutes."
+
+        # Distinct from up == 0: the process can be serving a cache happily while
+        # every value in it is minutes stale.
+        - alert: PathOfTitansRCONStale
+          expr: |
+            time() - pot_rcon_last_success_timestamp_seconds > 300
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans RCON data is stale"
+            description: "Last successful refresh was {{ $value | humanizeDuration }} ago. Metrics are being served from a stale cache."
+
+    - name: path-of-titans-game-config
+      rules:
+        # An enforced whitelist with nothing in it rejects every connection while
+        # the server stays up, keeps its tick rate, answers A2S and looks
+        # perfectly healthy. Nothing else in this stack can see it, and it is
+        # exactly the kind of thing that surfaces at the start of an event.
+        #
+        # bEnforceWhitelist is exported as a numeric setting valued 1 for true.
+        # The two metrics carry different label sets, hence on() with an empty
+        # list — both are single series.
+        - alert: PathOfTitansWhitelistLocksOutEveryone
+          expr: |
+            pot_rcon_server_setting{setting="bEnforceWhitelist"} == 1
+              and on() pot_rcon_moderation_active{list="whitelist"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Path of Titans whitelist is enforced but empty"
+            description: "bEnforceWhitelist is on with no active whitelist entries. Every join will be rejected while the server appears healthy."
+
+        # Reads 0 when the game's Saved directory cannot be read or parsed, since
+        # the live Game.ini does configure admins. Treat it as a mount/parse
+        # integrity check rather than a statement about moderation: it also
+        # invalidates PathOfTitansNoAdminOnline below, which compares against
+        # this same source.
+        - alert: PathOfTitansGameConfigUnreadable
+          expr: |
+            pot_rcon_admins_configured == 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans admin list reads as empty"
+            description: "No configured admins found in the game files. The /game mount or the Game.ini parse is probably broken."
+
+    - name: path-of-titans-moderation
+      rules:
+        # Gated on population so a quiet server does not page anyone. Threshold
+        # is a moderation judgement, not a technical one — adjust to taste.
+        - alert: PathOfTitansNoAdminOnline
+          expr: |
+            pot_rcon_admins_online == 0 and pot_rcon_players_parsed > 20
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Path of Titans has no admin online at population"
+            description: "{{ $value }} admins online with more than 20 players connected."
