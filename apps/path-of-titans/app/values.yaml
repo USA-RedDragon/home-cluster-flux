@@ -35,8 +35,8 @@ controllers:
             drop: ["ALL"]
       rcon-seed:
         image:
-          repository: jacob.pub/docker.io/outdead/rcon
-          tag: 0.10.2@sha256:7aca76877d05eb37f84c72533bdb7b806ef53d6269716a0abee4aeac3c52fcaf
+          repository: jacob.pub/ghcr.io/usa-reddragon/rcon
+          tag: v0.0.3@sha256:a43c96a6534fdbcd1bff8806d09b6d73a877af894aadb496e89cae6de4f52696
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -44,7 +44,6 @@ controllers:
           - |
             set -eu
             cp /rcon /opt/bin/rcon
-            cp /lib/ld-musl-x86_64.so.1 /opt/bin/
         securityContext: *security-context
       wireguard:
         image:
@@ -87,8 +86,8 @@ controllers:
       # on Cilium's min-TTL floor being generous.
       battleye-dns-refresh:
         image:
-          repository: jacob.pub/docker.io/outdead/rcon
-          tag: 0.10.2@sha256:7aca76877d05eb37f84c72533bdb7b806ef53d6269716a0abee4aeac3c52fcaf
+          repository: jacob.pub/ghcr.io/usa-reddragon/rcon
+          tag: v0.0.3@sha256:a43c96a6534fdbcd1bff8806d09b6d73a877af894aadb496e89cae6de4f52696
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -117,8 +116,7 @@ controllers:
                 - /bin/sh
                 - -c
                 - |
-                  if /opt/bin/ld-musl-x86_64.so.1 /opt/bin/rcon \
-                       -a 127.0.0.1:7779 -p "$RCON_PASSWORD" "Restart 600"; then
+                  if /opt/bin/rcon -a 127.0.0.1:7779 "Restart 600"; then
                     sleep 600
                   else
                     echo "preStop: RCON restart failed, shutting down now" >&2
