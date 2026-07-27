@@ -33,27 +33,6 @@ controllers:
             type: RuntimeDefault
           capabilities:
             drop: ["ALL"]
-      gameconfig-seed:
-        image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
-          tag: 50012h5@sha256:7f7d5b28a6736317ec0b526871d94519024a4eafb5010b6983d833b2022303d0
-          pullPolicy: IfNotPresent
-        command:
-          - /bin/sh
-          - -c
-          - |
-            set -eu
-            SRC=/pvc/Config/LinuxServer/Game.ini
-            if [ -f "$SRC" ]; then
-              cp "$SRC" /gameconfig/Game.ini
-              echo "gameconfig-seed: seeded $(wc -c < /gameconfig/Game.ini) bytes"
-            else
-              # Fresh volume: hand the server an empty file rather than failing,
-              # so first boot can come up and write its own defaults.
-              : > /gameconfig/Game.ini
-              echo "gameconfig-seed: no Game.ini on PVC, seeded empty"
-            fi
-        securityContext: *security-context
       rcon-seed:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/rcon
@@ -130,6 +109,23 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
           tag: 50012h5@sha256:7f7d5b28a6736317ec0b526871d94519024a4eafb5010b6983d833b2022303d0
           pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            MANAGED=/opt/path-of-titans/PathOfTitans/Saved/managed
+            LIVE=/opt/path-of-titans/PathOfTitans/Saved
+            if [ -d "$MANAGED" ]; then
+              if cp -a "$MANAGED/." "$LIVE/"; then
+                echo "config-overlay: applied managed config from $MANAGED"
+              else
+                echo "config-overlay: FAILED to apply $MANAGED -- booting with live tree" >&2
+              fi
+            else
+              echo "config-overlay: no managed/ dir present, live tree used as-is"
+            fi
+            exec /entrypoint.sh "$@"
+          - --
         args:
           - "-ini:Engine:[ConsoleVariables]:Misc.AnticheatProvider=none"
         lifecycle:
@@ -235,21 +231,6 @@ persistence:
       path-of-titans:
         path-of-titans:
         - path: /opt/path-of-titans/PathOfTitans/Saved
-        gameconfig-seed:
-        - path: /pvc
-          readOnly: true
-  gameconfig:
-    enabled: true
-    type: emptyDir
-    sizeLimit: 1Mi
-    advancedMounts:
-      path-of-titans:
-        gameconfig-seed:
-          - path: /gameconfig
-        path-of-titans:
-          - path: /opt/path-of-titans/PathOfTitans/Saved/Config/LinuxServer/Game.ini
-            subPath: Game.ini
-            readOnly: true
   battleye:
     enabled: true
     type: emptyDir
