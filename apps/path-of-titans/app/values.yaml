@@ -130,6 +130,8 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-of-titans
           tag: 50012h5@sha256:7f7d5b28a6736317ec0b526871d94519024a4eafb5010b6983d833b2022303d0
           pullPolicy: IfNotPresent
+        args:
+          - "-ini:Engine:[ConsoleVariables]:Misc.AnticheatProvider=none"
         lifecycle:
           preStop:
             exec:
