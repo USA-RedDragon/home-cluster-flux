@@ -59,3 +59,22 @@ ingress:
     tls:
       - hosts:
           - path-rcon
+
+route:
+  public:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - rcon.srshost.ing
+    rules:
+      - backendRefs:
+          - name: rcon
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /

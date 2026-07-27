@@ -84,3 +84,22 @@ persistence:
     storageClass: longhorn-nvme
     globalMounts:
       - path: /maps
+
+route:
+  public:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - map.srshost.ing
+    rules:
+      - backendRefs:
+          - name: path-map
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /

@@ -124,3 +124,22 @@ configMaps:
         {
           "disableExec": false
         }
+
+route:
+  public:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - files.srshost.ing
+    rules:
+      - backendRefs:
+          - name: filebrowser
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
