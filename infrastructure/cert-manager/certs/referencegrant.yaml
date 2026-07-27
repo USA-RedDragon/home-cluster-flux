@@ -46,5 +46,8 @@ spec:
       name: nvr.mcswain.dev-tls
       group: ""
     - kind: Secret
+      name: srshost.ing-tls
+      group: ""
+    - kind: Secret
       name: thisspacedoesnotexist.com-tls
       group: ""

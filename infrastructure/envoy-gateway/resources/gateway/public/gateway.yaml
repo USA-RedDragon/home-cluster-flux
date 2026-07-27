@@ -142,6 +142,9 @@ spec:
           - name: nvr.mcswain.dev-tls
             namespace: cert-manager
             kind: Secret
+          - name: srshost.ing-tls
+            namespace: cert-manager
+            kind: Secret
           - name: thisspacedoesnotexist.com-tls
             namespace: cert-manager
             kind: Secret

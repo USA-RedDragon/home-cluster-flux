@@ -15,5 +15,6 @@ resources:
   - mcswain.photography.cert.yaml
   - mcswain.wiki.cert.yaml
   - nvr.mcswain.dev.cert.yaml
+  - srshost.ing.cert.yaml
   - thisspacedoesnotexist.com.cert.yaml
   - referencegrant.yaml

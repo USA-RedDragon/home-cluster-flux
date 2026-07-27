@@ -1,0 +1,17 @@
+# Lets the SecurityPolicies in path-of-titans point Envoy's ext-auth at the
+# embedded outpost Service here. Cross-namespace backendRefs are denied without
+# an explicit grant in the target namespace.
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-ext-auth
+  namespace: authentik
+spec:
+  from:
+    - group: gateway.envoyproxy.io
+      kind: SecurityPolicy
+      namespace: path-of-titans
+  to:
+    - kind: Service
+      name: ak-outpost-authentik-embedded-outpost
+      group: ""
