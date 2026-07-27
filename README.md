@@ -1120,10 +1120,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="7">path-of-titans</td>
+    <td rowspan="8">path-of-titans</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/path-of-titans/a2s-exporter/helm.yaml">a2s-exporter</a></td>
-    <td rowspan="7"></td>
+    <td rowspan="8"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
@@ -1132,6 +1132,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/path-of-titans/mtail/helm.yaml">mtail</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/path-of-titans/path-map/helm.yaml">path-map</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
