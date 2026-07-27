@@ -22,3 +22,5 @@ spec:
         - X-authentik-uid
     headersToExtAuth:
       - cookie
+      - x-forwarded-proto
+      - x-forwarded-host
