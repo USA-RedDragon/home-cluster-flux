@@ -7,7 +7,7 @@ controllers:
       rcon-exporter:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-rcon-exporter
-          tag: v0.0.3
+          tag: v0.0.4
           pullPolicy: IfNotPresent
         env:
           - name: RCON_HOST
