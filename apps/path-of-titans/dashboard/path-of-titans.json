@@ -600,7 +600,7 @@
                   "placement": "bottom",
                   "showLegend": false
                 },
-                "maxVizHeight": 300,
+                "maxVizHeight": 40,
                 "minVizHeight": 16,
                 "minVizWidth": 8,
                 "namePlacement": "left",
@@ -613,7 +613,7 @@
                   "values": false
                 },
                 "showUnfilled": true,
-                "sizing": "auto",
+                "sizing": "manual",
                 "sortBy": "Value",
                 "sortDesc": true,
                 "valueMode": "color"
