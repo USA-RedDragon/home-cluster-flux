@@ -591,7 +591,7 @@
                 "overrides": []
               },
               "options": {
-                "displayMode": "gradient",
+                "displayMode": "basic",
                 "legend": {
                   "calcs": [],
                   "displayMode": "list",
@@ -1497,7 +1497,7 @@
                       }
                     ]
                   },
-                  "unit": "clocks"
+                  "unit": "dthms"
                 },
                 "overrides": []
               },
