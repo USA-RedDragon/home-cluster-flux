@@ -2,6 +2,7 @@
 controllers:
   path-map:
     replicas: 1
+    strategy: RollingUpdate
     containers:
       path-map:
         image:

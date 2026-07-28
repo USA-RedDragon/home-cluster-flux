@@ -2,6 +2,7 @@
 controllers:
   rcon-exporter:
     replicas: 1
+    strategy: RollingUpdate
     containers:
       rcon-exporter:
         image:
