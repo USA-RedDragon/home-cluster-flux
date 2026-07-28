@@ -30,7 +30,7 @@ spec:
             - -c
             - |
               set -eu
-              RETENTION_DAYS=365
+              RETENTION_DAYS=90
               cd /backups
 
               # The backup job names files with `date +%s`, so retention is decided
