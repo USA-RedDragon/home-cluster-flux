@@ -557,7 +557,7 @@
               "transformations": []
             }
           },
-          "description": "Magnitude by category, so one hue rather than a colour per species — the bar length carries the value and the names are read directly off the rows.",
+          "description": "Which species are online right now. One hue rather than a colour per species — the bar length carries the count and the species name is read directly off each row.",
           "id": 15,
           "links": [],
           "title": "Species",
@@ -602,7 +602,7 @@
                 "maxVizHeight": 300,
                 "minVizHeight": 16,
                 "minVizWidth": 8,
-                "namePlacement": "auto",
+                "namePlacement": "left",
                 "orientation": "horizontal",
                 "reduceOptions": {
                   "calcs": [
@@ -640,9 +640,9 @@
                       "group": "prometheus",
                       "kind": "DataQuery",
                       "spec": {
-                        "expr": "sum by (band) (pot_rcon_players_by_growth)",
+                        "expr": "sum by (band, stage) (pot_rcon_players_by_growth)",
                         "instant": true,
-                        "legendFormat": "{{band}}"
+                        "legendFormat": "{{stage}}"
                       },
                       "version": "v0"
                     },
@@ -654,7 +654,7 @@
               "transformations": []
             }
           },
-          "description": "Ordered bands from hatchling to fully grown, so the ramp runs light to dark rather than using unrelated hues.",
+          "description": "Players by growth stage, ordered hatchling → adult, so the ramp runs light to dark rather than using unrelated hues.",
           "id": 16,
           "links": [],
           "title": "Growth",
@@ -689,7 +689,37 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "0.25-0.5"
+                      "options": "Hatchling"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#a9cbf4",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Juvenile"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#86b6ef",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Adolescent"
                     },
                     "properties": [
                       {
@@ -704,7 +734,7 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "0.5-0.75"
+                      "options": "Sub-Adult"
                     },
                     "properties": [
                       {
@@ -719,13 +749,13 @@
                   {
                     "matcher": {
                       "id": "byName",
-                      "options": "0.75-1.01"
+                      "options": "Adult"
                     },
                     "properties": [
                       {
                         "id": "color",
                         "value": {
-                          "fixedColor": "#0d366b",
+                          "fixedColor": "#123a6b",
                           "mode": "fixed"
                         }
                       }
@@ -745,7 +775,7 @@
                 "maxVizHeight": 300,
                 "minVizHeight": 16,
                 "minVizWidth": 8,
-                "namePlacement": "auto",
+                "namePlacement": "left",
                 "orientation": "horizontal",
                 "reduceOptions": {
                   "calcs": [
@@ -1425,7 +1455,7 @@
                       "group": "prometheus",
                       "kind": "DataQuery",
                       "spec": {
-                        "expr": "max(pot_rcon_time_of_day)",
+                        "expr": "(floor(max(pot_rcon_time_of_day) / 100) * 3600) + ((max(pot_rcon_time_of_day) % 100) * 60)",
                         "instant": true,
                         "legendFormat": "time"
                       },
@@ -1439,7 +1469,7 @@
               "transformations": []
             }
           },
-          "description": "The in-game clock as the server reports it.",
+          "description": "The in-game clock. The server reports time of day as an HHMM integer (e.g. 1043 = 10:43); this converts it to seconds past midnight so it renders as a clock rather than a bare number.",
           "id": 22,
           "links": [],
           "title": "Game time of day",
@@ -1467,7 +1497,7 @@
                       }
                     ]
                   },
-                  "unit": "short"
+                  "unit": "clocks"
                 },
                 "overrides": []
               },
@@ -2575,7 +2605,7 @@
                           "name": "panel-2"
                         },
                         "height": 4,
-                        "width": 5,
+                        "width": 4,
                         "x": 0,
                         "y": 0
                       }
@@ -2588,8 +2618,8 @@
                           "name": "panel-3"
                         },
                         "height": 4,
-                        "width": 5,
-                        "x": 5,
+                        "width": 4,
+                        "x": 4,
                         "y": 0
                       }
                     },
@@ -2602,7 +2632,7 @@
                         },
                         "height": 4,
                         "width": 4,
-                        "x": 10,
+                        "x": 8,
                         "y": 0
                       }
                     },
@@ -2614,8 +2644,8 @@
                           "name": "panel-5"
                         },
                         "height": 4,
-                        "width": 5,
-                        "x": 14,
+                        "width": 4,
+                        "x": 12,
                         "y": 0
                       }
                     },
@@ -2627,8 +2657,21 @@
                           "name": "panel-6"
                         },
                         "height": 4,
-                        "width": 5,
-                        "x": 19,
+                        "width": 4,
+                        "x": 16,
+                        "y": 0
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-22"
+                        },
+                        "height": 4,
+                        "width": 4,
+                        "x": 20,
                         "y": 0
                       }
                     }
@@ -2825,23 +2868,10 @@
                           "kind": "ElementReference",
                           "name": "panel-21"
                         },
-                        "height": 4,
+                        "height": 8,
                         "width": 6,
                         "x": 18,
                         "y": 0
-                      }
-                    },
-                    {
-                      "kind": "GridLayoutItem",
-                      "spec": {
-                        "element": {
-                          "kind": "ElementReference",
-                          "name": "panel-22"
-                        },
-                        "height": 4,
-                        "width": 6,
-                        "x": 18,
-                        "y": 4
                       }
                     }
                   ]
