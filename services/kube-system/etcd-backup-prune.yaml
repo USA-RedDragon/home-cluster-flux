@@ -1,0 +1,74 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-prune
+  namespace: kube-system
+spec:
+  # 05:30 on the 1st of each month, offset from the @hourly backup.
+  schedule: "30 5 1 * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+          - name: registry-zot
+          containers:
+          - name: prune
+            image: jacob.pub/docker.io/alpine:3.24.1@sha256:bec4ccd3817e7c824eb0388971a0b83fab111d586285511ba0266b77e8dc65a9
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+            - name: backups
+              mountPath: /backups
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsUser: 0
+            command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              RETENTION_DAYS=365
+              cd /backups
+
+              # The backup job names files with `date +%s`, so retention is decided
+              # purely from the filename. Never stat: the archive holds tens of
+              # thousands of files on NFS and per-file metadata calls are the
+              # slow part.
+              CUT=$(( $(date +%s) - RETENTION_DAYS * 86400 ))
+
+              ls | awk -v cut="$CUT" '
+                /^etcd-[a-z]+\.kubernetes-[0-9]+\.db\.gz$/ {
+                  e = $0
+                  sub(/^etcd-[a-z]+\.kubernetes-/, "", e)
+                  sub(/\.db\.gz$/, "", e)
+                  if (e + 0 < cut) print
+                }' > /tmp/prune.txt
+
+              TOTAL=$(ls | wc -l)
+              DEL=$(wc -l < /tmp/prune.txt)
+              echo "total=$TOTAL expired=$DEL retention=${RETENTION_DAYS}d cutoff_epoch=$CUT"
+
+              if [ "$DEL" -eq 0 ]; then
+                echo "nothing to prune"
+                exit 0
+              fi
+
+              # Guard against a broken clock or a regex that stops matching:
+              # either would classify the whole archive as expired.
+              if [ "$(( DEL * 100 / TOTAL ))" -gt 95 ]; then
+                echo "ABORT: would delete $DEL of $TOTAL files (>95%)" >&2
+                exit 1
+              fi
+
+              echo "newest expired: $(tail -n1 /tmp/prune.txt)"
+              tr '\n' '\0' < /tmp/prune.txt | xargs -0 rm -f
+              echo "pruned $DEL files, $(ls | wc -l) remain"
+          restartPolicy: OnFailure
+          volumes:
+          - name: backups
+            nfs:
+              server: 192.168.1.135
+              path: /mnt/data/backups/Homelab/etcd
