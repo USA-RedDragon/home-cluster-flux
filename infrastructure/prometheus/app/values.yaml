@@ -892,6 +892,19 @@ grafana:
       repository: docker.io/busybox
       tag: 1.38.0@sha256:fd8d9aa63ba2f0982b5304e1ee8d3b90a210bc1ffb5314d980eb6962f1a9715d
 
+  imageRenderer:
+    enabled: true
+    image:
+      registry: jacob.pub
+      repository: docker.io/grafana/grafana-image-renderer
+      tag: v5.10.3@sha256:7f776ebb20f82b9cd5940238da596da8caf26baf9025c2e0a991d23dd803a0e6
+    resources:
+      requests:
+        cpu: 10m
+        memory: 128Mi
+      limits:
+        memory: 768Mi
+
   envFromSecret: grafana-oauth
 
   dashboardProviders:
