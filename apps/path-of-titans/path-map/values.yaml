@@ -6,7 +6,7 @@ controllers:
       path-map:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/path-map
-          tag: v0.0.1@sha256:4cb63f767ecaf10ad4a96023fc5b6301cfb2fa45345673fb859ba0b3157eb82a
+          tag: v0.0.2
           pullPolicy: IfNotPresent
         env:
           - name: RCON_HOST
