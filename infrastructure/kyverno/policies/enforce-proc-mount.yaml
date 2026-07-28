@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: proc-mount
 spec:
-  background: true
+  background: false
   rules:
     - name: check-proc-mount
       match:

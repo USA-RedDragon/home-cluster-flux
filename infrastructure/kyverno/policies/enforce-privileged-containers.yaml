@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: privileged-containers
 spec:
-  background: true
+  background: false
   rules:
     - name: privileged-containers
       match:
