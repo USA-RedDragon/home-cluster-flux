@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: nodeports
 spec:
-  background: true
+  background: false
   rules:
   - name: validate-nodeport
     match:

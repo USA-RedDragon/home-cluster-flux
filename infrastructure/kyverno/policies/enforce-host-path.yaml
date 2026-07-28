@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: host-path
 spec:
-  background: true
+  background: false
   rules:
     - name: host-path
       match:

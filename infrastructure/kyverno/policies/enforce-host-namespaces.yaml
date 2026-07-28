@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: host-namespaces
 spec:
-  background: true
+  background: false
   rules:
     - name: host-namespaces
       match:

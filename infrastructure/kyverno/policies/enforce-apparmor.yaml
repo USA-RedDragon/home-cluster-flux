@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: apparmor
 spec:
-  background: true
+  background: false
   rules:
     - name: app-armor
       match:
