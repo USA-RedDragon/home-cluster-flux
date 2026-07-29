@@ -1,0 +1,29 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyExtensionPolicy
+metadata:
+  name: internal-websocket-key
+  namespace: envoy-gateway-system
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+  lua:
+    # Envoy downgrades RFC 8441 extended CONNECT to an RFC 6455 HTTP/1.1
+    # upgrade without synthesizing sec-websocket-key, so strict backends
+    # reject the handshake with 400. See envoyproxy/envoy#8547.
+    - type: Inline
+      inline: |
+        function envoy_on_request(request_handle)
+          local headers = request_handle:headers()
+          if headers:get("sec-websocket-key") ~= nil then
+            return
+          end
+          if headers:get(":protocol") ~= "websocket"
+             and headers:get("upgrade") ~= "websocket" then
+            return
+          end
+          local rid = headers:get("x-request-id") or "envoy-ws-key-padding"
+          headers:add("sec-websocket-key",
+            request_handle:base64Escape(string.sub(rid .. "0000000000000000", 1, 16)))
+        end
