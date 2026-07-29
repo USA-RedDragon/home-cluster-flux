@@ -1,0 +1,18 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyPatchPolicy
+metadata:
+  name: internal-extended-connect
+  namespace: envoy-gateway-system
+spec:
+  type: JSONPatch
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: internal
+  jsonPatches:
+    - type: "type.googleapis.com/envoy.config.listener.v3.Listener"
+      name: envoy-gateway-system/internal/https
+      operation:
+        op: add
+        path: /filter_chains/0/filters/0/typed_config/http2_protocol_options/allow_connect
+        value: true
