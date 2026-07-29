@@ -59,6 +59,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#iperf3">iperf3</a></li>
   <li><a href="#jellyfin">jellyfin</a></li>
   <li><a href="#json-exporter">json-exporter</a></li>
+  <li><a href="#k8s-oidc-discovery">k8s-oidc-discovery</a></li>
   <li><a href="#kosync">kosync</a></li>
   <li><a href="#kromgo">kromgo</a></li>
   <li><a href="#kube-system">kube-system</a></li>
@@ -760,6 +761,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>json-exporter</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/json-exporter/app/helm.yaml">json-exporter</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>k8s-oidc-discovery</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>k8s-oidc-discovery</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/k8s-oidc-discovery/helm.yaml">k8s-oidc-discovery</a></td>
     <td></td>
   </tr>
 </table>
