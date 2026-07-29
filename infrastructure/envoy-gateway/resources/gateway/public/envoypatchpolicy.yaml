@@ -16,3 +16,9 @@ spec:
         op: add
         path: /filter_chains/0/filters/0/typed_config/http2_protocol_options/allow_connect
         value: true
+    - type: "type.googleapis.com/envoy.config.listener.v3.Listener"
+      name: envoy-gateway-system/public/https-quic
+      operation:
+        op: add
+        path: /filter_chains/0/filters/0/typed_config/http3_protocol_options/allow_extended_connect
+        value: true
