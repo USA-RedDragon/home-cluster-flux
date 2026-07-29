@@ -12,6 +12,9 @@ controllers:
         env:
           HTTP_TRUSTED_PROXIES: "172.17.0.0/16"
           METRICS_ENABLED: "true"
+          AWS_ROLE_ARN: arn:aws:iam::803205869942:role/nexrad-aws-notifier
+          AWS_WEB_IDENTITY_TOKEN_FILE: /var/run/secrets/aws/token
+          AWS_REGION: us-east-1
         resources:
           limits:
             memory: 100Mi
@@ -25,6 +28,25 @@ controllers:
             enabled: true
           startup:
             enabled: true
+
+serviceAccount:
+  nexrad-aws-notifier:
+    enabled: true
+
+persistence:
+  aws-token:
+    enabled: true
+    type: custom
+    volumeSpec:
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: token
+              audience: sts.amazonaws.com
+              expirationSeconds: 3600
+    globalMounts:
+      - path: /var/run/secrets/aws
+        readOnly: true
 
 service:
   nexrad-aws-notifier:
