@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  nexrad-aws-notifier:
+    replicas: 1
+    containers:
+      nexrad-aws-notifier:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/nexrad-aws-notifier
+          tag: v0.0.9:sha256:80db8cd2a09ed719ab9559c212956a656e0d5c8a354b150e241f92ab0817c85e
+          pullPolicy: IfNotPresent
+        env:
+          HTTP_TRUSTED_PROXIES: "172.17.0.0/16"
+          METRICS_ENABLED: "true"
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 30Mi
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+
+service:
+  nexrad-aws-notifier:
+    controller: nexrad-aws-notifier
+    ports:
+      http:
+        port: 8080
+        primary: true
+      metrics:
+        port: 8081
+
+serviceMonitor:
+  nexrad-aws-notifier:
+    enabled: true
+    serviceName: nexrad-aws-notifier
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
+
+route:
+  nexrad-aws-notifier:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - nexrad-aws-notifier.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: nexrad-aws-notifier
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
