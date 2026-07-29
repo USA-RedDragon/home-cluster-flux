@@ -21,6 +21,8 @@ spec:
     controllers:
       backup-sync:
         type: cronjob
+        serviceAccount:
+          name: backup-sync
         cronjob:
           schedule: 0 6 * * *
           concurrencyPolicy: Replace
@@ -31,16 +33,12 @@ spec:
               repository: jacob.pub/ghcr.io/rclone/rclone
               tag: 1.74.4@sha256:c61954aaa32328a5486715dd063a81c7879f5195ad3505cd362deddd509dc4a1
             env:
-              - name: AWS_ACCESS_KEY_ID
-                valueFrom:
-                  secretKeyRef:
-                    name: s3-backup-credentials
-                    key: accesskey
-              - name: AWS_SECRET_ACCESS_KEY
-                valueFrom:
-                  secretKeyRef:
-                    name: s3-backup-credentials
-                    key: secretkey
+              - name: AWS_ROLE_ARN
+                value: arn:aws:iam::803205869942:role/backup-sync
+              - name: AWS_WEB_IDENTITY_TOKEN_FILE
+                value: /var/run/secrets/aws/token
+              - name: AWS_REGION
+                value: us-east-1
               - name: RCLONE_CONFIG_B2_ACCOUNT
                 valueFrom:
                   secretKeyRef:
@@ -85,6 +83,21 @@ spec:
             no_check_bucket = true
 
     persistence:
+      aws-token:
+        enabled: true
+        type: custom
+        volumeSpec:
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  audience: sts.amazonaws.com
+                  expirationSeconds: 3600
+        advancedMounts:
+          backup-sync:
+            backup-sync:
+              - path: /var/run/secrets/aws
+                readOnly: true
       config:
         enabled: true
         type: configMap

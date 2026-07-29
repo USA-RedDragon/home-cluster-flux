@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: backup-sync
 resources:
   - ns.yaml
+  - serviceaccount.yaml
   - backup-sync-mcswain-backup.yaml
   - backup-sync-mcswain-git-backups.yaml
   - backup-sync-mcswain-home-assistant.yaml
