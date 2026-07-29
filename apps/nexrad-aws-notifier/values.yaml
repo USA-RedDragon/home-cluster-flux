@@ -7,10 +7,11 @@ controllers:
       nexrad-aws-notifier:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/nexrad-aws-notifier
-          tag: v0.0.10
+          tag: v0.0.11
           pullPolicy: IfNotPresent
         env:
           HTTP_TRUSTED_PROXIES: "172.17.0.0/16"
+          HTTP_CORS_HOSTS: "*"
           METRICS_ENABLED: "true"
           AWS_ROLE_ARN: arn:aws:iam::803205869942:role/nexrad-aws-notifier
           AWS_WEB_IDENTITY_TOKEN_FILE: /var/run/secrets/aws/token
