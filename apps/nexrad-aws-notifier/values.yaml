@@ -3,6 +3,7 @@
 controllers:
   nexrad-aws-notifier:
     replicas: 1
+    strategy: RollingUpdate
     containers:
       nexrad-aws-notifier:
         image:
