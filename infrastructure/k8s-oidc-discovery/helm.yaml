@@ -1,0 +1,125 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: k8s-oidc-discovery
+  namespace: k8s-oidc-discovery
+spec:
+  chart:
+    spec:
+      chart: app-template
+      version: '4.6.2'
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  interval: 1h
+  driftDetection:
+    mode: enabled
+  values:
+    controllers:
+      k8s-oidc-discovery:
+        replicas: 2
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            seccompProfile:
+              type: RuntimeDefault
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: ScheduleAnyway
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: k8s-oidc-discovery
+        containers:
+          app:
+            image:
+              repository: jacob.pub/registry.k8s.io/kubectl
+              tag: v1.34.2@sha256:86316dd78d4887f9dce1e35ce22f3fce12dc6927e45d896656d9b93a1bb2638b
+            args:
+              - proxy
+              - --address=0.0.0.0
+              - --port=8001
+              - --accept-paths=^/(\.well-known/openid-configuration|openid/v1/jwks)$
+              - --accept-hosts=.*
+            env:
+              HOME: /tmp
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /openid/v1/jwks
+                    port: 8001
+                  periodSeconds: 30
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /openid/v1/jwks
+                    port: 8001
+                  periodSeconds: 30
+                  failureThreshold: 3
+              startup:
+                enabled: false
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+
+    serviceAccount:
+      k8s-oidc-discovery:
+        enabled: true
+
+    persistence:
+      tmp:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 16Mi
+        globalMounts:
+          - path: /tmp
+
+    service:
+      k8s-oidc-discovery:
+        controller: k8s-oidc-discovery
+        ports:
+          http:
+            port: 8001
+            primary: true
+
+    route:
+      k8s-oidc-discovery:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            namespace: envoy-gateway-system
+            sectionName: https
+        hostnames:
+          - k8s-oidc.mcswain.dev
+        rules:
+          - backendRefs:
+              - name: k8s-oidc-discovery
+                port: 8001
+            matches:
+              - path:
+                  type: Exact
+                  value: /.well-known/openid-configuration
+              - path:
+                  type: Exact
+                  value: /openid/v1/jwks
