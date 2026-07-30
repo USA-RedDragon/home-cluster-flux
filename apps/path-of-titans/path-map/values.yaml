@@ -23,6 +23,8 @@ controllers:
             value: "8080"
           - name: MAP_IMAGEPATH
             value: /maps
+          - name: POLLER_INTERVALSECONDS
+            value: "1"
         resources:
           requests:
             cpu: 10m
