@@ -46,6 +46,13 @@ controllers:
           capabilities:
             drop: ["ALL"]
     pod:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: path-of-titans
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
