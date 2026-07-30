@@ -52,7 +52,7 @@ controllers:
             - topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/name: path-of-titans
+                  app.kubernetes.io/name: path-map
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
