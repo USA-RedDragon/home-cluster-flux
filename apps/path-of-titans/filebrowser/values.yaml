@@ -2,6 +2,7 @@
 controllers:
   filebrowser:
     replicas: 1
+    strategy: RollingUpdate
     initContainers:
       rcon-seed:
         image:
