@@ -7,7 +7,7 @@ controllers:
       dynatrace-otel-collector:
         image:
           repository: ghcr.io/dynatrace/dynatrace-otel-collector/dynatrace-otel-collector
-          tag: 0.53.0@sha256:05d73c5412afd8b5d4cafe9b803afdc9208bdee97feed1dd1d0abdf60ac44cc8
+          tag: 0.53.1@sha256:1fe560a4a9dd51eac9380bff8cbf46308f0efd4461a3cd3209a6d0316bea37a0
           pullPolicy: IfNotPresent
         resources:
           requests: {}
