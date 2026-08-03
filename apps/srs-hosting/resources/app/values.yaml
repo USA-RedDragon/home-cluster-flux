@@ -7,9 +7,9 @@ controllers:
       srs-hosting:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/platform
-          tag: v0.0.4
+          tag: v0.0.5
         env:
-          - name: METRICS_ENABLED
+          - name: METRICS__ENABLED
             value: "true"
           - name: DB_HOST
             valueFrom:
@@ -36,7 +36,7 @@ controllers:
               secretKeyRef:
                 name: postgresql-app
                 key: dbname
-          - name: DATABASE_URL
+          - name: DATABASE__URL
             value: postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):${DB_PORT}/${DB_NAME}
           - name: OIDC__ISSUER_URL
             value: 'https://authentik.mcswain.dev/application/o/srs-hosting/'
@@ -50,9 +50,9 @@ controllers:
               secretKeyRef:
                 name: srs-hosting
                 key: oidc-client-secret
-          - name: OIDC__REDIRECT_URI
+          - name: OIDC__REDIRECT_URL
             value: 'https://srshost.ing/api/v1/auth/callback'
-          - name: SESSION_SECRET
+          - name: SESSION__SECRET
             valueFrom:
               secretKeyRef:
                 name: srs-hosting
