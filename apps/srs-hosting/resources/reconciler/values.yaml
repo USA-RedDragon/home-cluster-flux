@@ -3,6 +3,8 @@ controllers:
   reconciler:
     replicas: 1
     strategy: RollingUpdate
+    serviceAccount:
+      identifier: reconciler
     containers:
       reconciler:
         image:
@@ -55,6 +57,73 @@ controllers:
         runAsGroup: 65534
         fsGroup: 65534
         fsGroupChangePolicy: OnRootMismatch
+
+serviceAccount:
+  reconciler: {}
+
+rbac:
+  roles:
+    reconciler:
+      type: ClusterRole
+      rules:
+        - apiGroups: [""]
+          resources: ["namespaces"]
+          verbs: ["get", "list", "watch", "create", "update", "patch"]
+        - apiGroups: [""]
+          resources: ["nodes"]
+          verbs: ["get", "list"]
+        - apiGroups: [""]
+          resources: ["pods", "endpoints"]
+          verbs: ["get", "list", "watch"]
+        - apiGroups: [""]
+          resources: ["secrets", "configmaps", "services", "serviceaccounts"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: [""]
+          resources: ["persistentvolumeclaims"]
+          verbs: ["get", "list", "watch", "create", "update", "patch"]
+        - apiGroups: ["apps"]
+          resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["batch"]
+          resources: ["jobs", "cronjobs"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["networking.k8s.io"]
+          resources: ["ingresses", "networkpolicies"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["gateway.networking.k8s.io"]
+          resources:
+            - httproutes
+            - grpcroutes
+            - tcproutes
+            - udproutes
+            - tlsroutes
+            - referencegrants
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["policy"]
+          resources: ["poddisruptionbudgets"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["autoscaling"]
+          resources: ["horizontalpodautoscalers"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["monitoring.coreos.com"]
+          resources: ["servicemonitors", "podmonitors", "prometheusrules"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["cilium.io"]
+          resources: ["ciliumnetworkpolicies"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["rbac.authorization.k8s.io"]
+          resources: ["roles", "rolebindings"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["scheduling.k8s.io"]
+          resources: ["priorityclasses"]
+          verbs: ["get", "list"]
+  bindings:
+    reconciler:
+      type: ClusterRoleBinding
+      roleRef:
+        identifier: reconciler
+      subjects:
+        - identifier: reconciler
 
 service:
   reconciler:
