@@ -6,8 +6,8 @@ controllers:
     containers:
       rcon-exporter:
         image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/path-rcon-exporter
-          tag: v0.0.4
+          repository: jacob.pub/ghcr.io/srs-hosting/path-rcon-exporter
+          tag: v0.0.5@sha256:df2e0c7af2eac062d06e4404b9fe48e1aa97d5a887e263e77443c4d1329eb4f8
           pullPolicy: IfNotPresent
         env:
           - name: RCON_HOST

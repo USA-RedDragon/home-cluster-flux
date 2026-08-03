@@ -6,8 +6,8 @@ controllers:
     containers:
       rcon:
         image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/rcon-web
-          tag: v0.0.4@sha256:5c7112a9a5dac943b3a88f0f5b4bdcfa9c529954b198c43bd4a07b5bd198796d
+          repository: jacob.pub/ghcr.io/srs-hosting/rcon-web
+          tag: v0.0.5@sha256:3fa0c1d57122abec49d7b418844d8193a047a8f2bf6fe08adb4059b50817dd71
         env:
           - name: RCON_PASSWORD
             valueFrom:
