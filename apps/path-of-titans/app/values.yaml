@@ -20,7 +20,7 @@ controllers:
       battleye-seed:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/path-of-titans
-          tag: 50012h10@sha256:26e4c2eaad7d0d288407643a6b72ac7990138c7e9d03dfb06149f6ff1e2a3148
+          tag: 50012h10@sha256:36fe79044b30129acc499f9179333620e32461fc04f456f775699cae5c29dd4f
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -33,18 +33,6 @@ controllers:
             type: RuntimeDefault
           capabilities:
             drop: ["ALL"]
-      rcon-seed:
-        image:
-          repository: jacob.pub/ghcr.io/srs-hosting/rcon
-          tag: v0.0.4@sha256:d2c2a62ea0d83aad7ebbd8ba39c066568f5f7dc6be9e0fbdf74ec5ca99aafab3
-          pullPolicy: IfNotPresent
-        command:
-          - /bin/sh
-          - -c
-          - |
-            set -eu
-            cp /rcon /opt/bin/rcon
-        securityContext: *security-context
       wireguard:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/wireguard
@@ -134,7 +122,7 @@ controllers:
                 - /bin/sh
                 - -c
                 - |
-                  if /opt/bin/rcon -a 127.0.0.1:7779 "Restart 600"; then
+                  if rcon -a 127.0.0.1:7779 "Restart 600"; then
                     sleep 600
                   else
                     echo "preStop: RCON restart failed, shutting down now" >&2
@@ -240,16 +228,6 @@ persistence:
           - path: /battleye
         path-of-titans:
           - path: /opt/path-of-titans/PathOfTitans/Binaries/Linux/BattlEye
-  bin:
-    enabled: true
-    type: emptyDir
-    sizeLimit: 32Mi
-    advancedMounts:
-      path-of-titans:
-        rcon-seed:
-          - path: /opt/bin
-        path-of-titans:
-          - path: /opt/bin
   wireguard-config:
     enabled: true
     type: secret
