@@ -7,7 +7,7 @@ controllers:
       discord:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/discord
-          tag: v0.0.8
+          tag: v0.0.9@sha256:940bb45e26aa3a17bf5918e546976e7d1dae9cc36fb68ba99fcb71640fe780f5
         env:
           - name: METRICS_ENABLED
             value: "true"
