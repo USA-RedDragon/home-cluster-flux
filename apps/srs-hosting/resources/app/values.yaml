@@ -7,7 +7,7 @@ controllers:
       srs-hosting:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/platform
-          tag: v0.0.9
+          tag: v0.0.10@sha256:683a5627c124a7a0395b96667a5611c6df46a9cc9fa270915baf7e3f954eac97
         env:
           - name: METRICS_ENABLED
             value: "true"
