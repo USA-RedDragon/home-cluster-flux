@@ -14,25 +14,6 @@ controllers:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     initContainers:
-      # BattlEye rewrites BEServer_x64.cfg on every boot, but its directory is on
-      # the read-only rootfs. Seed an emptyDir with the shipped BattlEye files so
-      # the directory can be mounted writable over the image's copy.
-      battleye-seed:
-        image:
-          repository: jacob.pub/ghcr.io/srs-hosting/path-of-titans
-          tag: 50012h10@sha256:36fe79044b30129acc499f9179333620e32461fc04f456f775699cae5c29dd4f
-          pullPolicy: IfNotPresent
-        command:
-          - /bin/sh
-          - -c
-          - cp -r /opt/path-of-titans/PathOfTitans/Binaries/Linux/BattlEye/* /battleye/
-        securityContext: &security-context
-          readOnlyRootFilesystem: true
-          allowPrivilegeEscalation: false
-          seccompProfile:
-            type: RuntimeDefault
-          capabilities:
-            drop: ["ALL"]
       wireguard:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/wireguard
@@ -93,41 +74,18 @@ controllers:
             memory: 8Mi
           limits:
             memory: 16Mi
-        securityContext: *security-context
+        securityContext: &security-context
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
       path-of-titans:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/path-of-titans
-          tag: 50012h10@sha256:26e4c2eaad7d0d288407643a6b72ac7990138c7e9d03dfb06149f6ff1e2a3148
+          tag: 50012h10@sha256:217cfb6bef7bea7093dda45ccd051e12a00840387a3376893ec4acde67ade436
           pullPolicy: IfNotPresent
-        command:
-          - /bin/sh
-          - -c
-          - |
-            MANAGED=/opt/path-of-titans/PathOfTitans/Saved/managed
-            LIVE=/opt/path-of-titans/PathOfTitans/Saved
-            if [ -d "$MANAGED" ]; then
-              if cp -R "$MANAGED/." "$LIVE/"; then
-                echo "config-overlay: applied managed config from $MANAGED"
-              else
-                echo "config-overlay: FAILED to apply $MANAGED -- booting with live tree" >&2
-              fi
-            else
-              echo "config-overlay: no managed/ dir present, live tree used as-is"
-            fi
-            exec /entrypoint.sh "$@"
-        lifecycle:
-          preStop:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - |
-                  if rcon -a 127.0.0.1:7779 "Restart 600"; then
-                    sleep 600
-                  else
-                    echo "preStop: RCON restart failed, shutting down now" >&2
-                    exit 1
-                  fi
         resources:
           requests:
             cpu: 2000m
@@ -136,17 +94,17 @@ controllers:
             cpu: 2000m
             memory: 10000Mi
         securityContext: *security-context
+        lifecycle:
+          preStop:
+            exec:
+              command: [/pre-stop]
         probes:
           liveness:
             enabled: true
             custom: true
             spec: &probe
               exec:
-                command:
-                  - /bin/sh
-                  - -c
-                  # /proc/net/udp lists ports in hex, so render 7777 as 1E61
-                  - 'grep -qE ":$(printf %04X 7777)[[:space:]]" /proc/net/udp'
+                command: [/health]
               periodSeconds: 10
               failureThreshold: 10
           readiness:
@@ -156,15 +114,7 @@ controllers:
           startup:
             enabled: true
             custom: true
-            spec:
-              exec:
-                command:
-                  - /bin/sh
-                  - -c
-                  # /proc/net/udp lists ports in hex, so render 7777 as 1E61
-                  - 'grep -qE ":$(printf %04X 7777)[[:space:]]" /proc/net/udp'
-              periodSeconds: 10
-              failureThreshold: 30
+            spec: *probe
         env:
         - name: TZ
           value: America/Chicago
@@ -217,17 +167,15 @@ persistence:
     advancedMounts:
       path-of-titans:
         path-of-titans:
-        - path: /opt/path-of-titans/PathOfTitans/Saved
+        - path: /data
   battleye:
     enabled: true
     type: emptyDir
     sizeLimit: 256Mi
     advancedMounts:
       path-of-titans:
-        battleye-seed:
-          - path: /battleye
         path-of-titans:
-          - path: /opt/path-of-titans/PathOfTitans/Binaries/Linux/BattlEye
+          - path: /battleye
   wireguard-config:
     enabled: true
     type: secret
