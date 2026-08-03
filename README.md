@@ -92,6 +92,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#rtl-433">rtl-433</a></li>
   <li><a href="#rtz">rtz</a></li>
   <li><a href="#ses-email-service">ses-email-service</a></li>
+  <li><a href="#srs-hosting">srs-hosting</a></li>
   <li><a href="#tailscale-operator">tailscale-operator</a></li>
   <li><a href="#tailscale-peer-relay">tailscale-peer-relay</a></li>
   <li><a href="#tandoor">tandoor</a></li>
@@ -1414,6 +1415,26 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>GitRepository</code></td>
     <td><a href="https://github.com/USA-RedDragon/ses-email-service">ses-email-service</a></td>
     <td></td>
+  </tr>
+</table>
+
+<h4>srs-hosting</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td rowspan="2">srs-hosting</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/srs-hosting/discord/helm.yaml">discord</a></td>
+    <td rowspan="2"><a href="apps/srs-hosting/postgres/postgres.yaml">postgresql</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/srs-hosting/reconciler/helm.yaml">reconciler</a></td>
   </tr>
 </table>
 

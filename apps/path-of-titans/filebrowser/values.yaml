@@ -6,8 +6,8 @@ controllers:
     initContainers:
       rcon-seed:
         image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/rcon
-          tag: v0.0.3@sha256:a43c96a6534fdbcd1bff8806d09b6d73a877af894aadb496e89cae6de4f52696
+          repository: jacob.pub/ghcr.io/srs-hosting/rcon
+          tag: v0.0.4@sha256:d2c2a62ea0d83aad7ebbd8ba39c066568f5f7dc6be9e0fbdf74ec5ca99aafab3
           pullPolicy: IfNotPresent
         command:
           - /bin/sh

@@ -6,8 +6,8 @@ controllers:
     containers:
       path-map:
         image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/path-map
-          tag: v0.0.4@sha256:b5216c2d03eccf1556d75da2b4dfeefc68df58aa4a2e1ec1ea9a3352b2ea4ff7
+          repository: jacob.pub/ghcr.io/srs-hosting/path-map
+          tag: v1.0.2@sha256:abb68639848e6a6362a568f8050fa4553dd37c23390224ade68c047153bd5c90
           pullPolicy: IfNotPresent
         env:
           - name: RCON_HOST
