@@ -9,7 +9,7 @@ controllers:
       reconciler:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/reconciler
-          tag: v0.0.9
+          tag: v0.0.10@sha256:89daa53d798bb6050b7a7f4b8ab2f989317edced2c3d8a2f0291f40d61a85a47
         env:
           - name: METRICS_ENABLED
             value: "true"
