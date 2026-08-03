@@ -1427,6 +1427,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
+    <td>discord</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/srs-hosting/resources/discord/helm.yaml">discord</a></td>
+    <td></td>
+  </tr>
+  <tr>
     <td rowspan="2">srs-hosting</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/srs-hosting/resources/restic/helmrelease.yaml">restic</a></td>
