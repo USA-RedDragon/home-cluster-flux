@@ -1427,10 +1427,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>srs-hosting</td>
+    <td rowspan="2">srs-hosting</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/srs-hosting/resources/restic/helmrelease.yaml">restic</a></td>
-    <td><a href="apps/srs-hosting/resources/postgres/postgres.yaml">postgresql</a></td>
+    <td rowspan="2"><a href="apps/srs-hosting/resources/postgres/postgres.yaml">postgresql</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/srs-hosting/resources/app/helm.yaml">srs-hosting</a></td>
   </tr>
 </table>
 
