@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+controllers:
+  discord:
+    replicas: 1
+    strategy: RollingUpdate
+    containers:
+      discord:
+        image:
+          repository: jacob.pub/ghcr.io/srs-hosting/discord
+          tag: v0.0.6
+        env:
+          - name: METRICS_ENABLED
+            value: "true"
+          - name: DISCORD_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: discord
+                key: token
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: host
+          - name: DB_PORT
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: port
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: password
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: dbname
+          - name: DATABASE_URL
+            value: postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+service:
+  discord:
+    controller: discord
+    ports:
+      metrics:
+        port: 9090
+        protocol: TCP
+
+serviceMonitor:
+  discord:
+    enabled: true
+    serviceName: discord
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
