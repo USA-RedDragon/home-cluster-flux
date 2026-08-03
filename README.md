@@ -1428,8 +1428,8 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
   <tr>
     <td>srs-hosting</td>
-    <td></td>
-    <td></td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/srs-hosting/resources/restic/helmrelease.yaml">restic</a></td>
     <td><a href="apps/srs-hosting/resources/postgres/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
