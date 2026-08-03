@@ -1,0 +1,118 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+controllers:
+  srs-hosting:
+    replicas: 1
+    strategy: RollingUpdate
+    containers:
+      srs-hosting:
+        image:
+          repository: jacob.pub/ghcr.io/srs-hosting/platform
+          tag: v0.0.3
+        env:
+          - name: METRICS_ENABLED
+            value: "true"
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: host
+          - name: DB_PORT
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: port
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: password
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: dbname
+          - name: DATABASE_URL
+            value: postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):${DB_PORT}/${DB_NAME}
+          - name: OIDC_ISSUER_URL
+            value: 'https://authentik.mcswain.dev/application/o/srs-hosting/'
+          - name: OIDC_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: srs-hosting
+                key: oidc-client-id
+          - name: OIDC_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: srs-hosting
+                key: oidc-client-secret
+          - name: OIDC_REDIRECT_URI
+            value: 'https://srshost.ing/api/v1/auth/callback'
+          - name: SESSION_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: srs-hosting
+                key: session-secret
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+service:
+  srs-hosting:
+    controller: srs-hosting
+    ports:
+      http:
+        port: 8080
+        protocol: TCP
+        primary: true
+      metrics:
+        port: 9090
+        protocol: TCP
+
+serviceMonitor:
+  srs-hosting:
+    enabled: true
+    serviceName: srs-hosting
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 10s
+        scrapeTimeout: 10s
+
+route:
+  srs-hosting:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - srshost.ing
+    rules:
+      - backendRefs:
+          - name: srs-hosting
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
