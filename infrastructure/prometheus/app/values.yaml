@@ -897,7 +897,7 @@ grafana:
     image:
       registry: jacob.pub
       repository: docker.io/grafana/grafana-image-renderer
-      tag: v5.11.0@sha256:6540bd7ff740d25167866cb6e6dbe044ff2c79d0bf682dc31358cf6a33cff54b
+      tag: v5.11.1@sha256:37e6ed8d55426f80d8d00a839df2cc02568b5877ffa2964f3ec09fa9a295c0a9
     resources:
       requests:
         cpu: 10m
