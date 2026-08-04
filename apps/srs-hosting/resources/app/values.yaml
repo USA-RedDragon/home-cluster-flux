@@ -28,7 +28,7 @@ controllers:
               secretKeyRef:
                 name: discord
                 key: client-id
-          - name: DISCORD_REDIRECT_URL
+          - name: DISCORD_INSTALL_REDIRECT_URL
             value: 'https://srshost.ing/api/v1/discord/install/callback'
           - name: OIDC_CLIENT_ID
             valueFrom:
