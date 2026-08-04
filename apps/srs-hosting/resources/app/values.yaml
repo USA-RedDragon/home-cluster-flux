@@ -18,6 +18,18 @@ controllers:
                 key: uri
           - name: OIDC_ISSUER_URL
             value: 'https://authentik.mcswain.dev/application/o/srs-hosting/'
+          - name: DISCORD_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: discord
+                key: client-secret
+          - name: DISCORD_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: discord
+                key: client-id
+          - name: DISCORD_REDIRECT_URL
+            value: 'https://srshost.ing/api/v1/discord/install/callback'
           - name: OIDC_CLIENT_ID
             valueFrom:
               secretKeyRef:
