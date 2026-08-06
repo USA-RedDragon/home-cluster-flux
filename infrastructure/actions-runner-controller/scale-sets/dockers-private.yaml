@@ -31,7 +31,7 @@ spec:
           fsGroup: 1001
         containers:
         - name: runner
-          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.333.1@sha256:593aa6cf1adfa25d6d5300f5f697645738c87904bb894b2fe63ff54149bcb72b
+          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.335.1@sha256:e9be6404faaf74bc01c1301042ab2b73f4e06ec42a55b55f2c675fcaa0965cb8
           command: ["/home/runner/run.sh"]
           env:
             - name: ACTIONS_RUNNER_CONTAINER_HOOKS
