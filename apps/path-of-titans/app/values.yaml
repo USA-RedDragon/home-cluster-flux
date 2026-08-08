@@ -65,6 +65,7 @@ controllers:
             trap 'exit 0' TERM INT
             while true; do
               getent hosts pot1.battleye.com >/dev/null 2>&1 || true
+              getent hosts discord.com >/dev/null 2>&1 || true
               sleep 120 &
               wait $!
             done
