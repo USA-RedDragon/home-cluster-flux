@@ -27,6 +27,12 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
+    - toFQDNs:
+        - matchName: discord.com
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
     # BattlEye master. Without this, ban checks time out and bans stop being
     # enforced while the server otherwise looks completely healthy.
     #
