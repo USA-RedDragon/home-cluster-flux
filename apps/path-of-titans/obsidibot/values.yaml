@@ -1,0 +1,114 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+controllers:
+  obsidibot:
+    replicas: 1
+    strategy: RollingUpdate
+    containers:
+      obsidibot:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/obsidibot
+          tag: v0.0.1
+        env:
+          - name: METRICS_ENABLED
+            value: "true"
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: obsidibot-app
+                key: uri
+          - name: RCON_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: path-of-titans
+                key: rcon-password
+          - name: RCON_PORT
+            value: "7779"
+          - name: RCON_HOST
+            value: "path-of-titans-rcon.path-of-titans.svc.cluster.local"
+          - name: DISCORD_APPLICATIONID
+            valueFrom:
+              secretKeyRef:
+                name: obsidibot
+                key: discord-application-id
+          - name: DISCORD_PUBLICKEY
+            valueFrom:
+              secretKeyRef:
+                name: obsidibot
+                key: discord-public-key
+          - name: DISCORD_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: obsidibot
+                key: discord-token
+          - name: INGEST_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: obsidibot
+                key: ingest-secret
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+service:
+  obsidibot-interactions:
+    controller: obsidibot
+    ports:
+      interactions:
+        port: 8080
+        protocol: TCP
+  obsidibot-webhook:
+    controller: obsidibot
+    ports:
+      webhook:
+        port: 8081
+        protocol: TCP
+  obsidibot-metrics:
+    controller: obsidibot
+    ports:
+      metrics:
+        port: 9090
+        protocol: TCP
+
+serviceMonitor:
+  obsidibot:
+    enabled: true
+    serviceName: obsidibot-metrics
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 60s
+        scrapeTimeout: 15s
+
+route:
+  interactions:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - obsidibot.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: obsidibot-interactions
+            port: 8080
+        matches:
+          - path:
+              type: Exact
+              value: /
