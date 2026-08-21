@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: rcon
+  name: obsidibot
   namespace: path-of-titans
 spec:
   install:
@@ -10,7 +10,7 @@ spec:
   interval: 60m0s
   driftDetection:
     mode: enabled
-  releaseName: rcon
+  releaseName: obsidibot
   chart:
     spec:
       chart: app-template
