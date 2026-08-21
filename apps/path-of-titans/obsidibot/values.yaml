@@ -64,19 +64,19 @@ controllers:
         fsGroupChangePolicy: OnRootMismatch
 
 service:
-  obsidibot-interactions:
+  interactions:
     controller: obsidibot
     ports:
       interactions:
         port: 8080
         protocol: TCP
-  obsidibot-webhook:
+  webhook:
     controller: obsidibot
     ports:
       webhook:
         port: 8081
         protocol: TCP
-  obsidibot-metrics:
+  metrics:
     controller: obsidibot
     ports:
       metrics:
