@@ -10,6 +10,14 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: path-of-titans
+            app.kubernetes.io/instance: obsidibot
+      toPorts:
+        - ports:
+            - port: "8081"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: kube-system
             k8s-app: kube-dns
       toPorts:
