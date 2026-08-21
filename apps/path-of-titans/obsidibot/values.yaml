@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 controllers:
   obsidibot:
-    replicas: 1
+    replicas: 3
     strategy: RollingUpdate
     containers:
       obsidibot:
