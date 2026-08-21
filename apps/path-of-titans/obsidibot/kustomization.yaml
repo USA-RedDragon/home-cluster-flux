@@ -4,7 +4,7 @@ namespace: path-of-titans
 resources:
   - helm.yaml
   - postgres.yaml
-  - securitypolicy.yaml
+  - restic.yaml
 configMapGenerator:
   - name: chart-values
     files:
