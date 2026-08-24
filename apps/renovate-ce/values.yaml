@@ -181,7 +181,7 @@ renovateServer:
   # Optional, a string of a comma separated values. (e.g. `org1/*, org2/test*, org2/test*`). Same behavior as Renovate cli 'autodiscoverFilter' feature
   # Warning: The Renovate CLI 'autodiscover' configuration option is disabled.
   # Repository filtering should solely rely on server-side filtering using 'mendRnvAutoDiscoverFilter'.
-  mendRnvAutoDiscoverFilter: 'kubewg-net/*,AstroGardenLLC/*,USA-RedDragon/*,SRS-Hosting/*'
+  mendRnvAutoDiscoverFilter: 'kubewg-net/*,AstroGardenLLC/*,USA-RedDragon/*,SRS-Hosting/*,Squallar/*'
 
   # Optional. Accepted values: 'enabled', 'discovered', and 'disabled'. Defaults to 'discovered'.
   mendRnvEnqueueJobsOnStartup: disabled
