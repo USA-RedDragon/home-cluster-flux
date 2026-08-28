@@ -31,3 +31,10 @@ spec:
     target:
       kind: Service
       name: ses-email-service
+  - patch: |
+      - op: add
+        path: /metadata/annotations/reloader.stakater.com~1auto
+        value: "true"
+    target:
+      kind: Deployment
+      name: ses-email-service
