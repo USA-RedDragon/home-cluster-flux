@@ -195,6 +195,16 @@
             ]
         },
         {
+            "description": "Envoy Gateway ships breaking changes in minor releases; require manual review",
+            "matchUpdateTypes": [
+                "minor"
+            ],
+            "automerge": false,
+            "matchPackageNames": [
+                "gateway-helm"
+            ]
+        },
+        {
             "matchDatasources": [
                 "docker"
             ],

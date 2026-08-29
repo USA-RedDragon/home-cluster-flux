@@ -14,3 +14,4 @@ config:
     extensionApis:
       enableBackend: true
       enableEnvoyPatchPolicy: true
+      enableLua: true
