@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/docker.io/healthchecks/healthchecks
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v4.3@sha256:cd7bcd94350818b3944f82eb5995f48bdeab8c8627977578a569ffa73f56f56f"
+  tag: "v4.4@sha256:aa08a61b0dcfd83f1332eab195d5cec1b595ae076eb8388cadf8a3d597114f9b"
 
 nameOverride: ""
 fullnameOverride: ""
