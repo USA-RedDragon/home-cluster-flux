@@ -51,6 +51,8 @@ controllers:
             value: all
           - name: JELLYFIN_LOG_DIR
             value: "/log"
+          - name: TMPDIR
+            value: /tmp
         securityContext:
           fsGroup: 568
           readOnlyRootFilesystem: true
@@ -89,12 +91,10 @@ persistence:
     enabled: true
     type: emptyDir
     sizeLimit: 10Gi
-  jellyfin-tmp:
+  tmp:
     enabled: true
     type: emptyDir
     sizeLimit: 30Gi
-    globalMounts:
-      - path: /tmp/jellyfin
   media:
     enabled: true
     existingClaim: media
