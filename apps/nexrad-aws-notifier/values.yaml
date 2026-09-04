@@ -8,7 +8,7 @@ controllers:
       nexrad-aws-notifier:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/nexrad-aws-notifier
-          tag: v0.0.12
+          tag: v0.0.13
           pullPolicy: IfNotPresent
         env:
           HTTP_TRUSTED_PROXIES: "172.17.0.0/16"
