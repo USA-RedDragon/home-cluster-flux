@@ -4,7 +4,6 @@ namespace: relax-sounds
 resources:
   - ns.yaml
   - helm.yaml
-  - valkey.yaml
   - restic.yaml
 configMapGenerator:
   - name: chart-values

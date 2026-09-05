@@ -9,21 +9,12 @@ controllers:
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-      labels:
-        valkey-client: "true"
     containers:
       relax-sounds:
         image:
           repository: jacob.pub/ghcr.io/gabe565/relax-sounds
-          tag: 1.8.2@sha256:e52a28d4320acfba8be067cb4b89badaf499258ff47482532149204aaa706e17
+          tag: 2.0.0
           pullPolicy: IfNotPresent
-        env:
-          RELAX_VALKEY_ENABLED: "true"
-          RELAX_VALKEY_HOST: valkey
-          RELAX_VALKEY_PASSWORD:
-            secretKeyRef:
-              name: valkey
-              key: valkey-password
         resources:
           requests:
             cpu: 10m
