@@ -23,7 +23,7 @@ spec:
           valkey:
             image:
               repository: jacob.pub/ghcr.io/valkey-io/valkey
-              tag: 9.1.2-alpine@sha256:a174b894902bd3367e330d47cc2054367dc4917701776aaf336f41d83b65ec7a
+              tag: 9.1.2-alpine@sha256:a0dbf4c1d5708782907c10e2c72deff317518518b5288a58416981d9db95d30b
             resources:
               limits:
                 memory: 50Mi
