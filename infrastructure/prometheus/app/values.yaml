@@ -593,7 +593,7 @@ alertmanager:
     image:
       registry: jacob.pub
       repository: quay.io/prometheus/alertmanager
-      tag: v0.33.1
+      tag: v0.34.0
       sha: ""
 
     ## If true then the user will be responsible to provide a secret with alertmanager configuration
