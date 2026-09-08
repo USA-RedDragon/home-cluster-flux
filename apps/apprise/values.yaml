@@ -7,7 +7,7 @@ controllers:
       apprise:
         image:
           repository: jacob.pub/lscr.io/linuxserver/apprise-api
-          tag: 1.5.4@sha256:e3960dba4862504eb86be39eb22c48c6955204e1a2d8a86058aebfbb14157507
+          tag: 1.5.4@sha256:9d45b610dfc9097714c1f33eba8dbce29f7d4b6367d861d6f5ccd5de67738962
         probes:
           liveness:
             enabled: true
