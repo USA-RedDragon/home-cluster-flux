@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
 controllers:
-  cobblemon:
+  forge:
     replicas: 1
     strategy: Recreate
 
@@ -14,10 +14,10 @@ controllers:
         fsGroupChangePolicy: OnRootMismatch
 
     containers:
-      cobblemon:
+      forge:
         image:
-          repository: jacob.pub/minecraft
-          tag: "fabric-1.20.1@sha256:00b2bc91a72d5ff6d648bd64f7f393605a8dbcecf6204ae8b2aa76d0c732fbfc"
+          repository: jacob.pub/ghcr.io/usa-reddragon/forge
+          tag: "1.20.1@sha256:80eb4883183dc086efb3e113d6f85afd97704436f35b39b644bb7979168391b6"
         env:
           ACCEPT_EULA: "true"
           MEMORY_OPTS: "-Xms8G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true"
@@ -41,8 +41,8 @@ controllers:
             enabled: true
 
 service:
-  cobblemon:
-    controller: cobblemon
+  forge:
+    controller: forge
     ports:
       server:
         port: 25565
@@ -73,7 +73,7 @@ route:
         sectionName: minecraft-server
     rules:
       - backendRefs:
-          - name: cobblemon
+          - name: forge
             port: 25565
   rcon:
     enabled: true
@@ -84,5 +84,5 @@ route:
         sectionName: minecraft-rcon
     rules:
       - backendRefs:
-          - name: cobblemon
+          - name: forge
             port: 25575
