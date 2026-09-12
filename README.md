@@ -928,12 +928,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">minecraft</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/minecraft/cobblemon-helm.yaml">cobblemon</a></td>
+    <td><a href="apps/minecraft/dragonmc-site-helm.yaml">dragonmc-site</a></td>
     <td rowspan="2"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/minecraft/dragonmc-site-helm.yaml">dragonmc-site</a></td>
+    <td><a href="apps/minecraft/forge-helm.yaml">forge</a></td>
   </tr>
 </table>
 
