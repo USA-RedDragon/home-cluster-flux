@@ -1,14 +1,14 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: cobblemon
+  name: forge
   namespace: minecraft
 spec:
   install:
     remediation:
       retries: -1
   interval: 60m0s
-  releaseName: cobblemon
+  releaseName: forge
   driftDetection:
     mode: enabled
   chart:
@@ -22,4 +22,4 @@ spec:
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
-      name: cobblemon-chart-values
+      name: forge-chart-values
