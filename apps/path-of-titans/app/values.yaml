@@ -56,7 +56,7 @@ controllers:
       battleye-dns-refresh:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/rcon
-          tag: v0.0.4@sha256:d2c2a62ea0d83aad7ebbd8ba39c066568f5f7dc6be9e0fbdf74ec5ca99aafab3
+          tag: v0.0.5@sha256:effa0b6f89db5f4edd7904677fb1671a88d48a4c62a92f331edbd5a850e34cee
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
