@@ -80,6 +80,12 @@ persistence:
     accessMode: ReadWriteOnce
     size: 20Gi
     storageClass: longhorn-nvme
+  cache:
+    enabled: true
+    type: emptyDir
+    sizeLimit: 10Gi
+    globalMounts:
+      - path: /home/minecraft/.cache
 
 route:
   server:
