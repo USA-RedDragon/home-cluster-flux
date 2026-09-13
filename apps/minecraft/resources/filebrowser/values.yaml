@@ -17,8 +17,8 @@ controllers:
             cp /rcon /opt/bin/rcon
             cat > /opt/bin/mc-restart <<'SCRIPT'
             #!/bin/sh
-            /opt/bin/rcon -a minecraft-rcon:7779 "/save-all"
-            /opt/bin/rcon -a minecraft-rcon:7779 "/stop"
+            /opt/bin/rcon -a minecraft-rcon:25575 "/save-all"
+            /opt/bin/rcon -a minecraft-rcon:25575 "/stop"
             SCRIPT
             chmod +x /opt/bin/mc-restart
         securityContext: &security-context
