@@ -2492,7 +2492,7 @@ prometheusOperator:
     image:
       registry: jacob.pub
       repository: quay.io/prometheus-operator/prometheus-config-reloader
-      tag: v0.93.0@sha256:0ccb22ca9f3f6fd9f76ce95585d18bd2e363d421c534dde710be4bd13caa551d
+      tag: v0.94.0@sha256:142a1f11df8dd165f00375b0b1826aecb9c9adeb05c39855893138d7c7575ff7
 
     # add prometheus config reloader liveness and readiness probe. Default: false
     enableProbe: false
