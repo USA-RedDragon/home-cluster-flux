@@ -7,7 +7,7 @@ controllers:
       rcon-seed:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/rcon
-          tag: v0.0.4@sha256:d2c2a62ea0d83aad7ebbd8ba39c066568f5f7dc6be9e0fbdf74ec5ca99aafab3
+          tag: v0.0.5
           pullPolicy: IfNotPresent
         command:
           - /bin/sh

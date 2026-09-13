@@ -7,7 +7,7 @@ controllers:
       rcon:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/rcon-web
-          tag: v0.0.5@sha256:3fa0c1d57122abec49d7b418844d8193a047a8f2bf6fe08adb4059b50817dd71
+          tag: v0.0.6
         env:
           - name: RCON_PASSWORD
             valueFrom:
