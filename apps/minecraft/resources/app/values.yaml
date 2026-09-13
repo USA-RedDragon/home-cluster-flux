@@ -1,11 +1,12 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
-
 controllers:
-  forge:
+  minecraft:
     replicas: 1
-    strategy: Recreate
-
+    podDisruptionBudget:
+      minAvailable: 1
     pod:
+      priorityClassName: game-server
+      terminationGracePeriodSeconds: 700
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -14,10 +15,11 @@ controllers:
         fsGroupChangePolicy: OnRootMismatch
 
     containers:
-      forge:
+      minecraft:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/forge
-          tag: "1.20.1@sha256:80eb4883183dc086efb3e113d6f85afd97704436f35b39b644bb7979168391b6"
+          tag: 1.20.1@sha256:80eb4883183dc086efb3e113d6f85afd97704436f35b39b644bb7979168391b6
+          pullPolicy: IfNotPresent
         env:
           ACCEPT_EULA: "true"
           MEMORY_OPTS: "-Xms8G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true"
@@ -30,25 +32,46 @@ controllers:
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
           capabilities:
             drop: ["ALL"]
+        # lifecycle:
+        #   preStop:
+        #     exec:
+        #       command: [/pre-stop]
         probes:
           liveness:
             enabled: true
+            # custom: true
+            # spec: &probe
+            #   exec:
+            #     command: [/health]
+            #   periodSeconds: 10
+            #   failureThreshold: 10
           readiness:
             enabled: true
+            # custom: true
+            # spec: *probe
           startup:
             enabled: true
+            # custom: true
+            # spec: *probe
 
 service:
-  forge:
-    controller: forge
+  minecraft:
+    controller: minecraft
     ports:
-      server:
+      game:
         port: 25565
+        protocol: TCP
         primary: true
+  rcon:
+    controller: minecraft
+    ports:
       rcon:
         port: 25575
+        protocol: TCP
 
 persistence:
   minecraft:
@@ -57,32 +80,3 @@ persistence:
     accessMode: ReadWriteOnce
     size: 20Gi
     storageClass: longhorn-nvme
-  tmp:
-    enabled: true
-    type: emptyDir
-    medium: Memory
-    sizeLimit: 4Gi
-
-route:
-  server:
-    enabled: true
-    kind: TCPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: minecraft-server
-    rules:
-      - backendRefs:
-          - name: forge
-            port: 25565
-  rcon:
-    enabled: true
-    kind: TCPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: minecraft-rcon
-    rules:
-      - backendRefs:
-          - name: forge
-            port: 25575

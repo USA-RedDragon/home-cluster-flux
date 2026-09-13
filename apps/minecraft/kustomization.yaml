@@ -3,15 +3,4 @@ kind: Kustomization
 namespace: minecraft
 resources:
   - ns.yaml
-  - dragonmc-site-helm.yaml
-  - forge-helm.yaml
-  - forge-networkpolicy.yaml
-configMapGenerator:
-  - name: dragonmc-site-chart-values
-    files:
-      - values.yaml=dragonmc-site-values.yaml
-  - name: forge-chart-values
-    files:
-      - values.yaml=forge-values.yaml
-configurations:
-  - kustomizeconfig.yaml
+  - ks.yaml

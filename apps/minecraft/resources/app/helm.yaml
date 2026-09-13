@@ -1,26 +1,22 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: dragonmc-site
+  name: minecraft
   namespace: minecraft
 spec:
-  install:
-    remediation:
-      retries: -1
   interval: 60m0s
   driftDetection:
     mode: enabled
-  releaseName: dragonmc-site
-  suspend: true
+  releaseName: minecraft
   chart:
     spec:
-      chart: app
+      chart: app-template
       sourceRef:
         kind: HelmRepository
-        name: usa-reddragon
+        name: bjw-s
         namespace: flux-system
-      version: '0.1.35'
+      version: '4.6.2'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
-      name: dragonmc-site-chart-values
+      name: chart-values

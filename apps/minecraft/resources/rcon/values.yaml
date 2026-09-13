@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+controllers:
+  rcon:
+    replicas: 1
+    strategy: RollingUpdate
+    containers:
+      rcon:
+        image:
+          repository: jacob.pub/ghcr.io/srs-hosting/rcon-web
+          tag: v0.0.5@sha256:3fa0c1d57122abec49d7b418844d8193a047a8f2bf6fe08adb4059b50817dd71
+        env:
+          - name: RCON_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: minecraft
+                key: rcon-password
+          - name: RCON_PORT
+            value: "25575"
+          - name: RCON_HOST
+            value: "rcon.minecraft.svc.cluster.local"
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65535
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+
+service:
+  rcon:
+    controller: rcon
+    ports:
+      http:
+        port: 8080
+        protocol: TCP
+
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: mc-rcon
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: rcon
+              port: http
+    tls:
+      - hosts:
+          - mc-rcon
