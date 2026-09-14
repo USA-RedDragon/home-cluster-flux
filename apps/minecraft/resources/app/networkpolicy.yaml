@@ -19,12 +19,19 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    - toFQDNs:
-        - matchName: sessionserver.mojang.com
-        - matchPattern: api.minecraftservices.com
-        - matchPattern: api.mojang.com
-        - matchPattern: authserver.mojang.com
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
+    # - toFQDNs:
+    #     - matchName: sessionserver.mojang.com
+    #     - matchPattern: api.minecraftservices.com
+    #     - matchPattern: api.mojang.com
+    #     - matchPattern: authserver.mojang.com
+    #   toPorts:
+    #     - ports:
+    #         - port: "443"
+    #           protocol: TCP
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
