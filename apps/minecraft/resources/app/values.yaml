@@ -18,7 +18,7 @@ controllers:
       minecraft:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/forge
-          tag: 1.20.1@sha256:7aea10485db426985dedb8214d7f57a2819f32a40c12e3e2f9f47ad868078a6b
+          tag: 1.20.1@sha256:d17bf86e2deaac7f66aa941729226762deaa7eafe6f2b4a52d692288167cb6ad
           pullPolicy: IfNotPresent
         env:
           ACCEPT_EULA: "true"
