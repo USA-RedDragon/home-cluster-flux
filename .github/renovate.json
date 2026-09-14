@@ -104,6 +104,14 @@
             ]
         },
         {
+            "description": "Forge server is pinned to the modpack's Minecraft version; mods break on any other version. Only digest updates of 1.20.1 are allowed.",
+            "automerge": false,
+            "allowedVersions": "/^1\\.20\\.1$/",
+            "matchPackageNames": [
+                "/usa-reddragon\\/forge$/"
+            ]
+        },
+        {
             "automerge": false,
             "allowedVersions": "<=1.19.2",
             "matchPackageNames": [
