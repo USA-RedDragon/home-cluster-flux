@@ -2467,7 +2467,7 @@ prometheusOperator:
   image:
     registry: jacob.pub
     repository: quay.io/prometheus-operator/prometheus-operator
-    tag: v0.93.0@sha256:a001ed10a3823bbf2410ea347796d0e35ff8decd24fb98acbe7ab9e98d431c39
+    tag: v0.94.0@sha256:cf153f64d6c38113fceb2cda7642365ea887f71edd7888f054e43e54cf177e55
     pullPolicy: IfNotPresent
 
   ## Prometheus image to use for prometheuses managed by the operator
