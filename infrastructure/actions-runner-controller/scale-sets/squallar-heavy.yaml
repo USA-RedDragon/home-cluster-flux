@@ -2,13 +2,13 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: squallar-runner-set
+  name: squallar-runner-set-heavy
   namespace: actions-runners
 spec:
   interval: 1m0s
   driftDetection:
     mode: enabled
-  releaseName: squallar-runner-set
+  releaseName: squallar-runner-set-heavy
   chart:
     spec:
       chart: gha-runner-scale-set
@@ -40,7 +40,7 @@ spec:
             whenUnsatisfiable: ScheduleAnyway
             labelSelector:
               matchLabels:
-                actions.github.com/scale-set-name: squallar-runner-set
+                actions.github.com/scale-set-name: squallar-runner-set-heavy
         containers:
         - name: runner
           image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.335.1@sha256:5087849844b1ae1aee5f8eeb5987858f1d2d50aeacb9ba21d853b066ee65aecc
@@ -52,8 +52,8 @@ spec:
               value: /home/runner/hook-template/template.yaml
           resources:
             requests:
-              cpu: 250m
-              memory: 512Mi
+              cpu: "1"
+              memory: 2Gi
             limits:
               cpu: "4"
               memory: 16Gi
@@ -71,18 +71,18 @@ spec:
         volumes:
           - name: hook-template
             configMap:
-              name: squallar-runner-hook-template
+              name: squallar-runner-heavy-hook-template
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: squallar-runner-hook-template
+  name: squallar-runner-heavy-hook-template
   namespace: actions-runners
 data:
   template.yaml: |
     metadata:
       labels:
-        actions.github.com/job-pod-of: squallar-runner-set
+        actions.github.com/job-pod-of: squallar-runner-set-heavy
     spec:
       topologySpreadConstraints:
         - maxSkew: 1
@@ -90,13 +90,13 @@ data:
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
-              actions.github.com/job-pod-of: squallar-runner-set
+              actions.github.com/job-pod-of: squallar-runner-set-heavy
       containers:
         - name: $job
           resources:
             requests:
-              cpu: 500m
-              memory: 1Gi
+              cpu: "2"
+              memory: 4Gi
             limits:
               cpu: "4"
               memory: 16Gi

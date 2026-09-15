@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: actions-runners
 resources:
   - dockers-private.yaml
-  - squallar.yaml
+  - squallar-heavy.yaml
+  - squallar-lite.yaml
   - networkpolicy.yaml
   - pdb.yaml

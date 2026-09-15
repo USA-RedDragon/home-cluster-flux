@@ -1,0 +1,102 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: squallar-runner-set-lite
+  namespace: actions-runners
+spec:
+  interval: 1m0s
+  driftDetection:
+    mode: enabled
+  releaseName: squallar-runner-set-lite
+  chart:
+    spec:
+      chart: gha-runner-scale-set
+      sourceRef:
+        kind: HelmRepository
+        namespace: actions-runner-system
+        name: actions-runner-controller
+      version: 0.14.2
+      interval: 1m0s
+  install:
+    remediation:
+      retries: -1
+  values:
+    githubConfigSecret: github-app-squallar
+    githubConfigUrl: "https://github.com/Squallar"
+    maxRunners: 10
+    containerMode:
+      type: kubernetes-novolume
+    template:
+      metadata:
+        labels:
+          policy.mcswain.dev/egress-kubeapi: "true"
+      spec:
+        securityContext:
+          fsGroup: 1001
+        topologySpreadConstraints:
+          - maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: ScheduleAnyway
+            labelSelector:
+              matchLabels:
+                actions.github.com/scale-set-name: squallar-runner-set-lite
+        containers:
+        - name: runner
+          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.335.1@sha256:5087849844b1ae1aee5f8eeb5987858f1d2d50aeacb9ba21d853b066ee65aecc
+          command: ["/home/runner/run.sh"]
+          env:
+            - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+              value: "false"
+            - name: ACTIONS_RUNNER_CONTAINER_HOOK_TEMPLATE
+              value: /home/runner/hook-template/template.yaml
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 8Gi
+          volumeMounts:
+            - name: hook-template
+              mountPath: /home/runner/hook-template
+              readOnly: true
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            capabilities:
+              drop:
+                - ALL
+        volumes:
+          - name: hook-template
+            configMap:
+              name: squallar-runner-lite-hook-template
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: squallar-runner-lite-hook-template
+  namespace: actions-runners
+data:
+  template.yaml: |
+    metadata:
+      labels:
+        actions.github.com/job-pod-of: squallar-runner-set-lite
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              actions.github.com/job-pod-of: squallar-runner-set-lite
+      containers:
+        - name: $job
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 8Gi
