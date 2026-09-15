@@ -124,14 +124,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td></td>
   </tr>
   <tr>
-    <td rowspan="3">actions-runners</td>
+    <td rowspan="2">actions-runners</td>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/actions-runner-controller/scale-sets/dockers-private.yaml">dockers-private-runner-set</a></td>
-    <td rowspan="3"></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/actions-runner-controller/scale-sets/rustdar.yaml">rustdar-runner-set</a></td>
+    <td rowspan="2"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
