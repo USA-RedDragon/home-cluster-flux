@@ -43,7 +43,7 @@ spec:
                 actions.github.com/scale-set-name: squallar-runner-set-lite
         containers:
         - name: runner
-          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.335.1@sha256:ff7a9f5d3d17183a97239195a2294f100b7983e00cc90058c2e394faee7f8f13
+          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.335.1@sha256:fe81b69ca645c824808616f3be1113843d8c0b16f52bdd9159af3cb38c1516ec
           command: ["/home/runner/run.sh"]
           env:
             - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
