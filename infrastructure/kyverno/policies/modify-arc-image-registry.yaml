@@ -1,0 +1,45 @@
+# The ARC container hook refuses image overrides from its pod template, so
+# `container:`/`services:` images in workflows would pull straight from the
+# upstream registry. Rewrite them through the zot pull-through cache instead.
+# Only pods the hook spawns (label `runner-pod`) in the runners namespace.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: arc-image-registry
+spec:
+  rules:
+  - name: rewrite-job-pod-images
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+          namespaces:
+          - actions-runners
+          selector:
+            matchExpressions:
+            - key: runner-pod
+              operator: Exists
+    mutate:
+      foreach:
+      - list: "request.object.spec.containers"
+        preconditions:
+          all:
+          # Registries zot proxies (services/zot/app/values.yaml)
+          - key: "{{ images.containers.\"{{element.name}}\".registry }}"
+            operator: AnyIn
+            value:
+            - ghcr.io
+            - docker.io
+            - quay.io
+            - lscr.io
+            - nvcr.io
+            - registry.k8s.io
+            - reg.kyverno.io
+            - docker.gitea.com
+            - git.scottlabs.io
+        patchStrategicMerge:
+          spec:
+            containers:
+            - name: "{{ element.name }}"
+              image: "jacob.pub/{{ images.containers.\"{{element.name}}\".reference }}"
