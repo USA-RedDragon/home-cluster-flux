@@ -1,0 +1,23 @@
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: actions-runners
+  namespace: actions-runners
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: runner
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: actions-runners-job-pods
+  namespace: actions-runners
+spec:
+  maxUnavailable: 0
+  selector:
+    matchExpressions:
+      - key: runner-pod
+        operator: Exists

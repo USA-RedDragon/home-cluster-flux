@@ -34,6 +34,13 @@ spec:
       spec:
         securityContext:
           fsGroup: 1001
+        topologySpreadConstraints:
+          - maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: ScheduleAnyway
+            labelSelector:
+              matchLabels:
+                actions.github.com/scale-set-name: squallar-runner-set
         containers:
         - name: runner
           image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.335.1@sha256:5087849844b1ae1aee5f8eeb5987858f1d2d50aeacb9ba21d853b066ee65aecc
@@ -73,7 +80,17 @@ metadata:
   namespace: actions-runners
 data:
   template.yaml: |
+    metadata:
+      labels:
+        actions.github.com/job-pod-of: squallar-runner-set
     spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              actions.github.com/job-pod-of: squallar-runner-set
       containers:
         - name: $job
           resources:
