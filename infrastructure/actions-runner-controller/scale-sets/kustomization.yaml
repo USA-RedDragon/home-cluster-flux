@@ -5,3 +5,4 @@ resources:
   - dockers-private.yaml
   - squallar.yaml
   - networkpolicy.yaml
+  - pdb.yaml
