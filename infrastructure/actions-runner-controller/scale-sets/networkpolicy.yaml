@@ -22,3 +22,29 @@ spec:
             - 172.16.0.0/12
             - 192.168.0.0/16
             - 100.64.0.0/10
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: actions-runners-job-pods
+  namespace: actions-runners
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: runner-pod
+        operator: Exists
+  egress:
+    - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: kube-system
+          k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
