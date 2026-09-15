@@ -50,10 +50,14 @@ spec:
               value: "false"
             - name: ACTIONS_RUNNER_CONTAINER_HOOK_TEMPLATE
               value: /home/runner/hook-template/template.yaml
+            - name: PATH
+              value: /home/runner/.cargo/bin:/home/runner/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+            - name: ACTIONS_RUNNER_PREPARE_JOB_TIMEOUT_SECONDS
+              value: "1800"
           resources:
             requests:
-              cpu: "1"
-              memory: 2Gi
+              cpu: "2"
+              memory: 4Gi
             limits:
               cpu: "4"
               memory: 16Gi
@@ -92,8 +96,8 @@ data:
         - name: $job
           resources:
             requests:
-              cpu: "2"
-              memory: 4Gi
+              cpu: 250m
+              memory: 512Mi
             limits:
               cpu: "4"
               memory: 16Gi
