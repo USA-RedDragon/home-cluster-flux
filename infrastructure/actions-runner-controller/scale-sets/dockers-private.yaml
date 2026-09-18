@@ -36,7 +36,7 @@ spec:
           fsGroup: 1001
         containers:
         - name: runner
-          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.337.0@sha256:0c75e1ed6ee7454613068ddd1704b38593fb7b049869db07bb29b877ab0da014
+          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.337.0@sha256:09bc088af8e4b04d4b18d43497eeb875f9c7127ae0fa70f7e81b98fdd09fcb6a
           command: ["/home/runner/run.sh"]
           env:
             - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
