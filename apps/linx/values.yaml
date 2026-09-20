@@ -62,7 +62,8 @@ controllers:
   cleanup:
     type: cronjob
     cronjob:
-      schedule: '0 0 * * *'
+      schedule: 36 0 * * *
+      timeZone: America/Chicago
     containers:
       app:
         <<: *app
