@@ -22,6 +22,13 @@ spec:
       toPorts:
         - ports:
             - port: "3000"
+    - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: minio
+          app.kubernetes.io/instance: minio
+      toPorts:
+        - ports:
+            - port: "9000"
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
@@ -55,6 +62,13 @@ spec:
       toPorts:
         - ports:
             - port: "3000"
+    - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: minio
+          app.kubernetes.io/instance: minio
+      toPorts:
+        - ports:
+            - port: "9000"
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
