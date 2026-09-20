@@ -35,6 +35,7 @@ controllers:
         env:
           AUTHENTIK_TOKEN_URL: https://authentik.mcswain.dev/application/o/token/
           AUTHENTIK_CLIENT_ID: minio-ci
+          AUTHENTIK_SCOPE: openid profile
           SA_TOKEN_FILE: /var/run/secrets/minio/token
           EXCHANGED_TOKEN_FILE: /var/run/secrets/minio-exchanged/token
           REFRESH_SECONDS: "1500"
