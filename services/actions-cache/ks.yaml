@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: actions-cache
-  path: ./services/actions-cache/app
+  path: ./services/actions-cache/resources
   prune: true
   sourceRef:
     kind: GitRepository

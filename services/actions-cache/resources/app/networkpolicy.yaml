@@ -6,7 +6,7 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: github-actions-cache-server
+      app.kubernetes.io/name: actions-cache
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -32,6 +32,11 @@ spec:
       toPorts:
         - ports:
             - port: "5432"
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+            gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway-system
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
