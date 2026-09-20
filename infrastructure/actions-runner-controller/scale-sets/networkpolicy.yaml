@@ -29,6 +29,11 @@ spec:
       toPorts:
         - ports:
             - port: "9000"
+    - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: envoy-gateway-system
+          gateway.envoyproxy.io/owning-gateway-name: public
+          gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway-system
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
@@ -69,6 +74,11 @@ spec:
       toPorts:
         - ports:
             - port: "9000"
+    - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: envoy-gateway-system
+          gateway.envoyproxy.io/owning-gateway-name: public
+          gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway-system
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
