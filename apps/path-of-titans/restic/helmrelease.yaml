@@ -31,7 +31,8 @@ spec:
       restic:
         type: cronjob
         cronjob:
-          schedule: 0 0 * * *
+          schedule: 56 0 * * *
+          timeZone: America/Chicago
           concurrencyPolicy: Replace
           ttlSecondsAfterFinished: 3600
         containers:

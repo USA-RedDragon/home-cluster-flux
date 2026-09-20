@@ -22,7 +22,7 @@ spec:
       backup-rtz-uploads:
         type: cronjob
         cronjob:
-          schedule: 0 3 * * *
+          schedule: 30 7 * * *
           concurrencyPolicy: Replace
           ttlSecondsAfterFinished: 3600
         containers:

@@ -22,7 +22,7 @@ spec:
       backup-tandoor:
         type: cronjob
         cronjob:
-          schedule: 0 3 * * *
+          schedule: 45 7 * * *
           concurrencyPolicy: Replace
           ttlSecondsAfterFinished: 3600
         containers:
