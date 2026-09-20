@@ -48,6 +48,8 @@ spec:
           env:
             - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
               value: "false"
+            - name: CUSTOM_ACTIONS_RESULTS_URL
+              value: http://actions-cache.actions-cache.svc.cluster.local:3000
             - name: ACTIONS_RUNNER_CONTAINER_HOOK_TEMPLATE
               value: /home/runner/hook-template/template.yaml
             - name: ACTIONS_RUNNER_PREPARE_JOB_TIMEOUT_SECONDS
