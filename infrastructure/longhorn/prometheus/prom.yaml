@@ -10,3 +10,106 @@ spec:
   endpoints:
     - port: manager
       interval: 1m
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: longhorn-disk-health
+  namespace: longhorn-system
+spec:
+  groups:
+    - name: disk-smart
+      rules:
+        - alert: DiskCriticalWarning
+          expr: longhorn_disk_health_attribute_raw{attribute="CriticalWarning"} != 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "NVMe critical warning on {{ $labels.node }}/{{ $labels.disk }}"
+            description: "The drive is reporting SMART CriticalWarning={{ $value }}. Replace it."
+
+        - alert: DiskAvailableSpareLow
+          expr: |
+            longhorn_disk_health_attribute_raw{attribute="AvailableSpare"}
+              < on(node, disk) longhorn_disk_health_attribute_raw{attribute="AvailableSpareThreshold"}
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "NVMe spare blocks exhausted on {{ $labels.node }}/{{ $labels.disk }}"
+            description: "AvailableSpare is {{ $value }}%, below the drive's own threshold."
+
+        - alert: DiskWearCritical
+          expr: longhorn_disk_health_attribute_raw{attribute="PercentageUsed"} >= 90
+          for: 1h
+          labels:
+            severity: critical
+          annotations:
+            summary: "{{ $labels.node }}/{{ $labels.disk }} at {{ $value }}% of rated endurance"
+            description: "Replace this drive."
+
+        - alert: DiskWearHigh
+          expr: longhorn_disk_health_attribute_raw{attribute="PercentageUsed"} >= 70
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $labels.node }}/{{ $labels.disk }} at {{ $value }}% of rated endurance"
+            description: "Plan a replacement. Check what is driving writes to this disk."
+
+        - alert: DiskWearExhaustionProjected
+          expr: |
+            predict_linear(longhorn_disk_health_attribute_raw{attribute="PercentageUsed"}[14d], 90 * 24 * 3600) >= 100
+              and longhorn_disk_health_attribute_raw{attribute="PercentageUsed"} < 90
+          for: 6h
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $labels.node }}/{{ $labels.disk }} projected to exhaust endurance within 90 days"
+            description: "Currently {{ $value }}% used and rising fast enough to reach 100% inside 90 days."
+
+        - alert: DiskMediaErrorsGrowing
+          expr: increase(longhorn_disk_health_attribute_raw{attribute="MediaErrors"}[24h]) > 0
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: "New media errors on {{ $labels.node }}/{{ $labels.disk }}"
+            description: "{{ $value }} new uncorrectable media errors in 24h. This drive is failing."
+
+        - alert: DiskReallocatedSectorsGrowing
+          expr: increase(longhorn_disk_health_attribute_raw{attribute="Reallocated_Sector_Ct"}[24h]) > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "New reallocated sectors on {{ $labels.node }}/{{ $labels.disk }}"
+            description: "{{ $value }} newly reallocated sectors in 24h."
+
+        - alert: DiskUncorrectableErrorsGrowing
+          expr: increase(longhorn_disk_health_attribute_raw{attribute="Uncorrectable_Error_Cnt"}[24h]) > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "New uncorrectable errors on {{ $labels.node }}/{{ $labels.disk }}"
+            description: "{{ $value }} new uncorrectable errors in 24h."
+
+        - alert: DiskBadBlocksGrowing
+          expr: increase(longhorn_disk_health_attribute_raw{attribute="Added_Bad_Flash_Blk_Ct"}[24h]) > 10
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Bad flash blocks accumulating on {{ $labels.node }}/{{ $labels.disk }}"
+            description: "{{ $value }} new bad flash blocks in 24h. A slow trickle is normal wear; a jump is not."
+
+        - alert: DiskLinkCRCErrorsGrowing
+          expr: increase(longhorn_disk_health_attribute_raw{attribute="CRC_Error_Count"}[24h]) > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "SATA link CRC errors on {{ $labels.node }}/{{ $labels.disk }}"
+            description: "{{ $value }} new CRC errors in 24h. Usually a cable or backplane fault, not the drive."
