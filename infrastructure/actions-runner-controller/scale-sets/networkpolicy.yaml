@@ -15,6 +15,13 @@ spec:
       toPorts:
         - ports:
             - port: "53"
+    - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: actions-cache
+          app.kubernetes.io/name: actions-cache
+      toPorts:
+        - ports:
+            - port: "3000"
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
@@ -41,6 +48,13 @@ spec:
       toPorts:
         - ports:
             - port: "53"
+    - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: actions-cache
+          app.kubernetes.io/name: actions-cache
+      toPorts:
+        - ports:
+            - port: "3000"
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
