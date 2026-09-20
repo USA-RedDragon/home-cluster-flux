@@ -63,8 +63,8 @@ controllers:
         env:
           API_BASE_URL: http://actions-cache.actions-cache.svc.cluster.local:3000
           ENABLE_DIRECT_DOWNLOADS: "false"
-          CACHE_CLEANUP_OLDER_THAN_DAYS: "30"
-          CACHE_MAX_SIZE_BYTES: "214748364800"
+          CACHE_CLEANUP_OLDER_THAN_DAYS: "14"
+          CACHE_MAX_SIZE_BYTES: "429496729600"
           STORAGE_DRIVER: s3
           STORAGE_S3_BUCKET: ci-cache
           AWS_REGION: us-east-1
