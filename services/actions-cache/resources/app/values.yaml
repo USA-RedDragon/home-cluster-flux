@@ -38,7 +38,6 @@ controllers:
           AUTHENTIK_SCOPE: openid profile
           SA_TOKEN_FILE: /var/run/secrets/minio/token
           EXCHANGED_TOKEN_FILE: /var/run/secrets/minio-exchanged/token
-          REFRESH_SECONDS: "1500"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
