@@ -13,13 +13,13 @@ spec:
   releaseName: actions-cache
   chart:
     spec:
-      chart: github-actions-cache-server
+      chart: app-template
       sourceRef:
         kind: HelmRepository
-        name: falcondev-oss
-        namespace: actions-cache
-      version: '1.4.1'
+        name: bjw-s
+        namespace: flux-system
+      version: '4.6.2'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
-      name: chart-values
+      name: actions-cache-chart-values

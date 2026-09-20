@@ -1,0 +1,138 @@
+controllers:
+  cache-server:
+    replicas: 2
+    strategy: RollingUpdate
+
+    serviceAccount:
+      name: github-actions-cache-server
+
+    pod:
+      labels:
+        policy.mcswain.dev/ingress-prometheus: "true"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: actions-cache
+
+    initContainers:
+      authentik-token:
+        restartPolicy: Always
+        image:
+          repository: jacob.pub/ghcr.io/falcondev-oss/github-actions-cache-server
+          tag: "9.8.0@sha256:58bc6ae6fc34606c3b139e259c3c12d9ff23c793a666e8a784f13f6bb9b1aa41"
+        command:
+          - node
+          - /exchange/exchange.mjs
+        env:
+          AUTHENTIK_TOKEN_URL: https://authentik.mcswain.dev/application/o/token/
+          AUTHENTIK_CLIENT_ID: minio-ci
+          SA_TOKEN_FILE: /var/run/secrets/minio/token
+          EXCHANGED_TOKEN_FILE: /var/run/secrets/minio-exchanged/token
+          REFRESH_SECONDS: "1500"
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        probes:
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              exec:
+                command: ["node", "-e", "process.exit(require('fs').statSync(process.env.EXCHANGED_TOKEN_FILE).size>0?0:1)"]
+              initialDelaySeconds: 2
+              periodSeconds: 3
+              failureThreshold: 20
+
+    containers:
+      cache-server:
+        image:
+          repository: jacob.pub/ghcr.io/falcondev-oss/github-actions-cache-server
+          tag: "9.8.0@sha256:58bc6ae6fc34606c3b139e259c3c12d9ff23c793a666e8a784f13f6bb9b1aa41"
+        env:
+          API_BASE_URL: http://actions-cache.actions-cache.svc.cluster.local:3000
+          ENABLE_DIRECT_DOWNLOADS: "false"
+          CACHE_CLEANUP_OLDER_THAN_DAYS: "30"
+          CACHE_MAX_SIZE_BYTES: "214748364800"
+          STORAGE_DRIVER: s3
+          STORAGE_S3_BUCKET: ci-cache
+          AWS_REGION: us-east-1
+          AWS_ENDPOINT_URL: http://minio.minio.svc.cluster.local:9000
+          AWS_ENDPOINT_URL_STS: http://minio.minio.svc.cluster.local:9000
+          AWS_ROLE_ARN: arn:minio:iam:us-east-1::role/39yQm0d7LORzWi8XjgOwQ92AVyM
+          AWS_ROLE_SESSION_NAME: actions-cache
+          AWS_WEB_IDENTITY_TOKEN_FILE: /var/run/secrets/minio-exchanged/token
+          DB_DRIVER: postgres
+          DB_POSTGRES_DATABASE: cache
+          DB_POSTGRES_HOST: postgresql-rw
+          DB_POSTGRES_PORT: "5432"
+          DB_POSTGRES_USER: cache
+          DB_POSTGRES_PASSWORD:
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: password
+          SKIP_TOKEN_VALIDATION: "true"
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+
+service:
+  app:
+    controller: cache-server
+    ports:
+      http:
+        port: 3000
+
+persistence:
+  exchange-script:
+    type: configMap
+    name: actions-cache-exchange
+    defaultMode: 0555
+    advancedMounts:
+      cache-server:
+        authentik-token:
+          - path: /exchange
+            readOnly: true
+
+  minio-token:
+    type: custom
+    volumeSpec:
+      projected:
+        sources:
+          - serviceAccountToken:
+              audience: minio-ci
+              expirationSeconds: 3600
+              path: token
+    advancedMounts:
+      cache-server:
+        authentik-token:
+          - path: /var/run/secrets/minio
+            readOnly: true
+
+  minio-exchanged:
+    type: emptyDir
+    advancedMounts:
+      cache-server:
+        authentik-token:
+          - path: /var/run/secrets/minio-exchanged
+        cache-server:
+          - path: /var/run/secrets/minio-exchanged
+            readOnly: true
