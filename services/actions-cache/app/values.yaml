@@ -1,0 +1,72 @@
+replicaCount: 2
+
+fullnameOverride: github-actions-cache-server
+
+config:
+  apiBaseUrl: http://github-actions-cache-server.actions-cache.svc.cluster.local:3000
+  enableDirectDownloads: false
+  cacheCleanupOlderThanDays: 30
+  cacheMaxSizeBytes: 214748364800
+  storage:
+    driver: s3
+    s3:
+      bucket: ci-cache
+      region: us-east-1
+      endpointUrl: http://minio.minio.svc.cluster.local:9000
+  db:
+    driver: postgres
+    postgres:
+      database: cache
+      host: postgresql-rw
+      port: 5432
+      user: cache
+
+serviceAccount:
+  create: false
+  name: github-actions-cache-server
+
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: 1
+
+podLabels:
+  policy.mcswain.dev/ingress-prometheus: "true"
+
+extraEnv:
+  - name: DB_POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgresql-app
+        key: password
+  - name: AWS_ROLE_ARN
+    value: arn:minio:iam:us-east-1::role/39yQm0d7LORzWi8XjgOwQ92AVyM
+  - name: AWS_WEB_IDENTITY_TOKEN_FILE
+    value: /var/run/secrets/minio/token
+  - name: AWS_ROLE_SESSION_NAME
+    value: actions-cache
+  - name: AWS_ENDPOINT_URL_STS
+    value: http://minio.minio.svc.cluster.local:9000
+  - name: SKIP_TOKEN_VALIDATION
+    value: "true"
+
+extraVolumes:
+  - name: minio-token
+    projected:
+      sources:
+        - serviceAccountToken:
+            audience: minio-ci
+            expirationSeconds: 3600
+            path: token
+
+extraVolumeMounts:
+  - name: minio-token
+    mountPath: /var/run/secrets/minio
+    readOnly: true
+
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: github-actions-cache-server
