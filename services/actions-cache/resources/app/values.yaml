@@ -83,7 +83,6 @@ controllers:
               secretKeyRef:
                 name: postgresql-app
                 key: password
-          SKIP_TOKEN_VALIDATION: "true"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
