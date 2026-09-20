@@ -66,6 +66,11 @@ controllers:
 service:
   minecraft:
     controller: minecraft
+    type: LoadBalancer
+    loadBalancerClass: metallb
+    externalTrafficPolicy: Local
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: "192.168.254.12"
     ports:
       game:
         port: 25565
