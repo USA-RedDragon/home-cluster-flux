@@ -5,6 +5,7 @@ const clientId = process.env.AUTHENTIK_CLIENT_ID
 const saTokenFile = process.env.SA_TOKEN_FILE
 const outFile = process.env.EXCHANGED_TOKEN_FILE
 const refreshSeconds = Number(process.env.REFRESH_SECONDS ?? 1500)
+const scope = process.env.AUTHENTIK_SCOPE ?? "openid profile"
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -15,6 +16,7 @@ async function exchange() {
     client_id: clientId,
     client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
     client_assertion: assertion,
+    scope,
   })
 
   const res = await fetch(tokenUrl, {
@@ -34,7 +36,8 @@ async function exchange() {
   renameSync(`${outFile}.tmp`, outFile)
 
   const claims = JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString())
-  console.log(`exchanged: sub=${claims.sub} aud=${claims.aud} exp=${new Date(claims.exp * 1000).toISOString()}`)
+  console.log(`exchanged: user=${claims.preferred_username} aud=${claims.aud} exp=${new Date(claims.exp * 1000).toISOString()}`)
+  if (!claims.preferred_username) console.error("WARNING: no preferred_username claim; MinIO writes will be denied")
 }
 
 let backoff = 5
