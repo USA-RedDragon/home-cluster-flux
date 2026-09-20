@@ -21,6 +21,8 @@ spec:
             - mountPath: /var/run/secrets/talos.dev
               name: talos-secrets
               readOnly: true
+            - mountPath: /tmp
+              name: tmp
             securityContext:
               allowPrivilegeEscalation: false
               runAsUser: 0
@@ -28,20 +30,29 @@ spec:
             - /bin/sh
             - -c
             - |
-              wget -O /usr/local/bin/talosctl https://github.com/siderolabs/talos/releases/download/v1.14.1/talosctl-linux-amd64 \
-              && chmod +x /usr/local/bin/talosctl \
-              && back=$(date +%s) \
-              && talosctl -n 192.168.1.249 etcd snapshot /tmp/etcd-chi.kubernetes-$back.db \
-              && gzip -9 /tmp/etcd-chi.kubernetes-$back.db \
-              && mv /tmp/etcd-chi.kubernetes-$back.db.gz /backups/etcd-chi.kubernetes-$back.db.gz \
-              && talosctl -n 192.168.1.250 etcd snapshot /tmp/etcd-psi.kubernetes-$back.db \
-              && gzip -9 /tmp/etcd-psi.kubernetes-$back.db \
-              && mv /tmp/etcd-psi.kubernetes-$back.db.gz /backups/etcd-psi.kubernetes-$back.db.gz \
-              && talosctl -n 192.168.1.251 etcd snapshot /tmp/etcd-omega.kubernetes-$back.db \
-              && gzip -9 /tmp/etcd-omega.kubernetes-$back.db \
-              && mv /tmp/etcd-omega.kubernetes-$back.db.gz /backups/etcd-omega.kubernetes-$back.db.gz
+              set -eu
+              wget -O /tmp/talosctl https://github.com/siderolabs/talos/releases/download/v1.12.9/talosctl-linux-amd64
+              chmod +x /tmp/talosctl
+              back=$(date +%s)
+              for entry in chi:192.168.1.249 psi:192.168.1.250 omega:192.168.1.251; do
+                name=${entry%%:*}
+                addr=${entry#*:}
+                /tmp/talosctl -n "$addr" etcd snapshot "/tmp/etcd-$name.kubernetes-$back.db"
+                gzip -9 -c "/tmp/etcd-$name.kubernetes-$back.db" > "/backups/etcd-$name.kubernetes-$back.db.gz"
+                rm -f "/tmp/etcd-$name.kubernetes-$back.db"
+              done
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 2560Mi
           restartPolicy: OnFailure
           volumes:
+          - name: tmp
+            emptyDir:
+              medium: Memory
+              sizeLimit: 2Gi
           - name: backups
             nfs:
               server: 192.168.1.135
