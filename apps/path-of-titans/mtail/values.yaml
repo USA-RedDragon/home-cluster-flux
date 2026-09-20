@@ -7,7 +7,7 @@ controllers:
       mtail:
         image:
           repository: jacob.pub/ghcr.io/jaqx0r/mtail
-          tag: 3.4.12@sha256:c99f9ff26b6ab4efdae723e3363bf0bef90ed221998265cbb289799f932dfcb8
+          tag: 3.4.13@sha256:6778d0fa13073792a27f67f5acb9216aa8b79d636e094e01878c417a6246437c
           pullPolicy: IfNotPresent
         args:
           - -progs
