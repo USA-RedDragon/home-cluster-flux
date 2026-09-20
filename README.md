@@ -121,8 +121,8 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>actions-cache</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/actions-cache/app/helm.yaml">actions-cache</a></td>
-    <td><a href="services/actions-cache/app/postgres.yaml">postgresql</a></td>
+    <td><a href="services/actions-cache/resources/app/helm.yaml">actions-cache</a></td>
+    <td><a href="services/actions-cache/resources/postgres/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
