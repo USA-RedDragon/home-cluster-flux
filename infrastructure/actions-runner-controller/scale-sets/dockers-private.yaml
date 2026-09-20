@@ -36,11 +36,13 @@ spec:
           fsGroup: 1001
         containers:
         - name: runner
-          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.337.0@sha256:0c75e1ed6ee7454613068ddd1704b38593fb7b049869db07bb29b877ab0da014
+          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.337.0@sha256:9f57ba720e0f4fe3afa5ccf597354a2604fd88f9d3b7124793268af1138eaae3
           command: ["/home/runner/run.sh"]
           env:
             - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
               value: "false"
+            - name: CUSTOM_ACTIONS_RESULTS_URL
+              value: http://actions-cache.actions-cache.svc.cluster.local:3000
           securityContext:
             runAsNonRoot: true
             runAsUser: 1001
