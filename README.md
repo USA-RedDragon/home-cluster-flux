@@ -23,6 +23,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
 <!-- Begin apps section -->
 <h3>Clusters</h3>
 <ul>
+  <li><a href="#actions-cache">actions-cache</a></li>
   <li><a href="#actions-runner-controller">actions-runner-controller</a></li>
   <li><a href="#apprise">apprise</a></li>
   <li><a href="#aredn">aredn</a></li>
@@ -108,6 +109,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
 </ul>
 
 <h3>Apps</h2>
+
+<h4>actions-cache</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>actions-cache</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/actions-cache/app/helm.yaml">actions-cache</a></td>
+    <td><a href="services/actions-cache/app/postgres.yaml">postgresql</a></td>
+  </tr>
+</table>
 
 <h4>actions-runner-controller</h2>
 <table>
