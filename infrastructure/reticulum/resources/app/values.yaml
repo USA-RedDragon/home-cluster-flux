@@ -21,7 +21,7 @@ controllers:
             drop: ["ALL"]
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/reticulum
-          tag: "1.5.2@sha256:617cbd4fb017e978486489e25b1cd41cef977a6f1a1a6da2f9b27c5825d9892c"
+          tag: "1.5.2@sha256:5102632ac71249bf5e16043ad17fcc2ad73ef02270878fad13c540f14d35e119"
         resources: {}
         env:
           - name: PYTHONUNBUFFERED
