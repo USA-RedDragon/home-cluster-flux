@@ -66,7 +66,7 @@ mattermostApp:
   replicaCount: 2
   image:
     repository: jacob.pub/ghcr.io/usa-reddragon/mattermost
-    tag: 10.12.4@sha256:1c2ae29bbefe896b68e436174b4cf73a53241f453b6943b2ca840a42c1c2f121
+    tag: 10.12.4@sha256:66fffa98d7e857d13da8382b44caf0a60d25734def959f009dafb001b08e8b2b
     pullPolicy: IfNotPresent
 
   strategy:
