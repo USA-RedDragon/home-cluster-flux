@@ -9,6 +9,201 @@
 -- whenever it starts against a database with no node identity. It is
 -- idempotent, so it is also safe to apply by hand with psql.
 
+-- Target Scheduler tables. The SQLite source declares bare VARCHAR, which
+-- SymmetricDS would create here as varchar(254); acquiredimage.metadata
+-- outgrows that, and imagedata.imagedata holds image blobs. So the schema is
+-- defined here rather than by initial.load.create.first. Column names are
+-- quoted to match the SQLite casing the backend's gorm models use.
+create table if not exists project (
+    "Id" integer NOT NULL,
+    "profileId" text NOT NULL,
+    name text NOT NULL,
+    description text,
+    state integer,
+    priority integer,
+    createdate integer,
+    activedate integer,
+    inactivedate integer,
+    minimumtime integer,
+    minimumaltitude double precision,
+    usecustomhorizon integer,
+    horizonoffset double precision,
+    meridianwindow integer,
+    filterswitchfrequency integer,
+    ditherevery integer,
+    enablegrader integer,
+    "isMosaic" integer NOT NULL,
+    "flatsHandling" integer NOT NULL,
+    "maximumAltitude" double precision,
+    smartexposureorder integer,
+    guid text,
+    PRIMARY KEY ("Id")
+);
+
+create table if not exists target (
+    "Id" integer NOT NULL,
+    name text NOT NULL,
+    active integer NOT NULL,
+    ra double precision,
+    "dec" double precision,
+    epochcode integer NOT NULL,
+    rotation double precision,
+    roi double precision,
+    projectid integer,
+    "unusedOEO" text,
+    guid text,
+    PRIMARY KEY ("Id")
+);
+
+create table if not exists exposuretemplate (
+    "Id" integer NOT NULL,
+    "profileId" text NOT NULL,
+    name text NOT NULL,
+    filtername text NOT NULL,
+    gain integer,
+    "offset" integer,
+    bin integer,
+    readoutmode integer,
+    twilightlevel integer,
+    moonavoidanceenabled integer,
+    moonavoidanceseparation double precision,
+    moonavoidancewidth integer,
+    maximumhumidity double precision,
+    defaultexposure double precision,
+    moonrelaxscale double precision,
+    moonrelaxmaxaltitude double precision,
+    moonrelaxminaltitude double precision,
+    moondownenabled integer,
+    ditherevery integer,
+    "minutesOffset" integer,
+    guid text,
+    PRIMARY KEY ("Id")
+);
+
+create table if not exists exposureplan (
+    "Id" integer NOT NULL,
+    "profileId" text NOT NULL,
+    exposure double precision NOT NULL,
+    desired integer,
+    acquired integer,
+    accepted integer,
+    targetid integer,
+    "exposureTemplateId" integer,
+    enabled integer,
+    guid text,
+    PRIMARY KEY ("Id")
+);
+
+create table if not exists filtercadenceitem (
+    "Id" integer NOT NULL,
+    targetid integer NOT NULL,
+    "order" integer NOT NULL,
+    next integer,
+    action integer NOT NULL,
+    "referenceIdx" integer,
+    PRIMARY KEY ("Id")
+);
+
+create table if not exists overrideexposureorderitem (
+    "Id" integer NOT NULL,
+    targetid integer NOT NULL,
+    "order" integer NOT NULL,
+    action integer NOT NULL,
+    "referenceIdx" integer,
+    PRIMARY KEY ("Id")
+);
+
+create table if not exists ruleweight (
+    "Id" integer NOT NULL,
+    name text NOT NULL,
+    weight double precision NOT NULL,
+    projectid integer,
+    PRIMARY KEY ("Id")
+);
+
+create table if not exists profilepreference (
+    "Id" integer NOT NULL,
+    "profileId" text NOT NULL,
+    "enableGradeRMS" integer,
+    "enableGradeStars" integer,
+    "enableGradeHFR" integer,
+    "maxGradingSampleSize" integer,
+    "rmsPixelThreshold" double precision,
+    "detectedStarsSigmaFactor" double precision,
+    "hfrSigmaFactor" double precision,
+    acceptimprovement integer,
+    exposurethrottle double precision,
+    parkonwait integer,
+    "enableSmartPlanWindow" integer,
+    "enableSynchronization" integer,
+    "syncWaitTimeout" integer,
+    "syncActionTimeout" integer,
+    "syncSolveRotateTimeout" integer,
+    "enableMoveRejected" integer,
+    "enableGradeFWHM" integer,
+    "enableGradeEccentricity" integer,
+    "fwhmSigmaFactor" integer,
+    "eccentricitySigmaFactor" integer,
+    "enableDeleteAcquiredImagesWithTarget" integer,
+    "syncEventContainerTimeout" integer,
+    "delayGrading" double precision,
+    "autoAcceptLevelHFR" double precision,
+    "autoAcceptLevelFWHM" double precision,
+    "autoAcceptLevelEccentricity" double precision,
+    "enableSimulatedRun" integer,
+    "skipSimulatedWaits" integer,
+    "skipSimulatedUpdates" integer,
+    "enableSlewCenter" integer,
+    "logLevel" integer,
+    "enableStopOnHumidity" integer,
+    guid text,
+    "enableProfileTargetCompletionReset" integer,
+    PRIMARY KEY ("Id")
+);
+
+create table if not exists flathistory (
+    "Id" integer NOT NULL,
+    "targetId" integer,
+    "lightSessionDate" integer,
+    "flatsTakenDate" integer,
+    "profileId" text NOT NULL,
+    "flatsType" text,
+    "filterName" text,
+    gain integer,
+    "offset" integer,
+    bin integer,
+    readoutmode integer,
+    rotation double precision,
+    roi double precision,
+    "lightSessionId" integer NOT NULL,
+    PRIMARY KEY ("Id")
+);
+
+create table if not exists acquiredimage (
+    "Id" integer NOT NULL,
+    "projectId" integer NOT NULL,
+    "targetId" integer NOT NULL,
+    acquireddate integer,
+    filtername text NOT NULL,
+    "gradingStatus" integer NOT NULL,
+    metadata text NOT NULL,
+    rejectreason text,
+    "profileId" text,
+    "exposureId" integer,
+    guid text,
+    PRIMARY KEY ("Id")
+);
+
+create table if not exists imagedata (
+    "Id" integer NOT NULL,
+    tag text,
+    imagedata bytea,
+    acquiredimageid integer,
+    width integer,
+    height integer,
+    PRIMARY KEY ("Id")
+);
+
 insert into sym_node_group (node_group_id) values ('home'), ('sqlite')
   on conflict do nothing;
 
@@ -51,11 +246,9 @@ insert into sym_trigger_router (trigger_id, router_id, initial_load_order, creat
   ('imagedata', 'sqlite to home', 110, current_timestamp, current_timestamp)
   on conflict do nothing;
 
--- The observatory sends the reload, so it is the one that must create the
--- tables here first. auto.reload.reverse makes home request that reload
--- whenever the observatory registers from scratch.
+-- Make home request a reverse initial load (observatory -> home) whenever the
+-- observatory registers from scratch.
 insert into sym_parameter (external_id, node_group_id, param_key, param_value, create_time, last_update_time) values
-  ('ALL', 'sqlite', 'initial.load.create.first', 'true', current_timestamp, current_timestamp),
   ('ALL', 'home', 'auto.reload.reverse', 'true', current_timestamp, current_timestamp)
   on conflict do nothing;
 
