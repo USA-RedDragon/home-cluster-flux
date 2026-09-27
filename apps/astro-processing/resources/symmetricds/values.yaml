@@ -3,6 +3,9 @@
 controllers:
   symmetricds:
     replicas: 1
+    # Two engines must never run against schedulerdb at once, and both would
+    # share the fixed instance ID below.
+    strategy: Recreate
 
     pod:
       securityContext:
@@ -17,13 +20,36 @@ controllers:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/symmetricds
           tag: "3.18.1@sha256:53e32d608e672a108abfd7b3ed0418b3e8d765404c811f37f8c9b5023ca6798d"
+        # The web server stays up even when the engine fails to start, so a TCP
+        # probe passes; /ping answers 660 until the engine is running.
         probes:
           liveness:
             enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /sync/home/ping
+                port: 31415
+              periodSeconds: 30
+              failureThreshold: 4
           readiness:
             enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /sync/home/ping
+                port: 31415
+              periodSeconds: 10
+              failureThreshold: 3
           startup:
             enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /sync/home/ping
+                port: 31415
+              periodSeconds: 10
+              failureThreshold: 60
         resources:
           requests:
             cpu: 10m
@@ -89,11 +115,29 @@ persistence:
     identifier: engines
     globalMounts:
       - path: /opt/symmetric-ds/engines
+  bootstrap:
+    enabled: true
+    type: configMap
+    name: symmetricds-bootstrap
+    globalMounts:
+      - path: /opt/symmetric-ds/bootstrap
+  # 3.18+ refuses to start if sym_node_host holds a different instance ID
+  # with a recent heartbeat. The image has no conf/instance.uuid, so without
+  # this every pod generates a new ID and a rollout's new pod fails.
+  instance-id:
+    enabled: true
+    type: configMap
+    identifier: engines
+    globalMounts:
+      - path: /opt/symmetric-ds/conf/instance.uuid
+        subPath: instance.uuid
+        readOnly: true
 
 configMaps:
   engines:
     suffix: engines
     data:
+      instance.uuid: symmetricds-home
       home.properties: |
         engine.name=home
         db.driver=org.postgresql.Driver
@@ -110,3 +154,4 @@ configMaps:
         job.push.period.time.ms=10000
         job.pull.period.time.ms=10000
         job.purge.period.time.ms=7200000
+        auto.config.registration.svr.sql.script=/opt/symmetric-ds/bootstrap/home-config.sql

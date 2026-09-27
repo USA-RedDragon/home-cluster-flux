@@ -7,5 +7,10 @@ configMapGenerator:
   - name: symmetricds-chart-values
     files:
       - values.yaml=values.yaml
+  - name: symmetricds-bootstrap
+    files:
+      - home-config.sql
+    options:
+      disableNameSuffixHash: true
 configurations:
   - kustomizeconfig.yaml
