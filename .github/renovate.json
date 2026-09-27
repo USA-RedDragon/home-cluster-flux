@@ -112,6 +112,14 @@
             ]
         },
         {
+            "description": "SymmetricDS in the cluster must be upgraded together with the observatory PC's install (a Windows service, not managed here); 3.18 also changed engine startup in ways that took sync down. Only digest updates of 3.18.1 are allowed.",
+            "automerge": false,
+            "allowedVersions": "/^3\\.18\\.1$/",
+            "matchPackageNames": [
+                "/usa-reddragon\\/symmetricds$/"
+            ]
+        },
+        {
             "automerge": false,
             "allowedVersions": "<=1.19.2",
             "matchPackageNames": [
