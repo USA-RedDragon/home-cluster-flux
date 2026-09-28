@@ -6,6 +6,7 @@ resources:
   - data.yaml
   - helm.yaml
   - networkpolicy.yaml
+  - prom.yaml
   - backend-traffic-policy.yaml
   - backup-astro.yaml
   - backup-rtz-uploads.yaml
