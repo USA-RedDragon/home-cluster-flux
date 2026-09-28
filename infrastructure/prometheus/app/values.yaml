@@ -68,7 +68,9 @@ defaultRules:
     windows: true
 
   ## Reduce app namespace alert scope
-  appNamespacesTarget: ".*"
+  # tfe is a work lab that is broken on purpose; keep app alerts out of it.
+  appNamespacesOperator: "!~"
+  appNamespacesTarget: "tfe"
 
   ## Labels for default rules
   labels: {}
