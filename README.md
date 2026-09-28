@@ -1007,10 +1007,18 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="5">monitoring</td>
+    <td rowspan="7">monitoring</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/monitoring/helm.yaml">alloy</a></td>
+    <td rowspan="7"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/monitoring/helm.yaml">loki</a></td>
+  </tr>
+  <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/metrics-actioner-helm.yaml">metrics-actioner</a></td>
-    <td rowspan="5"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
