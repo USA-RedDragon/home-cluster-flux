@@ -101,6 +101,14 @@ hubble:
     - icmp
     - http
 
+  # method: helm (the default) issues the Hubble certs once and reuses them on
+  # every upgrade, so they expired after 365 days (2026-07-28) and hubble-relay
+  # crash-looped. The certgen CronJob reissues them on tls.auto.schedule.
+  tls:
+    auto:
+      enabled: true
+      method: cronJob
+
   ui:
     enabled: true
     replicas: 1
