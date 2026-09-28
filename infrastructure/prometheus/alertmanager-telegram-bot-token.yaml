@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Secret
 metadata:
-    name: alertmanager-slack-webhook-url
+    name: alertmanager-telegram-bot-token
     namespace: monitoring
 stringData:
-    slack_webhook_url: ENC[AES256_GCM,data:EP8b3CERwncLChrtyB3c/VO2B7vtCF9omUlAxY+5XyUk7Zw4RJrGz//8Ig4tGCW6vV0FLFE8a7N7bNCiZ1u3,iv:tCyjP6rWbTs8Jlrt3B5ps/qEwZafDpJSWL95xA5yp80=,tag:4IG1glZvivZ5BKyF0ayEZg==,type:str]
+    telegram_bot_token: ENC[AES256_GCM,data:MiNKHwF322XnTPi3hEhOGQhOBZQwXnFk8ZSWi+psqRJLTjBBdArlgZwkOZvyyQ==,iv:l333z4HGadSROQtMkzHDtUEeLT1bE1GgJIfUnkbMK38=,tag:X9fwDREklC7+6yhhu/s05Q==,type:str]
 type: Opaque
 sops:
     kms: []
@@ -12,8 +12,8 @@ sops:
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2025-09-07T05:44:32Z"
-    mac: ENC[AES256_GCM,data:meX6Hpg3bMAJkFM/bno++/51b8CUqG33p4xipreO/FvtSArvVP1gKIKRpT7AKodY0FmuBqjlVQSRSrqiiQpo8ei6AK0UbVvAqqx4ROlk51cHFe7E2vJgBTFhFTtLhqiYvAnekm+eAY5PFHul00Ak+LCDIn0QnAzmB8gjRABVnvA=,iv:6AFIy1Fxaw3wZx1785CNIJO7FCBE2RiqAfsDXPnHOgQ=,tag:TqN7tD9DOUuIMjpDEHRYeg==,type:str]
+    lastmodified: "2026-09-28T01:16:19Z"
+    mac: ENC[AES256_GCM,data:aU6PFCGWDd5yKxfQgf24DWnoBnNBLE6q+tJCppW1amvX1jfpva1WCIUpKIRYZUdpWpTZgK+KZqhb8/1rfnVPMbspyvv1q/IcfslFlpn9wRdIEz/6jJtsgMFcfSWXtOUR8LLx1JmgOJ+6GW3mtNNEyaPFURI20MeZdqiT47j7DAo=,iv:7c3MaOcJiPMnkKVplkPi0Z4mqT+BjKvxV084UJZayQA=,tag:WJiz2G0V+PRwpaX+5R0DUA==,type:str]
     pgp:
         - created_at: "2024-03-03T08:36:58Z"
           enc: |
