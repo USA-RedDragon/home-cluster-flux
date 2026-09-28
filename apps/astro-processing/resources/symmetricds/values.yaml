@@ -8,12 +8,50 @@ controllers:
     strategy: Recreate
 
     pod:
+      # Fixed hostname so every pod reuses one sym_node_host row. 3.18.1
+      # Community treats another row with the same instance ID but a different
+      # host as a cluster peer and crashes on startup (NPE in
+      # ClusteredCacheManager.announceDiscoveredPeer).
+      hostname: symmetricds-home
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
         runAsGroup: 65534
         fsGroup: 65534
         fsGroupChangePolicy: OnRootMismatch
+
+    initContainers:
+      # Clear sym_node_host rows left by pods from before the fixed hostname.
+      # Safe with the Recreate strategy: no other engine is running here.
+      clear-stale-hosts:
+        image:
+          repository: jacob.pub/ghcr.io/cloudnative-pg/postgresql
+          tag: "17.5-22"
+        command:
+          - psql
+          - -v
+          - ON_ERROR_STOP=1
+          - -c
+          - >-
+            DO 'BEGIN IF to_regclass(''sym_node_host'') IS NOT NULL THEN
+            DELETE FROM sym_node_host WHERE node_id = ''home'' AND host_name <> ''symmetricds-home'';
+            END IF; END'
+        env:
+          PGHOST: postgresql-rw
+          PGDATABASE: schedulerdb
+          PGUSER:
+            secretKeyRef:
+              name: postgresql-symmetricds
+              key: username
+          PGPASSWORD:
+            secretKeyRef:
+              name: postgresql-symmetricds
+              key: password
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
 
     containers:
       symmetricds:
