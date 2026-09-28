@@ -21,6 +21,10 @@ spec:
     - kind: HelmRelease
       name: '*'
 ---
+# GitHub commit statuses. Each Alert may only list Kustomizations whose
+# sourceRef is that repo's GitRepository: the event revision is a commit SHA
+# of that source, and posting it to any other repo fails with
+# "422 No commit found for SHA". Add new Kustomizations here by name.
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
@@ -29,11 +33,22 @@ metadata:
 spec:
   providerRef:
     name: github-home-cluster-flux
+  # GitRepository flux-system/flux-system
   eventSources:
     - kind: Kustomization
-      name: '*'
-    - kind: HelmRelease
-      name: '*'
+      name: apps
+    - kind: Kustomization
+      name: cilium
+    - kind: Kustomization
+      name: helm-repos
+    - kind: Kustomization
+      name: infrastructure
+    - kind: Kustomization
+      name: metallb
+    - kind: Kustomization
+      name: network-policies
+    - kind: Kustomization
+      name: services
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
@@ -43,6 +58,7 @@ metadata:
 spec:
   providerRef:
     name: github-home-cluster-secrets
+  # GitRepository flux-system/secrets
   eventSources:
     - kind: Kustomization
       name: secrets
@@ -55,24 +71,10 @@ metadata:
 spec:
   providerRef:
     name: github-home-cluster-sensitive
+  # GitRepository flux-system/sensitive
   eventSources:
     - kind: Kustomization
-      name: '*'
-    - kind: HelmRelease
-      name: '*'
----
-apiVersion: notification.toolkit.fluxcd.io/v1beta3
-kind: Alert
-metadata:
-  name: github-status-helm-charts
-  namespace: flux-system
-spec:
-  providerRef:
-    name: github-helm-charts
-  eventSources:
+      name: sensitive
     - kind: Kustomization
-      name: '*'
-    - kind: HelmRelease
-      name: '*'
-    - kind: HelmRepository
-      name: '*'
+      name: camo
+      namespace: camo
