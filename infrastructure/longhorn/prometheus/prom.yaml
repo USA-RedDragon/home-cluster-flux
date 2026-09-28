@@ -49,25 +49,28 @@ spec:
             summary: "{{ $labels.node }}/{{ $labels.disk }} at {{ $value }}% of rated endurance"
             description: "Replace this drive."
 
-        - alert: DiskWearHigh
-          expr: longhorn_disk_health_attribute_raw{attribute="PercentageUsed"} >= 70
-          for: 1h
-          labels:
-            severity: warning
-          annotations:
-            summary: "{{ $labels.node }}/{{ $labels.disk }} at {{ $value }}% of rated endurance"
-            description: "Plan a replacement. Check what is driving writes to this disk."
-
+        # No fixed "wear high" threshold: a drive at 73% writing 67 GB/day has
+        # years left. Warn on the trend instead, and on real defects (spare,
+        # media errors) below.
         - alert: DiskWearExhaustionProjected
           expr: |
-            predict_linear(longhorn_disk_health_attribute_raw{attribute="PercentageUsed"}[14d], 90 * 24 * 3600) >= 100
+            predict_linear(longhorn_disk_health_attribute_raw{attribute="PercentageUsed"}[30d], 180 * 24 * 3600) >= 100
               and longhorn_disk_health_attribute_raw{attribute="PercentageUsed"} < 90
           for: 6h
           labels:
             severity: warning
           annotations:
-            summary: "{{ $labels.node }}/{{ $labels.disk }} projected to exhaust endurance within 90 days"
-            description: "Currently {{ $value }}% used and rising fast enough to reach 100% inside 90 days."
+            summary: "{{ $labels.node }}/{{ $labels.disk }} projected to exhaust endurance within 180 days"
+            description: "Rising fast enough over the last 30 days to reach 100% of rated endurance inside 180 days. Plan a replacement and check what is driving writes to this disk."
+
+        - alert: DiskAvailableSpareDropping
+          expr: longhorn_disk_health_attribute_raw{attribute="AvailableSpare"} < 90
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "NVMe spare blocks at {{ $value }}% on {{ $labels.node }}/{{ $labels.disk }}"
+            description: "The drive has been retiring blocks. Healthy drives sit at 100%; plan a replacement before it reaches the drive's own threshold."
 
         - alert: DiskMediaErrorsGrowing
           expr: increase(longhorn_disk_health_attribute_raw{attribute="MediaErrors"}[24h]) > 0
