@@ -57,7 +57,7 @@ controllers:
       symmetricds:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/symmetricds
-          tag: "3.18.1@sha256:53e32d608e672a108abfd7b3ed0418b3e8d765404c811f37f8c9b5023ca6798d"
+          tag: "3.18.1@sha256:dc4132fd7355ea97b7726b44e40552653920d636f3e8d7ca90b5ae1f19a39692"
         # The web server stays up even when the engine fails to start, so a TCP
         # probe passes; /ping answers 660 until the engine is running.
         probes:
