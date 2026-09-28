@@ -25,7 +25,7 @@ data:
               severity: warning
             annotations:
               summary: "Talos node {{ $labels.node }} has sent no logs for 30m"
-              description: "Check the talos-logs Vector pod on {{ $labels.node }} and the node's machine.logging config."
+              description: "Talos node {{ $labels.node }} has sent no logs for 30m. Check the talos-logs Vector pod on it and the node's machine.logging config."
           - alert: LogSourceSilent
             expr: |
               (sum by (host) (count_over_time({job="syslog", host=~"OpenWrt|truenas"}[24h])))
@@ -36,7 +36,7 @@ data:
               severity: warning
             annotations:
               summary: "{{ $labels.host }} has sent no syslog for 30m"
-              description: "Check its remote syslog setting and the alloy-gateway-syslog Service (192.168.254.13)."
+              description: "{{ $labels.host }} has sent no syslog for 30m. Check its remote syslog setting and the alloy-gateway-syslog Service (192.168.254.13)."
           - alert: LogSourceSilent
             expr: absent_over_time({job="homeassistant"}[30m])
             for: 5m
@@ -44,7 +44,7 @@ data:
               severity: warning
             annotations:
               summary: "Home Assistant has sent no logs for 30m"
-              description: "Check the local_loki_alloy add-on on Home Assistant."
+              description: "Home Assistant has sent no logs for 30m. Check the local_loki_alloy add-on."
           - alert: LogSourceSilent
             expr: absent_over_time({job="observatory", app="symmetricds"}[30m])
             for: 5m
@@ -52,7 +52,7 @@ data:
               severity: warning
             annotations:
               summary: "Observatory has sent no SymmetricDS logs for 30m"
-              description: "Check the Alloy Windows service on the observatory, and SymmetricDS itself."
+              description: "The observatory has sent no SymmetricDS logs for 30m. Check the Alloy Windows service there, and SymmetricDS itself."
           - alert: LogSourceSilent
             expr: absent_over_time({job="kubernetes-events"}[30m])
             for: 5m
@@ -60,7 +60,7 @@ data:
               severity: warning
             annotations:
               summary: "No Kubernetes events reaching Loki for 30m"
-              description: "Check the alloy-gateway Deployment in monitoring."
+              description: "No Kubernetes events have reached Loki for 30m. Check the alloy-gateway Deployment in monitoring."
           - alert: LogSourceSilent
             expr: absent_over_time({namespace="kube-system"}[15m])
             for: 5m
@@ -68,20 +68,34 @@ data:
               severity: warning
             annotations:
               summary: "No pod logs reaching Loki for 15m"
-              description: "kube-system always logs; check the alloy DaemonSet in monitoring."
+              description: "No pod logs have reached Loki for 15m (kube-system always logs). Check the alloy DaemonSet in monitoring."
 
       - name: log-hardware
         rules:
-          - alert: UPSUnreachable
+          # Grouped by root cause: one alert per unreachable NUT server (value =
+          # number of clients affected), plus one for a driver with no UPS.
+          - alert: UPSServerUnreachable
             expr: |
-              sum by (job, node, host, identifier) (count_over_time({job=~"talos|syslog|homeassistant"}
-                |~ "(?i)(connect failed|driver not connected|driver is (still )?not (currently )?connected|No matching HID UPS)" [10m])) > 0
+              count by (ups_server) (sum by (ups_server, node, host) (count_over_time({job=~"talos|syslog"}
+                |~ "(?i)(connect failed|driver not connected)"
+                | regexp "(?:ups@|UPS \\[)(?P<ups_server>\\d+\\.\\d+\\.\\d+\\.\\d+)"
+                | ups_server != "" [10m])))
             for: 15m
             labels:
               severity: critical
             annotations:
-              summary: "UPS monitoring broken on {{ $labels.node }}{{ $labels.host }}"
-              description: "NUT cannot reach its UPS server or the UPS driver has no device, so this host will not shut down cleanly on power loss."
+              summary: "UPS server {{ $labels.ups_server }} unreachable from {{ $value }} hosts"
+              description: "{{ $value }} hosts (Talos nodes, router, NAS) cannot reach UPS server {{ $labels.ups_server }}, so they will not shut down cleanly on power loss. Which ones: {job=~\"talos|syslog\"} |= \"{{ $labels.ups_server }}\""
+          - alert: UPSDriverNoDevice
+            expr: |
+              sum by (host) (count_over_time({job="homeassistant", identifier=~".*nut"}
+                |~ "(?i)(No matching HID UPS|driver is (still )?not (currently )?connected)" [10m])) > 0
+            for: 15m
+            labels:
+              severity: critical
+            annotations:
+              summary: "No UPS attached to the NUT server on {{ $labels.host }}"
+              description: "The NUT driver on {{ $labels.host }} finds no USB UPS and restart-loops, so it serves nothing to its clients. Check the UPS USB cable."
           - alert: KernelStorageErrors
             expr: |
               sum by (node) (count_over_time({job="talos", service="kernel"}
