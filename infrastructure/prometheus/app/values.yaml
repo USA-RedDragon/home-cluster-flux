@@ -3507,7 +3507,7 @@ prometheus:
 
     ## Priority class assigned to the Pods
     ##
-    priorityClassName: system-cluster-critical
+    priorityClassName: ""
 
     ## Thanos configuration allows configuring various aspects of a Prometheus server in a Thanos environment.
     ## This section is experimental, it may change significantly without deprecation notice in any release.
