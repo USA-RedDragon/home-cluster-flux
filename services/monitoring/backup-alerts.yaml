@@ -1,0 +1,44 @@
+# Backup CronJobs (restic, backup-sync, etcd/longhorn backups) that stop
+# succeeding. KubeJobFailed only fires while a failed Job object exists, and
+# these Jobs are deleted an hour after finishing, so a backup can fail every
+# night unnoticed. The threshold follows the schedule: day-of-month
+# schedules are monthly.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: backups
+  namespace: monitoring
+spec:
+  groups:
+    - name: backups
+      rules:
+        - alert: BackupStale
+          expr: |
+            (
+              (time() - kube_cronjob_status_last_successful_time{cronjob=~".*(restic|backup).*"}) / 86400
+                > 2
+              and on (namespace, cronjob) kube_cronjob_info{schedule!~"\\S+ \\S+ [0-9].*"}
+            )
+            or
+            (
+              (time() - kube_cronjob_status_last_successful_time{cronjob=~".*(restic|backup).*"}) / 86400
+                > 35
+              and on (namespace, cronjob) kube_cronjob_info{schedule=~"\\S+ \\S+ [0-9].*"}
+            )
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup {{ $labels.namespace }}/{{ $labels.cronjob }} hasn't succeeded in {{ $value | printf \"%.0f\" }} days"
+            description: "CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} last succeeded {{ $value | printf \"%.1f\" }} days ago. Its Jobs are cleaned up after an hour, so check the run's logs in Loki: {namespace=\"{{ $labels.namespace }}\", pod=~\"{{ $labels.cronjob }}-.*\"}"
+        - alert: BackupNeverSucceeded
+          expr: |
+            (kube_cronjob_info{cronjob=~".*(restic|backup).*"}
+              unless on (namespace, cronjob) kube_cronjob_status_last_successful_time)
+            and on (namespace, cronjob) (time() - kube_cronjob_created) > 2 * 86400
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup {{ $labels.namespace }}/{{ $labels.cronjob }} has never succeeded"
+            description: "CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} is over 2 days old and has never completed successfully. Check its runs in Loki: {namespace=\"{{ $labels.namespace }}\", pod=~\"{{ $labels.cronjob }}-.*\"}"
