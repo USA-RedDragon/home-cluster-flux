@@ -4,7 +4,7 @@ namespace: astro-processing
 resources:
   - helm.yaml
 configMapGenerator:
-  - name: pixinsight-worker-chart-values
+  - name: astro-stacker-chart-values
     files:
       - values.yaml=values.yaml
 configurations:

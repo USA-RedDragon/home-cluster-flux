@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
 controllers:
-  pixinsight-worker:
+  astro-stacker:
     replicas: 1
     strategy: RollingUpdate
 
@@ -16,8 +16,8 @@ controllers:
     containers:
       app:
         image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/pixinsight-worker
-          tag: "beta@sha256:f5b3ed55322c905deb5f9fb0c48edb88216092eee135007e56cb8915edabe68a"
+          repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
+          tag: "beta@sha256:d257ccda77267039d77a01f1fbbdc9ab5b0ea1b647d0ca9517d3697590885f41"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -89,11 +89,11 @@ controllers:
             value: "2"
           S3_ACCESS_KEY:
             secretKeyRef:
-              name: pixinsight-worker-s3
+              name: astro-stacker-s3
               key: S3_ACCESS_KEY
           S3_SECRET_KEY:
             secretKeyRef:
-              name: pixinsight-worker-s3
+              name: astro-stacker-s3
               key: S3_SECRET_KEY
         resources:
           requests:
@@ -105,8 +105,8 @@ controllers:
             memory: 1Gi
 
 service:
-  pixinsight-worker:
-    controller: pixinsight-worker
+  astro-stacker:
+    controller: astro-stacker
     ports:
       http:
         port: 8080
@@ -116,9 +116,9 @@ service:
         port: 9999
 
 serviceMonitor:
-  pixinsight-worker:
+  astro-stacker:
     enabled: true
-    serviceName: pixinsight-worker
+    serviceName: astro-stacker
     endpoints:
       - port: metrics
         scheme: http
@@ -131,13 +131,13 @@ ingress:
     enabled: true
     className: tailscale
     hosts:
-      - host: pixinsight-worker
+      - host: astro-stacker
         paths:
         - path: /
           pathType: Prefix
           service:
-              identifier: pixinsight-worker
+              identifier: astro-stacker
               port: http
     tls:
       - hosts:
-          - pixinsight-worker
+          - astro-stacker
