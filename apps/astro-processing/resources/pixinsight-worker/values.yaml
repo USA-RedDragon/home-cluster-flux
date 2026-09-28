@@ -78,6 +78,10 @@ controllers:
           # Index frame headers from the astro bucket (read-only MinIO user).
           INDEXER_ENABLED:
             value: "true"
+          S3_ENDPOINT:
+            value: "minio.minio.svc:9000"
+          S3_USE_SSL:
+            value: "false"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: pixinsight-worker-s3
