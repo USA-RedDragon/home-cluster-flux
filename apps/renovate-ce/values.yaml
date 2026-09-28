@@ -15,6 +15,11 @@ renovateWorker:
   disableCacheVolume: true
 
   extraEnvVars:
+  # Go writes its module cache read-only, so mendRnvWorkerCleanup's delete
+  # failed on every file ("find: cannot delete ... Permission denied", ~40
+  # GB/day of logs) and the cache was never cleaned. Make it writable.
+  - name: GOFLAGS
+    value: '-modcacherw'
   - name: RENOVATE_REPOSITORY_CACHE
     value: 'enabled'
   - name: LOG_LEVEL
