@@ -21,6 +21,12 @@ args:
   - --objstore.config-file=/etc/thanos/config.yaml
   - --grpc-address=0.0.0.0:10901
   - --http-address=0.0.0.0:10902
+  # Keep memory under the pod limit regardless of query size. The chunk pool
+  # defaults to 2GB, above the 1.5Gi limit; oversized queries fail instead.
+  - --chunk-pool-size=512MB
+  - --index-cache-size=256MB
+  - --store.limits.request-series=200000
+  - --store.limits.request-samples=50000000
 
 secrets: []
 # - name: app-creds
