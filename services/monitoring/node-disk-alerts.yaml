@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: node-disk
+  namespace: monitoring
+spec:
+  groups:
+    - name: node-disk
+      rules:
+        # Replaces the default NodeDiskIOSaturation (queue depth > 10), which
+        # fired on every bulk job and twice per busy Longhorn volume (the
+        # VIRTUAL-DISK iSCSI device plus the disk under it). Latency is what
+        # hurts; the worst 1h average in the 14 days before this was 699 ms
+        # (astro-stacker on gamma's DRAM-less 980), so 2 s means a disk that
+        # is choking or dying, not a batch job.
+        - alert: NodeDiskLatencyHigh
+          expr: |
+            (
+              rate(node_disk_read_time_seconds_total{job="node-exporter"}[10m])
+                + rate(node_disk_write_time_seconds_total{job="node-exporter"}[10m])
+            )
+            / clamp_min(
+              rate(node_disk_reads_completed_total{job="node-exporter"}[10m])
+                + rate(node_disk_writes_completed_total{job="node-exporter"}[10m]),
+              1
+            ) > 2
+            and on(instance, device) node_disk_info{model!="VIRTUAL-DISK"}
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Disk {{ $labels.device }} on {{ $labels.instance }} averaging {{ $value | humanizeDuration }} per IO"
+            description: "Average IO latency on {{ $labels.device }} has stayed above 2s for an hour. Batch jobs stay well under this; check the drive's SMART data and what is writing to it."

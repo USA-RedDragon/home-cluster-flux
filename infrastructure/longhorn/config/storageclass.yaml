@@ -64,3 +64,23 @@ parameters:
   fsType: ext4
   dataLocality: best-effort
   diskSelector: "nvme"
+---
+# Scratch for sustained bulk writes (astro-stacker). The "fast" tag is on the
+# 990 PRO-class data NVMes only: not the DRAM-less 980s (750 ms writes under
+# load), not node system disks, not alpha-nvme-2 (worn). Tags live on the
+# Longhorn Node objects, not in Git.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn-fast-r1
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+parameters:
+  numberOfReplicas: "1"
+  staleReplicaTimeout: "30"
+  fromBackup: ""
+  fsType: ext4
+  dataLocality: disabled
+  diskSelector: "fast"

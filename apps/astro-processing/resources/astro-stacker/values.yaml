@@ -124,9 +124,10 @@ controllers:
 
 persistence:
   # Downloads, calibration masters and Siril output; the root filesystem is
-  # read-only. A per-pod NVMe volume, not an emptyDir: rebuilds write ~60 MB/s
-  # of 32-bit FITS, which saturated the node's Talos system disk (gamma sdb,
-  # NodeDiskIOSaturation) and slowed containerd, kubelet and logs with it.
+  # read-only. A per-pod volume on the "fast" NVMes, not an emptyDir: rebuilds
+  # write ~60 MB/s of 32-bit FITS, which saturated gamma's Talos system disk
+  # (slowing containerd, kubelet and logs) and then its DRAM-less 980 (750 ms
+  # writes).
   tmp:
     type: custom
     volumeSpec:
@@ -134,7 +135,7 @@ persistence:
         volumeClaimTemplate:
           spec:
             accessModes: [ReadWriteOnce]
-            storageClassName: longhorn-nvme-r1
+            storageClassName: longhorn-fast-r1
             resources:
               requests:
                 storage: 30Gi
