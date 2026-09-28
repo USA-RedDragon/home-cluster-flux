@@ -100,7 +100,7 @@ controllers:
             value: "172.17.0.0/16"
           # Calibration coverage comes from the worker's frame index.
           WORKER_URL:
-            value: "http://pixinsight-worker:8080"
+            value: "http://astro-stacker:8080"
 
 service:
   frontend:

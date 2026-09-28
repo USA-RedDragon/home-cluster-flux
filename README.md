@@ -286,7 +286,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/astro-processing/resources/pixinsight-worker/helm.yaml">pixinsight-worker</a></td>
+    <td><a href="apps/astro-processing/resources/astro-stacker/helm.yaml">astro-stacker</a></td>
   </tr>
   <tr>
     <td>symmetricds</td>
