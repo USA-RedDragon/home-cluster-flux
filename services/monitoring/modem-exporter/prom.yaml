@@ -1,0 +1,94 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: modem
+  namespace: monitoring
+spec:
+  groups:
+    - name: modem
+      rules:
+        - alert: ModemExporterFailing
+          expr: modem_scrape_ok == 0 or absent(modem_scrape_ok)
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cable modem is not being scraped"
+            description: "modem-exporter can't read the modem (or isn't running) for 15m. A rejected login backs off for an hour to avoid locking the account; check the modem-admin secret and the exporter logs."
+
+        - alert: ModemRebooted
+          expr: resets(modem_uptime_seconds[15m]) > 0
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cable modem rebooted"
+            description: "The cable modem's uptime reset in the last 15m (reboot or re-registration). Check {job=\"modem\"} in Loki for what preceded it."
+
+        - alert: ModemChannelsUnlocked
+          expr: (count(modem_downstream_locked == 0) or vector(0)) + (count(modem_upstream_locked == 0) or vector(0)) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cable modem has unlocked channels"
+            description: "{{ $value }} downstream/upstream channels have been unlocked for 10m: signal or plant problem on the coax."
+
+        - alert: ModemDownstreamSNRLow
+          expr: min by (channel_id, frequency_hz) (modem_downstream_snr_db{modulation="QAM256"}) < 33
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cable modem downstream SNR low on channel {{ $labels.channel_id }}"
+            description: "QAM256 channel {{ $labels.channel_id }} ({{ $labels.frequency_hz }} Hz) SNR is {{ $value }} dB; below 33 dB causes errors. Usually noise ingress or a bad splitter/connector."
+
+        - alert: ModemDownstreamPowerOutOfRange
+          expr: modem_downstream_power_dbmv < -10 or modem_downstream_power_dbmv > 12
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cable modem downstream power out of range on channel {{ $labels.channel_id }}"
+            description: "Downstream channel {{ $labels.channel_id }} ({{ $labels.frequency_hz }} Hz) receives {{ $value }} dBmV; outside -10..+12 dBmV. Too many splitters (low) or no attenuation (high)."
+
+        - alert: ModemUpstreamPowerHigh
+          expr: max by (channel_id, type) (modem_upstream_power_dbmv) > 51
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cable modem upstream power high on channel {{ $labels.channel_id }}"
+            description: "Upstream {{ $labels.type }} channel {{ $labels.channel_id }} transmits at {{ $value }} dBmV (>51). The modem is shouting to be heard: expect T3 timeouts and dropouts. Usually attenuation or a fault between modem and tap."
+
+        - alert: ModemUncorrectableErrors
+          expr: sum(increase(modem_downstream_uncorrectable_codewords[1h])) > 1000
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cable modem logging uncorrectable errors"
+            description: "{{ $value | humanize }} uncorrectable downstream codewords in the last hour: packets are being lost on the coax."
+---
+# Log-based modem alert, loaded by the Loki ruler (loki_rule label).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: modem-loki-rules
+  namespace: monitoring
+  labels:
+    loki_rule: "1"
+data:
+  modem-alerts.yaml: |
+    groups:
+      - name: modem-log
+        rules:
+          # 26 such events in two days, in bursts of up to 9/h, when checked.
+          - alert: ModemRangingProblems
+            expr: |
+              sum(count_over_time({job="modem"}
+                |~ "T3 time-out|T4 time-out|SYNC Timing Synchronization failure|Dynamic Range Window violation|Top of the DRW" [1h])) > 5
+            labels:
+              severity: warning
+            annotations:
+              summary: "Cable modem logged {{ $value }} ranging/sync problems in 1h"
+              description: "{{ $value }} T3/T4 timeouts, SYNC failures or Dynamic Range Window violations in the last hour: upstream noise or power trouble on the coax, felt as latency spikes and dropouts. See {job=\"modem\"} in Loki."

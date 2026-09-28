@@ -1,0 +1,19 @@
+# OpenWrt router metrics from its prometheus-node-exporter-lua (bound to the
+# lan interface: uci prometheus-node-exporter-lua.main.listen_interface=lan).
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: router
+  namespace: monitoring
+spec:
+  staticConfigs:
+    - targets: ["192.168.1.1:9100"]
+      labels:
+        instance: router
+        job: router
+  scrapeInterval: 1m
+  metricRelabelings:
+    # One series per tracked NAT connection: ~700 and churning constantly.
+    - sourceLabels: [__name__]
+      regex: node_nat_traffic
+      action: drop

@@ -10,6 +10,9 @@ resources:
   - talos-logs.yaml
   - alloy-gateway-svc.yaml
   - loki-alert-rules.yaml
+  - router-scrape.yaml
+  - backup-alerts.yaml
+  - modem-exporter
   - observatory-svc.yaml
   - thanos-prom.yaml
 configMapGenerator:
