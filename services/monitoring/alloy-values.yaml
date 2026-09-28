@@ -106,6 +106,66 @@ alloy:
         forward_to = [loki.write.default.receiver]
       }
 
+      // Kubernetes API audit log (control-plane nodes only; the file doesn't
+      // exist on workers). Talos logs every request twice at Metadata level,
+      // ~3-19 GB/day per node. Keep only people, denials, and writes by
+      // anything that isn't core automation (Flux's changes are in Git):
+      // about 1 MB/day per node.
+      local.file_match "audit" {
+        path_targets = [{"__path__" = "/var/log/audit/kube/kube-apiserver.log", "job" = "kube-audit", "node" = sys.env("NODE_NAME")}]
+      }
+
+      loki.source.file "audit" {
+        targets    = local.file_match.audit.targets
+        forward_to = [loki.process.audit.receiver]
+      }
+
+      loki.process "audit" {
+        stage.json {
+          expressions = {
+            stage       = "stage",
+            verb        = "verb",
+            username    = "user.username",
+            code        = "responseStatus.code",
+            resource    = "objectRef.resource",
+            subresource = "objectRef.subresource",
+            ts          = "stageTimestamp",
+          }
+        }
+
+        stage.drop {
+          source     = "stage"
+          expression = "^(RequestReceived|ResponseStarted|Panic)$"
+        }
+
+        stage.template {
+          source   = "class"
+          // The chart runs this config through Helm tpl first, so each opening
+          // double brace below is written as a Helm expression that prints one.
+          template = `{{ "{{" }} if not (hasPrefix "system:" .username) }}human{{ "{{" }} else if or (eq .code "401") (eq .code "403") }}denied{{ "{{" }} else if and (regexMatch "^(create|update|patch|delete|deletecollection)$" .verb) (not (regexMatch "^(leases|events|selfsubjectaccessreviews|subjectaccessreviews|localsubjectaccessreviews|selfsubjectrulesreviews|tokenreviews)$" .resource)) (ne .subresource "status") (not (regexMatch "^system:(serviceaccount:(kube-system|flux-system|longhorn-system|kyverno|cnpg-system|metallb-system|cert-manager|monitoring):|node:|kube-|apiserver|volume-scheduler)" .username)) }}write{{ "{{" }} end }}`
+        }
+
+        stage.drop {
+          source     = "class"
+          expression = "^$"
+        }
+
+        stage.labels {
+          values = { class = "" }
+        }
+
+        stage.label_drop {
+          values = ["filename"]
+        }
+
+        stage.timestamp {
+          source = "ts"
+          format = "RFC3339Nano"
+        }
+
+        forward_to = [loki.write.default.receiver]
+      }
+
       loki.write "default" {
         endpoint {
           url = "http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push"
