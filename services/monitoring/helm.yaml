@@ -140,36 +140,42 @@ spec:
               apiVersion: v1
               kind: ConfigMap
               metadata:
+                namespace: monitoring
                 name: loki-dashboards-loki-bloom-build
           - patch: |
               $patch: delete
               apiVersion: v1
               kind: ConfigMap
               metadata:
+                namespace: monitoring
                 name: loki-dashboards-loki-bloom-gateway
           - patch: |
               $patch: delete
               apiVersion: v1
               kind: ConfigMap
               metadata:
+                namespace: monitoring
                 name: loki-dashboards-loki-thanos-object-storage
           - patch: |
               $patch: delete
               apiVersion: v1
               kind: ConfigMap
               metadata:
+                namespace: monitoring
                 name: loki-dashboards-loki-mixin-recording-rules
           - patch: |
               $patch: delete
               apiVersion: v1
               kind: ConfigMap
               metadata:
+                namespace: monitoring
                 name: loki-dashboards-loki-reads-resources
           - patch: |
               $patch: delete
               apiVersion: v1
               kind: ConfigMap
               metadata:
+                namespace: monitoring
                 name: loki-dashboards-loki-writes-resources
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
