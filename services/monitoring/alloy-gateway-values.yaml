@@ -1,0 +1,133 @@
+# Single replica that feeds Loki from outside the log DaemonSet:
+# - Kubernetes events, once rather than once per node. The API server drops
+#   events after an hour; Loki keeps them 30d.
+# - LAN syslog on 192.168.254.13 (alloy-gateway-syslog Service).
+# - A push-only Loki API on the tailnet (alloy-gateway-push Service), so
+#   tailnet hosts can send logs without being able to query Loki.
+image:
+  registry: jacob.pub/docker.io
+  repository: grafana/alloy
+  tag: v1.20.0
+  digest: sha256:5379c6abea0695b640b0adb5e8fa1317d99d11f6a28cad423be0a638f897cbca
+
+configReloader:
+  image:
+    registry: jacob.pub/quay.io
+    repository: prometheus-operator/prometheus-config-reloader
+    tag: v0.94.0@sha256:404b7b6e9ab5bfec65b93a07debc11bf901062fac54af1eee92e877d738d8bf8
+
+# The alloy release already owns the PodLogs CRD.
+crds:
+  create: false
+
+alloy:
+  enableReporting: false
+  extraPorts:
+    - name: push
+      port: 3500
+      targetPort: 3500
+      protocol: TCP
+    - name: syslog-udp
+      port: 5514
+      targetPort: 5514
+      protocol: UDP
+    - name: syslog-tcp
+      port: 5601
+      targetPort: 5601
+      protocol: TCP
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
+  configMap:
+    content: |
+      logging {
+        level  = "info"
+        format = "logfmt"
+      }
+
+      loki.source.kubernetes_events "cluster" {
+        log_format = "json"
+        forward_to = [loki.process.events.receiver]
+      }
+
+      // Normal/Warning is low-cardinality and the most useful filter.
+      loki.process "events" {
+        stage.json {
+          expressions = { type = "type", reason = "reason" }
+        }
+        // Kyverno audit results were 99.6% of Warning events and already
+        // live in its PolicyReports; they buried the real warnings.
+        stage.drop {
+          source = "reason"
+          value  = "PolicyViolation"
+        }
+        stage.labels {
+          values = { type = "" }
+        }
+        stage.static_labels {
+          values = { job = "kubernetes-events" }
+        }
+        forward_to = [loki.write.default.receiver]
+      }
+
+      loki.source.api "push" {
+        http {
+          listen_address = "0.0.0.0"
+          listen_port    = 3500
+        }
+        forward_to = [loki.write.default.receiver]
+      }
+
+      loki.relabel "syslog" {
+        forward_to = []
+        rule {
+          source_labels = ["__syslog_message_hostname"]
+          target_label  = "host"
+        }
+        rule {
+          source_labels = ["__syslog_message_app_name"]
+          target_label  = "app"
+        }
+        rule {
+          source_labels = ["__syslog_message_severity"]
+          target_label  = "level"
+        }
+        rule {
+          source_labels = ["__syslog_connection_ip_address"]
+          target_label  = "source_ip"
+        }
+      }
+
+      // UDP/RFC3164 is what OpenWrt logd and most appliances send.
+      loki.source.syslog "lan" {
+        listener {
+          address       = "0.0.0.0:5514"
+          protocol      = "udp"
+          syslog_format = "rfc3164"
+          labels        = { job = "syslog" }
+        }
+        listener {
+          address       = "0.0.0.0:5601"
+          protocol      = "tcp"
+          syslog_format = "rfc5424"
+          labels        = { job = "syslog" }
+        }
+        relabel_rules = loki.relabel.syslog.rules
+        forward_to    = [loki.write.default.receiver]
+      }
+
+      loki.write "default" {
+        endpoint {
+          url = "http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push"
+        }
+      }
+
+controller:
+  type: deployment
+  replicas: 1
+
+serviceMonitor:
+  enabled: true

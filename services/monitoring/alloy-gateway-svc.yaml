@@ -1,0 +1,45 @@
+# LAN syslog for routers, NAS and appliances. Fixed IP so devices can be
+# pointed at it. Local traffic policy keeps the sender's IP for source_ip.
+apiVersion: v1
+kind: Service
+metadata:
+  name: alloy-gateway-syslog
+  namespace: monitoring
+  annotations:
+    metallb.io/loadBalancerIPs: 192.168.254.13
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/instance: alloy-gateway
+  ports:
+    - name: syslog-udp
+      port: 514
+      targetPort: 5514
+      protocol: UDP
+    - name: syslog-tcp
+      port: 601
+      targetPort: 5601
+      protocol: TCP
+---
+# Push-only Loki API on the tailnet as loki-push:3500. Unlike Loki itself,
+# this cannot be queried.
+apiVersion: v1
+kind: Service
+metadata:
+  name: alloy-gateway-push
+  namespace: monitoring
+  annotations:
+    tailscale.com/expose: "true"
+    tailscale.com/hostname: loki-push
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/instance: alloy-gateway
+  ports:
+    - name: push
+      port: 3500
+      targetPort: 3500
+      protocol: TCP
