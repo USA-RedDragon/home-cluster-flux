@@ -228,8 +228,14 @@ insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_chann
   ('ruleweight', 'ruleweight', 'default', 'reload', current_timestamp, current_timestamp),
   ('profilepreference', 'profilepreference', 'default', 'reload', current_timestamp, current_timestamp),
   ('flathistory', 'flathistory', 'default', 'reload', current_timestamp, current_timestamp),
-  ('acquiredimage', 'acquiredimage', 'default', 'reload', current_timestamp, current_timestamp),
-  ('imagedata', 'imagedata', 'default', 'reload', current_timestamp, current_timestamp)
+  ('acquiredimage', 'acquiredimage', 'default', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+-- imagedata.imagedata holds thumbnails that Target Scheduler has stored both
+-- as blobs and as base64 text, which SymmetricDS cannot load into one bytea
+-- column. Nothing here reads it, so replicate the metadata only.
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, excluded_column_names, create_time, last_update_time) values
+  ('imagedata', 'imagedata', 'default', 'reload', 'imagedata', current_timestamp, current_timestamp)
   on conflict do nothing;
 
 insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
