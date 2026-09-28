@@ -72,7 +72,9 @@ class Modem:
             "User-Agent": UA,
         })
         with self.opener.open(req, timeout=20) as r:
-            return json.loads(r.read())
+            # The firmware sometimes logs raw non-UTF-8 bytes (e.g. "DSID: \xea"
+            # in a CM-STATUS event); one such entry broke every poll.
+            return json.loads(r.read().decode("utf-8", errors="replace"))
 
     def _cookie(self, name, value):
         host = MODEM.split("://", 1)[1].split("/")[0]
