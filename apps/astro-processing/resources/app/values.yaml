@@ -88,6 +88,8 @@ controllers:
             value: "true"
           METRICS_BIND:
             value: "[::]"
+          METRICS_PORT:
+            value: "9090"
           PPROF_ENABLED:
             value: "true"
           PPROF_BIND:
@@ -127,7 +129,8 @@ persistence:
 serviceMonitor:
   backend:
     enabled: true
-    serviceName: backend
+    service:
+      identifier: backend
     endpoints:
       - port: metrics
         scheme: http
