@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: log-volume
+  namespace: monitoring
+spec:
+  groups:
+    - name: log-volume
+      rules:
+        # Alloy's per-file read rate. The whole cluster normally logs about
+        # 200 KiB/s; 1 MiB/s from one container is roughly 86 GB/day of
+        # node-disk writes plus the same again into Loki and MinIO.
+        - alert: ContainerLogFlood
+          expr: |
+            label_replace(label_replace(label_replace(
+              sum by (path) (rate(loki_source_file_read_bytes_total[10m])),
+              "namespace", "$1", "path", "/var/log/pods/([^_]+)_.*"),
+              "pod", "$1", "path", "/var/log/pods/[^_]+_([^_]+)_.*"),
+              "container", "$1", "path", "/var/log/pods/[^/]+/([^/]+)/.*")
+            > 1048576
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is logging {{ $value | humanize1024 }}B/s"
+            description: "Sustained log flood, usually a component stuck retrying. Check it in Grafana: {container=\"{{ $labels.container }}\", namespace=\"{{ $labels.namespace }}\"}"
