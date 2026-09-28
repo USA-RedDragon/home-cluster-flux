@@ -1,0 +1,65 @@
+# Single replica that watches Kubernetes events and pushes them to Loki.
+# Separate from the log DaemonSet so each event is collected once, not once
+# per node. The API server drops events after an hour; Loki keeps them 30d.
+image:
+  registry: jacob.pub/docker.io
+  repository: grafana/alloy
+  tag: v1.20.0
+  digest: sha256:5379c6abea0695b640b0adb5e8fa1317d99d11f6a28cad423be0a638f897cbca
+
+configReloader:
+  image:
+    registry: jacob.pub/quay.io
+    repository: prometheus-operator/prometheus-config-reloader
+    tag: v0.94.0@sha256:404b7b6e9ab5bfec65b93a07debc11bf901062fac54af1eee92e877d738d8bf8
+
+# The alloy release already owns the PodLogs CRD.
+crds:
+  create: false
+
+alloy:
+  enableReporting: false
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
+  configMap:
+    content: |
+      logging {
+        level  = "info"
+        format = "logfmt"
+      }
+
+      loki.source.kubernetes_events "cluster" {
+        log_format = "json"
+        forward_to = [loki.process.events.receiver]
+      }
+
+      // Normal/Warning is low-cardinality and the most useful filter.
+      loki.process "events" {
+        stage.json {
+          expressions = { type = "type" }
+        }
+        stage.labels {
+          values = { type = "" }
+        }
+        stage.static_labels {
+          values = { job = "kubernetes-events" }
+        }
+        forward_to = [loki.write.default.receiver]
+      }
+
+      loki.write "default" {
+        endpoint {
+          url = "http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push"
+        }
+      }
+
+controller:
+  type: deployment
+  replicas: 1
+
+serviceMonitor:
+  enabled: true

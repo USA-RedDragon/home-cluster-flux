@@ -31,5 +31,8 @@ configMapGenerator:
   - name: alloy-chart-values
     files:
       - values.yaml=alloy-values.yaml
+  - name: alloy-events-chart-values
+    files:
+      - values.yaml=alloy-events-values.yaml
 configurations:
   - kustomizeconfig.yaml
