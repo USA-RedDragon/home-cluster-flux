@@ -100,9 +100,11 @@ ingress:
 
 probes: {}
 
+# Merging blocks spikes well above steady state; 650Mi was OOMKilled twice on
+# the first real compaction run. Only the limit is raised, not the request.
 resources:
   limits:
-    memory: 650Mi
+    memory: 2Gi
   requests:
     cpu: 100m
     memory: 512Mi
