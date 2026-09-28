@@ -17,7 +17,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:d257ccda77267039d77a01f1fbbdc9ab5b0ea1b647d0ca9517d3697590885f41"
+          tag: "beta@sha256:a3a750707135e9a36579cedb7e6044ae7956e153566c86a0f522c4ed6cbc63e6"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -87,6 +87,18 @@ controllers:
             value: "true"
           PREVIEWS_CONCURRENCY:
             value: "2"
+          # Calibrate, register and stack good subs into one master per
+          # target and filter (Siril, in the image).
+          STACKING_ENABLED:
+            value: "true"
+          STACKING_WORK_DIR:
+            value: /tmp/stacking
+          STACKING_SIRIL_THREADS:
+            value: "4"
+          # Siril sizes its stacking buffers from the node's free memory, not
+          # the pod limit, so keep its share small.
+          STACKING_SIRIL_MEMORY:
+            value: "0.05"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
@@ -97,12 +109,21 @@ controllers:
               key: S3_SECRET_KEY
         resources:
           requests:
-            cpu: 50m
-            memory: 64Mi
-          limits:
-            # Each preview render holds about 200 MB (compressed file, raw
-            # samples and float image).
+            cpu: 1
             memory: 1Gi
+          limits:
+            # Previews hold about 200 MB each; the stacker's accumulator is
+            # 416 MB and a rebuild pass about 730 MB, plus Siril.
+            memory: 6Gi
+
+persistence:
+  # Downloads, calibration masters and Siril output; the root filesystem is
+  # read-only.
+  tmp:
+    type: emptyDir
+    sizeLimit: 30Gi
+    globalMounts:
+      - path: /tmp
 
 service:
   astro-stacker:
