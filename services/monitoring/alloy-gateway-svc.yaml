@@ -9,6 +9,7 @@ metadata:
     metallb.io/loadBalancerIPs: 192.168.254.13
 spec:
   type: LoadBalancer
+  loadBalancerClass: metallb
   externalTrafficPolicy: Local
   selector:
     app.kubernetes.io/name: alloy
