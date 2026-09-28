@@ -1,0 +1,107 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: thanos
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app
+    matchExpressions:
+      - key: app.kubernetes.io/instance
+        operator: In
+        values:
+          - thanos-querier
+          - thanos-compactor
+          - thanos-store
+  endpoints:
+    # Store and compactor serve /metrics on "http" (10902); the querier's only
+    # HTTP listener is "query" (9090). Each Service has just one of the two.
+    - port: http
+      interval: 1m
+    - port: query
+      interval: 1m
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: thanos
+  namespace: monitoring
+spec:
+  groups:
+    - name: thanos
+      rules:
+        - alert: ThanosComponentDown
+          expr: |
+            up{job=~"thanos-(querier|store|compactor)-app"} == 0
+            or absent(up{job="thanos-querier-app"})
+            or absent(up{job="thanos-store-app"})
+            or absent(up{job="thanos-compactor-app"})
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $labels.job }} is down"
+            description: "Prometheus cannot scrape monitoring/{{ $labels.job }}. Querier down breaks long-range queries, store down hides history older than Prometheus' local retention, compactor down stops compaction, downsampling and retention in the metrics bucket."
+
+        - alert: ThanosCompactHalted
+          expr: thanos_compact_halted == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Thanos compactor halted"
+            description: "monitoring/thanos-compactor-app hit an unrecoverable error (usually overlapping or corrupt blocks) and stopped compacting and applying retention. The metrics bucket in MinIO will grow until it is fixed; see the compactor logs."
+
+        # iterations_total counts full compact+downsample+retention passes.
+        # The offset term keeps it quiet for the first day after a fresh
+        # deploy, but a compactor that keeps restarting mid-pass still fires.
+        - alert: ThanosCompactNotProgressing
+          expr: |
+            sum by (job) (increase(thanos_compact_iterations_total{job="thanos-compactor-app"}[24h])) == 0
+            and on(job) count by (job) (thanos_compact_iterations_total{job="thanos-compactor-app"} offset 23h)
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Thanos compactor has not finished a pass in 24h"
+            description: "monitoring/thanos-compactor-app has not completed a compaction/downsampling/retention iteration in 24h. Check whether it is OOMKilled, stuck, or behind on a large backlog."
+
+        - alert: ThanosBucketOperationsFailing
+          expr: |
+            sum by (job) (rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-(store|compactor)-app"}[15m]))
+              / sum by (job) (rate(thanos_objstore_bucket_operations_total{job=~"thanos-(store|compactor)-app"}[15m])) > 0.05
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $labels.job }} bucket operations failing"
+            description: "{{ $value | humanizePercentage }} of monitoring/{{ $labels.job }} operations against the metrics bucket in MinIO are failing. Check MinIO and the minio-thanos credentials."
+
+        - alert: ThanosQueryEndpointMissing
+          expr: |
+            (
+              absent(thanos_store_nodes_grpc_connections{job="thanos-querier-app", store_type="sidecar"})
+              or absent(thanos_store_nodes_grpc_connections{job="thanos-querier-app", store_type="store"})
+            )
+            and on() up{job="thanos-querier-app"} == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Thanos querier lost its {{ $labels.store_type }} endpoint"
+            description: "monitoring/thanos-querier-app has no connection to its {{ $labels.store_type }} endpoint. Without the sidecar recent data is missing; without the store gateway history older than Prometheus' local retention is missing."
+
+        # ResourceExhausted (store series/sample limits) and Canceled are
+        # expected on oversized or abandoned queries, so they are left out.
+        - alert: ThanosQueryStoreErrors
+          expr: |
+            sum(rate(grpc_client_handled_total{job="thanos-querier-app", grpc_service="thanos.Store", grpc_code=~"Unknown|Internal|Unavailable|DataLoss|DeadlineExceeded"}[15m]))
+              / sum(rate(grpc_client_handled_total{job="thanos-querier-app", grpc_service="thanos.Store"}[15m])) > 0.05
+            and sum(increase(grpc_client_handled_total{job="thanos-querier-app", grpc_service="thanos.Store", grpc_code=~"Unknown|Internal|Unavailable|DataLoss|DeadlineExceeded"}[15m])) >= 3
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Thanos querier store calls failing ({{ $value | humanizePercentage }})"
+            description: "More than 5% of monitoring/thanos-querier-app calls to the Prometheus sidecar and store gateway failed over 15m, so Grafana queries through Thanos are incomplete or erroring."

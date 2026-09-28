@@ -11,6 +11,7 @@ resources:
   - alloy-gateway-svc.yaml
   - loki-alert-rules.yaml
   - observatory-svc.yaml
+  - thanos-prom.yaml
 configMapGenerator:
   - name: querier-chart-values
     files:
