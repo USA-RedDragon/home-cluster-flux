@@ -17,7 +17,7 @@ controllers:
       frontend:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing-frontend
-          tag: "beta@sha256:c0ffd1e54de37cf180bb0a2cad7090768d873c70344b726ef4e234d4437d57d3"
+          tag: "beta@sha256:56f0e05f5af98ce2ee688fbda6ac5cd617ef771d02c0c4471d7a7c3ccbcc9181"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -47,7 +47,7 @@ controllers:
       backend:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing
-          tag: "beta@sha256:a444e724fff6e4e2ec0e0298c7ae66ef2fc657f20bd714b434a6a767314decd9"
+          tag: "beta@sha256:5ad029477f886c86435d3f14b56d9d6c9133629a58d0d9a7ebe872f32246eb79"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -154,6 +154,12 @@ ingress:
               identifier: frontend
               port: http
         - path: /query
+          pathType: Exact
+          service:
+              identifier: backend
+              port: http
+        # Server-sent events: previews, masters and stacker progress.
+        - path: /events
           pathType: Exact
           service:
               identifier: backend
