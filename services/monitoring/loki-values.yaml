@@ -37,7 +37,7 @@ loki:
     retention_enabled: true
     delete_request_store: s3
   limits_config:
-    retention_period: 90d
+    retention_period: 180d
     ingestion_rate_mb: 16
     ingestion_burst_size_mb: 32
   # Default 4; Drilldown fires dozens of small queries per page and they
