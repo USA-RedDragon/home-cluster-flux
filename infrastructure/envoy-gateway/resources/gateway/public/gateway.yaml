@@ -124,9 +124,6 @@ spec:
           - name: kubewg.net-tls
             namespace: cert-manager
             kind: Secret
-          - name: mattermost.mcswain.dev-tls
-            namespace: cert-manager
-            kind: Secret
           - name: mcswain.cloud-tls
             namespace: cert-manager
             kind: Secret

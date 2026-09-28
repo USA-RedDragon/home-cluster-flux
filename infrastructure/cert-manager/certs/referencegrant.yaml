@@ -28,9 +28,6 @@ spec:
       name: kubewg.net-tls
       group: ""
     - kind: Secret
-      name: mattermost.mcswain.dev-tls
-      group: ""
-    - kind: Secret
       name: mcswain.cloud-tls
       group: ""
     - kind: Secret
