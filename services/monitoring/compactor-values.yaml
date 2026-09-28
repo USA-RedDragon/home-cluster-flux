@@ -75,8 +75,13 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# Only here so Prometheus can scrape /metrics; the chart default was port 80,
+# which nothing listens on.
 service:
   type: ClusterIP
+  ports:
+  - name: http
+    port: 10902
 
 persistentVolumes:
 # - name: config
