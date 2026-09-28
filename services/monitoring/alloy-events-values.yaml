@@ -40,7 +40,13 @@ alloy:
       // Normal/Warning is low-cardinality and the most useful filter.
       loki.process "events" {
         stage.json {
-          expressions = { type = "type" }
+          expressions = { type = "type", reason = "reason" }
+        }
+        // Kyverno audit results were 99.6% of Warning events and already
+        // live in its PolicyReports; they buried the real warnings.
+        stage.drop {
+          source = "reason"
+          value  = "PolicyViolation"
         }
         stage.labels {
           values = { type = "" }
