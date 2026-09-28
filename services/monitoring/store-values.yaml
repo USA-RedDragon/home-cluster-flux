@@ -111,9 +111,11 @@ probes:
       path: /-/ready
       port: 10902
 
+# Memory scales with how much data a query touches. Two 10-day queries
+# against an almost empty bucket already peaked at 508Mi.
 resources:
   limits:
-    memory: 650Mi
+    memory: 1536Mi
   requests:
     cpu: 100m
     memory: 512Mi
