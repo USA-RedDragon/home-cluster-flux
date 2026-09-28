@@ -21,6 +21,9 @@ args:
   - /tmp/thanos-compact
   - --objstore.config-file=/etc/thanos/config.yaml
   - --wait
+  # Prometheus has tsdb.outOfOrderTimeWindow set, which writes separate blocks
+  # overlapping the regular ones; without this the compactor halts on them.
+  - --compact.enable-vertical-compaction
 
 secrets: []
 # - name: app-creds
