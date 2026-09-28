@@ -11,7 +11,9 @@ loki:
     replication_factor: 1
   schemaConfig:
     configs:
-      - from: "2026-09-27"
+      # Must predate reject_old_samples_max_age (7d) or Alloy's backfill of
+      # older lines gets a 500 and retries forever.
+      - from: "2026-09-01"
         store: tsdb
         object_store: s3
         schema: v13

@@ -299,6 +299,8 @@ alertmanager:
       telegram_configs:
       - chat_id: -5365451857
         bot_token: ${telegram_bot_token}
+        parse_mode: HTML
+        message: '{{ template "telegram.compact.message" . }}'
 
     templates:
     - '/etc/alertmanager/config/*.tmpl'
@@ -328,7 +330,30 @@ alertmanager:
   ## ref: https://prometheus.io/docs/alerting/notifications/
   ##      https://prometheus.io/docs/alerting/notification_examples/
   ##
-  templateFiles: {}
+  templateFiles:
+    telegram.tmpl: |-
+      {{/* Compact Telegram message. The default template prints every label and
+           the full PromQL, which overflows Telegram's 4096-char limit. This file
+           goes through Flux variable substitution, so it must not contain a dollar sign. */}}
+      {{ define "telegram.compact.alert" -}}
+      {{ if eq .Status "firing" }}🔴{{ else }}✅{{ end }} <b>{{ .Labels.alertname | html }}</b>{{ with .Labels.severity }} <i>{{ . | html }}</i>{{ end }}
+      {{ with .Annotations.summary }}{{ . | html }}
+      {{ end }}{{ with .Annotations.description }}{{ . | reReplaceAll " on cluster \\.\\z" "" | html }}
+      {{ end }}
+      {{- end }}
+
+      {{ define "telegram.compact.message" -}}
+      {{ if gt (len .Alerts.Firing) 0 }}🔥 <b>{{ len .Alerts.Firing }} firing</b>{{ end }}{{ if and (gt (len .Alerts.Firing) 0) (gt (len .Alerts.Resolved) 0) }} · {{ end }}{{ if gt (len .Alerts.Resolved) 0 }}<b>{{ len .Alerts.Resolved }} resolved</b>{{ end }}{{ with .GroupLabels.namespace }} · <code>{{ . | html }}</code>{{ end }}
+      {{ if gt (len .Alerts.Firing) 15 }}{{ range slice .Alerts.Firing 0 15 }}
+      {{ template "telegram.compact.alert" . }}{{ end }}
+      <i>…first 15 of {{ len .Alerts.Firing }} firing shown</i>
+      {{ else }}{{ range .Alerts.Firing }}
+      {{ template "telegram.compact.alert" . }}{{ end }}{{ end }}{{ if gt (len .Alerts.Resolved) 5 }}{{ range slice .Alerts.Resolved 0 5 }}
+      {{ template "telegram.compact.alert" . }}{{ end }}
+      <i>…first 5 of {{ len .Alerts.Resolved }} resolved shown</i>
+      {{ else }}{{ range .Alerts.Resolved }}
+      {{ template "telegram.compact.alert" . }}{{ end }}{{ end }}
+      {{- end }}
   #
   ## An example template:
   #   template_1.tmpl: |-
