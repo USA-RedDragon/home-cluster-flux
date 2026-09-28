@@ -147,7 +147,10 @@ defaultRules:
   runbookUrl: "https://runbooks.prometheus-operator.dev/runbooks"
 
   ## Disabled PrometheusRule alerts
-  disabled: {}
+  disabled:
+    # Queue depth fires on every bulk job; replaced by NodeDiskLatencyHigh
+    # (services/monitoring/node-disk-alerts.yaml).
+    NodeDiskIOSaturation: true
   # KubeAPIDown: true
   # NodeRAIDDegraded: true
 
