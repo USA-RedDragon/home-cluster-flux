@@ -17,7 +17,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:9ff7c26739689027fbbf28e5be535c2d7a6d8822f6a5e8bfef981ec527ff449c"
+          tag: "beta@sha256:d414b3194cea0a72fcf27fc01565fa0b9d47242728072cf557699612cc29d3e8"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -99,6 +99,11 @@ controllers:
           # about 320 MiB per thread; Siril runs while the accumulator is idle.
           STACKING_SIRIL_MEMORY:
             value: "0.5"
+          # Targets stacked at once. Each worker's Siril gets a third of the
+          # Siril share (3.3 GiB, enough for 4 threads) and its accumulator
+          # up to about 1.5 GB.
+          STACKING_WORKERS:
+            value: "3"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
@@ -109,12 +114,13 @@ controllers:
               key: S3_SECRET_KEY
         resources:
           requests:
-            cpu: 1
-            memory: 1Gi
+            cpu: 2
+            memory: 4Gi
           limits:
-            # Previews hold about 200 MB each; the stacker's accumulator is
-            # 416 MB and a rebuild pass about 730 MB, plus Siril.
-            memory: 6Gi
+            # Previews hold about 200 MB each; each stacking worker's
+            # accumulator is 416 MB and a rebuild pass about 730 MB, plus
+            # Siril's share of the limit.
+            memory: 20Gi
 
 persistence:
   # Downloads, calibration masters and Siril output; the root filesystem is
