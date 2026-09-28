@@ -24,6 +24,8 @@ args:
   # Blocks in the bucket, i.e. anything older than Prometheus' local retention.
   - --endpoint
   - dns+thanos-store-app.monitoring.svc.cluster.local:10901
+  # Read the compactor's 5m/1h downsampled blocks for long ranges.
+  - --query.auto-downsampling
 
 secrets: []
 # - name: app-creds
