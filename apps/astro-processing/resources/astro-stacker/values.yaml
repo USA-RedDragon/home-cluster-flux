@@ -99,11 +99,11 @@ controllers:
           # about 320 MiB per thread; Siril runs while the accumulator is idle.
           STACKING_SIRIL_MEMORY:
             value: "0.5"
-          # Targets stacked at once. Each worker's Siril gets a third of the
-          # Siril share (3.3 GiB, enough for 4 threads) and its accumulator
-          # up to about 1.5 GB.
+          # Targets stacked at once. Each worker's Siril gets a sixth of the
+          # Siril share (2 GiB, enough for 4 threads) and its accumulator
+          # up to about 1.5 GB. Three workers used under 3 cores.
           STACKING_WORKERS:
-            value: "3"
+            value: "6"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
@@ -114,13 +114,13 @@ controllers:
               key: S3_SECRET_KEY
         resources:
           requests:
-            cpu: 2
-            memory: 4Gi
+            cpu: 3
+            memory: 6Gi
           limits:
             # Previews hold about 200 MB each; each stacking worker's
             # accumulator is 416 MB and a rebuild pass about 730 MB, plus
             # Siril's share of the limit.
-            memory: 20Gi
+            memory: 24Gi
 
 persistence:
   # Downloads, calibration masters and Siril output; the root filesystem is
