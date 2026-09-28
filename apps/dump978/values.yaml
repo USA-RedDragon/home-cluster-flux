@@ -17,7 +17,7 @@ controllers:
             enabled: true
         env:
           TZ: America/Chicago
-          PROMETHEUS_ENABLE: "true"
+          ENABLE_PROMETHEUS: "true"
           DUMP978_DEVICE_TYPE: rtlsdr
           DUMP978_SDR_GAIN: "15.7"
           DUMP978_RTLSDR_DEVICE: "00000978"
