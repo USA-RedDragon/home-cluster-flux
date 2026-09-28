@@ -166,7 +166,7 @@ def render_metrics(st):
     return "\n".join(lines) + "\n"
 
 
-def parse_log(st):
+def parse_log(st, boot_ns):
     """Yield (timestamp_ns, level, message) for each event-log entry."""
     for r in rows(st["GetCustomerStatusLogResponse"]["CustomerStatusLogList"], "}-{"):
         if len(r) < 5:
@@ -176,16 +176,33 @@ def parse_log(st):
             when = datetime.strptime(f"{dt} {tm}", "%d/%m/%Y %H:%M:%S").replace(tzinfo=MODEM_TZ)
         except ValueError:
             continue
-        # Entries logged before the modem has time-of-day show 1969; stamp them "now".
+        # Entries logged before the modem has time-of-day (during boot) show
+        # 1969. Stamp them with the boot time: stamping "now" made a day-old
+        # boot look like a fresh burst of SYNC failures.
+        ts = int(when.timestamp() * 1e9)
         if when.year < 2000:
-            when = datetime.now(timezone.utc)
-        yield int(when.timestamp() * 1e9), LEVELS.get(int(pri) if pri.isdigit() else 0, "unknown"), msg.strip()
+            ts = boot_ns
+        yield ts, LEVELS.get(int(pri) if pri.isdigit() else 0, "unknown"), msg.strip()
 
 
 class State:
     metrics = "# no data yet\n"
     ok = False
     seen = set()
+    boot_ns = None
+    last_uptime = None
+
+
+def boot_time_ns(st):
+    """Boot time from uptime, fixed per boot so log de-duplication is stable."""
+    up = uptime_seconds(st["GetCustomerStatusConnectionInfoResponse"].get("CustomerConnSystemUpTime"))
+    if up is None:
+        return State.boot_ns or time.time_ns()
+    if State.boot_ns is None or State.last_uptime is None or up < State.last_uptime:
+        # Round to the minute: consecutive polls must agree on it.
+        State.boot_ns = int((time.time() - up) // 60 * 60 * 1e9)
+    State.last_uptime = up
+    return State.boot_ns
 
 
 def push_logs(entries):
@@ -219,7 +236,7 @@ def poll_loop():
             print(f"poll failed: {exc!r}", flush=True)
             time.sleep(POLL)
             continue
-        entries = list(parse_log(st))
+        entries = list(parse_log(st, boot_time_ns(st)))
         # The log is a 100-entry ring with no IDs: de-duplicate by content.
         # Loki drops exact duplicates too, so a restart re-sending is harmless.
         new = [e for e in entries if (e[0], e[2]) not in State.seen]
