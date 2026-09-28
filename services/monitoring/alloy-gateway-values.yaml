@@ -22,6 +22,9 @@ crds:
 
 alloy:
   enableReporting: false
+  # For syslog_format = "raw" on the UDP listener (lenient ESPHome parsing).
+  # Nothing else in this config is experimental.
+  stabilityLevel: experimental
   extraPorts:
     - name: push
       port: 3500
@@ -101,14 +104,8 @@ alloy:
         }
       }
 
-      // UDP/RFC3164 is what OpenWrt logd and most appliances send.
-      loki.source.syslog "lan" {
-        listener {
-          address       = "0.0.0.0:5514"
-          protocol      = "udp"
-          syslog_format = "rfc3164"
-          labels        = { job = "syslog" }
-        }
+      // TCP/RFC5424: TrueNAS.
+      loki.source.syslog "tcp" {
         listener {
           address       = "0.0.0.0:5601"
           protocol      = "tcp"
@@ -117,6 +114,46 @@ alloy:
         }
         relabel_rules = loki.relabel.syslog.rules
         forward_to    = [loki.write.default.receiver]
+      }
+
+      // UDP/RFC3164: OpenWrt logd and ESPHome. ESPHome omits the timestamp
+      // until SNTP syncs after boot, which the strict rfc3164 parser rejects
+      // (losing reset reasons), so take it raw and parse leniently here.
+      // Raw mode still decodes the priority into severity/facility.
+      loki.relabel "syslog_udp" {
+        forward_to = []
+        rule {
+          source_labels = ["__syslog_message_severity"]
+          target_label  = "level"
+        }
+        rule {
+          source_labels = ["__syslog_connection_ip_address"]
+          target_label  = "source_ip"
+        }
+      }
+
+      loki.source.syslog "udp" {
+        listener {
+          address       = "0.0.0.0:5514"
+          protocol      = "udp"
+          syslog_format = "raw"
+          labels        = { job = "syslog" }
+        }
+        relabel_rules = loki.relabel.syslog_udp.rules
+        forward_to    = [loki.process.syslog_udp.receiver]
+      }
+
+      loki.process "syslog_udp" {
+        stage.regex {
+          expression = "^(?:[A-Z][a-z]{2} [ \\d]\\d \\d{2}:\\d{2}:\\d{2} )?(?P<host>\\S+) (?P<app>[^\\s:\\[]+)(?:\\[\\d+\\])?: (?P<msg>.*)$"
+        }
+        stage.labels {
+          values = { host = "", app = "" }
+        }
+        stage.output {
+          source = "msg"
+        }
+        forward_to = [loki.write.default.receiver]
       }
 
       loki.write "default" {
