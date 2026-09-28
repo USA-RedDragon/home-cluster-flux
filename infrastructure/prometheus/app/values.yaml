@@ -1000,6 +1000,13 @@ grafana:
     server:
       domain: grafana.mcswain.dev
       root_url: https://grafana.mcswain.dev
+    # Sign-in is only via authentik OAuth. Local username/password login (UI
+    # and HTTP basic auth) is how the public instance was taken over.
+    auth:
+      disable_login_form: true
+      disable_login: true
+    auth.basic:
+      enabled: false
 
   deploymentStrategy:
     type: Recreate
@@ -1029,7 +1036,11 @@ grafana:
   ##
   defaultDashboardsTimezone: browser
 
-  adminPassword: prom-operator
+  # prom-operator (the chart default) was published here and used to create
+  # rogue admin service accounts (2026-02 .. 2026-07). Real password lives in
+  # home-cluster-secrets; local login is disabled below anyway.
+  admin:
+    existingSecret: grafana-admin
 
   rbac:
     ## If true, Grafana PSPs will be created
