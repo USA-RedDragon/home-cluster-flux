@@ -1,6 +1,19 @@
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Provider
 metadata:
+  name: telegram
+  namespace: flux-system
+spec:
+  # @mcswainfluxalertsbot in the Flux alerts group; token in flux-telegram
+  # (home-cluster-secrets).
+  type: telegram
+  channel: "-5584705038"
+  secretRef:
+    name: flux-telegram
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
   name: github-home-cluster-flux
   namespace: flux-system
 spec:
