@@ -95,10 +95,10 @@ controllers:
             value: /tmp/stacking
           STACKING_SIRIL_THREADS:
             value: "4"
-          # Siril sizes its stacking buffers from the node's free memory, not
-          # the pod limit, so keep its share small.
+          # Share of the pod's memory limit Siril may use. Registration needs
+          # about 320 MiB per thread; Siril runs while the accumulator is idle.
           STACKING_SIRIL_MEMORY:
-            value: "0.05"
+            value: "0.5"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
