@@ -1,0 +1,118 @@
+# The S3 port is published unfiltered on s3.mcswain.dev, so the metrics
+# endpoints stay behind MinIO's JWT auth instead of MINIO_PROMETHEUS_AUTH_TYPE=public.
+# The token lives in the minio-prometheus secret (key: token), made with
+# `mcli admin prometheus generate <alias>`.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: minio
+  namespace: minio
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: minio
+      app.kubernetes.io/service: minio
+  endpoints:
+    # Both endpoints share a port, so give each its own job or their
+    # overlapping series (minio_s3_requests_*) would collide.
+    - port: s3
+      path: /minio/v2/metrics/cluster
+      interval: 1m
+      authorization:
+        type: Bearer
+        credentials:
+          name: minio-prometheus
+          key: token
+      relabelings:
+        - targetLabel: job
+          replacement: minio-cluster
+    - port: s3
+      path: /minio/v2/metrics/node
+      interval: 1m
+      authorization:
+        type: Bearer
+        credentials:
+          name: minio-prometheus
+          key: token
+      relabelings:
+        - targetLabel: job
+          replacement: minio-node
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: minio
+  namespace: minio
+spec:
+  groups:
+    - name: minio
+      rules:
+        - alert: MinIODown
+          expr: up{job=~"minio-(cluster|node)"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "MinIO metrics scrape failing ({{ $labels.job }})"
+            description: "Prometheus cannot scrape MinIO {{ $labels.job }} metrics at {{ $labels.instance }}. Either MinIO is down (Loki, Thanos and backups all write to it) or the minio-prometheus token was rejected."
+
+        - alert: MinIOMetricsMissing
+          expr: absent(up{job="minio-cluster"})
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "MinIO is not being scraped"
+            description: "No MinIO scrape target exists. The minio/minio ServiceMonitor was probably rejected; check that the minio-prometheus secret (key: token) exists in the minio namespace."
+
+        - alert: MinIOClusterUnhealthy
+          expr: minio_cluster_health_status == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "MinIO reports itself unhealthy"
+            description: "MinIO says it has lost write quorum. Loki, Thanos and backup writes to s3 will fail."
+
+        - alert: MinIODriveOffline
+          expr: minio_cluster_drive_offline_total > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "MinIO has {{ $value }} offline drive(s)"
+            description: "MinIO reports {{ $value }} drive(s) offline. Its data lives on NFS 192.168.1.135:/mnt/data/K8S/minio; check the mount."
+
+        - alert: MinIOUsableSpaceLow
+          expr: |
+            minio_cluster_capacity_usable_free_bytes / minio_cluster_capacity_usable_total_bytes < 0.15
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "MinIO below 15% free space"
+            description: "MinIO has {{ $value | humanizePercentage }} usable space left on its NFS volume (192.168.1.135:/mnt/data/K8S/minio). Loki, Thanos and backups share it."
+
+        - alert: MinIOUsableSpaceCritical
+          expr: |
+            minio_cluster_capacity_usable_free_bytes / minio_cluster_capacity_usable_total_bytes < 0.05
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "MinIO below 5% free space"
+            description: "MinIO has only {{ $value | humanizePercentage }} usable space left on 192.168.1.135:/mnt/data/K8S/minio. Writes from Loki, Thanos and backups will start failing."
+
+        # Low traffic makes a bare ratio noisy, so also require a minimum
+        # number of errors.
+        - alert: MinIOS3ServerErrors
+          expr: |
+            sum(rate(minio_s3_requests_5xx_errors_total{job="minio-node"}[10m]))
+              / sum(rate(minio_s3_requests_total{job="minio-node"}[10m])) > 0.05
+            and sum(increase(minio_s3_requests_5xx_errors_total{job="minio-node"}[10m])) > 10
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "MinIO S3 5xx error rate {{ $value | humanizePercentage }}"
+            description: "More than 5% of S3 requests to MinIO returned 5xx over the last 10m. Check which clients (Loki, Thanos, backups) are affected and the MinIO logs."
