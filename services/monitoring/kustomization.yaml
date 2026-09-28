@@ -8,6 +8,7 @@ resources:
   - metrics-actioner-rbac.yaml
   - log-alerts.yaml
   - talos-logs.yaml
+  - alloy-gateway-svc.yaml
   - observatory-svc.yaml
 configMapGenerator:
   - name: querier-chart-values
@@ -31,8 +32,8 @@ configMapGenerator:
   - name: alloy-chart-values
     files:
       - values.yaml=alloy-values.yaml
-  - name: alloy-events-chart-values
+  - name: alloy-gateway-chart-values
     files:
-      - values.yaml=alloy-events-values.yaml
+      - values.yaml=alloy-gateway-values.yaml
 configurations:
   - kustomizeconfig.yaml
