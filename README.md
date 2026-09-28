@@ -984,7 +984,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/helm.yaml">alloy-events</a></td>
+    <td><a href="services/monitoring/helm.yaml">alloy-gateway</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
