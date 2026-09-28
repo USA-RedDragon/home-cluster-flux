@@ -7,7 +7,8 @@ spec:
   summary: "Home Cluster"
   providerRef:
     name: telegram
-  eventSeverity: info
+  # info fired a message on every chart pull and reconcile; only send failures
+  eventSeverity: error
   eventSources:
     - kind: GitRepository
       name: '*'
