@@ -7,6 +7,9 @@ spec:
   # @mcswainfluxalertsbot in the Flux alerts group; token in flux-telegram
   # (home-cluster-secrets).
   type: telegram
+  # Required for telegram; without it every dispatch fails with
+  # "provider has no address".
+  address: https://api.telegram.org
   channel: "-5584705038"
   secretRef:
     name: flux-telegram
