@@ -22,7 +22,7 @@ spec:
         container:
           resources:
             requests:
-              cpu: "1"
+              cpu: 200m
               memory: 512Mi
             limits:
               cpu: "2"

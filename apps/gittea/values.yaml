@@ -14,7 +14,7 @@ controllers:
             memory: 4Gi
           requests:
             memory: 3Gi
-            cpu: 2
+            cpu: 500m
         probes:
           liveness:
             enabled: true
