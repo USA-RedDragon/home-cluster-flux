@@ -26,7 +26,8 @@ spec:
       database: srs-hosting
       owner: srs-hosting
   storage:
-    size: 5Gi
+    # Filled up, which halted every instance and left no primary.
+    size: 10Gi
   monitoring:
     enablePodMonitor: true
   resources:

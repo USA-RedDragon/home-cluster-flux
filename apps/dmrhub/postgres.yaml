@@ -41,7 +41,9 @@ spec:
       owner: dmrhub
       source: postgresql
   storage:
-    size: 30Gi
+    # Filled up (35Gi PVC, hand-expanded past the 30Gi here), which halted
+    # every instance and left the cluster without a primary.
+    size: 50Gi
   monitoring:
     enablePodMonitor: true
   resources:
