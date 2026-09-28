@@ -281,6 +281,10 @@ alertmanager:
         matchers:
         - alertname=~"InfoInhibitor|Watchdog"
         continue: false
+      - receiver: "null"
+        matchers:
+        - namespace="tfe"
+        continue: false
       - receiver: 'metrics-actioner-webhook'
         continue: true
         matchers:
