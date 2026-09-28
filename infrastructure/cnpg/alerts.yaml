@@ -1,0 +1,89 @@
+---
+# Catches the failure that took dmrhub and srs-hosting down in Aug-Sep 2026:
+# WAL stopped being archived, piled up until the volumes filled, every
+# instance halted for low disk space, and nothing could be promoted.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cnpg
+  namespace: cnpg-system
+spec:
+  groups:
+    - name: cnpg
+      rules:
+        - alert: CNPGWALArchiveBacklog
+          expr: max by (namespace, pod) (cnpg_collector_pg_wal_archive_status{value="ready"}) > 10
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: WAL segments are piling up waiting to be archived.
+            description: >-
+              {{ $labels.namespace }}/{{ $labels.pod }} has {{ $value }} WAL
+              segments waiting to be archived. They are kept on disk until
+              archived and will eventually fill the volume.
+
+        - alert: CNPGWALArchivingFailing
+          expr: >-
+            (cnpg_pg_stat_archiver_last_failed_time > cnpg_pg_stat_archiver_last_archived_time)
+            and on (namespace, pod) (cnpg_pg_replication_in_recovery == 0)
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: WAL archiving to the object store is failing.
+            description: >-
+              The primary {{ $labels.namespace }}/{{ $labels.pod }} has not
+              archived a WAL segment successfully since its last failure.
+              Check the barman object store settings and credentials.
+
+        - alert: CNPGWALRetained
+          expr: >-
+            cnpg_collector_pg_wal{value="count"}
+            > ignoring (value) 3 * cnpg_collector_pg_wal{value="max"}
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: pg_wal is far above its normal size.
+            description: >-
+              {{ $labels.namespace }}/{{ $labels.pod }} holds {{ $value }} WAL
+              segments, more than 3x max_wal_size. Something is retaining WAL:
+              failed archiving or an inactive replication slot.
+
+        - alert: CNPGBackupStale
+          expr: >-
+            time() - (max by (namespace, job) (cnpg_collector_last_available_backup_timestamp) > 0)
+            > 6 * 3600
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: No recent base backup.
+            description: >-
+              The last successful backup for {{ $labels.job }} was
+              {{ $value | humanizeDuration }} ago. Backups are scheduled hourly.
+
+        - alert: CNPGNoPrimary
+          expr: >-
+            count by (namespace, job) (cnpg_collector_up)
+            unless on (namespace, job)
+            count by (namespace, job) (cnpg_pg_replication_in_recovery == 0)
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Postgres cluster has no primary.
+            description: >-
+              {{ $labels.job }} has instances but none is accepting writes.
+
+        - alert: CNPGInstanceDown
+          expr: cnpg_collector_up == 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: Postgres is not running in a CNPG instance.
+            description: >-
+              PostgreSQL in {{ $labels.namespace }}/{{ $labels.pod }} has been
+              down for 10 minutes.

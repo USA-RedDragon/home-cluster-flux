@@ -4,3 +4,4 @@ namespace: cnpg-system
 resources:
   - ns.yaml
   - ks.yaml
+  - alerts.yaml
