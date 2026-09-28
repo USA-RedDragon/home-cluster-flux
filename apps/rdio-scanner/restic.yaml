@@ -24,7 +24,7 @@ spec:
         cronjob:
           schedule: 0 1 * * *
           timeZone: America/Chicago
-          concurrencyPolicy: Replace
+          concurrencyPolicy: Forbid
           ttlSecondsAfterFinished: 3600
         containers:
           restic:
