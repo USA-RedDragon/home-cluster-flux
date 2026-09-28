@@ -13,7 +13,9 @@ controllers:
         env:
           HTTP_TRUSTED_PROXIES: "172.17.0.0/16"
           HTTP_CORS_HOSTS: "*"
-          METRICS_ENABLED: "true"
+          HTTP_METRICS_ENABLED: "true"
+          HTTP_METRICS_IPV4_HOST: "0.0.0.0"
+          HTTP_METRICS_IPV6_HOST: "::"
           AWS_ROLE_ARN: arn:aws:iam::803205869942:role/nexrad-aws-notifier
           AWS_WEB_IDENTITY_TOKEN_FILE: /var/run/secrets/aws/token
           AWS_REGION: us-east-1

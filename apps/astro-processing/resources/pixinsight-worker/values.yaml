@@ -65,6 +65,8 @@ controllers:
             value: "true"
           METRICS_BIND:
             value: "[::]"
+          METRICS_PORT:
+            value: "9090"
           PPROF_ENABLED:
             value: "true"
           PPROF_BIND:
