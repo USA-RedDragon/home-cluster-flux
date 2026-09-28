@@ -9,7 +9,7 @@ configReloader:
   image:
     registry: jacob.pub/quay.io
     repository: prometheus-operator/prometheus-config-reloader
-    tag: v0.94.0@sha256:404b7b6e9ab5bfec65b93a07debc11bf901062fac54af1eee92e877d738d8bf8
+    tag: v0.94.0@sha256:142a1f11df8dd165f00375b0b1826aecb9c9adeb05c39855893138d7c7575ff7
 
 alloy:
   enableReporting: false
