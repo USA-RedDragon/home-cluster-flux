@@ -23,5 +23,11 @@ configMapGenerator:
   - name: metrics-actioner-chart-values
     files:
       - values.yaml=metrics-actioner-values.yaml
+  - name: loki-chart-values
+    files:
+      - values.yaml=loki-values.yaml
+  - name: alloy-chart-values
+    files:
+      - values.yaml=alloy-values.yaml
 configurations:
   - kustomizeconfig.yaml

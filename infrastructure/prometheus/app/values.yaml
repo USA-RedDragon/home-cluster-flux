@@ -1121,6 +1121,11 @@ grafana:
     url: http://thanos-querier-app:9090
     access: proxy
     isDefault: true
+  - name: Loki
+    type: loki
+    uid: loki
+    url: http://loki:3100
+    access: proxy
   # - name: prometheus-sample
   #   access: proxy
   #   basicAuth: true
