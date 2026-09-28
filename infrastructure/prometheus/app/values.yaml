@@ -341,22 +341,24 @@ alertmanager:
            goes through Flux variable substitution, so it must not contain a dollar sign. */}}
       {{ define "telegram.compact.alert" -}}
       {{ if eq .Status "firing" }}🔴{{ else }}✅{{ end }} <b>{{ .Labels.alertname | html }}</b>{{ with .Labels.severity }} <i>{{ . | html }}</i>{{ end }}
-      {{ with .Annotations.summary }}{{ . | html }}
-      {{ end }}{{ with .Annotations.description }}{{ . | reReplaceAll " on cluster \\.\\z" "" | html }}
-      {{ end }}
+      {{ with .Annotations.description }}{{ . | reReplaceAll " on cluster \\.\\z" "" | html }}{{ else }}{{ .Annotations.summary | html }}{{ end }}
+      <a href="{{ template "telegram.compact.amurl" . }}/#/alerts?filter=%7Balertname%3D%22{{ .Labels.alertname | urlquery }}%22%2Cnamespace%3D%22{{ .Labels.namespace | urlquery }}%22%7D">open</a>{{ with .Annotations.runbook_url }} · <a href="{{ . | html }}">runbook</a>{{ end }}{{ "\n" }}
       {{- end }}
+
+      {{ define "telegram.compact.amurl" }}https://alertmanager.jackal-stargazer.ts.net{{ end }}
 
       {{ define "telegram.compact.message" -}}
       {{ if gt (len .Alerts.Firing) 0 }}🔥 <b>{{ len .Alerts.Firing }} firing</b>{{ end }}{{ if and (gt (len .Alerts.Firing) 0) (gt (len .Alerts.Resolved) 0) }} · {{ end }}{{ if gt (len .Alerts.Resolved) 0 }}<b>{{ len .Alerts.Resolved }} resolved</b>{{ end }}{{ with .GroupLabels.namespace }} · <code>{{ . | html }}</code>{{ end }}
-      {{ if gt (len .Alerts.Firing) 15 }}{{ range slice .Alerts.Firing 0 15 }}
+      {{ if gt (len .Alerts.Firing) 7 }}{{ range slice .Alerts.Firing 0 7 }}
       {{ template "telegram.compact.alert" . }}{{ end }}
-      <i>…first 15 of {{ len .Alerts.Firing }} firing shown</i>
+      <i>…first 7 of {{ len .Alerts.Firing }} firing shown</i>
       {{ else }}{{ range .Alerts.Firing }}
-      {{ template "telegram.compact.alert" . }}{{ end }}{{ end }}{{ if gt (len .Alerts.Resolved) 5 }}{{ range slice .Alerts.Resolved 0 5 }}
+      {{ template "telegram.compact.alert" . }}{{ end }}{{ end }}{{ if gt (len .Alerts.Resolved) 2 }}{{ range slice .Alerts.Resolved 0 2 }}
       {{ template "telegram.compact.alert" . }}{{ end }}
-      <i>…first 5 of {{ len .Alerts.Resolved }} resolved shown</i>
+      <i>…first 2 of {{ len .Alerts.Resolved }} resolved shown</i>
       {{ else }}{{ range .Alerts.Resolved }}
       {{ template "telegram.compact.alert" . }}{{ end }}{{ end }}
+      <a href="{{ template "telegram.compact.amurl" . }}/#/alerts?filter=%7Bnamespace%3D%22{{ .GroupLabels.namespace | urlquery }}%22%7D">Alertmanager</a> · <a href="{{ template "telegram.compact.amurl" . }}/#/silences/new?filter=%7Bnamespace%3D%22{{ .GroupLabels.namespace | urlquery }}%22%7D">silence</a>
       {{- end }}
   #
   ## An example template:
@@ -730,7 +732,7 @@ alertmanager:
 
     ## The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name. string  false
     ##
-    externalUrl:
+    externalUrl: https://alertmanager.jackal-stargazer.ts.net
 
     ## The route prefix Alertmanager registers HTTP handlers for. This is useful, if using ExternalURL and a proxy is rewriting HTTP routes of a request, and the actual ExternalURL is still true,
     ## but the server serves requests under a different route prefix. For example for use with kubectl proxy.
@@ -3125,7 +3127,7 @@ prometheus:
 
     ## External URL at which Prometheus will be reachable.
     ##
-    externalUrl: ""
+    externalUrl: https://prometheus.jackal-stargazer.ts.net
 
     ## Define which Nodes the Pods are scheduled on.
     ## ref: https://kubernetes.io/docs/user-guide/node-selection/
