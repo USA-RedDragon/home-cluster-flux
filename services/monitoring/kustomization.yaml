@@ -9,6 +9,7 @@ resources:
   - log-alerts.yaml
   - talos-logs.yaml
   - alloy-gateway-svc.yaml
+  - loki-alert-rules.yaml
   - observatory-svc.yaml
 configMapGenerator:
   - name: querier-chart-values
