@@ -124,10 +124,20 @@ controllers:
 
 persistence:
   # Downloads, calibration masters and Siril output; the root filesystem is
-  # read-only.
+  # read-only. A per-pod NVMe volume, not an emptyDir: rebuilds write ~60 MB/s
+  # of 32-bit FITS, which saturated the node's Talos system disk (gamma sdb,
+  # NodeDiskIOSaturation) and slowed containerd, kubelet and logs with it.
   tmp:
-    type: emptyDir
-    sizeLimit: 30Gi
+    type: custom
+    volumeSpec:
+      ephemeral:
+        volumeClaimTemplate:
+          spec:
+            accessModes: [ReadWriteOnce]
+            storageClassName: longhorn-nvme-r1
+            resources:
+              requests:
+                storage: 30Gi
     globalMounts:
       - path: /tmp
 
