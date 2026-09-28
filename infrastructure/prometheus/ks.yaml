@@ -22,4 +22,4 @@ spec:
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: alertmanager-slack-webhook-url
+        name: alertmanager-telegram-bot-token
