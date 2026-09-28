@@ -40,6 +40,10 @@ loki:
     retention_period: 30d
     ingestion_rate_mb: 16
     ingestion_burst_size_mb: 32
+  # Default 4; Drilldown fires dozens of small queries per page and they
+  # sat 7-12s in the queue while each ran in under a second.
+  querier:
+    max_concurrent: 16
   analytics:
     reporting_enabled: false
 
