@@ -16,14 +16,11 @@ nameOverride: ""
 fullnameOverride: ""
 
 args:
-  - query
-  - --http-address
-  - "0.0.0.0:9090"
-  - --endpoint
-  - dnssrv+_grpc._tcp.prometheus-stack-kube-prom-thanos-discovery.monitoring.svc.cluster.local
-  # Blocks in the bucket, i.e. anything older than Prometheus' local retention.
-  - --endpoint
-  - dns+thanos-store-app.monitoring.svc.cluster.local:10901
+  - store
+  - --data-dir=/tmp/thanos-store
+  - --objstore.config-file=/etc/thanos/config.yaml
+  - --grpc-address=0.0.0.0:10901
+  - --http-address=0.0.0.0:10902
 
 secrets: []
 # - name: app-creds
@@ -64,8 +61,6 @@ env: []
 #       name: app-otherenv
 #       key: SPECIAL_KEY
 
-podAnnotations: {}
-
 podSecurityContext: {}
   # fsGroup: 2000
 
@@ -80,10 +75,12 @@ securityContext: {}
 service:
   type: ClusterIP
   ports:
-  - name: query
-    port: 9090
+  - name: grpc
+    port: 10901
+  - name: http
+    port: 10902
 
-persistentVolumes: []
+persistentVolumes:
 # - name: config
 #   mountPath: /config
 #   configMap:
@@ -91,29 +88,35 @@ persistentVolumes: []
 #     items:
 #     - key: test.ini
 #       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+- name: bucket-config
+  mountPath: /etc/thanos
+  readOnly: true
+  secret:
+    secretName: minio-thanos
+# Index-header cache only; rebuilt from the bucket on start.
+- name: emptydir
+  mountPath: /tmp/thanos-store
+  emptyDir: {}
 
 ingress:
   enabled: false
 
 probes:
   liveness:
-    tcpSocket:
-      port: 9090
+    httpGet:
+      path: /-/healthy
+      port: 10902
   readiness:
-    tcpSocket:
-      port: 9090
+    httpGet:
+      path: /-/ready
+      port: 10902
 
 resources:
   limits:
-    memory: 500Mi
+    memory: 650Mi
   requests:
     cpu: 100m
-    memory: 400Mi
+    memory: 512Mi
 
 nodeSelector: {}
 
