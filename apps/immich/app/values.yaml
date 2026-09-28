@@ -99,12 +99,14 @@ machine-learning:
             TRANSFORMERS_CACHE: /cache
             HF_XET_CACHE: /cache/huggingface-xet
             MPLCONFIGDIR: /cache/matplotlib-config
+          # Loading all models (face detect/recognise, CLIP, PP-OCR) peaks at
+          # ~1.3 GB RSS; the old 1.3Gi limit OOM-killed it 26 times a day.
           resources:
             requests:
-              memory: 600Mi
+              memory: 1.5Gi
               cpu: 500m
             limits:
-              memory: 1.3Gi
+              memory: 3Gi
               cpu: '1'
   persistence:
     cache:
