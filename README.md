@@ -1007,10 +1007,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="4">monitoring</td>
+    <td rowspan="5">monitoring</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/metrics-actioner-helm.yaml">metrics-actioner</a></td>
-    <td rowspan="4"></td>
+    <td rowspan="5"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
@@ -1023,6 +1023,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/helm.yaml">thanos-querier</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/monitoring/helm.yaml">thanos-store</a></td>
   </tr>
 </table>
 
