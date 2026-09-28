@@ -46,10 +46,23 @@ loki:
     max_concurrent: 16
   analytics:
     reporting_enabled: false
+  # Log-based alerts. Rules come from ConfigMaps labelled loki_rule (the rules
+  # sidecar writes them under /rules/<tenant>; the tenant is "fake" because
+  # auth is disabled) and fire into the kube-prometheus-stack Alertmanager.
+  rulerConfig:
+    alertmanager_url: http://prometheus-stack-kube-prom-alertmanager.monitoring.svc.cluster.local:9093
+    enable_api: true
+    storage:
+      type: local
+      local:
+        directory: /rules
+    # Scratch space for evaluation; must not be the storage directory.
+    rule_path: /var/loki/ruler-scratch
 
 singleBinary:
   replicas: 1
-  sidecar: false
+  # Loads log alert rules from loki_rule ConfigMaps (see sidecar below).
+  sidecar: true
   extraEnvFrom:
     - secretRef:
         name: minio-loki
@@ -90,3 +103,18 @@ monitoring:
     enabled: true
   rules:
     enabled: true
+
+sidecar:
+  image:
+    registry: jacob.pub/quay.io
+    repository: kiwigrid/k8s-sidecar
+    tag: 2.11.2
+    digest: sha256:43afbcbff749bb3f3650ed7c97cb1f29f9686d91b5ea891ba68b7055e300eee9
+  rules:
+    folder: /rules/fake
+  resources:
+    requests:
+      cpu: 5m
+      memory: 32Mi
+    limits:
+      memory: 128Mi
