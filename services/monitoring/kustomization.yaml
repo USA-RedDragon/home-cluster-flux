@@ -14,6 +14,9 @@ configMapGenerator:
   - name: compactor-chart-values
     files:
       - values.yaml=compactor-values.yaml
+  - name: store-chart-values
+    files:
+      - values.yaml=store-values.yaml
   - name: pushgateway-chart-values
     files:
       - values.yaml=pushgateway-values.yaml

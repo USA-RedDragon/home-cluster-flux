@@ -21,6 +21,9 @@ args:
   - "0.0.0.0:9090"
   - --endpoint
   - dnssrv+_grpc._tcp.prometheus-stack-kube-prom-thanos-discovery.monitoring.svc.cluster.local
+  # Blocks in the bucket, i.e. anything older than Prometheus' local retention.
+  - --endpoint
+  - dns+thanos-store-app.monitoring.svc.cluster.local:10901
 
 secrets: []
 # - name: app-creds
