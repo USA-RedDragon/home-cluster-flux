@@ -17,7 +17,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/pixinsight-worker
-          tag: "beta@sha256:8b40a6ab443e296076c3e8f57b5079e8fe464e8709d2a00da53fdc52bcb071ba"
+          tag: "beta@sha256:f5b3ed55322c905deb5f9fb0c48edb88216092eee135007e56cb8915edabe68a"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -82,6 +82,11 @@ controllers:
             value: "minio.minio.svc:9000"
           S3_USE_SSL:
             value: "false"
+          # Auto-stretched JPEG previews of every light, in astro-processed.
+          PREVIEWS_ENABLED:
+            value: "true"
+          PREVIEWS_CONCURRENCY:
+            value: "2"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: pixinsight-worker-s3
@@ -95,7 +100,9 @@ controllers:
             cpu: 50m
             memory: 64Mi
           limits:
-            memory: 512Mi
+            # Each preview render holds about 200 MB (compressed file, raw
+            # samples and float image).
+            memory: 1Gi
 
 service:
   pixinsight-worker:
