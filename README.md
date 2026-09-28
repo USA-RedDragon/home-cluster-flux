@@ -977,10 +977,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="7">monitoring</td>
+    <td rowspan="8">monitoring</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/helm.yaml">alloy</a></td>
-    <td rowspan="7"></td>
+    <td rowspan="8"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
@@ -993,6 +993,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/helm.yaml">pushgateway</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/monitoring/talos-logs.yaml">talos-logs</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
