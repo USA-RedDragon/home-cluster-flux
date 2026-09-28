@@ -17,7 +17,7 @@ controllers:
       frontend:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing-frontend
-          tag: "beta@sha256:c59b54206ab8080e688f257fb65a9dab6c167a84d3cd63a9e02f2d9afff74133"
+          tag: "beta@sha256:523cb838ab8406fabaf978da1023edd3295eba59a9358a8df39752413e4bb134"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -47,7 +47,7 @@ controllers:
       backend:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing
-          tag: "beta@sha256:def033c52da51e37907acb2fb2e77de9412d1abd162f864cfbd9440086b79c32"
+          tag: "beta@sha256:8b7bf9f9c16eb875edc9e6c1c93ccb525e61afbb07e887a2b9a3ba23f3d4689b"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -98,6 +98,9 @@ controllers:
             value: "debug"
           HTTP_TRUSTED_PROXIES:
             value: "172.17.0.0/16"
+          # Calibration coverage comes from the worker's frame index.
+          WORKER_URL:
+            value: "http://pixinsight-worker:8080"
 
 service:
   frontend:
