@@ -66,7 +66,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#kyverno">kyverno</a></li>
   <li><a href="#linx">linx</a></li>
   <li><a href="#longhorn">longhorn</a></li>
-  <li><a href="#mattermost">mattermost</a></li>
   <li><a href="#mindustry">mindustry</a></li>
   <li><a href="#minecraft">minecraft</a></li>
   <li><a href="#minio">minio</a></li>
@@ -897,30 +896,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
 </table>
 
-<h4>mattermost</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td rowspan="3">mattermost</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/mattermost/app/helm.yaml">mattermost</a></td>
-    <td rowspan="3"><a href="apps/mattermost/app/postgres.yaml">postgresql</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/mattermost/app/push-proxy-helm.yaml">push-proxy</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/mattermost/restic/helmrelease.yaml">restic</a></td>
-  </tr>
-</table>
-
 <h4>mindustry</h2>
 <table>
   <tr>
@@ -974,14 +949,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="5">minio</td>
+    <td rowspan="4">minio</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/minio/backup-astro.yaml">backup-astro</a></td>
-    <td rowspan="5"></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="services/minio/backup-mattermost.yaml">backup-mattermost</a></td>
+    <td rowspan="4"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
