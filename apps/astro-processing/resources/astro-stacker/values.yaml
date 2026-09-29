@@ -3,9 +3,11 @@
 controllers:
   astro-stacker:
     replicas: 1
-    strategy: RollingUpdate
+    strategy: Recreate
 
     pod:
+      # The stacker drains on SIGTERM (--stacking.drain-seconds, 1200).
+      terminationGracePeriodSeconds: 1260
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
@@ -17,7 +19,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:6847e91103f60e466ab37d08f617b8f2848f32d20373f500acbe05b201f87f94"
+          tag: "beta@sha256:db476d19b234b1b6d684e5aa58e1844903c874fa1e862dbde681e25504869c37"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
