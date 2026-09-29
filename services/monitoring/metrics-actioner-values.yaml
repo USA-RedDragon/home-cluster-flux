@@ -51,7 +51,7 @@ configs:
           ipv4_host: '0.0.0.0'
       actions:
       - match_common_labels:
-          alertname: TrunkRecorderNoCalls
+          remediation: restart-trunk-recorder
         action: rollout-restart-deployment
         options:
           deployment: trunk-recorder-app

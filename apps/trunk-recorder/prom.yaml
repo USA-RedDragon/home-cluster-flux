@@ -23,11 +23,28 @@ spec:
   groups:
   - name: trunk-recorder
     rules:
-    - alert: TrunkRecorderNoCalls
-      expr: rate(trunk_recorder_active_calls{}[1m]) == 0
-      for: 1m
+    # Both restart trunk-recorder via metrics-actioner, matched on the
+    # remediation label (alerts are grouped per namespace, so an alertname
+    # match would miss when both fire together). The old rule,
+    # rate(active_calls) == 0, fired whenever the call count held steady for
+    # a minute and restarted a healthy recorder mid-call.
+    - alert: TrunkRecorderControlChannelLost
+      # ~40 msg/s when locked on; a fresh pod is back above 10 within a minute.
+      expr: sum by (system) (rate(trunk_recorder_message_decodes[2m])) < 10
+      for: 3m
       labels:
-        severity: critical
+        severity: warning
+        remediation: restart-trunk-recorder
       annotations:
-        summary: "TrunkRecorder has not received any calls"
-        description: "TrunkRecorder has not received any calls in the last 1 minute"
+        summary: "trunk-recorder lost the {{ $labels.system }} control channel"
+        description: "Decoding {{ $value | humanize }} control channel messages/s (normally ~40) for 3m. Restarting it."
+    - alert: TrunkRecorderNoCalls
+      # The quietest hour still has thousands of calls.
+      expr: sum by (system) (increase(trunk_recorder_calls[30m])) == 0
+      for: 5m
+      labels:
+        severity: warning
+        remediation: restart-trunk-recorder
+      annotations:
+        summary: "trunk-recorder recorded no {{ $labels.system }} calls in 30m"
+        description: "The control channel may be decoding, but no calls have been recorded for 30m. Restarting it."
