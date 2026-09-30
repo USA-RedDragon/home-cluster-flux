@@ -977,14 +977,18 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="10">monitoring</td>
+    <td rowspan="11">monitoring</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/helm.yaml">alloy</a></td>
-    <td rowspan="10"></td>
+    <td rowspan="11"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/helm.yaml">alloy-gateway</a></td>
+  </tr>
+  <tr>
+    <td><code>DaemonSet</code></td>
+    <td><a href="services/monitoring/freeze-catcher.yaml">freeze-catcher</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
