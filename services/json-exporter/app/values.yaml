@@ -41,71 +41,92 @@ configMaps:
     data:
       config.yml: |
         ---
+        # Every metric sets allow_missing_key: a disconnected device omits
+        # most fields, and without it each scrape logged an ERROR per missing
+        # path (~350k lines/day). The image module uses `..` rather than
+        # `[0]` because with no images NINA answers 500 with "Response": "",
+        # and indexing a string errors even with allow_missing_key.
         modules:
           guider:
             metrics:
             # Connection Status
             - name: observatory_guider_connected
               path: '{ .Response.Connected }'
+              allow_missing_key: true
               help: Guider connection status (1 = connected, 0 = disconnected)
 
             # RMS Error - RA
             - name: observatory_guider_rms_error_ra_arcseconds
               path: '{ .Response.RMSError.RA.Arcseconds }'
+              allow_missing_key: true
               help: Guider Right Ascension RMS Error in Arcseconds
             - name: observatory_guider_rms_error_ra_pixels
               path: '{ .Response.RMSError.RA.Pixel }'
+              allow_missing_key: true
               help: Guider Right Ascension RMS Error in Pixels
 
             # RMS Error - Dec
             - name: observatory_guider_rms_error_dec_arcseconds
               path: '{ .Response.RMSError.Dec.Arcseconds }'
+              allow_missing_key: true
               help: Guider Declination RMS Error in Arcseconds
             - name: observatory_guider_rms_error_dec_pixels
               path: '{ .Response.RMSError.Dec.Pixel }'
+              allow_missing_key: true
               help: Guider Declination RMS Error in Pixels
 
             # RMS Error - Total
             - name: observatory_guider_rms_error_total_arcseconds
               path: '{ .Response.RMSError.Total.Arcseconds }'
+              allow_missing_key: true
               help: Guider Total RMS Error in Arcseconds
             - name: observatory_guider_rms_error_total_pixels
               path: '{ .Response.RMSError.Total.Pixel }'
+              allow_missing_key: true
               help: Guider Total RMS Error in Pixels
 
             # Peak Errors - RA
             - name: observatory_guider_peak_error_ra_arcseconds
               path: '{ .Response.RMSError.PeakRA.Arcseconds }'
+              allow_missing_key: true
               help: Guider Peak Right Ascension Error in Arcseconds
             - name: observatory_guider_peak_error_ra_pixels
               path: '{ .Response.RMSError.PeakRA.Pixel }'
+              allow_missing_key: true
               help: Guider Peak Right Ascension Error in Pixels
 
             # Peak Errors - Dec
             - name: observatory_guider_peak_error_dec_arcseconds
               path: '{ .Response.RMSError.PeakDec.Arcseconds }'
+              allow_missing_key: true
               help: Guider Peak Declination Error in Arcseconds
             - name: observatory_guider_peak_error_dec_pixels
               path: '{ .Response.RMSError.PeakDec.Pixel }'
+              allow_missing_key: true
               help: Guider Peak Declination Error in Pixels
 
             # Pixel Scale
             - name: observatory_guider_pixel_scale
               path: '{ .Response.PixelScale }'
+              allow_missing_key: true
               help: Guider pixel scale in arcseconds per pixel
 
             # Last Guide Step
             - name: observatory_guider_last_step_ra_distance
               path: '{ .Response.LastGuideStep.RADistanceRaw }'
+              allow_missing_key: true
               help: Last guide step RA distance (raw)
             - name: observatory_guider_last_step_dec_distance
               path: '{ .Response.LastGuideStep.DECDistanceRaw }'
+              allow_missing_key: true
               help: Last guide step DEC distance (raw)
             - name: observatory_guider_last_step_ra_duration
               path: '{ .Response.LastGuideStep.RADuration }'
+              allow_missing_key: true
               help: Last guide step RA correction duration in milliseconds
             - name: observatory_guider_last_step_dec_duration
               path: '{ .Response.LastGuideStep.DECDuration }'
+              allow_missing_key: true
               help: Last guide step DEC correction duration in milliseconds
 
           camera:
@@ -113,100 +134,127 @@ configMaps:
             # Connection Status
             - name: observatory_camera_connected
               path: '{ .Response.Connected }'
+              allow_missing_key: true
               help: Camera connection status (1 = connected, 0 = disconnected)
 
             # Temperature Management
             - name: observatory_camera_temperature_celsius
               path: '{ .Response.Temperature }'
+              allow_missing_key: true
               help: Current camera sensor temperature in Celsius
             - name: observatory_camera_target_temperature_celsius
               path: '{ .Response.TemperatureSetPoint }'
+              allow_missing_key: true
               help: Target camera sensor temperature in Celsius
             - name: observatory_camera_at_target_temperature
               path: '{ .Response.AtTargetTemp }'
+              allow_missing_key: true
               help: Whether camera is at target temperature (1 = yes, 0 = no)
             - name: observatory_camera_cooler_on
               path: '{ .Response.CoolerOn }'
+              allow_missing_key: true
               help: Camera cooler status (1 = on, 0 = off)
             - name: observatory_camera_cooler_power_percent
               path: '{ .Response.CoolerPower }'
+              allow_missing_key: true
               help: Camera cooler power percentage (0-100)
 
             # Dew Heater
             - name: observatory_camera_dew_heater_on
               path: '{ .Response.DewHeaterOn }'
+              allow_missing_key: true
               help: Camera dew heater status (1 = on, 0 = off)
 
             # Camera Settings
             - name: observatory_camera_gain
               path: '{ .Response.Gain }'
+              allow_missing_key: true
               help: Current camera gain setting
             - name: observatory_camera_offset
               path: '{ .Response.Offset }'
+              allow_missing_key: true
               help: Current camera offset setting
             - name: observatory_camera_usb_limit
               path: '{ .Response.USBLimit }'
+              allow_missing_key: true
               help: Current USB bandwidth limit setting
             - name: observatory_camera_binning_x
               path: '{ .Response.BinX }'
+              allow_missing_key: true
               help: Current X-axis binning factor
             - name: observatory_camera_binning_y
               path: '{ .Response.BinY }'
+              allow_missing_key: true
               help: Current Y-axis binning factor
 
             # Sensor Properties
             - name: observatory_camera_sensor_width_pixels
               path: '{ .Response.XSize }'
+              allow_missing_key: true
               help: Camera sensor width in pixels
             - name: observatory_camera_sensor_height_pixels
               path: '{ .Response.YSize }'
+              allow_missing_key: true
               help: Camera sensor height in pixels
             - name: observatory_camera_pixel_size_microns
               path: '{ .Response.PixelSize }'
+              allow_missing_key: true
               help: Camera pixel size in microns
             - name: observatory_camera_bit_depth
               path: '{ .Response.BitDepth }'
+              allow_missing_key: true
               help: Camera bit depth
             - name: observatory_camera_electrons_per_adu
               path: '{ .Response.ElectronsPerADU }'
+              allow_missing_key: true
               help: Camera electrons per ADU conversion factor
 
             # Exposure Status
             - name: observatory_camera_is_exposing
               path: '{ .Response.IsExposing }'
+              allow_missing_key: true
               help: Whether camera is currently exposing (1 = yes, 0 = no)
             - name: observatory_camera_last_download_time_seconds
               path: '{ .Response.LastDownloadTime }'
+              allow_missing_key: true
               help: Last image download time in seconds
 
             # Subsampling/ROI
             - name: observatory_camera_subsample_enabled
               path: '{ .Response.IsSubSampleEnabled }'
+              allow_missing_key: true
               help: Whether subsampling/ROI is enabled (1 = yes, 0 = no)
             - name: observatory_camera_subsample_x
               path: '{ .Response.SubSampleX }'
+              allow_missing_key: true
               help: Subsample region X offset in pixels
             - name: observatory_camera_subsample_y
               path: '{ .Response.SubSampleY }'
+              allow_missing_key: true
               help: Subsample region Y offset in pixels
             - name: observatory_camera_subsample_width
               path: '{ .Response.SubSampleWidth }'
+              allow_missing_key: true
               help: Subsample region width in pixels
             - name: observatory_camera_subsample_height
               path: '{ .Response.SubSampleHeight }'
+              allow_missing_key: true
               help: Subsample region height in pixels
 
             # Exposure Limits
             - name: observatory_camera_exposure_max_seconds
               path: '{ .Response.ExposureMax }'
+              allow_missing_key: true
               help: Maximum exposure time in seconds
             - name: observatory_camera_exposure_min_seconds
               path: '{ .Response.ExposureMin }'
+              allow_missing_key: true
               help: Minimum exposure time in seconds
 
             # Battery (if applicable)
             - name: observatory_camera_battery_percent
               path: '{ .Response.Battery }'
+              allow_missing_key: true
               help: Camera battery percentage (-1 if not applicable)
 
           filterwheel:
@@ -214,16 +262,19 @@ configMaps:
             # Connection Status
             - name: observatory_filterwheel_connected
               path: '{ .Response.Connected }'
+              allow_missing_key: true
               help: Filter wheel connection status (1 = connected, 0 = disconnected)
 
             # Movement Status
             - name: observatory_filterwheel_is_moving
               path: '{ .Response.IsMoving }'
+              allow_missing_key: true
               help: Whether filter wheel is currently moving (1 = moving, 0 = stationary)
 
             # Selected Filter
             - name: observatory_filterwheel_selected_filter_id
               path: '{ .Response.SelectedFilter.Id }'
+              allow_missing_key: true
               help: Currently selected filter ID (position number)
 
           flatdevice:
@@ -231,28 +282,35 @@ configMaps:
             # Connection Status
             - name: observatory_flatdevice_connected
               path: '{ .Response.Connected }'
+              allow_missing_key: true
               help: Flat device connection status (1 = connected, 0 = disconnected)
 
             # Light Status
             - name: observatory_flatdevice_light_on
               path: '{ .Response.LightOn }'
+              allow_missing_key: true
               help: Flat device light status (1 = on, 0 = off)
             - name: observatory_flatdevice_brightness
               path: '{ .Response.Brightness }'
+              allow_missing_key: true
               help: Current flat device brightness level
             - name: observatory_flatdevice_brightness_min
               path: '{ .Response.MinBrightness }'
+              allow_missing_key: true
               help: Minimum flat device brightness level
             - name: observatory_flatdevice_brightness_max
               path: '{ .Response.MaxBrightness }'
+              allow_missing_key: true
               help: Maximum flat device brightness level
 
             # Capabilities
             - name: observatory_flatdevice_supports_open_close
               path: '{ .Response.SupportsOpenClose }'
+              allow_missing_key: true
               help: Whether flat device supports open/close operations (1 = yes, 0 = no)
             - name: observatory_flatdevice_supports_on_off
               path: '{ .Response.SupportsOnOff }'
+              allow_missing_key: true
               help: Whether flat device supports on/off light control (1 = yes, 0 = no)
 
           focuser:
@@ -260,35 +318,43 @@ configMaps:
             # Connection Status
             - name: observatory_focuser_connected
               path: '{ .Response.Connected }'
+              allow_missing_key: true
               help: Focuser connection status (1 = connected, 0 = disconnected)
 
             # Position
             - name: observatory_focuser_position
               path: '{ .Response.Position }'
+              allow_missing_key: true
               help: Current focuser position in steps
             - name: observatory_focuser_step_size
               path: '{ .Response.StepSize }'
+              allow_missing_key: true
               help: Focuser step size in microns (0 if not available)
 
             # Temperature
             - name: observatory_focuser_temperature_celsius
               path: '{ .Response.Temperature }'
+              allow_missing_key: true
               help: Focuser temperature in Celsius
 
             # Status
             - name: observatory_focuser_is_moving
               path: '{ .Response.IsMoving }'
+              allow_missing_key: true
               help: Whether focuser is currently moving (1 = moving, 0 = stationary)
             - name: observatory_focuser_is_settling
               path: '{ .Response.IsSettling }'
+              allow_missing_key: true
               help: Whether focuser is settling after a move (1 = settling, 0 = stable)
 
             # Temperature Compensation
             - name: observatory_focuser_temp_comp_enabled
               path: '{ .Response.TempComp }'
+              allow_missing_key: true
               help: Whether temperature compensation is enabled (1 = enabled, 0 = disabled)
             - name: observatory_focuser_temp_comp_available
               path: '{ .Response.TempCompAvailable }'
+              allow_missing_key: true
               help: Whether temperature compensation is available (1 = available, 0 = not available)
 
           focuser_autofocus:
@@ -296,93 +362,117 @@ configMaps:
             # Autofocus Results
             - name: observatory_autofocus_calculated_position
               path: '{ .Response.CalculatedFocusPoint.Position }'
+              allow_missing_key: true
               help: Calculated optimal focus position from last autofocus run
             - name: observatory_autofocus_calculated_hfr
               path: '{ .Response.CalculatedFocusPoint.Value }'
+              allow_missing_key: true
               help: Calculated HFR value at optimal focus position
             - name: observatory_autofocus_initial_position
               path: '{ .Response.InitialFocusPoint.Position }'
+              allow_missing_key: true
               help: Initial focus position at start of autofocus run
             - name: observatory_autofocus_initial_hfr
               path: '{ .Response.InitialFocusPoint.Value }'
+              allow_missing_key: true
               help: Initial HFR value at start of autofocus run
 
             # Environmental
             - name: observatory_autofocus_temperature_celsius
               path: '{ .Response.Temperature }'
+              allow_missing_key: true
               help: Temperature at time of autofocus run in Celsius
 
             # Fit Quality
             - name: observatory_autofocus_hyperbolic_rsquare
               path: '{ .Response.RSquares.Hyperbolic }'
+              allow_missing_key: true
               help: R-squared value for hyperbolic fit (quality metric, 0-1)
             - name: observatory_autofocus_left_trend_rsquare
               path: '{ .Response.RSquares.LeftTrend }'
+              allow_missing_key: true
               help: R-squared value for left trend line
             - name: observatory_autofocus_right_trend_rsquare
               path: '{ .Response.RSquares.RightTrend }'
+              allow_missing_key: true
               help: R-squared value for right trend line
 
             # Backlash Compensation
             - name: observatory_autofocus_backlash_in
               path: '{ .Response.BacklashCompensation.BacklashIN }'
+              allow_missing_key: true
               help: Backlash compensation IN value in steps
             - name: observatory_autofocus_backlash_out
               path: '{ .Response.BacklashCompensation.BacklashOUT }'
+              allow_missing_key: true
               help: Backlash compensation OUT value in steps
 
           image:
             metrics:
             # Exposure Settings
             - name: observatory_image_exposure_time_seconds
-              path: '{ .Response[0].ExposureTime }'
+              path: '{ .Response..ExposureTime }'
+              allow_missing_key: true
               help: Exposure time of last captured image in seconds
             - name: observatory_image_gain
-              path: '{ .Response[0].Gain }'
+              path: '{ .Response..Gain }'
+              allow_missing_key: true
               help: Gain setting used for last captured image
             - name: observatory_image_offset
-              path: '{ .Response[0].Offset }'
+              path: '{ .Response..Offset }'
+              allow_missing_key: true
               help: Offset setting used for last captured image
             - name: observatory_image_temperature_celsius
-              path: '{ .Response[0].Temperature }'
+              path: '{ .Response..Temperature }'
+              allow_missing_key: true
               help: Camera temperature during last image capture in Celsius
 
             # Optical Properties
             - name: observatory_image_focal_length_mm
-              path: '{ .Response[0].FocalLength }'
+              path: '{ .Response..FocalLength }'
+              allow_missing_key: true
               help: Focal length used for last image in millimeters
 
             # Image Statistics
             - name: observatory_image_mean_adu
-              path: '{ .Response[0].Mean }'
+              path: '{ .Response..Mean }'
+              allow_missing_key: true
               help: Mean ADU value of last captured image
             - name: observatory_image_median_adu
-              path: '{ .Response[0].Median }'
+              path: '{ .Response..Median }'
+              allow_missing_key: true
               help: Median ADU value of last captured image
             - name: observatory_image_stdev_adu
-              path: '{ .Response[0].StDev }'
+              path: '{ .Response..StDev }'
+              allow_missing_key: true
               help: Standard deviation of ADU values in last captured image
             - name: observatory_image_min_adu
-              path: '{ .Response[0].Min }'
+              path: '{ .Response..Min }'
+              allow_missing_key: true
               help: Minimum ADU value in last captured image
             - name: observatory_image_max_adu
-              path: '{ .Response[0].Max }'
+              path: '{ .Response..Max }'
+              allow_missing_key: true
               help: Maximum ADU value in last captured image
 
             # Star Detection and Focus
             - name: observatory_image_stars_detected
-              path: '{ .Response[0].Stars }'
+              path: '{ .Response..Stars }'
+              allow_missing_key: true
               help: Number of stars detected in last captured image
             - name: observatory_image_hfr
-              path: '{ .Response[0].HFR }'
+              path: '{ .Response..HFR }'
+              allow_missing_key: true
               help: Half-Flux Radius (HFR) of last captured image
             - name: observatory_image_hfr_stdev
-              path: '{ .Response[0].HFRStDev }'
+              path: '{ .Response..HFRStDev }'
+              allow_missing_key: true
               help: Standard deviation of HFR measurements in last captured image
 
             # Sensor Type
             - name: observatory_image_is_bayered
-              path: '{ .Response[0].IsBayered }'
+              path: '{ .Response..IsBayered }'
+              allow_missing_key: true
               help: Whether last image is from a Bayer sensor (1 = color, 0 = mono)
 
           mount:
@@ -390,69 +480,87 @@ configMaps:
             # Connection Status
             - name: observatory_mount_connected
               path: '{ .Response.Connected }'
+              allow_missing_key: true
               help: Mount connection status (1 = connected, 0 = disconnected)
 
             # Coordinates - Equatorial
             - name: observatory_mount_right_ascension_hours
               path: '{ .Response.RightAscension }'
+              allow_missing_key: true
               help: Current Right Ascension in hours (0-24)
             - name: observatory_mount_right_ascension_degrees
               path: '{ .Response.Coordinates.RADegrees }'
+              allow_missing_key: true
               help: Current Right Ascension in degrees (0-360)
             - name: observatory_mount_declination_degrees
               path: '{ .Response.Declination }'
+              allow_missing_key: true
               help: Current Declination in degrees (-90 to +90)
 
             # Coordinates - Horizontal
             - name: observatory_mount_altitude_degrees
               path: '{ .Response.Altitude }'
+              allow_missing_key: true
               help: Current altitude above horizon in degrees (0-90)
             - name: observatory_mount_azimuth_degrees
               path: '{ .Response.Azimuth }'
+              allow_missing_key: true
               help: Current azimuth in degrees (0-360)
 
             # Site Location
             - name: observatory_mount_site_latitude_degrees
               path: '{ .Response.SiteLatitude }'
+              allow_missing_key: true
               help: Observatory site latitude in degrees
             - name: observatory_mount_site_longitude_degrees
               path: '{ .Response.SiteLongitude }'
+              allow_missing_key: true
               help: Observatory site longitude in degrees
             - name: observatory_mount_site_elevation_meters
               path: '{ .Response.SiteElevation }'
+              allow_missing_key: true
               help: Observatory site elevation in meters
 
             # Time
             - name: observatory_mount_sidereal_time_hours
               path: '{ .Response.SiderealTime }'
+              allow_missing_key: true
               help: Local sidereal time in hours (0-24)
             - name: observatory_mount_time_to_meridian_flip_hours
               path: '{ .Response.TimeToMeridianFlip }'
+              allow_missing_key: true
               help: Time until meridian flip in hours
 
             # Status
             - name: observatory_mount_tracking_enabled
               path: '{ .Response.TrackingEnabled }'
+              allow_missing_key: true
               help: Whether tracking is enabled (1 = enabled, 0 = disabled)
             - name: observatory_mount_slewing
               path: '{ .Response.Slewing }'
+              allow_missing_key: true
               help: Whether mount is currently slewing (1 = slewing, 0 = stationary)
             - name: observatory_mount_at_park
               path: '{ .Response.AtPark }'
+              allow_missing_key: true
               help: Whether mount is parked (1 = parked, 0 = unparked)
             - name: observatory_mount_at_home
               path: '{ .Response.AtHome }'
+              allow_missing_key: true
               help: Whether mount is at home position (1 = home, 0 = not home)
             - name: observatory_mount_is_pulse_guiding
               path: '{ .Response.IsPulseGuiding }'
+              allow_missing_key: true
               help: Whether mount is currently pulse guiding (1 = guiding, 0 = not guiding)
 
             # Guide Rates
             - name: observatory_mount_guide_rate_ra_arcsec_per_sec
               path: '{ .Response.GuideRateRightAscensionArcsecPerSec }'
+              allow_missing_key: true
               help: Guide rate for Right Ascension in arcseconds per second
             - name: observatory_mount_guide_rate_dec_arcsec_per_sec
               path: '{ .Response.GuideRateDeclinationArcsecPerSec }'
+              allow_missing_key: true
               help: Guide rate for Declination in arcseconds per second
 
           rotator:
@@ -460,28 +568,35 @@ configMaps:
             # Connection Status
             - name: observatory_rotator_connected
               path: '{ .Response.Connected }'
+              allow_missing_key: true
               help: Rotator connection status (1 = connected, 0 = disconnected)
 
             # Position
             - name: observatory_rotator_position_degrees
               path: '{ .Response.Position }'
+              allow_missing_key: true
               help: Current rotator position in degrees (sky angle)
             - name: observatory_rotator_mechanical_position_degrees
               path: '{ .Response.MechanicalPosition }'
+              allow_missing_key: true
               help: Current mechanical rotator position in degrees
             - name: observatory_rotator_step_size_degrees
               path: '{ .Response.StepSize }'
+              allow_missing_key: true
               help: Rotator step size in degrees
 
             # Status
             - name: observatory_rotator_is_moving
               path: '{ .Response.IsMoving }'
+              allow_missing_key: true
               help: Whether rotator is currently moving (1 = moving, 0 = stationary)
             - name: observatory_rotator_synced
               path: '{ .Response.Synced }'
+              allow_missing_key: true
               help: Whether rotator is synced (1 = synced, 0 = not synced)
             - name: observatory_rotator_reverse
               path: '{ .Response.Reverse }'
+              allow_missing_key: true
               help: Whether rotator direction is reversed (1 = reversed, 0 = normal)
 
           safetymonitor:
@@ -489,11 +604,13 @@ configMaps:
             # Connection Status
             - name: observatory_safetymonitor_connected
               path: '{ .Response.Connected }'
+              allow_missing_key: true
               help: Safety monitor connection status (1 = connected, 0 = disconnected)
 
             # Safety Status
             - name: observatory_safetymonitor_is_safe
               path: '{ .Response.IsSafe }'
+              allow_missing_key: true
               help: Safety status (1 = safe to observe, 0 = unsafe conditions)
 
           switch:
@@ -501,28 +618,35 @@ configMaps:
             # Connection Status
             - name: observatory_switch_connected
               path: '{ .Response.Connected }'
+              allow_missing_key: true
               help: Switch hub connection status (1 = connected, 0 = disconnected)
 
             # Power Monitoring (ReadonlySwitches - Voltage is Id 25, Current is Id 26, Power is Id 27)
             - name: observatory_switch_input_voltage_volts
               path: '{ .Response.ReadonlySwitches[0].Value }'
+              allow_missing_key: true
               help: Power supply input voltage in volts
             - name: observatory_switch_current_amps
               path: '{ .Response.ReadonlySwitches[1].Value }'
+              allow_missing_key: true
               help: Total current draw in amps
             - name: observatory_switch_power_watts
               path: '{ .Response.ReadonlySwitches[2].Value }'
+              allow_missing_key: true
               help: Total power consumption in watts
 
             # Dew Heater Levels (WritableSwitches - Dew A is Id 22, Dew B is Id 23, Dew C is Id 24)
             - name: observatory_switch_dew_heater_a_percent
               path: '{ .Response.WritableSwitches[22].Value }'
+              allow_missing_key: true
               help: Dew heater A power level percentage (0-100)
             - name: observatory_switch_dew_heater_b_percent
               path: '{ .Response.WritableSwitches[23].Value }'
+              allow_missing_key: true
               help: Dew heater B power level percentage (0-100)
             - name: observatory_switch_dew_heater_c_percent
               path: '{ .Response.WritableSwitches[24].Value }'
+              allow_missing_key: true
               help: Dew heater C power level percentage (0-100)
 
           weather:
@@ -530,54 +654,67 @@ configMaps:
             # Connection Status
             - name: observatory_weather_connected
               path: '{ .Response.Connected }'
+              allow_missing_key: true
               help: Weather station connection status (1 = connected, 0 = disconnected)
 
             # Temperature and Humidity
             - name: observatory_weather_temperature_celsius
               path: '{ .Response.Temperature }'
+              allow_missing_key: true
               help: Ambient temperature in Celsius
             - name: observatory_weather_dew_point_celsius
               path: '{ .Response.DewPoint }'
+              allow_missing_key: true
               help: Dew point temperature in Celsius
             - name: observatory_weather_humidity_percent
               path: '{ .Response.Humidity }'
+              allow_missing_key: true
               help: Relative humidity percentage (0-100)
 
             # Sky Conditions
             - name: observatory_weather_sky_temperature_celsius
               path: '{ .Response.SkyTemperature }'
+              allow_missing_key: true
               help: Sky temperature in Celsius (IR reading for clouds)
             - name: observatory_weather_cloud_cover_percent
               path: '{ .Response.CloudCover }'
+              allow_missing_key: true
               help: Cloud cover percentage (0-100)
             - name: observatory_weather_sky_brightness
               path: '{ .Response.SkyBrightness }'
+              allow_missing_key: true
               help: Sky brightness reading (relative units)
 
             # Atmospheric Pressure
             - name: observatory_weather_pressure_mbar
               path: '{ .Response.Pressure }'
+              allow_missing_key: true
               help: Atmospheric pressure in millibars
 
             # Wind
             - name: observatory_weather_wind_speed_mps
               path: '{ .Response.WindSpeed }'
+              allow_missing_key: true
               help: Wind speed in meters per second
             - name: observatory_weather_wind_gust_mps
               path: '{ .Response.WindGust }'
+              allow_missing_key: true
               help: Wind gust speed in meters per second
             - name: observatory_weather_wind_direction_degrees
               path: '{ .Response.WindDirection }'
+              allow_missing_key: true
               help: Wind direction in degrees (0-360, 0=North)
 
             # Precipitation
             - name: observatory_weather_rain_rate
               path: '{ .Response.RainRate }'
+              allow_missing_key: true
               help: Rain rate (mm per hour or similar units)
 
             # Measurement Period
             - name: observatory_weather_average_period_seconds
               path: '{ .Response.AveragePeriod }'
+              allow_missing_key: true
               help: Averaging period for weather measurements in seconds
 
 persistence:
