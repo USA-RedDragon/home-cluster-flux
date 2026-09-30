@@ -28,3 +28,26 @@ spec:
   interval: 60m0s
   driftDetection:
     mode: enabled
+  # Longhorn treats a NotReady manager pod as a down node and rebuilds every
+  # replica on it. With the chart's default probe (1s timeout, 3 failures) a
+  # ~25s node freeze on epsilon (2026-09-29 22:27) did exactly that. Allow ~1m.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: DaemonSet
+              name: longhorn-manager
+            patch: |
+              apiVersion: apps/v1
+              kind: DaemonSet
+              metadata:
+                name: longhorn-manager
+                namespace: longhorn-system
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: longhorn-manager
+                        readinessProbe:
+                          timeoutSeconds: 5
+                          failureThreshold: 6
