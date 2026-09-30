@@ -10,6 +10,7 @@ configMapGenerator:
   - name: symmetricds-bootstrap
     files:
       - home-config.sql
+      - observatory-verdicts.sql
     options:
       disableNameSuffixHash: true
 configurations:

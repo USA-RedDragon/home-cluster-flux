@@ -106,6 +106,13 @@ controllers:
           # up to about 1.5 GB. Three workers used under 3 cores.
           STACKING_WORKERS:
             value: "6"
+          # Reject in Target Scheduler the subs the masters leave out (low
+          # score, moon), so it images those targets further: off, dry-run or
+          # on. Needs stacker_verdict in schedulerdb and the observatory's
+          # trigger (symmetricds/observatory-verdicts.sql). Limit a first run
+          # with STACKING_TS_VERDICTS_TARGETS (comma separated) or _SINCE.
+          STACKING_TS_VERDICTS:
+            value: "off"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
