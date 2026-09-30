@@ -22,17 +22,46 @@ controllers:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/reticulum
           tag: "1.5.5@sha256:444941c42b02e298d41051fa0cfe2dfdbc6dd2ec2dc247d7d52f6601d258fa48"
-        resources: {}
+        # A CPU request keeps it off the BestEffort share, so node-wide stalls
+        # (astro-stacker bursts on epsilon) don't starve it first.
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
         env:
           - name: PYTHONUNBUFFERED
             value: "1"
+        # RNS listens with a backlog of 1, so a probe SYN can be dropped and
+        # only retried after 1s. A 5s timeout covers the retry, and liveness
+        # needs ~60s of failures before it kills the pod.
         probes:
           liveness:
             enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 4242
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 6
           readiness:
             enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 4242
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
           startup:
             enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 4242
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 60
 
 configMaps:
   config:
@@ -54,6 +83,9 @@ configMaps:
             mode = gateway
             listen_on = 0.0.0.0
             port = 4242
+            # Every client arrives through the Envoy TCPRoute, so RNS sees one
+            # source IP; fast-flap blocking banned it and locked out everyone.
+            block_fast_flapping = no
 
             discoverable = true
             discovery_name = "Central Oklahoma Reticulum Hub"
