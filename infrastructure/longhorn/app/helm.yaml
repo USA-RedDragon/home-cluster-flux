@@ -31,6 +31,8 @@ spec:
   # Longhorn treats a NotReady manager pod as a down node and rebuilds every
   # replica on it. With the chart's default probe (1s timeout, 3 failures) a
   # ~25s node freeze on epsilon (2026-09-29 22:27) did exactly that. Allow ~1m.
+  # The freeze was astro-stacker saturating all 16 CPUs; the manager ships with
+  # no requests (BestEffort, the smallest CPU share), so give it a real one.
   postRenderers:
     - kustomize:
         patches:
@@ -51,3 +53,6 @@ spec:
                         readinessProbe:
                           timeoutSeconds: 5
                           failureThreshold: 6
+                        resources:
+                          requests:
+                            cpu: 100m
