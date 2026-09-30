@@ -1,0 +1,140 @@
+# Catches the multi-second node freezes that fail every probe on a node at once
+# (2026-09-29 22:27 on epsilon: loopback probes, node-exporter scrapes and the
+# Longhorn manager all timed out while the node sat idle). A 100ms tick loop
+# notices when it was held up for over a second and logs what the kernel looked
+# like just before and right after. Search Loki: {container="freeze-catcher"} |= "FREEZE".
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: freeze-catcher
+  namespace: monitoring
+data:
+  catcher.py: |
+    import collections, glob, json, os, time
+
+    TICK, THRESHOLD, DSCAN_EVERY = 0.1, 1.0, 10
+    NODE = os.environ.get("NODE_NAME", "?")
+
+    def read(path):
+        try:
+            with open(path) as f:
+                return f.read()
+        except OSError:
+            return ""
+
+    def psi(kind):
+        out = {}
+        for line in read(f"/proc/pressure/{kind}").splitlines():
+            parts = line.split()
+            out[parts[0]] = {k: float(v) for k, v in (p.split("=") for p in parts[1:])}
+        return out
+
+    def stat():
+        s = {}
+        for line in read("/proc/stat").splitlines():
+            p = line.split()
+            if p and p[0] in ("ctxt", "intr", "procs_running", "procs_blocked"):
+                s[p[0]] = int(p[1])
+        s["softirq"] = sum(int(x) for x in read("/proc/softirqs").split() if x.isdigit())
+        return s
+
+    def cheap():
+        s = stat()
+        return {"t": round(time.time(), 2), "load": read("/proc/loadavg").split()[:4], **s,
+                "psi": {k: psi(k).get("some", {}).get("total", 0) for k in ("cpu", "io", "memory")}}
+
+    def tasks(state_filter, with_stack=False, limit=40):
+        out = []
+        for d in glob.glob("/proc/[0-9]*/task/[0-9]*"):
+            st = read(d + "/stat")
+            if not st:
+                continue
+            try:
+                comm = st[st.index("(") + 1:st.rindex(")")]
+                rest = st[st.rindex(")") + 2:].split()
+            except ValueError:
+                continue
+            state = rest[0]
+            if state not in state_filter:
+                continue
+            e = {"tid": d.rsplit("/", 1)[1], "comm": comm, "state": state,
+                 "wchan": read(d + "/wchan"), "utime": int(rest[11]), "stime": int(rest[12])}
+            if with_stack:
+                e["stack"] = read(d + "/stack").split("\n")[:12]
+            out.append(e)
+            if len(out) >= limit:
+                break
+        return out
+
+    def top_threads(n=12):
+        # Highest cumulative CPU among runnable threads right after the freeze.
+        return sorted(tasks("R", limit=400), key=lambda e: -(e["utime"] + e["stime"]))[:n]
+
+    ring = collections.deque(maxlen=int(15 / TICK))
+    dring = collections.deque(maxlen=15)
+    last, i = time.monotonic(), 0
+    print(json.dumps({"msg": "freeze-catcher started", "node": NODE}), flush=True)
+    while True:
+        time.sleep(TICK)
+        now = time.monotonic()
+        gap = now - last
+        last = now
+        i += 1
+        if gap > THRESHOLD:
+            print(json.dumps({
+                "msg": "FREEZE", "node": NODE, "gap_s": round(gap, 2),
+                "ended_at": round(time.time(), 2),
+                "after": cheap(),
+                "before": list(ring)[-20:],
+                "dstate_before": list(dring)[-5:],
+                "dstate_after": tasks("D", with_stack=True),
+                "top_runnable_after": top_threads(),
+            }), flush=True)
+        ring.append(cheap())
+        if i % DSCAN_EVERY == 0:
+            d = tasks("D")
+            dring.append({"t": round(time.time(), 1), "n": len(d), "tasks": d[:15]})
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: freeze-catcher
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: freeze-catcher
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: freeze-catcher
+    spec:
+      # Host PIDs so it can see every task; privileged to read kernel stacks.
+      hostPID: true
+      priorityClassName: system-node-critical
+      tolerations:
+        - operator: Exists
+      containers:
+        - name: freeze-catcher
+          image: jacob.pub/docker.io/python:3.13-alpine@sha256:9b7c4b429185ca4a4454b6b67888b91e9c0b4d3432bde91a4fd3b30b681565ba
+          command: [python3, -u, /app/catcher.py]
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: 20m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          volumeMounts:
+            - name: app
+              mountPath: /app
+      volumes:
+        - name: app
+          configMap:
+            name: freeze-catcher
