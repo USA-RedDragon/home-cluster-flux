@@ -210,4 +210,3 @@ FOR EACH ROW
 BEGIN
     UPDATE stacker_plan_ledger SET reconciles = reconciles + 1 WHERE exposureplan_id = NEW.exposureplan_id;
 END$
-

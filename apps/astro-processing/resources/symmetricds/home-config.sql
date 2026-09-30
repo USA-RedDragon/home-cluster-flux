@@ -322,4 +322,3 @@ update sym_trigger_router set ping_back_enabled = 1, last_update_time = current_
 insert into sym_parameter (external_id, node_group_id, param_key, param_value, create_time, last_update_time) values
   ('ALL', 'home', 'auto.reload.reverse', 'true', current_timestamp, current_timestamp)
   on conflict do nothing;
-
