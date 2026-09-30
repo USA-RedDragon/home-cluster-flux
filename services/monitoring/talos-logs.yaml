@@ -104,10 +104,23 @@ spec:
                 type: filter
                 inputs: [talos]
                 condition: '!match(to_string(.msg) ?? "", r''^type=(AVC|USER_AVC|SYSCALL|PATH|PROCTITLE|CWD|EOE|SOCKADDR|MAC_STATUS) '')'
+              # The Talos console dashboard polls machined over localhost with
+              # the same 10 read-only calls, and each call logs an authz line
+              # plus an OK line: ~14k lines/h per node. Drop those calls and
+              # successful authz lines; other methods' OK lines (apply-config,
+              # reboot, ...) still come through as the audit trail.
+              drop_dashboard_polls:
+                type: filter
+                inputs: [drop_audit]
+                condition: |
+                  msg = to_string(.msg) ?? ""
+                  authz = match(msg, r'machined/authz/authorizer authorized \(')
+                  poll = match(msg, r'machined OK \[/machine\.MachineService/(Version|SystemStat|ServiceList|Processes|NetworkDeviceStats|Memory|LoadAvg|DiskStats|CPUInfo|CPUFreqStats)\] \S+ unary Success')
+                  !(.service == "machined" && (authz || poll))
             sinks:
               loki:
                 type: loki
-                inputs: [drop_audit]
+                inputs: [drop_dashboard_polls]
                 endpoint: http://loki.monitoring.svc.cluster.local:3100
                 encoding:
                   codec: json
