@@ -95,10 +95,19 @@ spec:
                   del(.host)
                   del(.port)
                   del(.source_type)
+              # delta and epsilon run SELinux in permissive mode (the other
+              # nodes never load it) and log every would-be denial: ~194k
+              # audit record lines/h, mostly pod writes to unlabeled volumes.
+              # Nothing is enforced, so drop the records; the kernel's
+              # "audit: rate limit exceeded" summaries still come through.
+              drop_audit:
+                type: filter
+                inputs: [talos]
+                condition: '!match(to_string(.msg) ?? "", r''^type=(AVC|USER_AVC|SYSCALL|PATH|PROCTITLE|CWD|EOE|SOCKADDR|MAC_STATUS) '')'
             sinks:
               loki:
                 type: loki
-                inputs: [talos]
+                inputs: [drop_audit]
                 endpoint: http://loki.monitoring.svc.cluster.local:3100
                 encoding:
                   codec: json
