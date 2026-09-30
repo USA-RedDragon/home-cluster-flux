@@ -10,14 +10,19 @@ renovateWorker:
   existingSecret: renovate-secrets
   replicas: 2
 
-  mendRnvWorkerCleanup: always
+  # Daily, not "always". Go toolchains that `go` downloads itself
+  # (golang.org/toolchain@...) are unpacked read-only regardless of
+  # -modcacherw, and the cleanup's `find -delete` then fails on every file
+  # after every job (~158k log lines/h). Once a day keeps the rest of the
+  # cache in check; the read-only toolchains are a bounded ~250 MB each and
+  # go away when the worker restarts.
+  mendRnvWorkerCleanup: "0 4 * * *"
 
   disableCacheVolume: true
 
   extraEnvVars:
-  # Go writes its module cache read-only, so mendRnvWorkerCleanup's delete
-  # failed on every file ("find: cannot delete ... Permission denied", ~40
-  # GB/day of logs) and the cache was never cleaned. Make it writable.
+  # Go writes its module cache read-only. Renovate's gomod manager already
+  # sets GOFLAGS=-modcacherw for its own go runs; this covers anything else.
   - name: GOFLAGS
     value: '-modcacherw'
   - name: RENOVATE_REPOSITORY_CACHE
