@@ -89,6 +89,7 @@ spec:
         metadata:
           labels:
             policy.mcswain.dev/egress-kubeapi: "true"
+            policy.mcswain.dev/egress-coredns: "true"
         spec:
           serviceAccountName: backup-prune
           restartPolicy: Never
