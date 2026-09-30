@@ -10,5 +10,12 @@ configMapGenerator:
   - name: frigate-chart-values
     files:
       - values.yaml=values.yaml
+  # Mounted by name from the chart values, so no hash suffix.
+  - name: frigate-patches
+    files:
+      - patches/timeline.py
+      - patches/cleanup.py
+    options:
+      disableNameSuffixHash: true
 configurations:
   - kustomizeconfig.yaml
