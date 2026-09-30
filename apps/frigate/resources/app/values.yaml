@@ -484,6 +484,24 @@ configMaps:
           enabled: true
         version: 0.17-0
 persistence:
+  # Backport of upstream #24510 (unreleased as of 0.18.0): TimelineProcessor
+  # kept every tracked object that ended without a clip/snapshot in
+  # pre_event_cache forever, ~0.12 GiB/day until the 8Gi limit thrashed.
+  # DELETE this mount and patches/ when bumping past 0.18.0; the files are
+  # full copies of 0.18.0 and would downgrade a newer image.
+  patches:
+    enabled: true
+    type: configMap
+    name: frigate-patches
+    advancedMounts:
+      frigate:
+        frigate:
+          - path: /opt/frigate/frigate/timeline.py
+            subPath: timeline.py
+            readOnly: true
+          - path: /opt/frigate/frigate/events/cleanup.py
+            subPath: cleanup.py
+            readOnly: true
   configmap:
     enabled: true
     type: configMap
