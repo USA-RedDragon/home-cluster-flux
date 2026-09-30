@@ -123,6 +123,10 @@ controllers:
             # accumulator is 416 MB and a rebuild pass about 730 MB, plus
             # Siril's share of the limit.
             memory: 24Gi
+            # Unlimited, rebuild bursts took all 16 CPUs of the node (7-13
+            # cores on 30s averages) and froze it for seconds: probes and
+            # fork() stalled node-wide. Its hourly average is ~1.2 cores.
+            cpu: 8
 
 persistence:
   # Downloads, calibration masters and Siril output; the root filesystem is
