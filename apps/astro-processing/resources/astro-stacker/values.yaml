@@ -19,7 +19,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:be56b865a2a980c631d02ece3288a748f331d1482e1a52ae40a02e742bdc0c12"
+          tag: "beta@sha256:a691b0c291c30be463f745db5f4540a47c92f28a545e860311f218c8412517c9"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -112,7 +112,9 @@ controllers:
           # trigger (symmetricds/observatory-verdicts.sql). Limit a first run
           # with STACKING_TS_VERDICTS_TARGETS (comma separated) or _SINCE.
           STACKING_TS_VERDICTS:
-            value: "off"
+            value: "dry-run"
+          STACKING_TS_VERDICTS_TARGETS:
+            value: "Bode's Galaxy"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
