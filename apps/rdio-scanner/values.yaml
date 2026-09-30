@@ -11,7 +11,7 @@ controllers:
       rdio-scanner:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/rdio-scanner
-          tag: v7.2.25
+          tag: v7.2.27
           pullPolicy: IfNotPresent
         resources:
           limits:
