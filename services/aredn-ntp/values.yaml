@@ -14,6 +14,9 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+# OLSR-only node: mesh-base's babeld (and arednlink, which needs it) expect a
+# /tmp/babel-generated.conf that only mesh-manager writes, so babeld
+# crash-looped every second (~86k log lines/day). Drop them like vtund.
 command:
 - /bin/sh
 - -c
@@ -25,6 +28,7 @@ command:
   cat /etc/resolv.conf > /tmp/resolv.conf.auto \
   && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
   && rm -rf /etc/s6/vtund \
+  && rm -rf /etc/s6/babeld /etc/s6/arednlink \
   && exec s6-svscan /etc/s6
 
 secrets: []
