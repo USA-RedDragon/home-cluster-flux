@@ -13,6 +13,7 @@ resources:
   - router-scrape.yaml
   - backup-alerts.yaml
   - node-disk-alerts.yaml
+  - freeze-catcher.yaml
   - modem-exporter
   - observatory-svc.yaml
   - thanos-prom.yaml
