@@ -5,3 +5,4 @@ resources:
   - ns.yaml
   - ks.yaml
   - alerts.yaml
+  - backup-prune.yaml

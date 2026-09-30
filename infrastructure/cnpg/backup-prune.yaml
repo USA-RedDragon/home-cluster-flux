@@ -1,0 +1,119 @@
+# CNPG never deletes Backup objects, and every ScheduledBackup here is hourly
+# (6-field cron: "0 2 * * * *" is minute 2 of every hour). They reached 32k.
+# Barman's 4w retention already removes the data from the object store, so
+# Backup objects past that are dead bookkeeping. Deleting one never touches
+# the object store.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backup-prune
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cnpg-backup-prune
+rules:
+  - apiGroups: [postgresql.cnpg.io]
+    resources: [backups]
+    verbs: [list, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cnpg-backup-prune
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cnpg-backup-prune
+subjects:
+  - kind: ServiceAccount
+    name: backup-prune
+    namespace: cnpg-system
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backup-prune
+data:
+  prune.py: |
+    import datetime, json, os, ssl, urllib.error, urllib.request
+
+    MAX_AGE = datetime.timedelta(days=int(os.environ.get("MAX_AGE_DAYS", "28")))
+    SA = "/var/run/secrets/kubernetes.io/serviceaccount"
+    API = "https://kubernetes.default.svc/apis/postgresql.cnpg.io/v1"
+    TOKEN = open(f"{SA}/token").read()
+    CTX = ssl.create_default_context(cafile=f"{SA}/ca.crt")
+
+    def call(method, url):
+        req = urllib.request.Request(url, method=method, headers={"Authorization": f"Bearer {TOKEN}"})
+        with urllib.request.urlopen(req, context=CTX, timeout=60) as r:
+            return json.load(r)
+
+    now = datetime.datetime.now(datetime.timezone.utc)
+    deleted = kept = 0
+    cont = ""
+    while True:
+        page = call("GET", f"{API}/backups?limit=500" + (f"&continue={cont}" if cont else ""))
+        for b in page["items"]:
+            m = b["metadata"]
+            created = datetime.datetime.fromisoformat(m["creationTimestamp"].replace("Z", "+00:00"))
+            if now - created > MAX_AGE:
+                try:
+                    call("DELETE", f"{API}/namespaces/{m['namespace']}/backups/{m['name']}")
+                except urllib.error.HTTPError as e:
+                    if e.code != 404:  # already gone
+                        raise
+                deleted += 1
+            else:
+                kept += 1
+        cont = page["metadata"].get("continue")
+        if not cont:
+            break
+    print(json.dumps({"msg": "cnpg backup prune", "deleted": deleted, "kept": kept, "max_age_days": MAX_AGE.days}))
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-prune
+spec:
+  schedule: "30 5 * * 0"
+  timeZone: America/Chicago
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            policy.mcswain.dev/egress-kubeapi: "true"
+        spec:
+          serviceAccountName: backup-prune
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+          containers:
+            - name: prune
+              image: jacob.pub/docker.io/python:3.13-alpine@sha256:9b7c4b429185ca4a4454b6b67888b91e9c0b4d3432bde91a4fd3b30b681565ba
+              command: [python3, -u, /app/prune.py]
+              securityContext:
+                readOnlyRootFilesystem: true
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: [ALL]
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 128Mi
+              volumeMounts:
+                - name: app
+                  mountPath: /app
+          volumes:
+            - name: app
+              configMap:
+                name: backup-prune
