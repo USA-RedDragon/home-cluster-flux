@@ -2,6 +2,8 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: longhorn-nvme
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
 provisioner: driver.longhorn.io
 allowVolumeExpansion: true
 reclaimPolicy: Delete
@@ -30,10 +32,16 @@ parameters:
   dataLocality: best-effort
   diskSelector: "ssd"
 ---
+# A single replica must follow its pod (best-effort locality), or one node can
+# hold every replica of something that is spread for HA at the app layer: all
+# three authentik CNPG replicas sat on beta when it died (2026-09-30).
+# StorageClass parameters are immutable, so force lets Flux recreate on change.
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: longhorn-r1
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: Enabled
 provisioner: driver.longhorn.io
 allowVolumeExpansion: true
 reclaimPolicy: Delete
@@ -43,7 +51,7 @@ parameters:
   staleReplicaTimeout: "30"
   fromBackup: ""
   fsType: ext4
-  dataLocality: disabled
+  dataLocality: best-effort
   disableRevisionCounter: "true"
   unmapMarkSnapChainRemoved: "ignored"
   dataEngine: v1
@@ -73,6 +81,8 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: longhorn-fast-r1
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: Enabled
 provisioner: driver.longhorn.io
 allowVolumeExpansion: true
 reclaimPolicy: Delete
@@ -82,5 +92,5 @@ parameters:
   staleReplicaTimeout: "30"
   fromBackup: ""
   fsType: ext4
-  dataLocality: disabled
+  dataLocality: best-effort
   diskSelector: "fast"

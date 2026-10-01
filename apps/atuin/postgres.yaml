@@ -41,6 +41,7 @@ spec:
         compression: gzip
     name: postgresql
   storage:
+    storageClass: longhorn-nvme-r1
     size: 16Gi
   monitoring:
     enablePodMonitor: true

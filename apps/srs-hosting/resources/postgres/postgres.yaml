@@ -26,6 +26,7 @@ spec:
       database: srs-hosting
       owner: srs-hosting
   storage:
+    storageClass: longhorn-nvme-r1
     # Filled up, which halted every instance and left no primary.
     size: 10Gi
   monitoring:

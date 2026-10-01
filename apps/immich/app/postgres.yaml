@@ -36,6 +36,7 @@ spec:
         compression: gzip
     retentionPolicy: "4w"
   storage:
+    storageClass: longhorn-nvme-r1
     size: 12Gi
   monitoring:
     enablePodMonitor: true

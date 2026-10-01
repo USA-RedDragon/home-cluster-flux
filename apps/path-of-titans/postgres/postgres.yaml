@@ -26,6 +26,7 @@ spec:
       database: path-of-titans
       owner: path-of-titans
   storage:
+    storageClass: longhorn-nvme-r1
     size: 3Gi
   monitoring:
     enablePodMonitor: true

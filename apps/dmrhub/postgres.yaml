@@ -41,6 +41,7 @@ spec:
       owner: dmrhub
       source: postgresql
   storage:
+    storageClass: longhorn-nvme-r1
     # Filled up (35Gi PVC, hand-expanded past the 30Gi here), which halted
     # every instance and left the cluster without a primary.
     size: 50Gi
