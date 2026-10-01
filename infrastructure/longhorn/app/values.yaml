@@ -3,21 +3,26 @@ persistence:
   defaultClassReplicaCount: 2
   defaultDataLocality: best-effort
 defaultSettings:
-  priorityClass: system-cluster-critical
+  # Matches what is live. Changing priority-class restarts every
+  # instance-manager, which needs all volumes detached; system-cluster-critical
+  # buys nothing over longhorn-critical for that cost.
+  priorityClass: longhorn-critical
   logLevel: Warn
-  backupTarget: s3://longhorn@us-east-1/
-  backupTargetCredentialSecret: minio
-  guaranteedInstanceManagerCPU: '12'
+  # Per data engine since Longhorn 1.8; a bare number would also reset v2.
+  guaranteedInstanceManagerCPU: '{"v1":"12","v2":"31"}'
   offlineReplicaRebuilding: true
   orphanResourceAutoDeletion: instance
   concurrentAutomaticEngineUpgradePerNodeLimit: 3
+  # The backup target is the `default` BackupTarget CR
+  # (s3://longhorn@us-east-1/, secret minio); 1.13 ignores
+  # defaultSettings.backupTarget.
 longhornManager:
-  priorityClass: system-cluster-critical
+  priorityClass: longhorn-critical
   tolerations:
     - key: node-role.kubernetes.io/control-plane
       effect: NoSchedule
 longhornDriver:
-  priorityClass: system-cluster-critical
+  priorityClass: longhorn-critical
   tolerations:
     - key: node-role.kubernetes.io/control-plane
       effect: NoSchedule
