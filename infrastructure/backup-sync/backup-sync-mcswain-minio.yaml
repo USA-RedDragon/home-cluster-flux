@@ -58,6 +58,9 @@ spec:
               - --stats-one-line-date
               - --s3-storage-class
               - DEEP_ARCHIVE
+              - --fast-list
+              - --update
+              - --use-server-modtime
               - sync
               - b2:mcswain-minio
               - s3:mcswain-backups/minio
