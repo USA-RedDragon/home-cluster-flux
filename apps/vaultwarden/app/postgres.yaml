@@ -28,6 +28,7 @@ spec:
   monitoring:
     enablePodMonitor: true
   storage:
+    storageClass: longhorn-nvme-r1
     size: 4Gi
   resources:
     requests:

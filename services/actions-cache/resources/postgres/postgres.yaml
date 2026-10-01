@@ -12,6 +12,7 @@ spec:
       database: cache
       owner: cache
   storage:
+    storageClass: longhorn-nvme-r1
     size: 8Gi
   monitoring:
     enablePodMonitor: true

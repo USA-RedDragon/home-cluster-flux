@@ -28,6 +28,16 @@ spec:
   interval: 60m0s
   driftDetection:
     mode: enabled
+  # values.yaml is generated into a ConfigMap but was never wired in with
+  # valuesFrom, so the chart's `longhorn` StorageClass stayed the cluster
+  # default with dataLocality disabled, and every CNPG volume landed on it.
+  # Only the StorageClass keys are set here; wiring the rest of values.yaml
+  # (priorityClass, tolerations, ingress, backup target) is a separate change.
+  values:
+    persistence:
+      defaultClass: false
+      defaultClassReplicaCount: 2
+      defaultDataLocality: best-effort
   # Longhorn treats a NotReady manager pod as a down node and rebuilds every
   # replica on it. With the chart's default probe (1s timeout, 3 failures) a
   # ~25s node freeze on epsilon (2026-09-29 22:27) did exactly that. Allow ~1m.

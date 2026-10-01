@@ -26,6 +26,7 @@ spec:
       database: astro-processing
       owner: astro-processing
   storage:
+    storageClass: longhorn-nvme-r1
     size: 30Gi
   monitoring:
     enablePodMonitor: true

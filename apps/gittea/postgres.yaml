@@ -26,6 +26,7 @@ spec:
       database: gitea
       owner: gitea
   storage:
+    storageClass: longhorn-nvme-r1
     size: 4Gi
   monitoring:
     enablePodMonitor: true

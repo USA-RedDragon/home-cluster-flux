@@ -26,6 +26,7 @@ spec:
       database: obsidibot
       owner: obsidibot
   storage:
+    storageClass: longhorn-nvme-r1
     size: 3Gi
   monitoring:
     enablePodMonitor: true
