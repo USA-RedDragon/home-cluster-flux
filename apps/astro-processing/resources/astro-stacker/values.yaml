@@ -112,9 +112,7 @@ controllers:
           # trigger (symmetricds/observatory-verdicts.sql). Limit a first run
           # with STACKING_TS_VERDICTS_TARGETS (comma separated) or _SINCE.
           STACKING_TS_VERDICTS:
-            value: "dry-run"
-          STACKING_TS_VERDICTS_TARGETS:
-            value: "Bode's Galaxy"
+            value: "on"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
