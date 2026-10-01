@@ -30,7 +30,7 @@ spec:
           exporter:
             image:
               repository: jacob.pub/docker.io/library/python
-              tag: 3.13-alpine@sha256:9b7c4b429185ca4a4454b6b67888b91e9c0b4d3432bde91a4fd3b30b681565ba
+              tag: 3.14-alpine@sha256:2e740b2c28a426e74f11396c05e38afb3191acced75045b8d62df573c1dc8ce8
             command: ["python3", "-u", "/app/exporter.py"]
             env:
               MODEM_PASSWORD:
