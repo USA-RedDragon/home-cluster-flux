@@ -513,6 +513,7 @@ persistence:
   config:
     enabled: true
     type: persistentVolumeClaim
+    storageClass: longhorn-nvme
     accessMode: ReadWriteOnce
     size: 10Gi
   tmp:
