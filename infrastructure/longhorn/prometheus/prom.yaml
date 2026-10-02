@@ -52,16 +52,29 @@ spec:
         # No fixed "wear high" threshold: a drive at 73% writing 67 GB/day has
         # years left. Warn on the trend instead, and on real defects (spare,
         # media errors) below.
+        #
+        # Days left = remaining % / (% per day), where % per day is the 7d write
+        # rate times the drive's lifetime %-per-unit-written. Projecting from
+        # DataUnitsWritten rather than PercentageUsed because the latter is an
+        # integer: one 2->3 tick inside a short window extrapolates to >100%.
+        # max by (node, disk) stitches the series across longhorn-manager pod
+        # restarts, which otherwise start a fresh series each time. 7d because
+        # Prometheus retention is 10d.
         - alert: DiskWearExhaustionProjected
           expr: |
-            predict_linear(longhorn_disk_health_attribute_raw{attribute="PercentageUsed"}[30d], 180 * 24 * 3600) >= 100
-              and longhorn_disk_health_attribute_raw{attribute="PercentageUsed"} < 90
+            (100 - max by (node, disk) (longhorn_disk_health_attribute_raw{attribute="PercentageUsed"}))
+            / (
+                rate((max by (node, disk) (longhorn_disk_health_attribute_raw{attribute="DataUnitsWritten"}))[7d:1h]) * 86400
+              * max by (node, disk) (longhorn_disk_health_attribute_raw{attribute="PercentageUsed"})
+              / max by (node, disk) (longhorn_disk_health_attribute_raw{attribute="DataUnitsWritten"})
+            ) < 180
+              and max by (node, disk) (longhorn_disk_health_attribute_raw{attribute="PercentageUsed"}) < 90
           for: 6h
           labels:
             severity: warning
           annotations:
-            summary: "{{ $labels.node }}/{{ $labels.disk }} projected to exhaust endurance within 180 days"
-            description: "Rising fast enough over the last 30 days to reach 100% of rated endurance inside 180 days. Plan a replacement and check what is driving writes to this disk."
+            summary: "{{ $labels.node }}/{{ $labels.disk }} projected to exhaust endurance in {{ $value | humanize }} days"
+            description: "At the last 7 days' write rate this drive reaches 100% of rated endurance in under 180 days. Plan a replacement and check what is driving writes to this disk."
 
         - alert: DiskAvailableSpareDropping
           expr: longhorn_disk_health_attribute_raw{attribute="AvailableSpare"} < 90
