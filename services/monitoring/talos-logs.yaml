@@ -42,7 +42,7 @@ spec:
           vector:
             image:
               repository: jacob.pub/docker.io/timberio/vector
-              tag: 0.58.0-distroless-libc@sha256:5a817a93ed2b2e3ba76efc44c7c8252b8c145192e392762c7a4776d5a7d0ba46
+              tag: 0.58.0-distroless-libc@sha256:6c93dfe2554cc7e38316d618961cd657d5271c7a7aa727e0007502b28cb82c2e
             args: ["--config", "/etc/vector/vector.yaml"]
             env:
               NODE_NAME:
