@@ -20,7 +20,7 @@ controllers:
       ledger:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/ledger
-          tag: v0.1.0
+          tag: v0.2.0
           pullPolicy: IfNotPresent
         resources:
           requests:
@@ -28,12 +28,11 @@ controllers:
             memory: 64Mi
           limits:
             memory: 256Mi
-        # Optional until created in home-cluster-secrets; keys are the env var names:
+        # From home-cluster-secrets; keys are the env var names:
         # SECURITY_ENCRYPTION_KEY, PLAID_CLIENT_ID, PLAID_SECRET
         envFrom:
           - secretRef:
               name: ledger
-              optional: true
         env:
           DB_USER:
             secretKeyRef:
@@ -61,7 +60,7 @@ controllers:
             value: host=$(DB_HOST) user=$(DB_USER) password=$(DB_PASS) dbname=$(DB_NAME) port=$(DB_PORT) sslmode=disable
             dependsOn: [DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME]
           PLAID_ENABLED:
-            value: "false"
+            value: "true"
           PLAID_ENVIRONMENT:
             value: "production"
           METRICS_ENABLED:
