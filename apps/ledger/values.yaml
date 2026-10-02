@@ -20,7 +20,7 @@ controllers:
       ledger:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/ledger
-          tag: v0.3.0
+          tag: v0.4.0
           pullPolicy: IfNotPresent
         resources:
           requests:
