@@ -20,7 +20,7 @@ controllers:
       ledger:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/ledger
-          tag: v0.9.0
+          tag: v0.9.1
           pullPolicy: IfNotPresent
         resources:
           requests:
@@ -29,7 +29,7 @@ controllers:
           limits:
             memory: 256Mi
         # From home-cluster-secrets; keys are the env var names:
-        # SECURITY_ENCRYPTION_KEY, PLAID_CLIENT_ID, PLAID_SECRET
+        # SECURITY_ENCRYPTION_KEY, PLAID_CLIENT_ID, PLAID_SECRET, ALERTS_URLS
         envFrom:
           - secretRef:
               name: ledger
@@ -71,6 +71,10 @@ controllers:
             value: "info"
           TZ:
             value: America/Chicago
+          ALERTS_ENABLED:
+            value: "true"
+          ALERTS_APPRISE_URL:
+            value: http://apprise.apprise.svc.cluster.local:8000/notify
         probes:
           liveness:
             enabled: true
