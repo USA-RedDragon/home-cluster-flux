@@ -1,0 +1,19 @@
+# Lets ledger send alerts to the Apprise API in the apprise namespace. Ledger's other egress
+# (DNS, its own namespace, the internet for Plaid) comes from the cluster-wide policy labels.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ledger-apprise
+  namespace: ledger
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: ledger
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: apprise
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
