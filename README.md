@@ -64,6 +64,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#kromgo">kromgo</a></li>
   <li><a href="#kube-system">kube-system</a></li>
   <li><a href="#kyverno">kyverno</a></li>
+  <li><a href="#ledger">ledger</a></li>
   <li><a href="#linx">linx</a></li>
   <li><a href="#longhorn">longhorn</a></li>
   <li><a href="#mindustry">mindustry</a></li>
@@ -865,6 +866,26 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/kyverno/policy-reporter/helm.yaml">kyverno-policy-reporter</a></td>
+  </tr>
+</table>
+
+<h4>ledger</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td rowspan="2">ledger</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/ledger/helm.yaml">ledger</a></td>
+    <td rowspan="2"><a href="apps/ledger/postgres.yaml">postgresql</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/ledger/restic.yaml">restic</a></td>
   </tr>
 </table>
 

@@ -1,0 +1,130 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+
+controllers:
+  ledger:
+    replicas: 1
+    strategy: RollingUpdate
+    pod:
+      labels:
+        policy.mcswain.dev/egress-coredns: "true"
+        policy.mcswain.dev/egress-namespace: "true"
+        policy.mcswain.dev/egress-internet: "true"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+    containers:
+      ledger:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/ledger
+          tag: v0.1.0
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+        # Optional until created in home-cluster-secrets; keys are the env var names:
+        # SECURITY_ENCRYPTION_KEY, PLAID_CLIENT_ID, PLAID_SECRET
+        envFrom:
+          - secretRef:
+              name: ledger
+              optional: true
+        env:
+          DB_USER:
+            secretKeyRef:
+              name: postgresql-app
+              key: user
+          DB_PASS:
+            secretKeyRef:
+              name: postgresql-app
+              key: password
+          DB_HOST:
+            secretKeyRef:
+              name: postgresql-app
+              key: host
+          DB_PORT:
+            secretKeyRef:
+              name: postgresql-app
+              key: port
+          DB_NAME:
+            secretKeyRef:
+              name: postgresql-app
+              key: dbname
+          STORAGE_TYPE:
+            value: "postgres"
+          STORAGE_DSN:
+            value: host=$(DB_HOST) user=$(DB_USER) password=$(DB_PASS) dbname=$(DB_NAME) port=$(DB_PORT) sslmode=disable
+            dependsOn: [DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME]
+          PLAID_ENABLED:
+            value: "false"
+          PLAID_ENVIRONMENT:
+            value: "production"
+          METRICS_ENABLED:
+            value: "true"
+          METRICS_BIND:
+            value: "[::]"
+          LOG_LEVEL:
+            value: "info"
+          TZ:
+            value: America/Chicago
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /api/v1/health
+                port: 8080
+              periodSeconds: 10
+              timeoutSeconds: 3
+              failureThreshold: 3
+          startup:
+            enabled: true
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+
+service:
+  ledger:
+    controller: ledger
+    ports:
+      http:
+        port: 8080
+      metrics:
+        port: 9000
+
+# Tailscale only: no public HTTPRoute.
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: ledger
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: ledger
+              port: http
+    tls:
+      - hosts:
+          - ledger
+
+serviceMonitor:
+  ledger:
+    enabled: true
+    serviceName: ledger
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 30s
+        scrapeTimeout: 10s
