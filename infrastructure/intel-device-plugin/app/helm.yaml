@@ -14,9 +14,14 @@ metadata:
   name: intel-device-plugin
   namespace: intel-device-plugin
 spec:
+  # Helm never upgrades CRDs on its own; the GpuDevicePlugin CRD was still
+  # from 2024 and rejected fields the gpu chart sets (allowIDs, ...).
   install:
+    crds: CreateReplace
     remediation:
       retries: -1
+  upgrade:
+    crds: CreateReplace
   interval: 1m0s
   driftDetection:
     mode: enabled

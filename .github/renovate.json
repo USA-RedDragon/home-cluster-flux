@@ -23,7 +23,7 @@
         {
             "customType": "regex",
             "managerFilePatterns": [
-                "/(^|/)kube-system\\/etcd-backup\\.yaml/"
+                "/(^|/)kube-system\\/etcd-(backup|defrag)\\.yaml/"
             ],
             "matchStrings": [
                 "github\\.com\\/siderolabs\\/talos\\/releases\\/download\\/(?<currentValue>v.*)\\/talosctl-linux-amd64"
@@ -316,6 +316,13 @@
                 "mend-renovate-enterprise-edition",
                 "ghcr.io/usa-reddragon/renovate-ee-worker",
                 "ghcr.io/usa-reddragon/renovate-ee"
+            ]
+        },
+        {
+            "description": "ARC deletes AutoscalingRunnerSets whose chart version differs from the controller's, so upgrade the controller and the scale sets together",
+            "groupName": "actions-runner-controller",
+            "matchPackageNames": [
+                "/gha-runner-scale-set/"
             ]
         }
     ]
