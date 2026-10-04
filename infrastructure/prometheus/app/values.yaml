@@ -151,6 +151,9 @@ defaultRules:
     # Queue depth fires on every bulk job; replaced by NodeDiskLatencyHigh
     # (services/monitoring/node-disk-alerts.yaml).
     NodeDiskIOSaturation: true
+    # Fires ~7h after every defrag; replaced by EtcdDatabaseLarge
+    # (services/monitoring/etcd-alerts.yaml).
+    etcdDatabaseHighFragmentationRatio: true
   # KubeAPIDown: true
   # NodeRAIDDegraded: true
 

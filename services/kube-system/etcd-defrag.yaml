@@ -1,0 +1,77 @@
+apiVersion: talos.dev/v1alpha1
+kind: ServiceAccount
+metadata:
+  name: etcd-defrag-talos-secrets
+  namespace: kube-system
+spec:
+  roles:
+  # EtcdDefragment needs os:operator (os:etcd:backup only covers snapshots).
+  - os:operator
+---
+# Weekly etcd defrag, one member at a time, stopping if any member is
+# unhealthy. Longhorn and Kyverno churn refragments the database within a
+# day; the file plateaus, so this only keeps it near its live size.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: etcd-defrag
+  namespace: kube-system
+spec:
+  schedule: "15 3 * * 1"
+  timeZone: America/Chicago
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          imagePullSecrets:
+          - name: registry-zot
+          containers:
+          - name: defrag
+            image: jacob.pub/docker.io/alpine:3.24.2@sha256:3cf95fe0816180395592b8373f3ec60663f076127617bbacb4eacf9667afe2e9
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+            - mountPath: /var/run/secrets/talos.dev
+              name: talos-secrets
+              readOnly: true
+            - mountPath: /tmp
+              name: tmp
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsUser: 0
+            command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              wget -q -O /tmp/talosctl https://github.com/siderolabs/talos/releases/download/v1.14.2/talosctl-linux-amd64
+              chmod +x /tmp/talosctl
+              members=192.168.1.249,192.168.1.250,192.168.1.251
+              healthy() {
+                [ "$(/tmp/talosctl -n "$members" etcd status 2>/dev/null | grep -c '^192\.')" = 3 ] &&
+                  ! /tmp/talosctl -n "$members" etcd alarm list 2>/dev/null | grep -q '^192\.'
+              }
+              for addr in 192.168.1.249 192.168.1.250 192.168.1.251; do
+                healthy || { echo "etcd not healthy, stopping before $addr"; exit 1; }
+                echo "defragmenting $addr"
+                /tmp/talosctl -n "$addr" etcd defrag
+                sleep 30
+              done
+              healthy
+              /tmp/talosctl -n "$members" etcd status
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+          restartPolicy: Never
+          volumes:
+          - name: tmp
+            emptyDir:
+              medium: Memory
+              sizeLimit: 256Mi
+          - name: talos-secrets
+            secret:
+              secretName: etcd-defrag-talos-secrets
