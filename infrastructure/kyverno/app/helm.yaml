@@ -30,6 +30,11 @@ spec:
       version: '3.9.1'
       interval: 1m0s
   values:
+    # Policies are Audit-only; an hourly rescan rewrote ~2000 policy reports
+    # (~8k etcd writes/h) for no new information.
+    features:
+      backgroundScan:
+        backgroundScanInterval: 24h
     global:
       image:
         registry: jacob.pub/reg.kyverno.io

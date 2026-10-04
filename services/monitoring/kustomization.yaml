@@ -13,6 +13,7 @@ resources:
   - router-scrape.yaml
   - backup-alerts.yaml
   - node-disk-alerts.yaml
+  - etcd-alerts.yaml
   - observatory-svc.yaml
   - thanos-prom.yaml
 configMapGenerator:

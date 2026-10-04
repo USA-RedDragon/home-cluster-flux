@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: etcd
+  namespace: monitoring
+spec:
+  groups:
+    - name: etcd
+      rules:
+        # Replaces the default etcdDatabaseHighFragmentationRatio (in-use < 50%
+        # of the file), which fires ~7h after every defrag on this cluster:
+        # free pages are reused, so the file plateaus instead of growing
+        # without bound. What matters is the file approaching the 4 GiB
+        # quota-backend-bytes, where etcd goes read-only. Weekly defrag:
+        # services/kube-system/etcd-defrag.yaml.
+        - alert: EtcdDatabaseLarge
+          expr: etcd_mvcc_db_total_size_in_bytes{job=~".*etcd.*"} > 2 * 1024 * 1024 * 1024
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: etcd database file over 2 GiB (quota 4 GiB)
+            description: >-
+              etcd on {{ $labels.instance }} has a {{ $value | humanize1024 }}B database file.
+              At the 4 GiB quota etcd stops accepting writes. Defragment with
+              `talosctl -n <node> etcd defrag`, one member at a time.

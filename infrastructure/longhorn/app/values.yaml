@@ -14,9 +14,14 @@ defaultSettings:
   orphanResourceAutoDeletion: instance
   concurrentAutomaticEngineUpgradePerNodeLimit: 3
   concurrentReplicaRebuildPerNodeLimit: 10
-  # The backup target is the `default` BackupTarget CR
-  # (s3://longhorn@us-east-1/, secret minio); 1.13 ignores
-  # defaultSettings.backupTarget.
+  # The backup target is the `default` BackupTarget CR; 1.13 ignores
+  # defaultSettings.backupTarget, so it's set via defaultBackupStore below.
+# Every poll rewrites the status of all ~740 backup volumes (~18k etcd
+# writes/h at the default 5m), which kept etcd heavily fragmented.
+defaultBackupStore:
+  backupTarget: s3://longhorn@us-east-1/
+  backupTargetCredentialSecret: minio
+  pollInterval: 3600
 longhornManager:
   priorityClass: longhorn-critical
   tolerations:
