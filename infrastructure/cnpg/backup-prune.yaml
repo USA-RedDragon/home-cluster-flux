@@ -98,7 +98,7 @@ spec:
             runAsUser: 65534
           containers:
             - name: prune
-              image: jacob.pub/docker.io/python:3.13-alpine@sha256:9b7c4b429185ca4a4454b6b67888b91e9c0b4d3432bde91a4fd3b30b681565ba
+              image: jacob.pub/docker.io/python:3.13-alpine@sha256:2d9aefe2fef018a7eb2c13064c89c71929800fd2e5dccdbf52ea5da5bb8d929a
               command: [python3, -u, /app/prune.py]
               securityContext:
                 readOnlyRootFilesystem: true
