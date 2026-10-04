@@ -26,7 +26,7 @@ spec:
               - device-plugin
               - intel-device-plugin
               - longhorn-system
-              - nvidia
+              - node-feature-discovery
               - scrypted
       validate:
         failureAction: Audit

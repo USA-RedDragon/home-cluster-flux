@@ -1,0 +1,24 @@
+image:
+  repository: jacob.pub/registry.k8s.io/nfd/node-feature-discovery
+
+master:
+  config:
+    extraLabelNs:
+      - nvidia.com
+
+worker:
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule
+  config:
+    sources:
+      pci:
+        deviceClassWhitelist:
+          - "02"
+          - "0200"
+          - "0207"
+          - "0300"
+          - "0302"
+        deviceLabelFields:
+          - vendor

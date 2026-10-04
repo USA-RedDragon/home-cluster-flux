@@ -1,12 +1,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: nvidia-device-plugin
-  namespace: nvidia
+  name: node-feature-discovery
+  namespace: node-feature-discovery
 spec:
   interval: 1h
-  targetNamespace: nvidia
-  path: ./infrastructure/nvidia-device-plugin/app
+  targetNamespace: node-feature-discovery
+  path: ./infrastructure/node-feature-discovery/app
   prune: true
   sourceRef:
     kind: GitRepository
