@@ -1038,10 +1038,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/modem-exporter/helm.yaml">modem-exporter</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/helm.yaml">pushgateway</a></td>
   </tr>
   <tr>
