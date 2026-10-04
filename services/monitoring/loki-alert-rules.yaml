@@ -116,6 +116,17 @@ data:
             annotations:
               summary: "TrueNAS storage event from {{ $labels.app }}"
               description: "ZFS pool/vdev state change or SMART failure on the NAS. Query: {host=\"truenas\", app=\"{{ $labels.app }}\"}"
+          # Cable modem health, from the router side. Nothing polls the Arris S33
+          # any more (HNAP scraping crashed it; modem-exporter removed 2026-10-04).
+          # Baseline without polling was one drop pair (10 min apart) in 5.6 days.
+          - alert: WANDropsRepeating
+            expr: |
+              sum(count_over_time({host="OpenWrt"} |= "Interface 'wan' has lost the connection" [24h])) >= 3
+            labels:
+              severity: warning
+            annotations:
+              summary: "WAN dropped {{ $value }} times in 24h"
+              description: "The cable modem keeps losing the link and nothing is polling it, so suspect modem firmware/hardware or Cox's plant (mid-split rollout). Give Cox the drop times from: {host=\"OpenWrt\"} |= \"Interface 'wan' has lost the connection\" (not the modem's DRW/T3 ranging messages, which are routine)."
 
       - name: log-apps
         rules:
