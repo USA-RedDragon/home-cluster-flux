@@ -1,0 +1,34 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: nvidia
+  namespace: gpu-operator
+spec:
+  interval: 1m0s
+  url: https://helm.ngc.nvidia.com/nvidia
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gpu-operator
+  namespace: gpu-operator
+spec:
+  install:
+    remediation:
+      retries: -1
+  interval: 1m0s
+  driftDetection:
+    mode: enabled
+  releaseName: gpu-operator
+  chart:
+    spec:
+      chart: gpu-operator
+      sourceRef:
+        kind: HelmRepository
+        name: nvidia
+      version: 'v26.7.1'
+      interval: 1m0s
+  valuesFrom:
+    - kind: ConfigMap
+      name: chart-values
