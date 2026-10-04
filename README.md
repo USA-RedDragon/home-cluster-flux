@@ -851,14 +851,18 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="3">kube-system</td>
+    <td rowspan="4">kube-system</td>
     <td><code>CronJob</code></td>
     <td><a href="services/kube-system/etcd-backup.yaml">backup</a></td>
-    <td rowspan="3"></td>
+    <td rowspan="4"></td>
   </tr>
   <tr>
     <td><code>CronJob</code></td>
     <td><a href="services/kube-system/etcd-backup-prune.yaml">backup-prune</a></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/kube-system/etcd-defrag.yaml">etcd-defrag</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
