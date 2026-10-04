@@ -1741,7 +1741,12 @@ kubeEtcd:
 
   ## If your etcd is not deployed as a pod, specify IPs it can be found on
   ##
-  endpoints: []
+  # Talos runs etcd as a host service, not a pod; listen-metrics-urls in
+  # talos-configs serves plain-HTTP metrics on 2381 on each control plane.
+  endpoints:
+    - 192.168.1.249 # chi
+    - 192.168.1.250 # psi
+    - 192.168.1.251 # omega
   # - 10.141.4.22
   # - 10.141.4.23
   # - 10.141.4.24
