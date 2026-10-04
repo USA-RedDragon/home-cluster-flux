@@ -4,14 +4,13 @@ controllers:
   jellyfin:
     replicas: 1
     pod:
-      nodeSelector:
-        nvidia.com/gpu.product: NVIDIA-GeForce-RTX-2070
-      runtimeClassName: nvidia
       securityContext:
         runAsNonRoot: true
         runAsUser: 568
         runAsGroup: 568
         fsGroup: 568
+        # video and render groups, so uid 568 can open the Arc's /dev/dri nodes
+        supplementalGroups: [44, 109]
         fsGroupChangePolicy: OnRootMismatch
     containers:
       jellyfin:
@@ -26,7 +25,7 @@ controllers:
           limits:
             cpu: '4'
             memory: 15Gi
-            nvidia.com/gpu: 1
+            gpu.intel.com/i915: 1
         probes:
           liveness:
             enabled: true
@@ -45,10 +44,6 @@ controllers:
             value: https://jellyfin.mcswain.dev
           - name: JELLYFIN_FFmpeg__probesize
             value: 20M
-          - name: NVIDIA_VISIBLE_DEVICES
-            value: all
-          - name: NVIDIA_DRIVER_CAPABILITIES
-            value: all
           - name: JELLYFIN_LOG_DIR
             value: "/log"
           - name: TMPDIR
