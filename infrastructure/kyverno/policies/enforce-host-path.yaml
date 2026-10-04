@@ -24,6 +24,7 @@ spec:
             namespaces:
               - kube-system
               - device-plugin
+              - gpu-operator
               - intel-device-plugin
               - longhorn-system
               - node-feature-discovery

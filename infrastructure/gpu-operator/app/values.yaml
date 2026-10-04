@@ -1,0 +1,43 @@
+hostPaths:
+  driverInstallDir: /usr/local
+
+daemonsets:
+  tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule
+
+nfd:
+  enabled: false
+
+operator:
+  repository: jacob.pub/nvcr.io/nvidia
+
+validator:
+  repository: jacob.pub/nvcr.io/nvidia
+
+driver:
+  enabled: false
+
+toolkit:
+  enabled: false
+
+devicePlugin:
+  repository: jacob.pub/nvcr.io/nvidia
+
+gfd:
+  repository: jacob.pub/nvcr.io/nvidia
+
+dcgmExporter:
+  repository: jacob.pub/nvcr.io/nvidia/k8s
+
+migManager:
+  enabled: false
+
+vfioManager:
+  enabled: false
+
+ccManager:
+  enabled: false
