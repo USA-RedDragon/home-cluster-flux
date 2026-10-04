@@ -50,6 +50,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#frigate">frigate</a></li>
   <li><a href="#gittea">gittea</a></li>
   <li><a href="#golink">golink</a></li>
+  <li><a href="#gpu-operator">gpu-operator</a></li>
   <li><a href="#healthchecks">healthchecks</a></li>
   <li><a href="#http-logger">http-logger</a></li>
   <li><a href="#imagescraper-mesonet">imagescraper-mesonet</a></li>
@@ -614,6 +615,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/golink/restic.yaml">restic</a></td>
+  </tr>
+</table>
+
+<h4>gpu-operator</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>gpu-operator</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/gpu-operator/app/helm.yaml">gpu-operator</a></td>
+    <td></td>
   </tr>
 </table>
 
