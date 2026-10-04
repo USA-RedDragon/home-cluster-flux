@@ -13,6 +13,7 @@ defaultSettings:
   offlineReplicaRebuilding: true
   orphanResourceAutoDeletion: instance
   concurrentAutomaticEngineUpgradePerNodeLimit: 3
+  concurrentReplicaRebuildPerNodeLimit: 10
   # The backup target is the `default` BackupTarget CR
   # (s3://longhorn@us-east-1/, secret minio); 1.13 ignores
   # defaultSettings.backupTarget.
