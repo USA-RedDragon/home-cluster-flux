@@ -1029,10 +1029,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><a href="services/monitoring/helm.yaml">alloy-gateway</a></td>
   </tr>
   <tr>
-    <td><code>DaemonSet</code></td>
-    <td><a href="services/monitoring/freeze-catcher.yaml">freeze-catcher</a></td>
-  </tr>
-  <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/helm.yaml">loki</a></td>
   </tr>
