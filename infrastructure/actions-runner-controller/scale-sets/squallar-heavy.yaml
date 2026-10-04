@@ -24,7 +24,8 @@ spec:
   values:
     githubConfigSecret: github-app-squallar
     githubConfigUrl: "https://github.com/Squallar"
-    maxRunners: 10
+    # 2 CPU requested per runner; 4 keeps a CI burst from overcommitting the cluster.
+    maxRunners: 4
     containerMode:
       type: kubernetes-novolume
     template:
