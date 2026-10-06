@@ -57,7 +57,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: intel
-      version: '0.37.0'
+      version: '0.37.1'
       interval: 1m0s
   valuesFrom:
     - kind: ConfigMap
