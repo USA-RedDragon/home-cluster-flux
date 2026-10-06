@@ -73,15 +73,15 @@ spec:
             # on all resources; overutilized = above average + 10 on any.
             - name: LowNodeUtilization
               args:
+                # No pods threshold: the evicted pods are small, so pod count on
+                # the target fills up long before its CPU/memory do.
                 useDeviationThresholds: true
                 thresholds:
                   cpu: 10
                   memory: 10
-                  pods: 10
                 targetThresholds:
                   cpu: 10
                   memory: 10
-                  pods: 10
                 evictableNamespaces:
                   exclude:
                     - minecraft
