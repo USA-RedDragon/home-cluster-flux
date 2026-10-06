@@ -108,7 +108,7 @@ route:
       - meshmap.aredn.mcswain.dev
     rules:
       - backendRefs:
-          - name: meshmap
+          - identifier: meshmap
             port: 80
         matches:
           - path:
