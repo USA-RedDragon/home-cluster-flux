@@ -75,16 +75,6 @@
             "automerge": false
         },
         {
-            "description": "Avoid duplicate digest pinning in Cilium helm values",
-            "matchFileNames": [
-                "**/clusters/home/cilium/app/values.yaml"
-            ],
-            "matchManagers": [
-                "helm-values"
-            ],
-            "pinDigests": false
-        },
-        {
             "description": "prometheus-operator derives spec.version from the image tag and rejects a digest there, which silently halts reconciliation of the Prometheus and Alertmanager CRs (no ServiceMonitor or PrometheusRule changes get applied). The node-exporter subchart runs semverCompare on its tag, so a digest there fails every kube-prometheus-stack upgrade. Keep these tags bare; every other image in this chart pins normally.",
             "matchFileNames": [
                 "**/infrastructure/prometheus/app/values.yaml"
