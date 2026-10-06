@@ -75,10 +75,14 @@ securityContext:
       - SYS_ADMIN
       - SYS_RESOURCE
 
+# TEMPORARY step to 1.19.6: the agent sat on 1.18.5 since January because
+# Renovate bumped only the tag while this digest stayed pinned. Cilium upgrades
+# one minor at a time; next step removes this and the envoy override so the
+# 1.20.2 chart sets matched images.
 image:
   repository: "quay.io/cilium/cilium"
-  tag: "v1.20.2"
-  digest: "sha256:2c92fb05962a346eaf0ce11b912ba434dc10bd54b9989e970416681f4a069628"
+  tag: "v1.19.6"
+  digest: "sha256:0df5b2750b64c49843aba1d649e9eaf61467cb0645ad3171db6f6962c095ac92"
 
 priorityClassName: system-node-critical
 
@@ -127,5 +131,6 @@ hubble:
 envoy:
   image:
     repository: "quay.io/cilium/cilium-envoy"
-    tag: "v1.29.9-1728346947-0d05e48bfbb8c4737ec40d5781d970a550ed2bbd"
-    digest: "sha256:42614a44e508f70d03a04470df5f61e3cffd22462471a0be0544cf116f2c50ba"
+    # chart 1.19.6 default; TEMPORARY with the agent pin above
+    tag: "v1.36.9-1782267392-edeb3f2af56c37c407efa1f63f0b32f595399bbc"
+    digest: "sha256:767101fb8a5e38f055778cb43b7aa8eed80450b37f8121effac3d9de9e06dc99"
