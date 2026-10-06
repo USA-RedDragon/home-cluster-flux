@@ -110,3 +110,11 @@ spec:
                   verbs: ["get", "watch", "list"]
                   apiGroups: ["policy"]
                   resources: ["poddisruptionbudgets"]
+              # metricsCollector reads actual usage for LowNodeUtilization;
+              # the chart's role doesn't grant it.
+              - op: add
+                path: /rules/-
+                value:
+                  verbs: ["get", "list"]
+                  apiGroups: ["metrics.k8s.io"]
+                  resources: ["nodes", "pods"]
