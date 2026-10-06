@@ -103,7 +103,7 @@ route:
       - sfro-allsky.mcswain.dev
     rules:
       - backendRefs:
-          - name: viewer
+          - identifier: viewer
             port: 80
         matches:
           - path:

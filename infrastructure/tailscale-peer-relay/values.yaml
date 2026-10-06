@@ -92,5 +92,5 @@ route:
         sectionName: tailscale-peer-relay
     rules:
       - backendRefs:
-          - name: tailscale
+          - identifier: tailscale
             port: 40000
