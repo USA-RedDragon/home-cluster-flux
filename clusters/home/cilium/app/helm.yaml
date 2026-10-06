@@ -18,6 +18,8 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: cilium
+  # The agent DaemonSet rolls 2 nodes at a time; 5m (default) times out.
+  timeout: 15m
   install:
     remediation:
       retries: -1
