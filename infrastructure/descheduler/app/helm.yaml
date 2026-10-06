@@ -38,7 +38,12 @@ spec:
       policy.mcswain.dev/egress-coredns: "true"
       policy.mcswain.dev/egress-kubeapi: "true"
     deschedulerPolicy:
+      # Runs every 2 min, so keep each pass small and let it converge.
       maxNoOfPodsToEvictPerNamespace: 1
+      maxNoOfPodsToEvictPerNode: 2
+      maxNoOfPodsToEvictTotal: 4
+      # Control-plane nodes are tainted; don't let them skew the averages.
+      nodeSelector: "!node-role.kubernetes.io/control-plane"
       metricsCollector:
         enabled: true
       profiles:
@@ -63,16 +68,24 @@ spec:
             - name: RemovePodsViolatingNodeTaints
             - name: RemovePodsViolatingInterPodAntiAffinity
             - name: RemovePodsViolatingTopologySpreadConstraint
+            # Relative to the worker average (fixed 20% floors never matched: every
+            # worker sits at 60-99% requested). Underutilized = below average - 10
+            # on all resources; overutilized = above average + 10 on any.
             - name: LowNodeUtilization
               args:
+                useDeviationThresholds: true
                 thresholds:
-                  cpu: 20
-                  memory: 20
-                  pods: 20
+                  cpu: 10
+                  memory: 10
+                  pods: 10
                 targetThresholds:
-                  cpu: 70
-                  memory: 70
-                  pods: 90
+                  cpu: 10
+                  memory: 10
+                  pods: 10
+                evictableNamespaces:
+                  exclude:
+                    - minecraft
+                    - path-of-titans
           plugins:
             balance:
               enabled:
