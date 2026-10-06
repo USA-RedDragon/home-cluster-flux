@@ -293,6 +293,13 @@ alertmanager:
         matchers:
         - namespace="tfe"
         continue: false
+      # CI runners hit their CPU limit by design, and every ephemeral runner pod
+      # raised its own alert.
+      - receiver: "null"
+        matchers:
+        - alertname="CPUThrottlingHigh"
+        - namespace="actions-runners"
+        continue: false
       - receiver: 'metrics-actioner-webhook'
         continue: true
         matchers:
