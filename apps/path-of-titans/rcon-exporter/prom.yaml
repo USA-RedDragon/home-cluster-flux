@@ -6,12 +6,15 @@ spec:
   groups:
     - name: path-of-titans-rcon-integrity
       rules:
-        # Non-zero means the record format moved and every metric derived from
-        # it is suspect.
+        # Sustained failures mean the record format moved and every metric
+        # derived from it is suspect. A single player can produce a short burst
+        # on its own: on 2026-10-06 one who connected and never left the loading
+        # screen failed every poll for 8 minutes, then disconnected. A real format
+        # change fails every poll indefinitely, so require it to persist.
         - alert: PathOfTitansRCONParseFailures
           expr: |
             increase(pot_rcon_parse_failures_total[15m]) > 0
-          for: 0m
+          for: 15m
           labels:
             severity: warning
           annotations:
