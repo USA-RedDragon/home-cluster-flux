@@ -2,7 +2,8 @@
 # succeeding. KubeJobFailed only fires while a failed Job object exists, and
 # these Jobs are deleted an hour after finishing, so a backup can fail every
 # night unnoticed. The threshold follows the schedule: day-of-month
-# schedules are monthly.
+# schedules are monthly (35d), day-of-week schedules weekly (9d), the rest
+# daily (2d).
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -17,7 +18,13 @@ spec:
             (
               (time() - kube_cronjob_status_last_successful_time{cronjob=~".*(restic|backup).*"}) / 86400
                 > 2
-              and on (namespace, cronjob) kube_cronjob_info{schedule!~"\\S+ \\S+ [0-9].*"}
+              and on (namespace, cronjob) kube_cronjob_info{schedule!~"\\S+ \\S+ [0-9].*|\\S+ \\S+ \\* \\S+ [^*].*"}
+            )
+            or
+            (
+              (time() - kube_cronjob_status_last_successful_time{cronjob=~".*(restic|backup).*"}) / 86400
+                > 9
+              and on (namespace, cronjob) kube_cronjob_info{schedule=~"\\S+ \\S+ \\* \\S+ [^*].*"}
             )
             or
             (
