@@ -74,3 +74,15 @@ serviceMonitor:
         path: /metrics
         interval: 10s
         scrapeTimeout: 10s
+
+persistence:
+  # Upstream (docker-tar1090) marks every receiver.json field required, but
+  # readsb only writes dbServer with an aircraft DB, so telegraf dropped the
+  # whole readsb_receiver measurement and logged an error every gather.
+  telegraf-receiver:
+    type: configMap
+    name: telegraf-receiver
+    globalMounts:
+      - path: /etc/telegraf/telegraf.d/readsb_receiver_json.conf
+        subPath: readsb_receiver_json.conf
+        readOnly: true
