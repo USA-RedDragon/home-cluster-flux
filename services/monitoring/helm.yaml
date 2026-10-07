@@ -123,7 +123,7 @@ spec:
         kind: HelmRepository
         name: grafana-community
         namespace: flux-system
-      version: '18.13.8'
+      version: '18.14.0'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
