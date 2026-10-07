@@ -81,6 +81,10 @@ alloy:
           listen_address = "0.0.0.0"
           listen_port    = 3500
         }
+        // Keep the pusher's timestamps: by default every entry is restamped
+        // on arrival, so the observatory's parsed NINA/TS times (and anything
+        // caught up after an outage) landed at the time it reached the gateway.
+        use_incoming_timestamp = true
         forward_to = [loki.write.default.receiver]
       }
 
