@@ -53,8 +53,11 @@ configs:
       - match_common_labels:
           remediation: restart-trunk-recorder
         action: rollout-restart-deployment
+        # The trunk-recorder alerts aggregate away the namespace label, so it
+        # has to be given here or every restart fails "missing namespace option".
         options:
           deployment: trunk-recorder-app
+          namespace: trunk-recorder
       - match_common_labels:
           alertname: TargetDown
           job: aredn-manager
