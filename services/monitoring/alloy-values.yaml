@@ -106,6 +106,18 @@ alloy:
       loki.process "pod_logs" {
         stage.cri {}
 
+        // CNPG retention deletes each hourly Backup as it turns 28 days old,
+        // and the operator then logs the vanished object as a Reconciler error:
+        // one per database per hour. Drop only that exact shape; every other
+        // backup error (e.g. "instance manager was restarted during backup")
+        // still comes through.
+        stage.match {
+          selector = "{namespace=\"cnpg-system\"}"
+          stage.drop {
+            expression = `"msg":"Reconciler error","controller":"backup",.*"error":"terminal error: Backup\.postgresql\.cnpg\.io \\"[a-z0-9.-]+\\" not found"`
+          }
+        }
+
         stage.label_drop {
           values = ["filename"]
         }
