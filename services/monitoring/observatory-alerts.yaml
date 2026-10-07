@@ -1,0 +1,31 @@
+# The observatory PC's windows_exporter, scraped over the tailnet as job
+# node_exporter_astro (scrape config in the scrape-configs secret).
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: observatory
+  namespace: monitoring
+spec:
+  groups:
+    - name: observatory
+      rules:
+        - alert: ObservatoryUnreachable
+          expr: up{job="node_exporter_astro"} == 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Observatory PC unreachable for 15m"
+            description: "windows_exporter on the observatory PC has not answered for 15m: the PC is off, hung, or off the tailnet."
+        # NINA saves subs to C: before the uploader ships them, so a full disk
+        # stops imaging.
+        - alert: ObservatoryDiskFull
+          expr: |
+            windows_logical_disk_free_bytes{job="node_exporter_astro", volume="C:"}
+              / windows_logical_disk_size_bytes{job="node_exporter_astro", volume="C:"} < 0.10
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Observatory C: is {{ $value | humanizePercentage }} free"
+            description: "The observatory PC's C: drive is under 10% free. Check that nina-s3-uploader is uploading and cleaning up."
