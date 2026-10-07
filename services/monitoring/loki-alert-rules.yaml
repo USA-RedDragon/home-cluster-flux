@@ -138,6 +138,24 @@ data:
             annotations:
               summary: "Observatory SymmetricDS logged {{ $value }} errors in 30m"
               description: "Target Scheduler sync to astro-processing is failing repeatedly (often SQLITE_BUSY). Query: {job=\"observatory\", app=\"symmetricds\"} |= \" ERROR \""
+          # The AM5 refuses a sync more than a few degrees from where it thinks
+          # it points. On 2026-10-05/06 it had lost its position by ~20 deg:
+          # NINA still centred by offset, but flips and limits ran on the wrong
+          # position and a night of subs carried bogus header coordinates.
+          - alert: NINAMountSyncFailed
+            expr: sum(count_over_time({job="observatory", app="nina"} |= "Failed to SyncToCoordinates" [15m])) > 0
+            labels:
+              severity: critical
+            annotations:
+              summary: "Mount rejected {{ $value }} plate-solve syncs in 15m"
+              description: "The AM5 refused SyncToCoordinates after a solve: it has lost its home position (or the target is within 5 deg of the pole). Its flip and limit decisions are wrong until it is re-homed. Query: {job=\"observatory\", app=\"nina\"} |= \"SyncToCoordinates\""
+          - alert: NINAPlateSolveFailing
+            expr: sum(count_over_time({job="observatory", app="nina"} |= "Plate solve failed" [1h])) >= 20
+            labels:
+              severity: warning
+            annotations:
+              summary: "{{ $value }} plate solves failed in the last hour"
+              description: "Clouds, focus, or a mount far off target. Query: {job=\"observatory\", app=\"nina\"} |= \"Plate solve failed\""
           - alert: K8sWarningEventStorm
             expr: |
               sum by (namespace, reason) (count_over_time({job="kubernetes-events", type="Warning"} | json | __error__="" [15m])) > 20
