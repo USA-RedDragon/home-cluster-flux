@@ -1,0 +1,48 @@
+# BBR congestion control on public TCP listeners. Accepted connections inherit
+# it from the listening socket.
+#
+# Why: a remote Jellyfin stream (~58 Mbps HEVC, 60 ms RTT) kept buffering.
+# Each 3 s HLS segment is sent as a burst; with CUBIC, the occasional drop at
+# the router's CAKE shaper halved the window and the stream averaged 30-45
+# Mbps (TCP_INFO on Envoy's socket matched CAKE drops one for one, 2026-10-07).
+# BBR paces at the measured bottleneck instead of backing off on a single loss.
+#
+# TCP_CONGESTION is IPPROTO_TCP (6) / 13; "bbr" is built into the Talos kernel
+# and listed in net.ipv4.tcp_allowed_congestion_control, so the non-root Envoy
+# process may set it. buf_value is base64("bbr").
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyPatchPolicy
+metadata:
+  name: public-bbr
+  namespace: envoy-gateway-system
+spec:
+  type: JSONPatch
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: public
+  jsonPatches:
+    - type: "type.googleapis.com/envoy.config.listener.v3.Listener"
+      name: envoy-gateway-system/public/https
+      operation:
+        op: add
+        path: /socket_options/-
+        value:
+          description: TCP congestion control BBR
+          level: 6
+          name: 13
+          buf_value: YmJy
+          state: STATE_PREBIND
+    # The public iperf3 endpoint gets the same, so remote throughput tests
+    # measure what streaming traffic actually experiences.
+    - type: "type.googleapis.com/envoy.config.listener.v3.Listener"
+      name: envoy-gateway-system/public/iperf3
+      operation:
+        op: add
+        path: /socket_options/-
+        value:
+          description: TCP congestion control BBR
+          level: 6
+          name: 13
+          buf_value: YmJy
+          state: STATE_PREBIND
