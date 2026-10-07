@@ -7,7 +7,7 @@ controllers:
       rcon-exporter:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/path-rcon-exporter
-          tag: v0.0.6@sha256:0facc3c28966fabc8961dc73c7aecd4c2f3118895756b05cee66e74b44c78a15
+          tag: v0.0.7@sha256:021584bb2d28ca70ce1fe9a58012b786c0d40de5e5661e37e554e22099d72051
           pullPolicy: IfNotPresent
         env:
           - name: RCON_HOST
