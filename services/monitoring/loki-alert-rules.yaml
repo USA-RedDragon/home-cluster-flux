@@ -74,6 +74,27 @@ data:
         rules:
           # Grouped by root cause: one alert per unreachable NUT server (value =
           # number of clients affected), plus one for a driver with no UPS.
+          # The observatory PC's Alloy ships System-log warnings and errors as
+          # JSON. WHEA = machine-check / PCIe AER / memory errors reported by
+          # the firmware; "Error" level means uncorrected.
+          - alert: ObservatoryHardwareError
+            expr: |
+              sum by (levelText) (count_over_time({job="observatory", app="windows-system"}
+                | json | source="Microsoft-Windows-WHEA-Logger" [15m])) > 0
+            labels:
+              severity: critical
+            annotations:
+              summary: "Observatory PC logged a WHEA hardware error ({{ $labels.levelText }})"
+              description: "The firmware reported a CPU, memory or PCIe error on the observatory PC. Warning = corrected (watch for repeats), Error = uncorrected. Query: {job=\"observatory\", app=\"windows-system\"} | json | source=\"Microsoft-Windows-WHEA-Logger\""
+          - alert: ObservatoryStorageErrors
+            expr: |
+              sum by (source, event_id) (count_over_time({job="observatory", app="windows-system"}
+                | json | source=~"disk|Ntfs|Microsoft-Windows-Ntfs|volmgr|rcraid|rcbottom|stornvme|storahci|Microsoft-Windows-StorPort|Microsoft-Windows-Disk" [15m])) > 0
+            labels:
+              severity: critical
+            annotations:
+              summary: "Observatory PC storage error: {{ $labels.source }} event {{ $labels.event_id }}"
+              description: "Disk, RAID driver or filesystem errors on the observatory PC (its C: is an AMD RAID1). Query: {job=\"observatory\", app=\"windows-system\"} | json | source=\"{{ $labels.source }}\""
           - alert: UPSServerUnreachable
             expr: |
               count by (ups_server) (sum by (ups_server, node, host) (count_over_time({job=~"talos|syslog"}

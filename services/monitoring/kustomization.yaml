@@ -15,6 +15,7 @@ resources:
   - node-disk-alerts.yaml
   - etcd-alerts.yaml
   - observatory-svc.yaml
+  - observatory-alerts.yaml
   - thanos-prom.yaml
 configMapGenerator:
   - name: querier-chart-values
