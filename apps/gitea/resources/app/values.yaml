@@ -1,0 +1,281 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  gitea:
+    replicas: 1
+    containers:
+      gitea:
+        image:
+          repository: jacob.pub/docker.gitea.com/gitea
+          tag: 1.26.2@sha256:7d13848af12645600a5f9d93ee2560daa9c6fa6b5b859b7bff3a5e1c0b661031
+          pullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 4Gi
+          requests:
+            memory: 3Gi
+            cpu: 500m
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        env:
+          - name: GITEA__GIT_0x2E_TIMEOUT__MIGRATE
+            value: "1200"
+          - name: GITEA__GIT_0x2E_TIMEOUT__MIRROR
+            value: "1200"
+          - name: GITEA__GIT_0x2E_TIMEOUT__PULL
+            value: "1200"
+          - name: GITEA__GIT_0x2E_TIMEOUT__CLONE
+            value: "1200"
+          - name: GITEA__GIT_0x2E_TIMEOUT__DEFAULT
+            value: "1200"
+          - name: GITEA__GIT_0x2E_TIMEOUT__GC
+            value: "1200"
+          - name: GITEA__METRICS__ENABLED
+            value: "true"
+          - name: GITEA__METRICS__ENABLED_ISSUE_BY_LABEL
+            value: "true"
+          - name: GITEA__METRICS__ENABLED_ISSUE_BY_REPOSITORY
+            value: "true"
+          - name: GITEA__SERVICE__REQUIRE_SIGNIN_VIEW
+            value: "false"
+          - name: GITEA__SERVICE__DISABLE_REGISTRATION
+            value: "true"
+          - name: GITEA__REPOSITORY__DEFAULT_PRIVATE
+            value: private
+          # Real client IPs from envoy / anubis (pod CIDR).
+          - name: GITEA__SECURITY__REVERSE_PROXY_TRUSTED_PROXIES
+            value: 172.17.0.0/16
+          - name: GITEA__OTHER__SHOW_FOOTER_TEMPLATE_LOAD_TIME
+            value: "false"
+          - name: GITEA__INDEXER__REPO_INDEXER_ENABLED
+            value: "true"
+          - name: GITEA__SERVER__DOMAIN
+            value: git.mcswain.dev
+          - name: GITEA__SERVER__ROOT_URL
+            value: https://git.mcswain.dev
+          - name: GITEA__SERVER__SSH_DOMAIN
+            value: git.mcswain.dev
+          - name: GITEA__MIGRATIONS__ALLOWED_DOMAINS
+            value: "github.com,*.github.com,gitlab.com,*.gitlab.com,bitbucket.org,*.bitbucket.org"
+          - name: GITEA__DATABASE__DB_TYPE
+            value: postgres
+          - name: GITEA__DATABASE__HOST
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: host
+          - name: GITEA__DATABASE__NAME
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: dbname
+          - name: GITEA__DATABASE__USER
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: username
+          - name: GITEA__DATABASE__PASSWD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: password
+          - name: GITEA__OPENID__ENABLE_OPENID_SIGNIN
+            value: "false"
+
+  anubis:
+    replicas: 1
+    containers:
+      anubis:
+        image:
+          repository: jacob.pub/ghcr.io/techarohq/anubis
+          tag: v1.27.0@sha256:8828275668b7bc675679f100970f9714f731388fbbf66ae94de8aca952e3fc4a
+          pullPolicy: IfNotPresent
+        env:
+          - name: BIND
+            value: ":8923"
+          - name: METRICS_BIND
+            value: ":9090"
+          - name: TARGET
+            value: http://gitea:3000
+          - name: SERVE_ROBOTS_TXT
+            value: "true"
+          - name: POLICY_FNAME
+            value: /data/cfg/botPolicy.yaml
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+        probes:
+          liveness: &anubis-probe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 9090
+          readiness: *anubis-probe
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: [ALL]
+
+service:
+  gitea:
+    controller: gitea
+    ports:
+      http:
+        port: 3000
+      ssh:
+        port: 22
+  anubis:
+    controller: anubis
+    ports:
+      web:
+        port: 8923
+      metrics:
+        port: 9090
+
+configMaps:
+  anubis-policy:
+    data:
+      botPolicy.yaml: |
+        bots:
+          - import: (data)/bots/_deny-pathological.yaml
+          - import: (data)/meta/ai-block-aggressive.yaml
+          - import: (data)/crawlers/_allow-good.yaml
+          - import: (data)/common/keep-internet-working.yaml
+          - import: (data)/clients/git.yaml
+          - import: (data)/apps/gitea-rss-feeds.yaml
+          # clients/git.yaml wants exact Accept/Pragma headers; let any smart-HTTP clone through.
+          - name: git-smart-http
+            path_regex: ^/.+/(info/refs|git-upload-pack|git-receive-pack)$
+            action: ALLOW
+          - name: gitea-api
+            path_regex: ^/api/
+            action: ALLOW
+          - name: generic-browser
+            user_agent_regex: Mozilla|Opera
+            action: CHALLENGE
+
+persistence:
+  data:
+    enabled: true
+    type: nfs
+    path: /mnt/data/git
+    server: 192.168.1.135
+    advancedMounts:
+      gitea:
+        gitea:
+          - path: /data
+  anubis-policy:
+    enabled: true
+    type: configMap
+    identifier: anubis-policy
+    advancedMounts:
+      anubis:
+        anubis:
+          - path: /data/cfg
+            readOnly: true
+
+route:
+  # LAN: internal gateway straight to gitea. Also what AdGuard resolves git.mcswain.dev to.
+  gitea:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - git.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: gitea
+            port: 3000
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+        timeouts:
+          request: 24h
+          backendRequest: 23h
+  git:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: git-ssh
+    rules:
+      - backendRefs:
+          - name: gitea
+            port: 22
+  # Public web: internet -> anubis -> gitea. Off until repo visibility has been reviewed.
+  gitea-public:
+    enabled: false
+    kind: HTTPRoute
+    annotations:
+      # internal external-dns would otherwise point AdGuard at the public gateway too; keep LAN on the internal one (no anubis).
+      external-dns.alpha.kubernetes.io/target: 192.168.254.253
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - git.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: gitea-anubis
+            port: 8923
+        filters:
+          # anubis 500s without X-Real-IP; set (not add) so clients can't spoof it.
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+                - name: X-Real-IP
+                  value: "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%"
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+        timeouts:
+          request: 24h
+          backendRequest: 23h
+  # Public SSH. Off until repo visibility has been reviewed.
+  git-public:
+    enabled: false
+    kind: TCPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: git-ssh
+    rules:
+      - backendRefs:
+          - name: gitea
+            port: 22
+
+serviceMonitor:
+  gitea:
+    serviceName: gitea
+    endpoints:
+      - port: http
+        scheme: http
+        path: /metrics
+        interval: 30s
+        scrapeTimeout: 10s
+  anubis:
+    serviceName: gitea-anubis
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 30s
+        scrapeTimeout: 10s
