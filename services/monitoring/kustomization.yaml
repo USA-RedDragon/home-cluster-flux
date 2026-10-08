@@ -18,6 +18,8 @@ resources:
   - observatory-alerts.yaml
   - nut-exporter-helm.yaml
   - ups-alerts.yaml
+  - snmp-exporter-helm.yaml
+  - switch-alerts.yaml
   - thanos-prom.yaml
 configMapGenerator:
   - name: querier-chart-values
@@ -47,5 +49,8 @@ configMapGenerator:
   - name: nut-exporter-chart-values
     files:
       - values.yaml=nut-exporter-values.yaml
+  - name: snmp-exporter-chart-values
+    files:
+      - values.yaml=snmp-exporter-values.yaml
 configurations:
   - kustomizeconfig.yaml

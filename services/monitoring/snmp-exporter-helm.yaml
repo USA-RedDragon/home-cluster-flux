@@ -1,0 +1,27 @@
+# Prometheus SNMP exporter for the MikroTik SwOS switches. Scraped per switch
+# by the ScrapeConfig in switch-alerts.yaml (/snmp?target=...&module=...).
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: snmp-exporter
+  namespace: monitoring
+spec:
+  install:
+    remediation:
+      retries: -1
+  interval: 60m0s
+  driftDetection:
+    mode: enabled
+  releaseName: snmp-exporter
+  chart:
+    spec:
+      chart: prometheus-snmp-exporter
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+      version: '9.18.1'
+      interval: 60m0s
+  valuesFrom:
+    - kind: ConfigMap
+      name: snmp-exporter-chart-values
