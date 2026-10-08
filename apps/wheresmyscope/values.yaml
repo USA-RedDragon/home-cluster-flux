@@ -17,7 +17,7 @@ controllers:
       wheresmyscope:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/wheresmyscope
-          tag: v1.1.0@sha256:d36176bc8c45471002c86da85946744444ed008bd11f11cc49a93f567cd9a640
+          tag: v1.0.1@sha256:3c44f72725ffd4ee3d3fd7b221ed8247cbdf8e2466e4b9adbc23a091d1c0db9f
           pullPolicy: IfNotPresent
         resources:
           requests:
@@ -41,13 +41,6 @@ controllers:
             value: "480"
           - name: IMAGE_WIDTH
             value: "800"
-          # While the observatory images the target, show its newest accepted
-          # sub (astro-stacker's watermarked public frame, polled and cached
-          # here, served at /image.jpg) instead of the survey cutout. The
-          # egress policy below already allows in-cluster pods, and
-          # astro-stacker has no ingress policy.
-          - name: PUBLIC_FRAME_STACKER_URL
-            value: http://astro-stacker.astro-processing.svc.cluster.local:8080
         envFrom:
           - secretRef:
               name: wheresmyscope

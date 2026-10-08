@@ -19,7 +19,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:9f44e4ccdd1580b6b8d3a61d8991c1843994d770c6f0c82ef5d53de88d8019e2"
+          tag: "beta@sha256:06fee464bc43244a3cd1c8fbdc8102e225e656325f8343f4358f3928f70aeae4"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -113,13 +113,6 @@ controllers:
           # with STACKING_TS_VERDICTS_TARGETS (comma separated) or _SINCE.
           STACKING_TS_VERDICTS:
             value: "on"
-          # The public site's frame of each recently imaged target's newest
-          # accepted light: small, stretched, watermarked JPEGs rendered in
-          # the background into astro-processed/public/, served (stored bytes
-          # only) at /api/v1/public-light.jpg for wheresmyscope in the
-          # cluster. Not on any gateway route.
-          PUBLIC_FRAMES_ENABLED:
-            value: "true"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
