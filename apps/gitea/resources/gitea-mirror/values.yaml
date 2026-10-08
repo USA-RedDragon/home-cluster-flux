@@ -64,7 +64,8 @@ controllers:
             cpu: 20m
             memory: 256Mi
           limits:
-            memory: 1Gi
+            # Release assets are buffered in memory; astro.garden-images has ~1GB tarballs (OOMKilled at 1Gi).
+            memory: 4Gi
         probes:
           liveness: &probe
             enabled: true
