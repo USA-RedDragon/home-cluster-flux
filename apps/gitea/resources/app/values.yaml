@@ -223,8 +223,8 @@ route:
     enabled: true
     kind: HTTPRoute
     annotations:
-      # internal external-dns would otherwise point AdGuard at the public gateway too; keep LAN on the internal one (no anubis).
-      external-dns.alpha.kubernetes.io/target: 192.168.254.253
+      # Keep it out of AdGuard so LAN resolves to the internal route only (no anubis).
+      external-dns.mcswain.dev/internal: skip
     parentRefs:
       - name: public
         namespace: envoy-gateway-system
