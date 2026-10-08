@@ -1,0 +1,206 @@
+# CrowdSec: detection from Loki (no node log tailing), decisions enforced at the edges
+# (OpenWrt firewall bouncer for every WAN port-forward; the VPS runs its own bouncer).
+#
+# Sources:
+#   - public Envoy access logs: HTTP routes go through the hub HTTP scenarios, TCP/UDP routes
+#     through mcswain/envoy-l4-flood
+#   - router kernel log: "cs-dnat:" new connections to port-forwards that bypass Envoy
+#     (router-dnat-flood) and fw4 WAN rejects (hub iptables port-scan scenarios)
+#
+# SIMULATION MODE: local scenarios only log what they would ban. Community blocklist (CAPI)
+# decisions are real, so the router bouncer stays disabled until the dry run has been reviewed.
+
+container_runtime: containerd
+
+image:
+  repository: jacob.pub/docker.io/crowdsecurity/crowdsec
+  tag: v1.8.1@sha256:0f2523fa61ef507f15d953045cface490cc880670c62f2755ced17524107f71a
+  kubectl:
+    repository: jacob.pub/docker.io/alpine/kubectl
+    tag: 1.37.1@sha256:b57b3bd3cd9f4f02dd444281857126aa78efa4b7b7e6ec57579dd927bf146fc3
+
+config:
+  simulation.yaml: |
+    simulation: true
+
+  parsers:
+    s01-parse:
+      mcswain-envoy-gateway.yaml: |
+        name: mcswain/envoy-gateway-logs
+        description: "Envoy Gateway JSON access logs from the public gateway (HTTP, TCP and UDP routes)"
+        filter: |
+          evt.Parsed.program == 'envoy-gateway' &&
+          UnmarshalJSON(evt.Parsed.message, evt.Unmarshaled, 'envoy') in ['', nil] &&
+          evt.Unmarshaled.envoy.downstream_remote_address != nil
+        onsuccess: next_stage
+        nodes:
+          - grok:
+              # "1.2.3.4:5678" or "[2001:db8::1]:5678"
+              pattern: '^\[?%{IP:remote_addr}\]?:%{INT:remote_port}$'
+              expression: evt.Unmarshaled.envoy.downstream_remote_address
+            nodes:
+              - filter: "evt.Unmarshaled.envoy.method != nil"
+                statics:
+                  - meta: log_type
+                    value: http_access-log
+                  - meta: service
+                    value: http
+                  - parsed: verb
+                    expression: evt.Unmarshaled.envoy.method
+                  - meta: http_verb
+                    expression: evt.Unmarshaled.envoy.method
+                  - parsed: request
+                    expression: evt.Unmarshaled.envoy["x-envoy-origin-path"] ?? "/"
+                  - meta: http_path
+                    expression: evt.Parsed.request
+                  - parsed: status
+                    expression: Sprintf("%v", evt.Unmarshaled.envoy.response_code)
+                  - meta: http_status
+                    expression: evt.Parsed.status
+                  - parsed: http_user_agent
+                    expression: evt.Unmarshaled.envoy["user-agent"] ?? ""
+                  - meta: http_user_agent
+                    expression: evt.Parsed.http_user_agent
+                  - meta: target_fqdn
+                    expression: evt.Unmarshaled.envoy[":authority"] ?? ""
+              - filter: "evt.Unmarshaled.envoy.method == nil"
+                statics:
+                  - meta: log_type
+                    value: envoy_l4
+                  # e.g. tcproute/gitea/gitea-git-public/rule/-1
+                  - meta: service
+                    expression: evt.Unmarshaled.envoy.upstream_cluster ?? "no-route"
+        statics:
+          - meta: source_ip
+            expression: evt.Parsed.remote_addr
+          - target: evt.StrTime
+            expression: evt.Unmarshaled.envoy.start_time
+
+    s02-enrich:
+      mcswain-whitelists.yaml: |
+        name: mcswain/whitelists
+        description: "Trusted sources: tailnet, home WAN, GitHub webhooks (private ranges are covered by crowdsecurity/whitelists)"
+        whitelist:
+          reason: "trusted source"
+          cidr:
+            - 100.64.0.0/10
+            - fd7a:115c:a1e0::/48
+            - 68.12.95.206/32
+            # GitHub webhook deliveries (api.github.com/meta "hooks")
+            - 192.30.252.0/22
+            - 185.199.108.0/22
+            - 140.82.112.0/20
+            - 143.55.64.0/20
+            - 9.234.98.160/27
+            - 9.234.106.48/28
+            - 2a0a:a440::/29
+            - 2606:50c0::/32
+
+  scenarios:
+    mcswain-envoy-l4-flood.yaml: |
+      type: leaky
+      name: mcswain/envoy-l4-flood
+      description: "Many TCP/UDP sessions from one IP to one non-HTTP public route (SSH, DMR, Reticulum, ...)"
+      filter: "evt.Meta.log_type == 'envoy_l4'"
+      groupby: "evt.Meta.source_ip + '/' + evt.Meta.service"
+      capacity: 40
+      leakspeed: 15s
+      blackhole: 5m
+      labels:
+        remediation: true
+        service: envoy
+        confidence: 2
+        spoofable: 0
+        behavior: "tcp:bruteforce"
+        label: "Connection flood on a TCP/UDP route"
+        classification:
+          - attack.T1110
+    mcswain-router-dnat-flood.yaml: |
+      type: leaky
+      name: mcswain/router-dnat-flood
+      description: "Many new connections from one IP to one router port-forward that bypasses Envoy"
+      filter: "evt.Parsed.program == 'kernel' && evt.Parsed.message contains 'cs-dnat:' && evt.Meta.source_ip != ''"
+      groupby: "evt.Meta.source_ip + '/' + evt.Parsed.dst_port"
+      capacity: 40
+      leakspeed: 15s
+      blackhole: 5m
+      labels:
+        remediation: true
+        service: router
+        confidence: 2
+        spoofable: 0
+        behavior: "tcp:bruteforce"
+        label: "Connection flood on a port-forward"
+        classification:
+          - attack.T1110
+
+agent:
+  # Reads from Loki, so one replica instead of a DaemonSet tailing node logs.
+  isDeployment: true
+  replicas: 1
+  # Logs come from Loki; no node log mounts.
+  hostVarLog: false
+  additionalAcquisition:
+    - source: loki
+      url: http://loki.monitoring.svc.cluster.local:3100
+      query: '{namespace="envoy-gateway-system", container="envoy", pod=~"envoy-envoy-gateway-system-public-.*"}'
+      wait_for_ready: 10s
+      labels:
+        type: envoy-gateway
+    - source: loki
+      url: http://loki.monitoring.svc.cluster.local:3100
+      query: '{job="syslog", host="OpenWrt", app="kernel"} |~ "cs-dnat: |reject wan|drop wan"'
+      wait_for_ready: 10s
+      labels:
+        type: kernel
+  env:
+    - name: COLLECTIONS
+      value: "crowdsecurity/base-http-scenarios crowdsecurity/http-cve crowdsecurity/iptables crowdsecurity/whitelist-good-actors"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+lapi:
+  replicas: 1
+  env:
+    # Pre-registered bouncers (key = what the bouncer is configured with).
+    - name: BOUNCER_KEY_router
+      valueFrom:
+        secretKeyRef:
+          name: crowdsec-bouncers
+          key: router
+  persistentVolume:
+    data:
+      enabled: true
+      storageClassName: longhorn-nvme
+      size: 1Gi
+    config:
+      enabled: true
+      storageClassName: longhorn-nvme
+      size: 100Mi
+  service:
+    # Bouncers on the router (and anything else on the LAN) reach LAPI here.
+    type: LoadBalancer
+    loadBalancerClass: metallb
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: 192.168.254.14
+    externalTrafficPolicy: Local
+  dashboard:
+    enabled: false
+  resources:
+    requests:
+      cpu: 20m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
