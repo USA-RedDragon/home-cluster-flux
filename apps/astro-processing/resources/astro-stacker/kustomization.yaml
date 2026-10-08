@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: astro-processing
 resources:
   - helm.yaml
+  - httproute-latest-light.yaml
 configMapGenerator:
   - name: astro-stacker-chart-values
     files:

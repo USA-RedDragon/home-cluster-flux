@@ -1,0 +1,22 @@
+# The newest light's preview, for Home Assistant's "Last Image" camera. HA
+# can't reach the tailnet ingress, so this one path is served on the LAN-only
+# internal gateway. Nothing else of the stacker's API is exposed here.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: astro-stacker-latest-light
+spec:
+  parentRefs:
+    - name: internal
+      namespace: envoy-gateway-system
+  hostnames:
+    - astro-stacker.mcswain.internal
+  rules:
+    - matches:
+        - path:
+            type: Exact
+            value: /api/v1/latest-light.jpg
+          method: GET
+      backendRefs:
+        - name: astro-stacker
+          port: 8080
