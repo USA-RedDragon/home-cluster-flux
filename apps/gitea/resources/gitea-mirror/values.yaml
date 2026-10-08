@@ -2,6 +2,7 @@
 
 # GitHub -> gitea pull mirrors. Force-push protection (bundle before a rewriting sync) is configured
 # in the UI: Configuration -> Connections -> Destructive Update Protection. Defaults to on-force-push.
+# Needs a classic PAT (repo, read:org): fine-grained tokens cover only one owner.
 # NOTE: it deletes a same-named non-mirror gitea repo when it creates the mirror. Old repos whose
 # history GitHub no longer has live in the usa-reddragon-archive org for that reason.
 defaultPodOptions:
@@ -35,7 +36,13 @@ controllers:
           MIRROR_STARRED: "false"
           GITEA_URL: http://gitea:3000
           GITEA_USERNAME: USA-RedDragon
-          MIRROR_STRATEGY: flat-user
+          # Personal repos under GITEA_USERNAME, org repos into same-named gitea orgs.
+          MIRROR_STRATEGY: preserve
+          MIRROR_ORGANIZATIONS: "true"
+          # Allowlist; the classic PAT can also see hashicorp and the ROM orgs.
+          INCLUDE_ORGANIZATIONS: SRS-Hosting,Squallar,AstroGardenLLC,kubewg-net,USA-RedDragon-ORG
+          # Orgs public; repo visibility follows GitHub per repo.
+          GITEA_ORG_VISIBILITY: public
           GITEA_MIRROR_INTERVAL: 8h
           SCHEDULE_ENABLED: "true"
           AUTO_IMPORT_REPOS: "true"
