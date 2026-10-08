@@ -95,6 +95,23 @@ data:
             annotations:
               summary: "Observatory PC storage error: {{ $labels.source }} event {{ $labels.event_id }}"
               description: "Disk, RAID driver or filesystem errors on the observatory PC (its C: is an AMD RAID1). Query: {job=\"observatory\", app=\"windows-system\"} | json | source=\"{{ $labels.source }}\""
+          # Daily at 13:00 as SYSTEM on the observatory PC
+          # (C:\ProgramData\restic\backup.ps1), to B2 k8s/observatory.
+          - alert: ObservatoryBackupFailed
+            expr: sum(count_over_time({job="observatory", app="restic"} |= "restic backup FAILED" [1h])) > 0
+            labels:
+              severity: warning
+            annotations:
+              summary: "Observatory PC backup failed"
+              description: "The observatory's restic backup failed. Query: {job=\"observatory\", app=\"restic\"}"
+          - alert: ObservatoryBackupMissing
+            expr: absent_over_time({job="observatory", app="restic"} |= "restic backup ok" [36h])
+            for: 30m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Observatory PC has not backed up in 36h"
+              description: "No successful restic backup from the observatory PC in 36h. Check the 'restic backup' scheduled task and C:\\ProgramData\\restic\\logs\\restic.log."
           - alert: UPSServerUnreachable
             expr: |
               count by (ups_server) (sum by (ups_server, node, host) (count_over_time({job=~"talos|syslog"}
