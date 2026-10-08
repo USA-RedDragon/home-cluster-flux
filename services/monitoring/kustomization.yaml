@@ -16,6 +16,8 @@ resources:
   - etcd-alerts.yaml
   - observatory-svc.yaml
   - observatory-alerts.yaml
+  - nut-exporter-helm.yaml
+  - ups-alerts.yaml
   - thanos-prom.yaml
 configMapGenerator:
   - name: querier-chart-values
@@ -42,5 +44,8 @@ configMapGenerator:
   - name: alloy-gateway-chart-values
     files:
       - values.yaml=alloy-gateway-values.yaml
+  - name: nut-exporter-chart-values
+    files:
+      - values.yaml=nut-exporter-values.yaml
 configurations:
   - kustomizeconfig.yaml

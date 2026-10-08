@@ -138,6 +138,18 @@ data:
             annotations:
               summary: "Observatory PC has not backed up in 36h"
               description: "No successful restic backup from the observatory PC in 36h. Check the 'restic backup' scheduled task and C:\\ProgramData\\restic\\logs\\restic.log."
+          # NUT on the observatory PC (C:\ProgramData\ups-shutdown\logs\ups.log).
+          # Shutdown lines are written as the PC goes down and may only reach
+          # Loki after it boots again (Alloy keeps its place in the file, and
+          # the timestamp stage keeps their real time), hence the long window;
+          # the RECOVERED line is written at that next boot.
+          - alert: ObservatoryUPSShutdown
+            expr: sum by (event) (count_over_time({job="observatory", app="ups"} |~ " ups (FSD|SHUTDOWN|RECOVERED) " | regexp " ups (?P<event>[A-Z]+) " [6h])) > 0
+            labels:
+              severity: critical
+            annotations:
+              summary: "Observatory UPS shutdown ({{ $labels.event }})"
+              description: "The observatory PC was shut down by NUT after a power cut (or is back after one). Sequence: {job=\"observatory\", app=\"ups\"}"
           - alert: UPSServerUnreachable
             expr: |
               count by (ups_server) (sum by (ups_server, node, host) (count_over_time({job=~"talos|syslog"}
