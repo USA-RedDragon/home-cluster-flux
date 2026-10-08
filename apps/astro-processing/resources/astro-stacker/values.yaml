@@ -118,7 +118,7 @@ controllers:
           # the background into astro-processed/public/, served (stored bytes
           # only) at /api/v1/public-light.jpg for wheresmyscope in the
           # cluster. Not on any gateway route.
-          PUBLIC_FRAMES_ENABLED:
+          PUBLICFRAMES_ENABLED:
             value: "true"
           S3_ACCESS_KEY:
             secretKeyRef:
