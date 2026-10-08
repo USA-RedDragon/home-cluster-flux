@@ -198,6 +198,8 @@ configMaps:
             location ~ ^/check(?<orig>/.*)?$ {
               proxy_set_header X-Forwarded-Uri $orig$is_args$args;
               proxy_set_header X-Forwarded-Host $host;
+              # policy expressions match on `host`; nginx would otherwise send 127.0.0.1:8923
+              proxy_set_header Host $host;
               proxy_set_header X-Forwarded-Proto https;
               proxy_set_header X-Real-IP $http_x_envoy_external_address;
               proxy_set_header Content-Length "";
