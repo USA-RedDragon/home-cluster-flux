@@ -176,6 +176,11 @@ lapi:
         secretKeyRef:
           name: crowdsec-bouncers
           key: router
+    - name: BOUNCER_KEY_vps
+      valueFrom:
+        secretKeyRef:
+          name: crowdsec-bouncers
+          key: vps
   persistentVolume:
     data:
       enabled: true
