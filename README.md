@@ -25,6 +25,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
 <ul>
   <li><a href="#actions-cache">actions-cache</a></li>
   <li><a href="#actions-runner-controller">actions-runner-controller</a></li>
+  <li><a href="#anubis">anubis</a></li>
   <li><a href="#apprise">apprise</a></li>
   <li><a href="#aredn">aredn</a></li>
   <li><a href="#aredn-dmrhub">aredn-dmrhub</a></li>
@@ -154,6 +155,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/actions-runner-controller/scale-sets/squallar-lite.yaml">squallar-runner-set-lite</a></td>
+  </tr>
+</table>
+
+<h4>anubis</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>anubis</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/anubis/resources/app/helm.yaml">anubis</a></td>
+    <td></td>
   </tr>
 </table>
 
