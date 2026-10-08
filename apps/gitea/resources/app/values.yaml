@@ -89,51 +89,6 @@ controllers:
           - name: GITEA__OPENID__ENABLE_OPENID_SIGNIN
             value: "false"
 
-  anubis:
-    replicas: 1
-    containers:
-      anubis:
-        image:
-          repository: jacob.pub/ghcr.io/techarohq/anubis
-          tag: v1.28.0@sha256:48deacf791149e27c2cf6f5d8b4243e1a3db7a5816a168de0af6e58d9a519e2e
-          pullPolicy: IfNotPresent
-        env:
-          - name: BIND
-            value: ":8923"
-          - name: METRICS_BIND
-            value: ":9090"
-          - name: TARGET
-            value: http://gitea:3000
-          - name: SERVE_ROBOTS_TXT
-            value: "true"
-          - name: POLICY_FNAME
-            value: /data/cfg/botPolicy.yaml
-          - name: REDIRECT_DOMAINS
-            value: git.mcswain.dev
-        envFrom:
-          # ED25519_PRIVATE_KEY_HEX: fixed key so passes survive restarts.
-          - secretRef:
-              name: gitea-anubis
-        resources:
-          requests:
-            cpu: 10m
-            memory: 64Mi
-          limits:
-            memory: 256Mi
-        probes:
-          liveness: &anubis-probe
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /healthz
-                port: 9090
-          readiness: *anubis-probe
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop: [ALL]
 
 service:
   gitea:
@@ -143,55 +98,7 @@ service:
         port: 3000
       ssh:
         port: 22
-  anubis:
-    controller: anubis
-    ports:
-      web:
-        port: 8923
-      metrics:
-        port: 9090
 
-configMaps:
-  anubis-policy:
-    data:
-      botPolicy.yaml: |
-        bots:
-          - import: (data)/bots/_deny-pathological.yaml
-          - import: (data)/meta/ai-block-aggressive.yaml
-          - import: (data)/crawlers/_allow-good.yaml
-          - import: (data)/common/keep-internet-working.yaml
-          - import: (data)/clients/git.yaml
-          - import: (data)/apps/gitea-rss-feeds.yaml
-          # git over smart HTTP and LFS: cheap, and git clients can't solve a challenge.
-          # clients/git.yaml wants exact Accept/Pragma headers; let any smart-HTTP clone through.
-          - name: git-smart-http
-            path_regex: ^/[^/]+/[^/]+/(info/refs|git-upload-pack|git-receive-pack)$
-            action: ALLOW
-          - name: git-lfs
-            path_regex: ^/[^/]+/[^/]+\.git/info/lfs/
-            action: ALLOW
-          # The API serves file contents, commits and diffs, so anonymous use would be a
-          # challenge-free way to crawl. Credentials pass; anonymous callers must be a browser
-          # that already holds a pass (the web UI), which other clients can't get.
-          - name: gitea-api-authenticated
-            action: ALLOW
-            expression:
-              all:
-                - path.startsWith("/api/")
-                - '"Authorization" in headers'
-          - name: gitea-api-version
-            path_regex: ^/api/v1/version$
-            action: ALLOW
-          - name: gitea-api-anonymous
-            path_regex: ^/api/
-            action: CHALLENGE
-          # Pages that are expensive to render: challenge every client, not just browsers.
-          - name: gitea-expensive
-            path_regex: ^/[^/]+/[^/]+/(commits?|blame|compare|archive|graph|activity|src/commit|raw/commit)(/|$)
-            action: CHALLENGE
-          - name: generic-browser
-            user_agent_regex: Mozilla|Opera
-            action: CHALLENGE
 
 persistence:
   data:
@@ -203,15 +110,6 @@ persistence:
       gitea:
         gitea:
           - path: /data
-  anubis-policy:
-    enabled: true
-    type: configMap
-    identifier: anubis-policy
-    advancedMounts:
-      anubis:
-        anubis:
-          - path: /data/cfg
-            readOnly: true
 
 route:
   # LAN: internal gateway straight to gitea. Also what AdGuard resolves git.mcswain.dev to.
@@ -246,7 +144,7 @@ route:
       - backendRefs:
           - name: gitea
             port: 22
-  # Public web: internet -> anubis -> gitea.
+  # Public web, guarded by the central Anubis (securitypolicy.yaml).
   gitea-public:
     enabled: true
     kind: HTTPRoute
@@ -261,15 +159,8 @@ route:
       - git.mcswain.dev
     rules:
       - backendRefs:
-          - name: gitea-anubis
-            port: 8923
-        filters:
-          # anubis 500s without X-Real-IP; set (not add) so clients can't spoof it.
-          - type: RequestHeaderModifier
-            requestHeaderModifier:
-              set:
-                - name: X-Real-IP
-                  value: "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%"
+          - name: gitea
+            port: 3000
         matches:
           - path:
               type: PathPrefix
@@ -295,14 +186,6 @@ serviceMonitor:
     serviceName: gitea
     endpoints:
       - port: http
-        scheme: http
-        path: /metrics
-        interval: 30s
-        scrapeTimeout: 10s
-  anubis:
-    serviceName: gitea-anubis
-    endpoints:
-      - port: metrics
         scheme: http
         path: /metrics
         interval: 30s
