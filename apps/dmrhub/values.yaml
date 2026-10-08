@@ -61,7 +61,7 @@ controllers:
                 name: postgresql-app
                 key: host
           - name: DATABASE_EXTRA_PARAMETERS
-            value: "[]"
+            value: ""
           - name: DATABASE_PORT
             valueFrom:
               secretKeyRef:
