@@ -23,6 +23,29 @@ spec:
   # one round trip at a time over the tailnet.
   scrapeTimeout: 14s
 ---
+# Closet network UPS: CyberPower CP1500AVRLCD3 on the router's USB, carrying the
+# router, the modem, the CRS310 and the hEX S that feeds the shelter fiber. It
+# is meant to outlast the closet nodes, so nothing on it shuts down early.
+# Served read-only by NUT on the router (upsd on 192.168.1.1:3493).
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: nut-network
+  namespace: monitoring
+spec:
+  staticConfigs:
+    - targets: ["nut-exporter.monitoring.svc.cluster.local:9199"]
+      labels:
+        instance: closet-network
+        job: nut-network
+        ups: closet-network
+  metricsPath: /ups_metrics
+  params:
+    server: ["192.168.1.1"]
+    ups: ["ups"]
+  scrapeInterval: 15s
+  scrapeTimeout: 14s
+---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -86,3 +109,50 @@ spec:
           annotations:
             summary: "Observatory UPS not readable"
             description: "NUT on the observatory PC has no UPS data for 10m: the 'Network UPS Tools' service is down, the tailnet path is broken, or the UPS USB cable is out. Until it's back the PC will NOT shut down cleanly on a power cut. Check: upsc observatory@127.0.0.1 on the PC, and {job=\"observatory\", app=\"ups\"}."
+        - alert: NetworkUPSOnBattery
+          expr: network_ups_tools_ups_status{job="nut-network", flag="OB"} == 1
+          for: 30s
+          labels:
+            severity: critical
+          annotations:
+            summary: "Mains is out: closet network UPS on battery"
+            description: "The CP1500 carrying the router, modem, CRS310 and shelter fiber switch is on battery: {{ with query \"network_ups_tools_battery_runtime_seconds{job='nut-network'}\" }}{{ . | first | value | humanizeDuration }}{{ end }} of runtime left."
+        - alert: NetworkUPSLowBattery
+          expr: network_ups_tools_ups_status{job="nut-network", flag="LB"} == 1
+          labels:
+            severity: critical
+          annotations:
+            summary: "Closet network UPS battery low"
+            description: "The CP1500 reports low battery (under 10% or 300s of runtime). The router, modem and shelter fiber go down when it runs out."
+        - alert: NetworkUPSReplaceBattery
+          expr: network_ups_tools_ups_status{job="nut-network", flag="RB"} == 1
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Closet network UPS battery needs replacing"
+            description: "The CP1500AVRLCD3 sets RB (replace battery)."
+        - alert: NetworkUPSBatteryNotCharging
+          expr: |
+            network_ups_tools_battery_charge{job="nut-network"} < 90
+              and on(instance) network_ups_tools_ups_status{job="nut-network", flag="OL"} == 1
+          for: 12h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Closet network UPS battery stuck at {{ $value }}% on mains"
+            description: "The CP1500 has been on mains for 12h without recharging past 90%. The battery is probably worn out."
+        - alert: NetworkUPSUnreachable
+          expr: |
+            up{job="nut-network"} == 0
+              or
+            absent(
+              network_ups_tools_ups_status{job="nut-network", flag="OL"} == 1
+              or network_ups_tools_ups_status{job="nut-network", flag="OB"} == 1
+            )
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Closet network UPS not readable"
+            description: "No data from NUT on the router for 10m: nut-server is down or the UPS USB cable is out. Check: ssh root@192.168.1.1 upsc ups@127.0.0.1 (the USB device must be owned by nut; /etc/hotplug.d/usb/30-libhid-ups sets that when the UPS is plugged in)."
