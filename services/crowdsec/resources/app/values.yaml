@@ -120,7 +120,9 @@ config:
       type: leaky
       name: mcswain/envoy-l4-flood
       description: "Many TCP/UDP sessions from one IP to one non-HTTP public route (SSH, DMR, Reticulum, ...)"
-      filter: "evt.Meta.log_type == 'envoy_l4'"
+      # Reticulum is a mesh transport: peers reconnect constantly by design (some every few
+      # seconds), so session counts say nothing about abuse there.
+      filter: "evt.Meta.log_type == 'envoy_l4' && !(evt.Meta.service startsWith 'tcproute/reticulum/')"
       groupby: "evt.Meta.source_ip + '/' + evt.Meta.service"
       capacity: 40
       leakspeed: 15s
