@@ -62,7 +62,8 @@ controllers:
           - name: GITEA__SERVER__SSH_DOMAIN
             value: git.mcswain.dev
           - name: GITEA__MIGRATIONS__ALLOWED_DOMAINS
-            value: "github.com,*.github.com,gitlab.com,*.gitlab.com,bitbucket.org,*.bitbucket.org"
+            # githubusercontent.com serves LFS objects and release assets for GitHub migrations.
+            value: "github.com,*.github.com,githubusercontent.com,*.githubusercontent.com,gitlab.com,*.gitlab.com,bitbucket.org,*.bitbucket.org"
           - name: GITEA__DATABASE__DB_TYPE
             value: postgres
           - name: GITEA__DATABASE__HOST
