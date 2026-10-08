@@ -41,8 +41,9 @@ controllers:
             value: "true"
           - name: GITEA__METRICS__ENABLED_ISSUE_BY_REPOSITORY
             value: "true"
+          # Anonymous browsing is fine; blame, history, diffs and archives need a login.
           - name: GITEA__SERVICE__REQUIRE_SIGNIN_VIEW
-            value: "false"
+            value: expensive
           - name: GITEA__SERVICE__DISABLE_REGISTRATION
             value: "true"
           - name: GITEA__REPOSITORY__DEFAULT_PRIVATE
@@ -106,6 +107,12 @@ controllers:
             value: "true"
           - name: POLICY_FNAME
             value: /data/cfg/botPolicy.yaml
+          - name: REDIRECT_DOMAINS
+            value: git.mcswain.dev
+        envFrom:
+          # ED25519_PRIVATE_KEY_HEX: fixed key so passes survive restarts.
+          - secretRef:
+              name: gitea-anubis
         resources:
           requests:
             cpu: 10m
@@ -154,13 +161,33 @@ configMaps:
           - import: (data)/common/keep-internet-working.yaml
           - import: (data)/clients/git.yaml
           - import: (data)/apps/gitea-rss-feeds.yaml
+          # git over smart HTTP and LFS: cheap, and git clients can't solve a challenge.
           # clients/git.yaml wants exact Accept/Pragma headers; let any smart-HTTP clone through.
           - name: git-smart-http
-            path_regex: ^/.+/(info/refs|git-upload-pack|git-receive-pack)$
+            path_regex: ^/[^/]+/[^/]+/(info/refs|git-upload-pack|git-receive-pack)$
             action: ALLOW
-          - name: gitea-api
+          - name: git-lfs
+            path_regex: ^/[^/]+/[^/]+\.git/info/lfs/
+            action: ALLOW
+          # The API serves file contents, commits and diffs, so anonymous use would be a
+          # challenge-free way to crawl. Credentials pass; anonymous callers must be a browser
+          # that already holds a pass (the web UI), which other clients can't get.
+          - name: gitea-api-authenticated
+            action: ALLOW
+            expression:
+              all:
+                - path.startsWith("/api/")
+                - '"Authorization" in headers'
+          - name: gitea-api-version
+            path_regex: ^/api/v1/version$
+            action: ALLOW
+          - name: gitea-api-anonymous
             path_regex: ^/api/
-            action: ALLOW
+            action: CHALLENGE
+          # Pages that are expensive to render: challenge every client, not just browsers.
+          - name: gitea-expensive
+            path_regex: ^/[^/]+/[^/]+/(commits?|blame|compare|archive|graph|activity|src/commit|raw/commit)(/|$)
+            action: CHALLENGE
           - name: generic-browser
             user_agent_regex: Mozilla|Opera
             action: CHALLENGE
