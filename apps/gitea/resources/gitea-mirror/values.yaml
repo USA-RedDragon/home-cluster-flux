@@ -1,0 +1,108 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+
+# GitHub -> gitea pull mirrors. Force-push protection (bundle before a rewriting sync) is configured
+# in the UI: Configuration -> Connections -> Destructive Update Protection. Defaults to on-force-push.
+# NOTE: it deletes a same-named non-mirror gitea repo when it creates the mirror. Old repos whose
+# history GitHub no longer has live in the usa-reddragon-archive org for that reason.
+defaultPodOptions:
+  securityContext:
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+    fsGroupChangePolicy: OnRootMismatch
+
+controllers:
+  gitea-mirror:
+    replicas: 1
+    strategy: Recreate
+    containers:
+      gitea-mirror:
+        image:
+          repository: jacob.pub/ghcr.io/raylabshq/gitea-mirror
+          tag: v3.40.3@sha256:786b193599c60138a3fa04b8d7abc45faef9748af030d49da802c5a478314154
+          pullPolicy: IfNotPresent
+        envFrom:
+          - secretRef:
+              name: gitea-mirror
+        env:
+          PORT: "4321"
+          BETTER_AUTH_URL: &url https://gitea-mirror.mcswain.dev
+          PUBLIC_BETTER_AUTH_URL: *url
+          BETTER_AUTH_TRUSTED_ORIGINS: *url
+          GITHUB_USERNAME: USA-RedDragon
+          PRIVATE_REPOSITORIES: "true"
+          INCLUDE_ARCHIVED: "true"
+          MIRROR_STARRED: "false"
+          GITEA_URL: http://gitea:3000
+          GITEA_USERNAME: USA-RedDragon
+          MIRROR_STRATEGY: flat-user
+          GITEA_MIRROR_INTERVAL: 8h
+          SCHEDULE_ENABLED: "true"
+          AUTO_IMPORT_REPOS: "true"
+        resources:
+          requests:
+            cpu: 20m
+            memory: 256Mi
+          limits:
+            memory: 1Gi
+        probes:
+          liveness: &probe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /api/health
+                port: 4321
+              periodSeconds: 30
+              timeoutSeconds: 10
+          readiness: *probe
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: [ALL]
+
+service:
+  gitea-mirror:
+    controller: gitea-mirror
+    ports:
+      http:
+        port: 4321
+
+persistence:
+  # sqlite + force-push backup bundles (data/repo-backups)
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    storageClass: longhorn-nvme
+    globalMounts:
+      - path: /app/data
+  certs:
+    type: emptyDir
+    globalMounts:
+      - path: /app/certs
+  home:
+    type: emptyDir
+    globalMounts:
+      - path: /home/gitea-mirror
+  tmp:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
+
+route:
+  gitea-mirror:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - gitea-mirror.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: gitea-mirror
+            port: 4321
