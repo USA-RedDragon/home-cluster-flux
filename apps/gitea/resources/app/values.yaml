@@ -218,9 +218,9 @@ route:
       - backendRefs:
           - name: gitea
             port: 22
-  # Public web: internet -> anubis -> gitea. Off until repo visibility has been reviewed.
+  # Public web: internet -> anubis -> gitea.
   gitea-public:
-    enabled: false
+    enabled: true
     kind: HTTPRoute
     annotations:
       # internal external-dns would otherwise point AdGuard at the public gateway too; keep LAN on the internal one (no anubis).
@@ -249,9 +249,9 @@ route:
         timeouts:
           request: 24h
           backendRequest: 23h
-  # Public SSH. Off until repo visibility has been reviewed.
+  # Public SSH. Key-only, so bots only add log noise; nothing is reachable anonymously over SSH.
   git-public:
-    enabled: false
+    enabled: true
     kind: TCPRoute
     parentRefs:
       - name: public
