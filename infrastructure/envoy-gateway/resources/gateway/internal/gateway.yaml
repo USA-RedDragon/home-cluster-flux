@@ -47,6 +47,15 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: frigate
+    - name: git-ssh
+      protocol: TCP
+      port: 22
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: gitea
     - name: http
       protocol: HTTP
       port: 80
@@ -62,6 +71,9 @@ spec:
           - name: envoy-gateway-cert
             kind: Secret
           - name: mcswain.internal-tls
+            kind: Secret
+          - name: mcswain.dev-tls
+            namespace: cert-manager
             kind: Secret
       allowedRoutes:
         namespaces:

@@ -3,6 +3,9 @@ kind: Cluster
 metadata:
   name: postgresql
   namespace: gitea
+  annotations:
+    # Hand-over from the apps Kustomization; remove once the gitea Kustomization owns these.
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   instances: 3
   imageName: jacob.pub/ghcr.io/cloudnative-pg/postgresql:17.5-22
@@ -42,6 +45,7 @@ kind: Secret
 metadata:
  name: cnpg-minio
  annotations:
+   kustomize.toolkit.fluxcd.io/prune: disabled
    reflector.v1.k8s.emberstack.com/reflects: reflector/cnpg-minio
 type: Opaque
 ---
@@ -49,6 +53,9 @@ apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
   name: backup
+  annotations:
+    # Hand-over from the apps Kustomization; remove once the gitea Kustomization owns these.
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   immediate: true
   schedule: "0 3 * * * *"
