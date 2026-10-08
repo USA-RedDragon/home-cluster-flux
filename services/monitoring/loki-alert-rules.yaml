@@ -95,6 +95,32 @@ data:
             annotations:
               summary: "Observatory PC storage error: {{ $labels.source }} event {{ $labels.event_id }}"
               description: "Disk, RAID driver or filesystem errors on the observatory PC (its C: is an AMD RAID1). Query: {job=\"observatory\", app=\"windows-system\"} | json | source=\"{{ $labels.source }}\""
+          # The observatory's C: is an AMD RAID1 (two 990 EVOs) that Windows
+          # always calls healthy. The "raid monitor" task polls rcadm every
+          # 15 minutes into C:\ProgramData\raid-monitor\logs\raid.log.
+          - alert: ObservatoryRAIDDegraded
+            expr: sum by (state) (count_over_time({job="observatory", app="raid"} |= " raid DEGRADED " | regexp "state=(?P<state>\\S+)" [20m])) > 0
+            labels:
+              severity: critical
+            annotations:
+              summary: "Observatory RAID1 is {{ $labels.state }}"
+              description: "The observatory's boot mirror has lost a member or is rebuilding. Detail and rebuild progress: {job=\"observatory\", app=\"raid\"}. Raw output: C:\\ProgramData\\raid-monitor\\logs\\last-run.txt"
+          - alert: ObservatoryRAIDUnknown
+            expr: sum(count_over_time({job="observatory", app="raid"} |= " raid ERROR " [20m])) > 0
+            for: 30m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Observatory RAID status can't be read"
+              description: "rcadm failed or its output didn't parse. Query: {job=\"observatory\", app=\"raid\"} |= \"ERROR\""
+          - alert: ObservatoryRAIDMonitorSilent
+            expr: absent_over_time({job="observatory", app="raid"} [45m])
+            for: 15m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Observatory RAID monitor has not reported in 45m"
+              description: "Check the 'raid monitor' scheduled task and the Alloy service on the observatory PC."
           # Daily at 13:00 as SYSTEM on the observatory PC
           # (C:\ProgramData\restic\backup.ps1), to B2 k8s/observatory.
           - alert: ObservatoryBackupFailed
