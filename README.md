@@ -39,6 +39,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#backup-sync">backup-sync</a></li>
   <li><a href="#cert-manager">cert-manager</a></li>
   <li><a href="#cnpg">cnpg</a></li>
+  <li><a href="#crowdsec">crowdsec</a></li>
   <li><a href="#csi-snapshotter">csi-snapshotter</a></li>
   <li><a href="#cyberchef">cyberchef</a></li>
   <li><a href="#descheduler">descheduler</a></li>
@@ -423,6 +424,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/cnpg/app/helm.yaml">cnpg</a></td>
+  </tr>
+</table>
+
+<h4>crowdsec</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>crowdsec</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/crowdsec/resources/app/helm.yaml">crowdsec</a></td>
+    <td></td>
   </tr>
 </table>
 
