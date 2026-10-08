@@ -48,7 +48,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#envoy-gateway">envoy-gateway</a></li>
   <li><a href="#external-dns-internal">external-dns-internal</a></li>
   <li><a href="#frigate">frigate</a></li>
-  <li><a href="#gittea">gittea</a></li>
+  <li><a href="#gitea">gitea</a></li>
   <li><a href="#golink">golink</a></li>
   <li><a href="#gpu-operator">gpu-operator</a></li>
   <li><a href="#healthchecks">healthchecks</a></li>
@@ -582,7 +582,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
 </table>
 
-<h4>gittea</h2>
+<h4>gitea</h2>
 <table>
   <tr>
     <th>Namespace</th>
@@ -593,8 +593,8 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>gitea</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/gittea/helm.yaml">gitea</a></td>
-    <td><a href="apps/gittea/postgres.yaml">postgresql</a></td>
+    <td><a href="apps/gitea/resources/app/helm.yaml">gitea</a></td>
+    <td><a href="apps/gitea/resources/postgres/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
