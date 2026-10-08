@@ -1,0 +1,86 @@
+# Observatory PC UPS: CyberPower EC450G on the observatory's USB, served by
+# NUT 2.8.5 (upsd on the tailnet IP, port 3493). The PC's own upsmon shuts it
+# down after 60 s on battery or at low battery (C:\ProgramData\ups-shutdown).
+# Reached through the tailscale egress Service "observatory" (observatory-svc.yaml).
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: nut-observatory
+  namespace: monitoring
+spec:
+  staticConfigs:
+    - targets: ["nut-exporter.monitoring.svc.cluster.local:9199"]
+      labels:
+        instance: observatory
+        job: nut-observatory
+        ups: observatory
+  metricsPath: /ups_metrics
+  params:
+    server: ["observatory.monitoring.svc.cluster.local"]
+    ups: ["observatory"]
+  scrapeInterval: 15s
+  scrapeTimeout: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ups
+  namespace: monitoring
+spec:
+  groups:
+    - name: ups
+      rules:
+        - alert: ObservatoryUPSOnBattery
+          expr: network_ups_tools_ups_status{job="nut-observatory", flag="OB"} == 1
+          for: 15s
+          labels:
+            severity: critical
+          annotations:
+            summary: "Observatory UPS on battery"
+            description: "The observatory's EC450G is on battery ({{ with query \"network_ups_tools_battery_charge{job='nut-observatory'}\" }}{{ . | first | value }}{{ end }}% charge). The PC shuts itself down after 60s on battery. Log: {job=\"observatory\", app=\"ups\"}"
+        - alert: ObservatoryUPSLowBattery
+          expr: network_ups_tools_ups_status{job="nut-observatory", flag="LB"} == 1
+          labels:
+            severity: critical
+          annotations:
+            summary: "Observatory UPS battery low"
+            description: "The EC450G reports low battery (LB: charge under 40% or runtime under 300s). upsmon shuts the PC down immediately on battery+LB."
+        - alert: ObservatoryUPSReplaceBattery
+          expr: network_ups_tools_ups_status{job="nut-observatory", flag="RB"} == 1
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Observatory UPS battery needs replacing"
+            description: "The EC450G sets RB (replace battery). Its battery is a 12V sealed lead-acid; replace it."
+        # A healthy battery is back above 90% within a few hours of an outage.
+        - alert: ObservatoryUPSBatteryNotCharging
+          expr: |
+            network_ups_tools_battery_charge{job="nut-observatory"} < 90
+              and on(instance) network_ups_tools_ups_status{job="nut-observatory", flag="OL"} == 1
+          for: 12h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Observatory UPS battery stuck at {{ $value }}% on mains"
+            description: "The EC450G has been on mains for 12h without recharging past 90%. The battery is probably worn out."
+        # upsd down, the tailnet path broken, or the USB link to the UPS lost
+        # (upsd then answers DATA-STALE and the exporter has nothing to give).
+        # Not while the whole PC is unreachable: ObservatoryUnreachable covers that.
+        - alert: ObservatoryUPSUnreachable
+          expr: |
+            (
+              up{job="nut-observatory"} == 0
+              or
+              absent(
+                network_ups_tools_ups_status{job="nut-observatory", flag="OL"} == 1
+                or network_ups_tools_ups_status{job="nut-observatory", flag="OB"} == 1
+              )
+            )
+            unless on() up{job="node_exporter_astro"} == 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Observatory UPS not readable"
+            description: "NUT on the observatory PC has no UPS data for 10m: the 'Network UPS Tools' service is down, the tailnet path is broken, or the UPS USB cable is out. Until it's back the PC will NOT shut down cleanly on a power cut. Check: upsc observatory@127.0.0.1 on the PC, and {job=\"observatory\", app=\"ups\"}."
