@@ -19,7 +19,9 @@ spec:
     server: ["observatory.monitoring.svc.cluster.local"]
     ups: ["observatory"]
   scrapeInterval: 15s
-  scrapeTimeout: 10s
+  # ~5s per scrape: go.nut fetches each variable's description and type
+  # one round trip at a time over the tailnet.
+  scrapeTimeout: 14s
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
