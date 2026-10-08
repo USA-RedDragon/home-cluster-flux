@@ -46,7 +46,7 @@ controllers:
           # here, served at /image.jpg) instead of the survey cutout. The
           # egress policy below already allows in-cluster pods, and
           # astro-stacker has no ingress policy.
-          - name: PUBLICFRAME_STACKER_URL
+          - name: PUBLIC_FRAME_STACKER_URL
             value: http://astro-stacker.astro-processing.svc.cluster.local:8080
         envFrom:
           - secretRef:
