@@ -1,0 +1,308 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+#
+# Central Anubis, used as forward auth by Envoy Gateway (SecurityPolicy extAuth on an HTTPRoute).
+# One instance per registrable domain, because the pass cookie can't cross domains:
+#   anubis.mcswain.dev, anubis.jacob.pub, anubis.dmrhub.net serve the challenge for every host
+#   under that domain.
+# Each pod is Anubis (TARGET=" ", forward-auth only) plus an nginx adapter, because Envoy's
+# HTTP ext_authz calls /check<original path> while Anubis wants its exact check endpoint and the
+# original URL in X-Forwarded-*. The adapter also serves the "silly page" to denied bots (418).
+#
+# To protect a route: a SecurityPolicy in the app's namespace like
+#   apps/dmrhub/securitypolicy.yaml, plus its namespace in referencegrant.yaml.
+
+defaultPodOptions:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 101
+    runAsGroup: 101
+    seccompProfile:
+      type: RuntimeDefault
+
+controllers:
+  mcswain-dev: &instance
+    replicas: 1
+    containers:
+      anubis: &anubis
+        image:
+          repository: jacob.pub/ghcr.io/techarohq/anubis
+          tag: v1.27.0@sha256:8828275668b7bc675679f100970f9714f731388fbbf66ae94de8aca952e3fc4a
+          pullPolicy: IfNotPresent
+        env: &anubis-env
+          TARGET: " "
+          BIND: ":8923"
+          METRICS_BIND: ":9090"
+          POLICY_FNAME: /cfg/botPolicy.yaml
+          SERVE_ROBOTS_TXT: "true"
+          PUBLIC_URL: https://anubis.mcswain.dev
+          COOKIE_DOMAIN: mcswain.dev
+          REDIRECT_DOMAINS: "mcswain.dev,*.mcswain.dev"
+        envFrom:
+          # ED25519_PRIVATE_KEY_HEX, shared by all instances
+          - secretRef:
+              name: anubis
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+        probes:
+          liveness: &anubis-probe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 9090
+          readiness: *anubis-probe
+        securityContext: &sc
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: [ALL]
+      adapter: &adapter
+        image:
+          repository: jacob.pub/docker.io/nginxinc/nginx-unprivileged
+          tag: 1.29-alpine@sha256:0c79d56aee561a1d81c63f00eee5fb5fe29279560cdc55e91425133104c7fbe6
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+        probes:
+          liveness: &adapter-probe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+          readiness: *adapter-probe
+        securityContext: *sc
+  jacob-pub:
+    <<: *instance
+    containers:
+      anubis:
+        <<: *anubis
+        env:
+          <<: *anubis-env
+          PUBLIC_URL: https://anubis.jacob.pub
+          COOKIE_DOMAIN: jacob.pub
+          REDIRECT_DOMAINS: "jacob.pub,*.jacob.pub"
+      adapter: *adapter
+  dmrhub-net:
+    <<: *instance
+    containers:
+      anubis:
+        <<: *anubis
+        env:
+          <<: *anubis-env
+          PUBLIC_URL: https://anubis.dmrhub.net
+          COOKIE_DOMAIN: dmrhub.net
+          REDIRECT_DOMAINS: "dmrhub.net,*.dmrhub.net"
+      adapter: *adapter
+
+service:
+  mcswain-dev: &svc
+    controller: mcswain-dev
+    ports:
+      web:
+        port: 8923
+      authz:
+        port: 8080
+      metrics:
+        port: 9090
+  jacob-pub:
+    <<: *svc
+    controller: jacob-pub
+  dmrhub-net:
+    <<: *svc
+    controller: dmrhub-net
+
+configMaps:
+  config:
+    data:
+      botPolicy.yaml: |
+        bots:
+          - import: (data)/bots/_deny-pathological.yaml
+          - import: (data)/meta/ai-block-aggressive.yaml
+          - import: (data)/crawlers/_allow-good.yaml
+          - import: (data)/common/keep-internet-working.yaml
+          - import: (data)/clients/git.yaml
+          - import: (data)/apps/gitea-rss-feeds.yaml
+
+          # --- git.mcswain.dev (Gitea) ---
+          # git over smart HTTP and LFS: cheap, and git clients can't solve a challenge.
+          - name: gitea-git-smart-http
+            action: ALLOW
+            expression:
+              all:
+                - host == "git.mcswain.dev"
+                - path.matches("^/[^/]+/[^/]+/(info/refs|git-upload-pack|git-receive-pack)$") || path.matches("^/[^/]+/[^/]+\\.git/info/lfs/")
+          # The API can serve file contents, commits and diffs, i.e. a challenge-free way to crawl.
+          # Credentials pass; anonymous callers must be a browser holding a pass.
+          - name: gitea-api-authenticated
+            action: ALLOW
+            expression:
+              all:
+                - host == "git.mcswain.dev"
+                - path.startsWith("/api/")
+                - '"Authorization" in headers'
+          - name: gitea-api-version
+            action: ALLOW
+            expression:
+              all:
+                - host == "git.mcswain.dev"
+                - path == "/api/v1/version"
+          - name: gitea-api-anonymous
+            action: CHALLENGE
+            expression:
+              all:
+                - host == "git.mcswain.dev"
+                - path.startsWith("/api/")
+          # Expensive to render: challenge every client, not just browsers.
+          - name: gitea-expensive
+            action: CHALLENGE
+            expression:
+              all:
+                - host == "git.mcswain.dev"
+                - path.matches("^/[^/]+/[^/]+/(commits?|blame|compare|archive|graph|activity|src/commit|raw/commit)(/|$)")
+
+          # --- everything ---
+          - name: generic-browser
+            user_agent_regex: Mozilla|Opera
+            action: CHALLENGE
+
+        # Forward-auth: a non-200 from the check denies. DENY gets an unusual code so the
+        # adapter can swap in the silly page.
+        status_codes:
+          CHALLENGE: 200
+          DENY: 418
+
+      nginx.conf: |
+        pid /tmp/nginx.pid;
+        events {}
+        http {
+          access_log off;
+          client_body_temp_path /tmp/cb; proxy_temp_path /tmp/p; fastcgi_temp_path /tmp/f;
+          uwsgi_temp_path /tmp/u; scgi_temp_path /tmp/s;
+          server {
+            listen 8080;
+            location = /healthz { return 200 "ok\n"; }
+            # Envoy ext_authz (HTTP) calls /check<original path?query>. Recover the original
+            # request for Anubis and call its exact check endpoint. X-Real-IP comes from
+            # x-envoy-external-address, which Envoy sets from the real peer (not client-controllable).
+            location ~ ^/check(?<orig>/.*)?$ {
+              proxy_set_header X-Forwarded-Uri $orig$is_args$args;
+              proxy_set_header X-Forwarded-Host $host;
+              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Real-IP $http_x_envoy_external_address;
+              proxy_set_header Content-Length "";
+              proxy_pass_request_body off;
+              proxy_intercept_errors on;
+              error_page 418 =418 @silly;
+              rewrite ^ /.within.website/x/cmd/anubis/api/check break;
+              proxy_pass http://127.0.0.1:8923;
+            }
+            location @silly {
+              root /etc/silly;
+              default_type text/html;
+              try_files /index.html =404;
+            }
+          }
+        }
+
+      index.html: |
+        <!doctype html>
+        <html lang="en"><head><meta charset="utf-8"><title>Grilled cheese</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></head>
+        <body style="font-family:sans-serif;max-width:38em;margin:3em auto;padding:0 1em;line-height:1.5">
+        <h1>&#129472; Congratulations, you found the grilled cheese.</h1>
+        <ol>
+          <li>Butter two slices of bread.</li>
+          <li>Cheese goes in the middle.</li>
+          <li>Medium-low heat until golden. Flip. Repeat.</li>
+          <li>Eat it. Do not scrape it.</li>
+        </ol>
+        </body></html>
+
+persistence:
+  config:
+    type: configMap
+    identifier: config
+    globalMounts:
+      - path: /cfg/botPolicy.yaml
+        subPath: botPolicy.yaml
+        readOnly: true
+      - path: /etc/nginx/nginx.conf
+        subPath: nginx.conf
+        readOnly: true
+      - path: /etc/silly/index.html
+        subPath: index.html
+        readOnly: true
+  tmp:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
+
+route:
+  # The challenge pages for each domain.
+  mcswain-dev: &challenge-route
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - anubis.mcswain.dev
+    rules:
+      - backendRefs:
+          - identifier: mcswain-dev
+            port: 8923
+        filters: &xri
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+                - name: X-Real-IP
+                  value: "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%"
+  jacob-pub:
+    <<: *challenge-route
+    hostnames:
+      - anubis.jacob.pub
+    rules:
+      - backendRefs:
+          - identifier: jacob-pub
+            port: 8923
+        filters: *xri
+  dmrhub-net:
+    <<: *challenge-route
+    hostnames:
+      - anubis.dmrhub.net
+    rules:
+      - backendRefs:
+          - identifier: dmrhub-net
+            port: 8923
+        filters: *xri
+
+serviceMonitor:
+  mcswain-dev: &sm
+    service:
+      identifier: mcswain-dev
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 30s
+        scrapeTimeout: 10s
+  jacob-pub:
+    <<: *sm
+    service:
+      identifier: jacob-pub
+  dmrhub-net:
+    <<: *sm
+    service:
+      identifier: dmrhub-net
