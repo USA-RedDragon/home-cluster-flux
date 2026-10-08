@@ -46,6 +46,19 @@ controllers:
           GITEA_MIRROR_INTERVAL: 8h
           SCHEDULE_ENABLED: "true"
           AUTO_IMPORT_REPOS: "true"
+          AUTO_MIRROR_REPOS: "true"
+          INCLUDE_COLLABORATOR_REPOS: "false"
+          # The env loader turns unset booleans into false and overwrites the UI settings on every
+          # start, so the Mirror Content choices have to live here.
+          MIRROR_RELEASES: "true"
+          RELEASE_LIMIT: "10"
+          GITEA_LFS: "true"
+          MIRROR_WIKI: "true"
+          MIRROR_METADATA: "true"
+          MIRROR_LABELS: "true"
+          MIRROR_MILESTONES: "true"
+          MIRROR_ISSUES: "false"
+          MIRROR_PULL_REQUESTS: "false"
         resources:
           requests:
             cpu: 20m
