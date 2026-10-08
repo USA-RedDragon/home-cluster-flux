@@ -51,7 +51,7 @@ loki:
   # auth is disabled) and fire into the kube-prometheus-stack Alertmanager.
   rulerConfig:
     # Every Alertmanager replica, as Prometheus does, not one via the Service.
-    alertmanager_url: dnssrvnoa+_http-web._tcp.alertmanager-operated.monitoring.svc.cluster.local
+    alertmanager_url: http://_http-web._tcp.alertmanager-operated.monitoring.svc.cluster.local
     enable_alertmanager_discovery: true
     enable_api: true
     storage:
