@@ -1023,10 +1023,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="9">monitoring</td>
+    <td rowspan="10">monitoring</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/helm.yaml">alloy</a></td>
-    <td rowspan="9"></td>
+    <td rowspan="10"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
@@ -1039,6 +1039,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/metrics-actioner-helm.yaml">metrics-actioner</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/monitoring/nut-exporter-helm.yaml">nut-exporter</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
