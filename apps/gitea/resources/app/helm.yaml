@@ -3,9 +3,6 @@ kind: HelmRelease
 metadata:
   name: gitea
   namespace: gitea
-  annotations:
-    # Hand-over from the apps Kustomization; remove once the gitea Kustomization owns these.
-    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   install:
     remediation:
