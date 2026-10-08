@@ -108,7 +108,7 @@ sidecar:
   image:
     registry: jacob.pub/quay.io
     repository: kiwigrid/k8s-sidecar
-    tag: 2.13.3@sha256:e1a9e80f41ce6856e586787eaf005a23dce1551b4e3dbc3e233d8d813c20bd78
+    tag: 2.14.1@sha256:092dbe0c335fba9af414a27630ca68f34df6185784fa847d9954187e69dbfdd7
     digest: sha256:43afbcbff749bb3f3650ed7c97cb1f29f9686d91b5ea891ba68b7055e300eee9
   rules:
     folder: /rules/fake
