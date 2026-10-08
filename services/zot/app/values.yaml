@@ -255,6 +255,7 @@ persistence:
           - path: /zot
 
 route:
+  # Web UI: protected by the central Anubis (securitypolicy.yaml).
   zot:
     enabled: true
     kind: HTTPRoute
@@ -272,6 +273,27 @@ route:
           - path:
               type: PathPrefix
               value: /
+        timeouts:
+          request: 0s
+          backendRequest: 0s
+  # Registry API (docker/containerd/crane, incl. this cluster's own pulls): no Anubis.
+  registry:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - jacob.pub
+    rules:
+      - backendRefs:
+          - name: zot
+            port: 5000
+        matches:
+          - path:
+              type: PathPrefix
+              value: /v2
         timeouts:
           request: 0s
           backendRequest: 0s

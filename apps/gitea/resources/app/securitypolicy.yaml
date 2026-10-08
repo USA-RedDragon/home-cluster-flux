@@ -1,0 +1,21 @@
+# Bot protection: Envoy asks the central Anubis (services/anubis) before every request.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: anubis
+  namespace: gitea
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: gitea-gitea-public
+  extAuth:
+    # Anubis down => let traffic through rather than take the site down.
+    failOpen: true
+    headersToExtAuth: [cookie, user-agent, accept, accept-language, accept-encoding, authorization, x-envoy-external-address]
+    http:
+      backendRefs:
+        - name: anubis-mcswain-dev
+          namespace: anubis
+          port: 8080
+      path: /check
