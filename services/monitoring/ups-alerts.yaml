@@ -116,7 +116,7 @@ spec:
             severity: critical
           annotations:
             summary: "Mains is out: closet network UPS on battery"
-            description: "The CP1500 carrying the router, modem, CRS310 and shelter fiber switch is on battery: {{ with query \"network_ups_tools_battery_runtime_seconds{job='nut-network'}\" }}{{ . | first | value | humanizeDuration }}{{ end }} of runtime left."
+            description: "The CP1500 carrying the router, modem, CRS310 and shelter fiber switch is on battery: {{ with query \"network_ups_tools_battery_runtime{job='nut-network'}\" }}{{ . | first | value | humanizeDuration }}{{ end }} of runtime left."
         - alert: NetworkUPSLowBattery
           expr: network_ups_tools_ups_status{job="nut-network", flag="LB"} == 1
           labels:
