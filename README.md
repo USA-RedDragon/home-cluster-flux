@@ -885,7 +885,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>kromgo</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/kromgo/helm.yaml">kromgo</a></td>
+    <td><a href="apps/kromgo/resources/app/helm.yaml">kromgo</a></td>
     <td></td>
   </tr>
 </table>
