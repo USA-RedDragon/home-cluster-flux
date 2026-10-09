@@ -1,0 +1,18 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-notification
+  namespace: flux-system
+spec:
+  interval: 1h
+  targetNamespace: flux-system
+  path: ./services/flux-notification/resources/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg
