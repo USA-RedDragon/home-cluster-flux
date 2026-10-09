@@ -293,9 +293,20 @@ alertmanager:
       repeat_interval: 30m
       receiver: 'null'
       routes:
+      # Dead-man switch: Watchdog always fires, so it pings a healthchecks.io
+      # check (outside the cluster) every couple of minutes. If the pings stop
+      # (cluster, Alertmanager or the home uplink down), healthchecks.io alerts
+      # via its own Telegram integration. Check timeout 5m + grace 5m.
+      - receiver: 'healthchecks-watchdog'
+        matchers:
+        - alertname="Watchdog"
+        group_wait: 0s
+        group_interval: 1m
+        repeat_interval: 2m
+        continue: false
       - receiver: "null"
         matchers:
-        - alertname=~"InfoInhibitor|Watchdog"
+        - alertname="InfoInhibitor"
         continue: false
       - receiver: "null"
         matchers:
@@ -322,6 +333,10 @@ alertmanager:
     - name: 'metrics-actioner-webhook'
       webhook_configs:
       - url: 'http://metrics-actioner-app.monitoring.svc.cluster.local:8080/api/v1/webhooks/alertmanager'
+    - name: 'healthchecks-watchdog'
+      webhook_configs:
+      - url: ${healthchecks_watchdog_url}
+        send_resolved: false
     - name: 'telegram'
       telegram_configs:
       - chat_id: -5365451857

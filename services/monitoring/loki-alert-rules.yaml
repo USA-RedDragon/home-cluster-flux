@@ -198,6 +198,44 @@ data:
             annotations:
               summary: "TrueNAS storage event from {{ $labels.app }}"
               description: "ZFS pool/vdev state change or SMART failure on the NAS. Query: {host=\"truenas\", app=\"{{ $labels.app }}\"}"
+          # TrueNAS cloud sync (B2) results. A TrueNAS cron job runs
+          # /mnt/data/backups/Homelab/scripts/cloudsync-status.sh at :30 every
+          # hour and logs one line per enabled task: status=OK|STALE|RUNNING|
+          # FAILED|... (STALE = last success >36h ago; all tasks run daily).
+          - alert: TrueNASCloudSyncFailed
+            expr: |
+              sum by (task) (count_over_time({host="truenas", app="cloudsync-status"}
+                |~ "status=" !~ "status=(OK|RUNNING) "
+                | regexp "status=(?P<status>\\S+) .* task=(?P<task>.*)" [2h])) > 0
+            labels:
+              severity: warning
+            annotations:
+              summary: "TrueNAS cloud sync failing or stale: {{ $labels.task }}"
+              description: "The task's last run did not succeed, or its last success is over 36h old. Check Data Protection > Cloud Sync Tasks on the NAS. Query: {host=\"truenas\", app=\"cloudsync-status\"}"
+          - alert: TrueNASCloudSyncStatusMissing
+            expr: absent_over_time({host="truenas", app="cloudsync-status"} |= "status=" [3h])
+            for: 30m
+            labels:
+              severity: warning
+            annotations:
+              summary: "TrueNAS cloud sync status reports stopped"
+              description: "No cloudsync-status lines for 3h: the TrueNAS cron job is gone, the script failed, or the middleware is wedged (midclt timing out). On the NAS: /bin/sh /mnt/data/backups/Homelab/scripts/cloudsync-status.sh; systemctl status middlewared."
+          # Router config backup: /root/backup_to_b2.sh, cron 0 2 * * * (local).
+          - alert: RouterBackupFailed
+            expr: sum(count_over_time({host="OpenWrt", app="backup_to_b2"} |= "FAILED" [1h])) > 0
+            labels:
+              severity: warning
+            annotations:
+              summary: "Router B2 config backup failed"
+              description: "backup_to_b2.sh logged a failure. Query: {host=\"OpenWrt\", app=\"backup_to_b2\"}"
+          - alert: RouterBackupMissing
+            expr: absent_over_time({host="OpenWrt", app="backup_to_b2"} |= "OK: uploaded" [36h])
+            for: 30m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Router has not backed up to B2 in 36h"
+              description: "No 'OK: uploaded' line from backup_to_b2.sh (cron 02:00 local). Check crond and the rclone config on the router."
           # Cable modem health, from the router side. Nothing polls the Arris S33
           # any more (HNAP scraping crashed it; modem-exporter removed 2026-10-04).
           # Baseline without polling was one drop pair (10 min apart) in 5.6 days.
