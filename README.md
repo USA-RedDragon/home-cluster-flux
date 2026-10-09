@@ -383,28 +383,28 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="6">backup-sync</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-git-backups.yaml">backup-sync-git-backups</a></td>
+    <td><a href="infrastructure/backup-sync/resources/git-backups/helm.yaml">backup-sync-git-backups</a></td>
     <td rowspan="6"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-home-assistant.yaml">backup-sync-home-assistant</a></td>
+    <td><a href="infrastructure/backup-sync/resources/home-assistant/helm.yaml">backup-sync-home-assistant</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-kubernetes-backups.yaml">backup-sync-kubernetes-backups</a></td>
+    <td><a href="infrastructure/backup-sync/resources/kubernetes-backups/helm.yaml">backup-sync-kubernetes-backups</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-backup.yaml">backup-sync-mcswain-backup</a></td>
+    <td><a href="infrastructure/backup-sync/resources/mcswain-backup/helm.yaml">backup-sync-mcswain-backup</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-minio.yaml">backup-sync-mcswain-minio</a></td>
+    <td><a href="infrastructure/backup-sync/resources/mcswain-minio/helm.yaml">backup-sync-mcswain-minio</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/backup-sync/backup-sync-mcswain-router-backups.yaml">backup-sync-mcswain-router-backups</a></td>
+    <td><a href="infrastructure/backup-sync/resources/mcswain-router-backups/helm.yaml">backup-sync-mcswain-router-backups</a></td>
   </tr>
 </table>
 
