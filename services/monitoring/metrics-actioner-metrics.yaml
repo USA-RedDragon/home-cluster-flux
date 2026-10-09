@@ -4,7 +4,7 @@ metadata:
   name: metrics-actioner
   labels:
     app.kubernetes.io/instance: metrics-actioner
-    app.kubernetes.io/name: app
+    app.kubernetes.io/name: metrics-actioner
 spec:
   endpoints:
     - port: metrics
@@ -13,4 +13,4 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/instance: metrics-actioner
-      app.kubernetes.io/name: app
+      app.kubernetes.io/name: metrics-actioner
