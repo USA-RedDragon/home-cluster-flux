@@ -39,7 +39,7 @@ controllers:
       copy-auth:
         image:
           repository: jacob.pub/docker.io/eclipse-mosquitto
-          tag: 2.0.22@sha256:914f529386804c8278a4e581526b9be5e1604df44b30daabc70aa97dcefe5268
+          tag: 2.1.2-alpine@sha256:38c0da4f2ef84284d47b3b3eeea1cb3bdeabe81ee10caf0cd5c5ff61ee3ea408
           pullPolicy: IfNotPresent
         command:
           - sh
@@ -65,7 +65,7 @@ controllers:
       mosquitto:
         image:
           repository: jacob.pub/docker.io/eclipse-mosquitto
-          tag: 2.0.22@sha256:914f529386804c8278a4e581526b9be5e1604df44b30daabc70aa97dcefe5268
+          tag: 2.1.2-alpine@sha256:38c0da4f2ef84284d47b3b3eeea1cb3bdeabe81ee10caf0cd5c5ff61ee3ea408
           pullPolicy: IfNotPresent
         resources:
           requests:
@@ -117,7 +117,6 @@ configMaps:
   config:
     data:
       mosquitto.conf: |
-        per_listener_settings false
         listener 1883
         allow_anonymous false
         persistence true
@@ -129,8 +128,10 @@ configMaps:
         log_type warning
         log_type notice
 
-        password_file /mosquitto/auth/passwd
-        acl_file /mosquitto/auth/acl
+        plugin /usr/lib/mosquitto_password_file.so
+        plugin_opt_password_file /mosquitto/auth/passwd
+        plugin /usr/lib/mosquitto_acl_file.so
+        plugin_opt_acl_file /mosquitto/auth/acl
 
         # listener 8883
         # cafile /tls/ca/tls-1.crt
