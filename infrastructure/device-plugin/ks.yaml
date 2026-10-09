@@ -6,27 +6,9 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: device-plugin
-  path: ./infrastructure/device-plugin/resources/app
+  path: ./infrastructure/device-plugin/resources
   prune: true
   sourceRef:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: coral-nfd
-  namespace: device-plugin
-spec:
-  interval: 1h
-  targetNamespace: device-plugin
-  path: ./infrastructure/device-plugin/resources/coral-nfd
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    namespace: flux-system
-    name: flux-system
-  commonMetadata:
-    annotations:
-      kustomize.toolkit.fluxcd.io/prune: disabled
