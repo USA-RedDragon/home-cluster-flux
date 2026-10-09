@@ -725,7 +725,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>imagescraper-mesonet</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/imagescraper-mesonet/helm.yaml">imagescraper-mesonet</a></td>
+    <td><a href="apps/imagescraper-mesonet/resources/app/helm.yaml">imagescraper-mesonet</a></td>
     <td></td>
   </tr>
 </table>
