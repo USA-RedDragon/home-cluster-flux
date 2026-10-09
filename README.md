@@ -1235,12 +1235,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">paperless-ngx</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/paperless-ngx/helm.yaml">paperless-ngx</a></td>
-    <td rowspan="2"><a href="apps/paperless-ngx/postgres.yaml">postgresql</a></td>
+    <td><a href="apps/paperless-ngx/resources/app/helm.yaml">paperless-ngx</a></td>
+    <td rowspan="2"><a href="apps/paperless-ngx/resources/postgres/postgres.yaml">postgresql</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/paperless-ngx/restic.yaml">restic</a></td>
+    <td><a href="apps/paperless-ngx/resources/restic/helm.yaml">restic</a></td>
   </tr>
 </table>
 
