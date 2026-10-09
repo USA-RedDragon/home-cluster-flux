@@ -8,7 +8,7 @@ image:
   repository: jacob.pub/ghcr.io/usa-reddragon/metrics-actioner
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.16"
+  tag: "v0.0.17@sha256:6bb7a44843ca5c6388bd0745752a9c8e9b915e590248113424766a6bdc2f82c8"
 
 imagePullSecrets: []
 nameOverride: ""
