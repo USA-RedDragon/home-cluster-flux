@@ -1687,7 +1687,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>ultrafeeder</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/ultrafeeder/helm.yaml">ultrafeeder</a></td>
+    <td><a href="apps/ultrafeeder/resources/app/helm.yaml">ultrafeeder</a></td>
     <td></td>
   </tr>
 </table>
