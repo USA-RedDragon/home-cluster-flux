@@ -4,7 +4,7 @@ metadata:
   name: prometheus-stack
   namespace: monitoring
 spec:
-  interval: 1m0s
+  interval: 1h0m0s
   driftDetection:
     mode: enabled
   releaseName: prometheus-stack
@@ -19,7 +19,7 @@ spec:
         name: prometheus-community
         namespace: flux-system
       version: '92.2.0'
-      interval: 1m0s
+      interval: 1h0m0s
   valuesFrom:
     - kind: ConfigMap
       name: chart-values

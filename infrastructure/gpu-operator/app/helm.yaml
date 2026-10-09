@@ -5,7 +5,7 @@ metadata:
   name: nvidia
   namespace: gpu-operator
 spec:
-  interval: 1m0s
+  interval: 1h0m0s
   url: https://helm.ngc.nvidia.com/nvidia
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -17,7 +17,7 @@ spec:
   install:
     remediation:
       retries: -1
-  interval: 1m0s
+  interval: 1h0m0s
   driftDetection:
     mode: enabled
   releaseName: gpu-operator
@@ -28,7 +28,7 @@ spec:
         kind: HelmRepository
         name: nvidia
       version: 'v26.7.1'
-      interval: 1m0s
+      interval: 1h0m0s
   valuesFrom:
     - kind: ConfigMap
       name: chart-values

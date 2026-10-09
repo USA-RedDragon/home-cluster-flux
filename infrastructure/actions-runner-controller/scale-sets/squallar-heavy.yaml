@@ -5,7 +5,7 @@ metadata:
   name: squallar-runner-set-heavy
   namespace: actions-runners
 spec:
-  interval: 1m0s
+  interval: 1h0m0s
   driftDetection:
     mode: enabled
   releaseName: squallar-runner-set-heavy
@@ -17,7 +17,7 @@ spec:
         namespace: actions-runner-system
         name: actions-runner-controller
       version: 0.15.0
-      interval: 1m0s
+      interval: 1h0m0s
   install:
     remediation:
       retries: -1

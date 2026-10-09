@@ -5,7 +5,7 @@ metadata:
   name: hashicorp
   namespace: tfe
 spec:
-  interval: 1m0s
+  interval: 1h0m0s
   url: https://helm.releases.hashicorp.com
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -17,7 +17,7 @@ spec:
   install:
     remediation:
       retries: -1
-  interval: 1m0s
+  interval: 1h0m0s
   releaseName: tfe
   chart:
     spec:
@@ -26,7 +26,7 @@ spec:
         kind: HelmRepository
         name: hashicorp
       version: 1.6.10
-      interval: 1m0s
+      interval: 1h0m0s
   valuesFrom:
     - kind: ConfigMap
       name: chart-values-tfe

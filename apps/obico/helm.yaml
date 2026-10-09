@@ -5,7 +5,7 @@ metadata:
   name: obico
   namespace: obico
 spec:
-  interval: 1m0s
+  interval: 1h0m0s
   url: https://charts.gabe565.com
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2

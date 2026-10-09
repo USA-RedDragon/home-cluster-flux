@@ -5,7 +5,7 @@ metadata:
   name: kyverno
   namespace: kyverno
 spec:
-  interval: 1m0s
+  interval: 1h0m0s
   url: https://kyverno.github.io/kyverno/
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -17,7 +17,7 @@ spec:
   install:
     remediation:
       retries: -1
-  interval: 1m0s
+  interval: 1h0m0s
   driftDetection:
     mode: enabled
   releaseName: kyverno
@@ -28,7 +28,7 @@ spec:
         kind: HelmRepository
         name: kyverno
       version: '3.9.1'
-      interval: 1m0s
+      interval: 1h0m0s
   values:
     # Policies are Audit-only; an hourly rescan rewrote ~2000 policy reports
     # (~8k etcd writes/h) for no new information.
