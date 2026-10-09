@@ -1703,12 +1703,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">vaultwarden</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/vaultwarden/restic/helmrelease.yaml">restic</a></td>
-    <td rowspan="2"><a href="apps/vaultwarden/app/postgres.yaml">postgresql</a></td>
+    <td><a href="apps/vaultwarden/resources/restic/helmrelease.yaml">restic</a></td>
+    <td rowspan="2"><a href="apps/vaultwarden/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/vaultwarden/app/helm.yaml">vaultwarden</a></td>
+    <td><a href="apps/vaultwarden/resources/app/helm.yaml">vaultwarden</a></td>
   </tr>
 </table>
 
