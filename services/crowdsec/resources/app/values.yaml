@@ -59,7 +59,7 @@ config:
       # Every dynamic value goes through html: one stray '<' (e.g. a nil field's "<no value>") and Telegram 400s the message.
       format: |
         {
-          "chat_id": "${TELEGRAM_CHAT_ID}",
+          "chat_id": "-5455010891",
           "parse_mode": "HTML",
           "disable_web_page_preview": true,
           "text": "{{range . -}}{{$tgHosts := dict -}}{{range .Events}}{{range .Meta}}{{if eq .Key "target_fqdn"}}{{if set $tgHosts .Value ""}}{{end}}{{end}}{{end}}{{end -}}&#128683; <b>{{html .Source.IP}}</b>{{range .Decisions}} banned {{html .Duration}}{{end}}\n{{html .Source.Cn}} &#183; {{html .Source.AsName}} (AS{{html .Source.AsNumber}})\nRule: <code>{{html .Scenario}}</code> ({{len .Events}} events){{if $tgHosts}}\nHosts: {{html (keys $tgHosts | sortAlpha | join ", ")}}{{end}}\n<a href=\"https://app.crowdsec.net/cti/{{html .Source.IP}}\">CTI</a> &#183; unban: <code>cscli decisions delete --ip {{html .Source.IP}}</code>\n\n{{end}}"
