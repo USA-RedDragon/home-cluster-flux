@@ -18,6 +18,9 @@ spec:
   maxHistory: 2
   driftDetection:
     mode: enabled
+  install:
+    remediation:
+      retries: -1
   dependsOn:
     - name: loki
   values:
