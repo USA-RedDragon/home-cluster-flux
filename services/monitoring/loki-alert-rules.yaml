@@ -209,7 +209,7 @@ data:
               severity: warning
             annotations:
               summary: "TrueNAS cloud sync status reports stopped"
-              description: "No cloudsync-status lines for 3h: the TrueNAS cron job is gone, the script failed, or the middleware is wedged (midclt timing out). On the NAS: /bin/sh /mnt/data/backups/Homelab/scripts/cloudsync-status.sh; systemctl status middlewared."
+              description: "No cloudsync-status lines for 3h: the TrueNAS cron job is gone, the script failed, or the middleware is wedged (midclt timing out). On the NAS: /bin/sh /mnt/data/admin/scripts/cloudsync-status.sh; systemctl status middlewared."
           - alert: RouterBackupFailed
             expr: sum(count_over_time({host="OpenWrt", app="backup_to_b2"} |= "FAILED" [1h])) > 0
             labels:
