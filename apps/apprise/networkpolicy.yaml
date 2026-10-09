@@ -1,0 +1,31 @@
+# Only the notification senders (and the tailnet UI ingress) may reach Apprise.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: apprise
+  namespace: apprise
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: apprise
+      app.kubernetes.io/name: apprise
+  ingress:
+    # kubelet probes
+    - fromEntities:
+        - host
+    - fromEndpoints:
+        # itself: qbit-manage's apprise://.../torrents URL makes Apprise call its own /notify/torrents
+        - matchLabels:
+            io.kubernetes.pod.namespace: apprise
+        - matchLabels:
+            io.kubernetes.pod.namespace: cross-seed
+        - matchLabels:
+            io.kubernetes.pod.namespace: qbit-manage
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: apprise
+            tailscale.com/parent-resource-ns: apprise
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
