@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: monitoring
-  path: ./infrastructure/prometheus/app
+  path: ./infrastructure/prometheus/resources/app
   dependsOn:
     - name: longhorn-config
       namespace: longhorn-system
