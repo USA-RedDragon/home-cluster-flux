@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: restic
-  namespace: path-of-titans
+  namespace: astro-processing
 spec:
   chartRef:
     kind: OCIRepository
@@ -14,20 +14,11 @@ spec:
   driftDetection:
     mode: enabled
   values:
-    defaultPodOptions:
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: path-of-titans
-
     controllers:
       restic:
         type: cronjob
         cronjob:
-          schedule: 56 0 * * *
+          schedule: 48 1 * * *
           timeZone: America/Chicago
           concurrencyPolicy: Forbid
           ttlSecondsAfterFinished: 3600
@@ -36,7 +27,7 @@ spec:
             image: &image
               repository: jacob.pub/ghcr.io/gabe565/restic
               tag: 0.19.1@sha256:3c42c281443525045d82dd46f8e020569b13b46bc60fefb25e1428a6cff53d25
-            workingDir: /data
+            workingDir: /
             envFrom: &envFrom
               - secretRef:
                   name: restic-b2
@@ -44,19 +35,18 @@ spec:
                   name: restic-envs
             env: &env
               TZ: America/Chicago
+              CNPG_SECRET_PATH: /postgresql-superuser
               RESTIC_HOST:
                 fieldRef:
                   fieldPath: metadata.namespace
             command:
               - sh
               - -c
-              # language=sh
               - |
                 exec > >(ts '%H:%M:%S') 2>&1
                 set -eu
-                restic backup --tag=server /data
-                restic backup --tag=filebrowser /filebrowser
-                restic backup --tag=db --tag=postgresql --stdin-filename=postgresql.sql --stdin-from-command -- backup-cnpg.sh
+                restic backup --tag=db --tag=astro-processing --stdin-filename=astro-processing.sql --stdin-from-command -- backup-cnpg.sh --dbname=astro-processing
+                restic backup --tag=db --tag=schedulerdb --stdin-filename=schedulerdb.sql --stdin-from-command -- backup-cnpg.sh --dbname=schedulerdb
                 restic forget --prune --keep-daily=90 --keep-weekly=24 --keep-monthly=24 --keep-yearly=20
                 restic cache --cleanup
             resources:
@@ -74,16 +64,12 @@ spec:
         containers:
           init:
             image: *image
-            workingDir: /data
+            workingDir: /
             envFrom: *envFrom
             env: *env
             command: [sh, -c, "restic init || true"]
 
     persistence:
-      data:
-        existingClaim: path-of-titans
-      filebrowser:
-        existingClaim: filebrowser
-      postgresql-app:
+      postgresql-superuser:
         type: secret
-        name: postgresql-app
+        name: postgresql-superuser

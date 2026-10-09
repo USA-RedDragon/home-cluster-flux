@@ -299,14 +299,18 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">astro-processing</td>
+    <td rowspan="3">astro-processing</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/astro-processing/resources/app/helm.yaml">astro-processing</a></td>
-    <td rowspan="2"><a href="apps/astro-processing/resources/postgres/postgres.yaml">postgresql</a></td>
+    <td rowspan="3"><a href="apps/astro-processing/resources/postgres/postgres.yaml">postgresql</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/astro-processing/resources/astro-stacker/helm.yaml">astro-stacker</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/astro-processing/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
   <tr>
     <td>symmetricds</td>
@@ -1721,10 +1725,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">weewx</td>
+    <td rowspan="3">weewx</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/weewx/resources/restic/helmrelease.yaml">restic</a></td>
+    <td rowspan="3"></td>
+  </tr>
+  <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/weewx/resources/app/helm.yaml">weewx</a></td>
-    <td rowspan="2"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
