@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: ping-exporter
-  path: ./infrastructure/ping-exporter/app
+  path: ./infrastructure/ping-exporter/resources/app
   prune: true
   sourceRef:
     kind: GitRepository
