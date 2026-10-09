@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: cert-manager
-  path: ./infrastructure/cert-manager/app
+  path: ./infrastructure/cert-manager/resources/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -23,7 +23,7 @@ spec:
   dependsOn:
     - name: cert-manager
   targetNamespace: cert-manager
-  path: ./infrastructure/cert-manager/certs
+  path: ./infrastructure/cert-manager/resources/certs
   prune: true
   sourceRef:
     kind: GitRepository

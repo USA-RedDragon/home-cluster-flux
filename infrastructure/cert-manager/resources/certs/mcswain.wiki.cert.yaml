@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mcswain.wiki
+spec:
+  secretName: mcswain.wiki-tls
+  issuerRef:
+    name: cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - mcswain.wiki
+    - '*.mcswain.wiki'
