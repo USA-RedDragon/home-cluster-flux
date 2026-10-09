@@ -1251,44 +1251,44 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="10">path-of-titans</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/path-of-titans/a2s-exporter/helm.yaml">a2s-exporter</a></td>
-    <td rowspan="10"><a href="apps/path-of-titans/postgres/postgres.yaml">postgresql</a></td>
+    <td><a href="apps/path-of-titans/resources/a2s-exporter/helm.yaml">a2s-exporter</a></td>
+    <td rowspan="10"><a href="apps/path-of-titans/resources/postgres/postgres.yaml">postgresql</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/path-of-titans/filebrowser/helm.yaml">filebrowser</a></td>
+    <td><a href="apps/path-of-titans/resources/filebrowser/helm.yaml">filebrowser</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/path-of-titans/mtail/helm.yaml">mtail</a></td>
+    <td><a href="apps/path-of-titans/resources/mtail/helm.yaml">mtail</a></td>
   </tr>
   <tr>
     <td><code>Cluster</code></td>
-    <td><a href="apps/path-of-titans/obsidibot/postgres.yaml">obsidibot</a></td>
+    <td><a href="apps/path-of-titans/resources/obsidibot/postgres.yaml">obsidibot</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/path-of-titans/obsidibot/restic.yaml">obsidibot-restic</a></td>
+    <td><a href="apps/path-of-titans/resources/obsidibot/restic.yaml">obsidibot-restic</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/path-of-titans/path-map/helm.yaml">path-map</a></td>
+    <td><a href="apps/path-of-titans/resources/path-map/helm.yaml">path-map</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/path-of-titans/app/helm.yaml">path-of-titans</a></td>
+    <td><a href="apps/path-of-titans/resources/app/helm.yaml">path-of-titans</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/path-of-titans/rcon/helm.yaml">rcon</a></td>
+    <td><a href="apps/path-of-titans/resources/rcon/helm.yaml">rcon</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/path-of-titans/rcon-exporter/helm.yaml">rcon-exporter</a></td>
+    <td><a href="apps/path-of-titans/resources/rcon-exporter/helm.yaml">rcon-exporter</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/path-of-titans/restic/helmrelease.yaml">restic</a></td>
+    <td><a href="apps/path-of-titans/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
