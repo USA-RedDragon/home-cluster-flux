@@ -439,7 +439,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">cnpg-system</td>
     <td><code>CronJob</code></td>
-    <td><a href="infrastructure/cnpg/backup-prune.yaml">backup-prune</a></td>
+    <td><a href="infrastructure/cnpg/resources/backup-prune/backup-prune.yaml">backup-prune</a></td>
     <td rowspan="2"></td>
   </tr>
   <tr>
