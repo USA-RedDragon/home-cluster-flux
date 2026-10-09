@@ -25,9 +25,18 @@ controllers:
           - --smartctl.interval=120s
           - --smartctl.rescan=10m
           - --web.listen-address=:9633
+          # Physical disks only. Longhorn's iSCSI volume attachments also
+          # appear as /dev/sd*, but they're attached after boot, so the local
+          # SATA drives (870 EVOs on alpha/beta/gamma) are always sda/sdb.
+          # On NVMe-only nodes sda/sdb may be iSCSI; rules drop model
+          # VIRTUAL-DISK.
+          - --smartctl.device-include=^(nvme[0-9]+|sd[ab])$
         securityContext:
-          # SMART pass-through ioctls on /dev/nvme* and /dev/sd* need it.
+          # SMART pass-through ioctls on /dev/nvme* and /dev/sd* need root;
+          # privileged alone still gets EACCES opening /dev/nvme0.
           privileged: true
+          runAsUser: 0
+          runAsGroup: 0
           readOnlyRootFilesystem: true
         probes:
           liveness:
