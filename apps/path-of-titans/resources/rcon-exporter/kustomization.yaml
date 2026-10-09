@@ -5,7 +5,7 @@ resources:
   - helm.yaml
   - prom.yaml
 configMapGenerator:
-  - name: chart-values
+  - name: rcon-exporter-chart-values
     files:
       - values.yaml=values.yaml
 configurations:

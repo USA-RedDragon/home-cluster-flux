@@ -5,7 +5,7 @@ resources:
   - helm.yaml
   - prom.yaml
 configMapGenerator:
-  - name: chart-values
+  - name: mtail-chart-values
     files:
       - values.yaml=values.yaml
 configurations:
