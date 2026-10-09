@@ -1,131 +1,50 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: jacob.pub/ghcr.io/usa-reddragon/mqtt-wx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:5cf34d6d46ad71b3f05f3d35d5d25e5452e3d8cb4af6a6b5824a33e88a66182c"
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom:
-- secretRef:
-    name: passwords
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: INPUT_TOPIC_WEATHER
-  value: rtl_433/Cotech-367959
-- name: INPUT_TOPIC_INDOOR
-  value: weather-esphome/indoor-sensors
-- name: INPUT_TOPIC_LIGHTNING
-  value: weather-esphome/lightning
-- name: INPUT_TOPIC_LIGHT
-  value: weather-esphome/light
-- name: INPUT_TOPIC_PRESSURE
-  value: weather-esphome/weather
-- name: INPUT_TOPIC_PARTICLE_SENSOR
-  value: weather-esphome/particle-sensor
-- name: INPUT_TOPIC_CO2
-  value: weather-esphome/living-room-scd40
-- name: OUTPUT_TOPIC
-  value: weather/station
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+controllers:
+  mqtt-wx:
+    forceRename: mqtt-wx-app
+    strategy: Recreate
+    pod:
+      enableServiceLinks: true
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/mqtt-wx
+          tag: main@sha256:5cf34d6d46ad71b3f05f3d35d5d25e5452e3d8cb4af6a6b5824a33e88a66182c
+          pullPolicy: IfNotPresent
+        envFrom:
+        - secretRef:
+            name: passwords
+        env:
+        - name: INPUT_TOPIC_WEATHER
+          value: rtl_433/Cotech-367959
+        - name: INPUT_TOPIC_INDOOR
+          value: weather-esphome/indoor-sensors
+        - name: INPUT_TOPIC_LIGHTNING
+          value: weather-esphome/lightning
+        - name: INPUT_TOPIC_LIGHT
+          value: weather-esphome/light
+        - name: INPUT_TOPIC_PRESSURE
+          value: weather-esphome/weather
+        - name: INPUT_TOPIC_PARTICLE_SENSOR
+          value: weather-esphome/particle-sensor
+        - name: INPUT_TOPIC_CO2
+          value: weather-esphome/living-room-scd40
+        - name: OUTPUT_TOPIC
+          value: weather/station
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            cpu: 1m
+            memory: 64Mi
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
 service:
-  type: ClusterIP
-
-persistentVolumes: []
-# - name: data
-#   mountPath: /var/lib/postgresql/data
-#   subPath: pg
-#   size: 10Gi
-#   persistentVolumeClaim:
-#     name: data
-#     storageClass: longhorn-nvme
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-
-
-ingress:
-  enabled: false
-
-probes: {}
-
-resources:
-  limits:
-    memory: 128Mi
-  requests:
-    cpu: 1m
-    memory: 64Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+  app:
+    forceRename: mqtt-wx-app
+    controller: mqtt-wx
+    ports:
+      http:
+        port: 80
