@@ -1,129 +1,58 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: jacob.pub/quay.io/thanos/thanos
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: v0.42.4@sha256:b567818fe608067eb0f1d7c2c4fe361e7ad83c8a256234c97685f1d0bf670cc8
-
-imagePullSecrets:
-- name: registry-quay
-nameOverride: ""
-fullnameOverride: ""
-
-args:
-  - compact
-  - --data-dir
-  - /tmp/thanos-compact
-  - --objstore.config-file=/etc/thanos/config.yaml
-  - --wait
-  # Prometheus has tsdb.outOfOrderTimeWindow set, which writes separate blocks
-  # overlapping the regular ones; without this the compactor halts on them.
-  - --compact.enable-vertical-compaction
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - configMapRef:
-#     name: app-config
-
-env: []
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-# Only here so Prometheus can scrape /metrics; the chart default was port 80,
-# which nothing listens on.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+controllers:
+  thanos-compactor:
+    forceRename: thanos-compactor-app
+    strategy: Recreate
+    pod:
+      enableServiceLinks: true
+      imagePullSecrets:
+      - name: registry-quay
+    containers:
+      app:
+        image:
+          repository: jacob.pub/quay.io/thanos/thanos
+          tag: v0.42.4@sha256:b567818fe608067eb0f1d7c2c4fe361e7ad83c8a256234c97685f1d0bf670cc8
+          pullPolicy: IfNotPresent
+        args:
+        - compact
+        - --data-dir
+        - /tmp/thanos-compact
+        - --objstore.config-file=/etc/thanos/config.yaml
+        - --wait
+        # Prometheus has tsdb.outOfOrderTimeWindow set, which writes separate blocks
+        # overlapping the regular ones; without this the compactor halts on them.
+        - --compact.enable-vertical-compaction
+        # Merging blocks spikes well above steady state; 650Mi was OOMKilled twice on
+        # the first real compaction run. Only the limit is raised, not the request.
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+        ports:
+        - name: http
+          containerPort: 10902
+          protocol: TCP
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 10902
-
-persistentVolumes:
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-- name: bucket-config
-  mountPath: /etc/thanos
-  readOnly: true
-  secret:
-    secretName: minio-thanos
-- name: emptydir
-  mountPath: /tmp/thanos-compact
-  emptyDir: {}
-
-ingress:
-  enabled: false
-
-probes: {}
-
-# Merging blocks spikes well above steady state; 650Mi was OOMKilled twice on
-# the first real compaction run. Only the limit is raised, not the request.
-resources:
-  limits:
-    memory: 2Gi
-  requests:
-    cpu: 100m
-    memory: 512Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+  app:
+    forceRename: thanos-compactor-app
+    controller: thanos-compactor
+    ports:
+      http:
+        port: 10902
+persistence:
+  bucket-config:
+    type: secret
+    name: minio-thanos
+    advancedMounts:
+      thanos-compactor:
+        app:
+        - path: /etc/thanos
+          readOnly: true
+  emptydir:
+    type: emptyDir
+    advancedMounts:
+      thanos-compactor:
+        app:
+        - path: /tmp/thanos-compact
