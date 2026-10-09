@@ -10,8 +10,6 @@ spec:
   endpoints:
     - port: manager
       interval: 1m
-# Disk SMART rules moved to infrastructure/smartctl-exporter: Longhorn 1.13's
-# disk health data is a stale cache for NVMe-partition disks.
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule

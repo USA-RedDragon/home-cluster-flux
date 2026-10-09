@@ -9,10 +9,7 @@ controllers:
           repository: jacob.pub/lscr.io/linuxserver/apprise-api
           tag: 1.5.4@sha256:e3960dba4862504eb86be39eb22c48c6955204e1a2d8a86058aebfbb14157507
         env:
-          # Configs are plain files (<key>.cfg) so one can be mounted from a Secret.
           APPRISE_STATEFUL_MODE: simple
-          # No /get, /add, /del: stored configs (and the tokens in them) can't be read back or
-          # rewritten over the API. /notify/<key> still works.
           APPRISE_CONFIG_LOCK: "yes"
         probes:
           liveness:
@@ -42,8 +39,6 @@ persistence:
     accessMode: ReadWriteOnce
     size: 1Gi
     storageClass: longhorn-ssd
-  # /notify/torrents -> Telegram (qbit-manage + cross-seed). Token stays in the sops secret,
-  # off the PVC (and its restic backups).
   torrents:
     enabled: true
     type: secret

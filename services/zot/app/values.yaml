@@ -255,7 +255,6 @@ persistence:
           - path: /zot
 
 route:
-  # Web UI: protected by the central Anubis (securitypolicy.yaml).
   zot:
     enabled: true
     kind: HTTPRoute
@@ -276,7 +275,6 @@ route:
         timeouts:
           request: 0s
           backendRequest: 0s
-  # Registry API (docker/containerd/crane, incl. this cluster's own pulls): no Anubis.
   registry:
     enabled: true
     kind: HTTPRoute

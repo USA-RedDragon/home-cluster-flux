@@ -7,9 +7,6 @@ spec:
   groups:
     - name: disk-smart
       rules:
-        # Keyed by node + serial_number: nvme0/nvme1 and sda/sdb names can swap
-        # across reboots. model_name!~"VIRTUAL-DISK" drops Longhorn iSCSI
-        # attachments that land on sda/sdb on NVMe-only nodes.
         - record: disk:info
           expr: max by (node, device, serial_number, model_name, firmware_version, interface) (smartctl_device{model_name!~".*VIRTUAL-DISK.*"})
 
@@ -51,8 +48,6 @@ spec:
             summary: "NVMe spare blocks at {{ $value }}% on {{ $labels.node }} {{ $labels.serial_number }}"
             description: "{{ $labels.node }} {{ $labels.model_name }} {{ $labels.serial_number }}: The drive has been retiring blocks. Healthy drives sit at 100%."
 
-        # Rated-endurance used: NVMe PercentageUsed, or for SATA 100 minus the
-        # normalized Wear_Leveling_Count (Samsung 870 EVO: 100 new -> 0 worn).
         - record: disk:endurance_used:percent
           expr: |
             (
@@ -61,7 +56,6 @@ spec:
               (100 - smartctl_device_attribute{attribute_name="Wear_Leveling_Count", attribute_value_type="value"})
             ) * on (node, device) group_left (serial_number, model_name) disk:info
 
-        # Lifetime bytes written: NVMe reports it; SATA via Total_LBAs_Written x 512.
         - record: disk:bytes_written:total
           expr: |
             (
@@ -70,11 +64,6 @@ spec:
               (smartctl_device_attribute{attribute_name="Total_LBAs_Written", attribute_value_type="raw"} * 512)
             ) * on (node, device) group_left (serial_number, model_name) disk:info
 
-        # Only alert on wear that will run out soon (user rule, 2026-10-09: no
-        # fixed % thresholds; a drive at 95% with 250 days left is a planned
-        # swap, not an alert). Days left = remaining % / %-per-day, where
-        # %-per-day = 7d byte rate x lifetime %-per-byte. Bytes rather than the
-        # integer endurance %, which ticks and extrapolates wildly.
         - alert: DiskWearExhaustionProjected
           expr: |
             (

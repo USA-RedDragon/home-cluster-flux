@@ -50,7 +50,6 @@ loki:
   # sidecar writes them under /rules/<tenant>; the tenant is "fake" because
   # auth is disabled) and fire into the kube-prometheus-stack Alertmanager.
   rulerConfig:
-    # Every Alertmanager replica, as Prometheus does, not one via the Service.
     alertmanager_url: http://_http-web._tcp.alertmanager-operated.monitoring.svc.cluster.local
     enable_alertmanager_discovery: true
     enable_api: true

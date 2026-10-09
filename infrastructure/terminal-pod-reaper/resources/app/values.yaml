@@ -1,14 +1,4 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
-#
-# Deletes ReplicaSet-owned pods stuck in phase Succeeded/Failed.
-#
-# Why: after the 2026-10-09 rolling node reboots, Talos' graceful shutdown left
-# ~70 Deployment pods "Completed" (phase Succeeded) and several ReplicaSets never
-# created replacements (crowdsec-appsec, the enforcing WAF, sat at 0/1 for ~2h;
-# also astro-processing-backend, external-dns-internal, kosync, ...). Deleting
-# the dead pod made the ReplicaSet recreate it within seconds. A ReplicaSet pod
-# is never legitimately terminal (restartPolicy Always), so deleting one is
-# always safe; Job/CronJob pods are left alone.
 controllers:
   terminal-pod-reaper:
     type: cronjob

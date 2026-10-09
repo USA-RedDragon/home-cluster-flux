@@ -24,7 +24,6 @@ spec:
     - kind: ConfigMap
       name: chart-values
   postRenderers:
-    # The chart's appsec service only exposes 7422; mcswain/waf-vpatch listens on 7423.
     - kustomize:
         patches:
           - target:
