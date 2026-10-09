@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: weewx
-  path: ./apps/weewx/mariadb
+  path: ./apps/weewx/resources/mariadb
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,7 +21,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: weewx
-  path: ./apps/weewx/app
+  path: ./apps/weewx/resources/app
   prune: true
   dependsOn:
     - name: weewx-mariadb
