@@ -47,3 +47,11 @@ spec:
   backupOwnerReference: self
   cluster:
     name: obsidibot
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cnpg-minio
+  annotations:
+    reflector.v1.k8s.emberstack.com/reflects: reflector/cnpg-minio
+type: Opaque
