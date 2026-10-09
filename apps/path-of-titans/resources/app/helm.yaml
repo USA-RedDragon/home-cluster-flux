@@ -4,15 +4,14 @@ metadata:
   name: path-of-titans
   namespace: path-of-titans
 spec:
-  interval: 60m0s
-  maxHistory: 2
-  driftDetection:
-    mode: enabled
-  releaseName: path-of-titans
   chartRef:
     kind: OCIRepository
     name: app-template
     namespace: flux-system
+  interval: 1h
+  maxHistory: 2
+  driftDetection:
+    mode: enabled
   valuesFrom:
     - kind: ConfigMap
       name: chart-values

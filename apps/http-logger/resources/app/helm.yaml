@@ -4,18 +4,17 @@ metadata:
   name: http-logger
   namespace: http-logger
 spec:
-  install:
-    remediation:
-      retries: -1
-  interval: 60m0s
-  maxHistory: 2
-  driftDetection:
-    mode: enabled
-  releaseName: http-logger
   chartRef:
     kind: OCIRepository
     name: app-template
     namespace: flux-system
+  interval: 1h
+  maxHistory: 2
+  driftDetection:
+    mode: enabled
+  install:
+    remediation:
+      retries: -1
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
