@@ -103,5 +103,14 @@ route:
             port: 8080
         matches:
           - path:
+              type: Exact
+              value: /events
+        timeouts:
+          request: 0s
+      - backendRefs:
+          - name: wx
+            port: 8080
+        matches:
+          - path:
               type: PathPrefix
               value: /
