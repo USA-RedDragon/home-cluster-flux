@@ -15,11 +15,6 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    strategy:
-      fail-fast: false
-      matrix:
-        resource: [HelmRelease, Kustomization]
-        sources: [flux-system]
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -32,34 +27,43 @@ jobs:
           ref: ${{ github.event.pull_request.base.sha }}
           path: default
 
-      - id: resource
-        env:
-          RESOURCE: ${{ matrix.resource }}
-        run: echo "resource=${RESOURCE@L}" >> $GITHUB_OUTPUT
+      - name: Setup Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version: '>=1.27.2'
+          cache: false
 
-      - name: Remove non-manifest files
-        run: find . -name .sops.yaml -delete
+      - name: Setup flate
+        run: go install github.com/home-operations/flate/cmd/flate@ff32c0becff81024e2f2ba6b81a6c53889936fd5
+
+      - name: Cache flate
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/flate
+          key: ${{ runner.os }}-flate-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys:
+            ${{ runner.os }}-flate-
 
       - name: Diff Resources
-        uses: docker://ghcr.io/allenporter/flux-local:v8.4.0@sha256:c0be852e30f299ce6a220cc992b0c21a2a0b0684cc17713b9d718e18d9c8beff
-        with:
-          args: >-
-            diff ${{ steps.resource.outputs.resource }}
-            --unified=6
-            --path=/github/workspace/pull/clusters/home
-            --path-orig=/github/workspace/default/clusters/home
-            --strip-attrs=helm.sh/chart,checksum/config,app.kubernetes.io/version,chart
-            --limit-bytes=10000
-            --all-namespaces
-            --sources=${{ matrix.sources }}
-            --output-file=diff.patch
+        env:
+          FLATE_CACHE_DIR: ${{ runner.temp }}/flate
+          FLATE_NO_PROGRESS: "true"
+        run: >-
+          flate diff all
+          --path=pull
+          --path-orig=default
+          --allow-missing-secrets
+          --output=diff
+          > diff.patch
 
       - name: Generate Diff
         id: diff
+        if: ${{ !cancelled() }}
         run: |
           cat diff.patch
           echo "diff<<EOF" >> $GITHUB_OUTPUT
-          cat diff.patch >> $GITHUB_OUTPUT
+          head -c 60000 diff.patch >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           echo "added=$(grep -c '^+[^+]' diff.patch)" >> $GITHUB_OUTPUT
           echo "removed=$(grep -c '^-[^-]' diff.patch)" >> $GITHUB_OUTPUT
@@ -68,14 +72,18 @@ jobs:
         name: Add comment
         uses: mshick/add-pr-comment@v2
         with:
-          message-id: ${{ github.event.pull_request.number }}/${{ steps.resource.outputs.resource }}
+          message-id: ${{ github.event.pull_request.number }}/flate
           message-failure: |
-            ## ${{ matrix.resource }} Diff
+            ## Flux Diff
 
             > [!CAUTION]
             > Failed to create diff. [View log.](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            ```diff
+            ${{ steps.diff.outputs.diff }}
+            ```
           message: |
-            ## ${{ matrix.resource }} Diff
+            ## Flux Diff
 
             <table>
               <tr>
@@ -92,7 +100,6 @@ jobs:
             ```
             </details>
 
-  # Summarize matrix https://github.community/t/status-check-for-a-matrix-jobs/127354/7
   flux-diff-success:
     name: Flux Diff Successful
     runs-on: ubuntu-24.04
@@ -100,5 +107,5 @@ jobs:
     if: ${{ always() }}
     steps:
       - if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
-        name: Check matrix status
+        name: Check status
         run: exit 1

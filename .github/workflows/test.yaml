@@ -21,3 +21,28 @@ jobs:
         uses: fluxcd/pkg/actions/kustomize@main
       - name: Validate manifests
         run: .github/workflows/test/validate.sh
+
+  flux:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - name: Setup Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version: '>=1.27.2'
+          cache: false
+      - name: Setup flate
+        run: go install github.com/home-operations/flate/cmd/flate@ff32c0becff81024e2f2ba6b81a6c53889936fd5
+      - name: Cache flate
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/flate
+          key: ${{ runner.os }}-flate-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys:
+            ${{ runner.os }}-flate-
+      - name: Test Kustomizations and HelmReleases
+        env:
+          FLATE_CACHE_DIR: ${{ runner.temp }}/flate
+          FLATE_NO_PROGRESS: "true"
+        run: flate test all --path=clusters/home --allow-missing-secrets

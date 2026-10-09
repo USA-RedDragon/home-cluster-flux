@@ -22,6 +22,9 @@ spec:
     remediation:
       retries: -1
   values:
+    controllerServiceAccount:
+      namespace: actions-runner-system
+      name: arc-gha-rs-controller
     githubConfigSecret: github-app
     githubConfigUrl: "https://github.com/USA-RedDragon/dockers-private"
     maxRunners: 10
