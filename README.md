@@ -253,7 +253,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>aredn-ntp</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/aredn-ntp/helm.yaml">aredn-ntp</a></td>
+    <td><a href="services/aredn-ntp/resources/app/helm.yaml">aredn-ntp</a></td>
     <td></td>
   </tr>
 </table>
