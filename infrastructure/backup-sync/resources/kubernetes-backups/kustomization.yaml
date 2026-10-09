@@ -3,3 +3,9 @@ kind: Kustomization
 namespace: backup-sync
 resources:
   - helm.yaml
+configMapGenerator:
+  - name: kubernetes-backups-chart-values
+    files:
+      - values.yaml=values.yaml
+configurations:
+  - kustomizeconfig.yaml
