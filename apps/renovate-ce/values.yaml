@@ -126,8 +126,8 @@ renovateWorker:
 
   resources:
     requests:
-      cpu: '1'
-      memory: 8Gi
+      cpu: 1200m
+      memory: 4608Mi
     limits:
       memory: 12Gi
 
