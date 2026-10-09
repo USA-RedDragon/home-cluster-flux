@@ -7,6 +7,8 @@ spec:
   interval: 1h0m0s
   type: oci
   url: oci://docker.io/envoyproxy
+  secretRef:
+    name: registry-docker-hub
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
