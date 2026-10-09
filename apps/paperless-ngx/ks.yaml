@@ -8,9 +8,6 @@ spec:
   targetNamespace: paperless-ngx
   path: ./apps/paperless-ngx/resources
   prune: true
-  commonMetadata:
-    annotations:
-      kustomize.toolkit.fluxcd.io/prune: disabled
   sourceRef:
     kind: GitRepository
     namespace: flux-system
