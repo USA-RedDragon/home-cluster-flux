@@ -101,7 +101,9 @@ networkpolicies:
         - to:
           - ipBlock:
               cidr: 192.168.254.11/32
-            port: 1883
+          ports:
+            - port: 1883
+              protocol: TCP
         - to:
           - namespaceSelector:
               matchLabels:
