@@ -98,6 +98,7 @@ configMaps:
       AUTHENTIK_DISABLE_STARTUP_ANALYTICS: 'true'
       AUTHENTIK_AVATARS: initials
       AUTHENTIK_DISABLE_UPDATE_CHECK: "true"
+      AUTHENTIK_WORKER__TASK_EXPIRATION: days=7
 
 service:
   server:
