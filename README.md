@@ -1149,7 +1149,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>mqtt-wx</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/mqtt-wx/helm.yaml">mqtt-wx</a></td>
+    <td><a href="apps/mqtt-wx/resources/app/helm.yaml">mqtt-wx</a></td>
     <td></td>
   </tr>
 </table>
