@@ -1,223 +1,203 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: jacob.pub/ghcr.io/paperless-ngx/paperless-ngx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.20.15@sha256:6c86cad803970ea782683a8e80e7403444c5bf3cf70de63b4d3c8e87500db92f"
-
-nameOverride: ""
-fullnameOverride: ""
-
-args: []
-command: []
-
-secrets: []
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom:
-- secretRef:
-    name: paperless-ngx
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: PAPERLESS_REDIS
-  value: redis://localhost:6379
-- name: PAPERLESS_DBHOST
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: host
-- name: PAPERLESS_TIKA_ENABLED
-  value: '1'
-- name: PAPERLESS_USE_X_FORWARD_HOST
-  value: '1'
-- name: PAPERLESS_DBENGINE
-  value: postgres
-- name: PAPERLESS_URL
-  value: https://paperless.mcswain.dev
-- name: PAPERLESS_TIME_ZONE
-  value: America/Chicago
-- name: PAPERLESS_CONSUMER_POLLING
-  value: '10'
-- name: PAPERLESS_ENABLE_HTTP_REMOTE_USER
-  value: '1'
-- name: PAPERLESS_HTTP_REMOTE_USER_HEADER_NAME
-  value: 'HTTP_X_AUTHENTIK_USERNAME'
-- name: PAPERLESS_DBPASS
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: password
-- name: PAPERLESS_DBUSER
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: username
-- name: PAPERLESS_DBNAME
-  valueFrom:
-    secretKeyRef:
-      name: postgresql-app
-      key: dbname
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+controllers:
+  paperless:
+    strategy: Recreate
+    replicas: 1
+    annotations:
+      reloader.stakater.com/auto: "true"
+    pod:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/paperless-ngx/paperless-ngx
+          tag: 3.3.0@sha256:6b94799bc769a063b3340cc5847402e626d4d91d29a295a8e747f8e9bead4207
+          pullPolicy: IfNotPresent
+        envFrom:
+          - secretRef:
+              name: paperless-ngx
+        env:
+          USERMAP_UID: "1000"
+          USERMAP_GID: "1000"
+          PAPERLESS_URL: https://paperless.jackal-stargazer.ts.net
+          PAPERLESS_PROXY_SSL_HEADER: '["HTTP_X_FORWARDED_PROTO", "https"]'
+          PAPERLESS_ALLAUTH_TRUSTED_PROXY_COUNT: "1"
+          PAPERLESS_TIME_ZONE: America/Chicago
+          PAPERLESS_OCR_LANGUAGE: eng
+          PAPERLESS_REDIS: redis://localhost:6379
+          PAPERLESS_TIKA_ENABLED: "true"
+          PAPERLESS_TIKA_ENDPOINT: http://localhost:9998
+          PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://localhost:3000
+          PAPERLESS_CONSUMER_POLLING_INTERVAL: "10"
+          PAPERLESS_CONSUMER_RECURSIVE: "true"
+          PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
+          PAPERLESS_CONSUMER_DELETE_DUPLICATES: "true"
+          PAPERLESS_FILENAME_FORMAT: "{{ `{{ created_year }}/{{ correspondent }}/{{ title }}` }}"
+          PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: "true"
+          PAPERLESS_DBENGINE: postgresql
+          PAPERLESS_DBHOST:
+            secretKeyRef:
+              name: postgresql-app
+              key: host
+          PAPERLESS_DBPORT:
+            secretKeyRef:
+              name: postgresql-app
+              key: port
+          PAPERLESS_DBNAME:
+            secretKeyRef:
+              name: postgresql-app
+              key: dbname
+          PAPERLESS_DBUSER:
+            secretKeyRef:
+              name: postgresql-app
+              key: username
+          PAPERLESS_DBPASS:
+            secretKeyRef:
+              name: postgresql-app
+              key: password
+        probes:
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 8000
+                httpHeaders:
+                  - name: Host
+                    value: localhost
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 90
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 8000
+                httpHeaders:
+                  - name: Host
+                    value: localhost
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 5
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 8000
+                httpHeaders:
+                  - name: Host
+                    value: localhost
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 5
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1Gi
+          limits:
+            memory: 2Gi
+      redis:
+        image:
+          repository: jacob.pub/ghcr.io/valkey-io/valkey
+          tag: 9.1.2-alpine@sha256:48332870af354a799964c0012ae1194a0bf2bf894eb508f945810596dc2d8d11
+          pullPolicy: IfNotPresent
+        args:
+          - --save
+          - ""
+          - --appendonly
+          - "no"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 30Mi
+          limits:
+            memory: 128Mi
+      tika:
+        image:
+          repository: jacob.pub/docker.io/apache/tika
+          tag: 3.3.1.0@sha256:90b7fa1dc018434075fce9e1d9b88b1e3d0ea6979d0cf86e116c79a8073ae973
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 20m
+            memory: 256Mi
+          limits:
+            memory: 1Gi
+      gotenberg:
+        image:
+          repository: jacob.pub/docker.io/gotenberg/gotenberg
+          tag: 8.37.0@sha256:f29984bd1e226bf1b93ba90af06000afa8b315853e99d27b9aaa41b93f15c769
+          pullPolicy: IfNotPresent
+        command:
+          - gotenberg
+          - --chromium-disable-javascript=true
+          - --chromium-allow-list=file:///tmp/.*
+        resources:
+          requests:
+            cpu: 20m
+            memory: 128Mi
+          limits:
+            memory: 1Gi
 
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 8000
-
-persistentVolumes:
-- name: data
-  mountPath: /usr/src/paperless/data
-  size: 5Gi
-  persistentVolumeClaim:
-    name: data
-    storageClass: longhorn-ssd
-- name: consume
-  mountPath: /usr/src/paperless/consume
-  nfs:
-    path: /mnt/data/paperless/consume
-    server: 192.168.1.135
-- name: export
-  mountPath: /usr/src/paperless/export
-  nfs:
-    path: /mnt/data/paperless/export
-    server: 192.168.1.135
-- name: media
-  mountPath: /usr/src/paperless/media
-  nfs:
-    path: /mnt/data/paperless/media
-    server: 192.168.1.135
-
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+  app:
+    controller: paperless
+    ports:
+      http:
+        port: 8000
 
 ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: cloudflare
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
-    nginx.ingress.kubernetes.io/auth-signin: https://paperless.mcswain.dev/outpost.goauthentik.io/start?rd=$scheme://$http_host$escaped_request_uri
-    nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
-    nginx.ingress.kubernetes.io/auth-url: https://paperless.mcswain.dev/outpost.goauthentik.io/auth/nginx
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-  ingressClassName: nginx
-  hosts:
-  - host: paperless.mcswain.dev
-    paths:
-    - port: 8000
-      path: /
-      pathType: Prefix
-  tls:
-  - secretName: paperless-mcswain-dev-tls
+  tailscale:
+    enabled: true
+    className: tailscale
     hosts:
-      - paperless.mcswain.dev
+      - host: paperless
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - paperless
 
-extraContainers:
-- image: redis:8.10.2-alpine@sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0
-  imagePullPolicy: IfNotPresent
-  name: redis
-  resources: {}
-- image: jacob.pub/ghcr.io/paperless-ngx/tika:2.9.1-minimal@sha256:20db3df89eaeb1b271dd840888fe909b88b12f4b86ef641ec07a1d45d4c5168f
-  imagePullPolicy: IfNotPresent
-  name: tika
-  resources: {}
-- image: gotenberg/gotenberg:8.37.0@sha256:f29984bd1e226bf1b93ba90af06000afa8b315853e99d27b9aaa41b93f15c769
-  imagePullPolicy: IfNotPresent
-  name: gotenberg
-  resources: {}
-  command:
-  - "gotenberg"
-  - "--chromium-disable-javascript=true"
-  - "--chromium-allow-list=file:///tmp/.*"
-
-probes:
-  liveness:
-    httpGet:
-      path: /
-      port: 8000
-    failureThreshold: 5
-    periodSeconds: 30
-    timeoutSeconds: 10
-  readiness:
-    httpGet:
-      path: /
-      port: 8000
-    failureThreshold: 5
-    periodSeconds: 30
-    timeoutSeconds: 10
-
-resources:
-  limits:
-    memory: 1536Mi
-  requests:
-    cpu: 200m
-    memory: 1024Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+persistence:
+  data:
+    type: persistentVolumeClaim
+    forceRename: paperless-ngx-data
+    storageClass: longhorn-nvme
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    retain: true
+    advancedMounts:
+      paperless:
+        app:
+          - path: /usr/src/paperless/data
+  media:
+    type: persistentVolumeClaim
+    existingClaim: paperless-media
+    advancedMounts:
+      paperless:
+        app:
+          - path: /usr/src/paperless/media
+  consume:
+    type: persistentVolumeClaim
+    existingClaim: paperless-consume
+    advancedMounts:
+      paperless:
+        app:
+          - path: /usr/src/paperless/consume
+  export:
+    type: persistentVolumeClaim
+    existingClaim: paperless-export
+    advancedMounts:
+      paperless:
+        app:
+          - path: /usr/src/paperless/export
