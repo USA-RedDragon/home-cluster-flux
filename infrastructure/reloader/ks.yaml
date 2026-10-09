@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: reloader
-  path: ./infrastructure/reloader/resources
+  path: ./infrastructure/reloader/resources/app
   prune: true
   sourceRef:
     kind: GitRepository
