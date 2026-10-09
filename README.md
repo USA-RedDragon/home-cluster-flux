@@ -969,7 +969,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>linx</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/linx/helm.yaml">linx</a></td>
+    <td><a href="apps/linx/resources/app/helm.yaml">linx</a></td>
     <td></td>
   </tr>
 </table>
