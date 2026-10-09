@@ -202,6 +202,11 @@ lapi:
         secretKeyRef:
           name: crowdsec-bouncers
           key: vps
+    - name: BOUNCER_KEY_envoy
+      valueFrom:
+        secretKeyRef:
+          name: crowdsec-bouncers
+          key: envoy
   persistentVolume:
     data:
       enabled: true
@@ -224,6 +229,63 @@ lapi:
     requests:
       cpu: 20m
       memory: 128Mi
+    limits:
+      memory: 512Mi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+# WAF: request inspection for Envoy via envoy-proxy-bouncer (resources/bouncer).
+#   :7422 mcswain/waf-full    -> minio.mcswain.dev (console): CVE virtual patching + generic rules
+#                                in-band, OWASP CRS out-of-band (detect only)
+#   :7423 mcswain/waf-vpatch  -> s3.mcswain.dev (S3 API): CVE virtual patching only (generic/CRS
+#                                rules false-positive on S3 XML/signed requests; bodies aren't sent)
+# LOG-ONLY for now: on_match sets the remediation to allow, so matches alert but nothing is blocked.
+appsec:
+  enabled: true
+  acquisitions:
+    - source: appsec
+      listen_addr: "0.0.0.0:7422"
+      path: /
+      appsec_config: mcswain/waf-full
+      labels:
+        type: appsec
+    - source: appsec
+      listen_addr: "0.0.0.0:7423"
+      path: /
+      appsec_config: mcswain/waf-vpatch
+      labels:
+        type: appsec
+  configs:
+    mcswain-waf-full.yaml: |
+      name: mcswain/waf-full
+      default_remediation: ban
+      inband_rules:
+        - crowdsecurity/base-config
+        - crowdsecurity/vpatch-*
+        - crowdsecurity/generic-*
+      outofband_rules:
+        - crowdsecurity/crs
+      on_match:
+        - apply:
+            - SetRemediation("allow")
+    mcswain-waf-vpatch.yaml: |
+      name: mcswain/waf-vpatch
+      default_remediation: ban
+      inband_rules:
+        - crowdsecurity/base-config
+        - crowdsecurity/vpatch-*
+      on_match:
+        - apply:
+            - SetRemediation("allow")
+  env:
+    - name: COLLECTIONS
+      value: "crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/appsec-crs"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
     limits:
       memory: 512Mi
   metrics:

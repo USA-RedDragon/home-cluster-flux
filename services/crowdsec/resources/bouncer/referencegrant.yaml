@@ -1,0 +1,15 @@
+# Lets SecurityPolicies in app namespaces point extAuth at the Envoy WAF bouncer.
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: envoy-bouncer-extauth
+  namespace: crowdsec
+spec:
+  from:
+    - group: gateway.envoyproxy.io
+      kind: SecurityPolicy
+      namespace: minio
+  to:
+    - group: ""
+      kind: Service
+      name: envoy-bouncer

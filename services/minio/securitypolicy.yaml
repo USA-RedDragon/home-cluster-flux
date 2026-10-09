@@ -1,0 +1,23 @@
+# WAF (CrowdSec AppSec via services/crowdsec/resources/bouncer). Headers/URL/query only: Envoy
+# answers 413 to any body over bodyToExtAuth.maxRequestBytes (even with failOpen), which would
+# break console uploads and S3 PUTs.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: waf
+  namespace: minio
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: minio-console
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: minio-s3
+  extAuth:
+    failOpen: true
+    grpc:
+      backendRefs:
+        - name: envoy-bouncer
+          namespace: crowdsec
+          port: 8080
