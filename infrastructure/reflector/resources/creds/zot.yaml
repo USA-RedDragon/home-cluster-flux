@@ -1,0 +1,42 @@
+apiVersion: v1
+stringData:
+    .dockerconfigjson: ENC[AES256_GCM,data:s6oKf7p1eSOPsQEKDN78LCyx8Q1QecB26/7Qlqddo8O+W9Arjalky9MiOK2sCuqwk/FzHaJKRojqQ9tPSM4A7yC95ahIhwlaWzA6wz1P1AGs1ibBo6xamJPR/l/DbTtqn0qWSjAsLuN92Etw9ZQhAVFEgbT8ZyA90fO2SxgNPncfW7d/gf6O,iv:r1Wmq1IpMieHIS/tLTKY21Ywv5/ItqQn5kiNh//HESI=,tag:Yt3Y+CyBPqMFo0JY2vToeg==,type:str]
+kind: Secret
+metadata:
+    name: registry-zot
+    namespace: reflector
+    annotations:
+        reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+        reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
+type: kubernetes.io/dockerconfigjson
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2026-05-15T05:05:22Z"
+    mac: ENC[AES256_GCM,data:hJJwLLL9ShCdWqaVjh//lqiJt/onZuDw98ATiT1IaLenZ9QbfDY/znEi7SfMDrWbtl6FthGRXINvRMNaXfzMAQYLkmeOkxQZg+ZDH1QxK+LYyYVC207QeurCqwQKtoHWB3wZjMxNG4umMjt3/f8rmQxBsDu5jIJrpsNDalXwou8=,iv:d+0B7lY/yz41+rtL9LHEaITMdYkb0vYc/3l2HuZNdEI=,tag:XEyQmtvHgxszdc61wsIFqA==,type:str]
+    pgp:
+        - created_at: "2023-08-14T01:28:36Z"
+          enc: |
+            -----BEGIN PGP MESSAGE-----
+
+            hQIMA4MMKSOyI68lAQ/+JY1gCraeGqJQ3xBLy44up961cQIup/2iL5UNeU48vuDr
+            vOmgrr60hs3K1GCsMRI7MdDm8+uVHK4MBzweXCL7QbjNW5WOo5qn5g7y8ENireWe
+            fK14XvOUr/4Ko6rKZPvw0BU5s3Fy3bpYF/UXHe30wJWgRpVQg9/+WZrVgoOnQHfK
+            KQOVMe7UDVlHpVHo50nFL2mqv1xhIPFjnJwxHh8hdp5keZEu7oljSISmGId5lbFJ
+            k/l9n4SBchUeuHc1QEXvxqR8WpZg696R7UT6yWSiZSTK5X7f9ITAdM+7iFsF29s8
+            j79i+7UvlvWXwKwp2sdYzakZ7fuwe5mT0O89UesWuL84ZqSMJtYEVWmdCZsdIDs0
+            t+UNdEbBvukYcydmbXBxo6bK/HQkvwjl5gG5EA9XWhHyA5DHjeLqWGA4W19I7gp6
+            WCqy8PbQY5GS9pglZoJCKJM+vrMZaqV23tL0504wfruUPg/1eQaEaqOHtzbu0giK
+            vyFw3COVolPsl/SDmAgJtiUCTM9wrnuJNIn3g4L94iHjGwq90uOz5xHcWKKT9IUB
+            4R1sgJ1KUtpqxapLjC7617ACLvJ/TqUiMqEKqRT7tQOzvWGljf3OUF6IlDbM8kPe
+            5SfuVRezh9E/+fVr1bbbEOLgNFHw1Kl0l/m4fwW8Rc5RCksoasJIajEtKMzz6qLS
+            XgEAcZAiUdxrVw9wyet42tuOMBV952Szrd8UYfle6OJqcnXzzYdmhZoRA+JBbHWj
+            DSEkz+FaL3TxLeYmKCJSeWpt94v1lUeqmjBouDsv3EsGunlcu6pALGbxynypoTc=
+            =QKeU
+            -----END PGP MESSAGE-----
+          fp: A2BDE47C6914DA528CE96C6042D82D6196E0B4FF
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.3
