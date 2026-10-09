@@ -1,0 +1,39 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: crowdsec
+  namespace: crowdsec
+spec:
+  groups:
+    - name: crowdsec-blocklist
+      rules:
+        # The community blocklist (CAPI) is ~15-17k IPs and refreshes every ~2h.
+        # If it drops out, the bouncers silently stop blocking known-bad IPs.
+        - alert: CrowdSecCommunityBlocklistMissing
+          expr: (sum(cs_active_decisions{origin="CAPI"}) or vector(0)) < 1000
+          for: 6h
+          labels:
+            severity: warning
+          annotations:
+            summary: "CrowdSec community blocklist has {{ $value }} entries"
+            description: "LAPI holds fewer than 1000 CAPI decisions (normally ~16k). Check the LAPI's CAPI pull (cscli capi status) and enrollment."
+        # Each bouncer long-polls /v1/decisions/stream every ~10s. No requests
+        # means that device's nftables sets are frozen (stale or empty).
+        - alert: CrowdSecBouncerNotPulling
+          expr: absent(rate(cs_lapi_bouncer_requests_total{bouncer=~"router.*", route="/v1/decisions/stream"}[15m]) > 0)
+          for: 15m
+          labels:
+            severity: warning
+            bouncer: router
+          annotations:
+            summary: "CrowdSec router bouncer stopped pulling decisions"
+            description: "No /v1/decisions/stream requests from the OpenWrt bouncer for 15m. On the router: /etc/init.d/crowdsec-firewall-bouncer status; nft list set ip crowdsec crowdsec-blacklists-CAPI."
+        - alert: CrowdSecBouncerNotPulling
+          expr: absent(rate(cs_lapi_bouncer_requests_total{bouncer=~"vps.*", route="/v1/decisions/stream"}[15m]) > 0)
+          for: 15m
+          labels:
+            severity: warning
+            bouncer: vps
+          annotations:
+            summary: "CrowdSec VPS bouncer stopped pulling decisions"
+            description: "No /v1/decisions/stream requests from the PoT VPS bouncer for 15m. On the VPS: systemctl status crowdsec-firewall-bouncer (restarting nftables wipes its tables)."
