@@ -6,7 +6,7 @@ resources:
   - postgres.yaml
   - restic.yaml
 configMapGenerator:
-  - name: chart-values
+  - name: obsidibot-chart-values
     files:
       - values.yaml=values.yaml
 configurations:

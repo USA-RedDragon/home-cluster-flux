@@ -5,7 +5,7 @@ resources:
   - helm.yaml
   - securitypolicy.yaml
 configMapGenerator:
-  - name: chart-values
+  - name: rcon-chart-values
     files:
       - values.yaml=values.yaml
 configurations:

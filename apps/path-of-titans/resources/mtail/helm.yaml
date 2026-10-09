@@ -17,4 +17,4 @@ spec:
       retries: -1
   valuesFrom:
     - kind: ConfigMap
-      name: chart-values
+      name: mtail-chart-values
