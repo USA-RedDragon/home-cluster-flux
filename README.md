@@ -1059,48 +1059,48 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="11">monitoring</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/helm.yaml">alloy</a></td>
+    <td><a href="services/monitoring/resources/alloy/helm.yaml">alloy</a></td>
     <td rowspan="11"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/helm.yaml">alloy-gateway</a></td>
+    <td><a href="services/monitoring/resources/alloy-gateway/helm.yaml">alloy-gateway</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/helm.yaml">loki</a></td>
+    <td><a href="services/monitoring/resources/loki/helm.yaml">loki</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/metrics-actioner-helm.yaml">metrics-actioner</a></td>
+    <td><a href="services/monitoring/resources/metrics-actioner/helm.yaml">metrics-actioner</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/nut-exporter-helm.yaml">nut-exporter</a></td>
+    <td><a href="services/monitoring/resources/nut-exporter/helm.yaml">nut-exporter</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/helm.yaml">pushgateway</a></td>
+    <td><a href="services/monitoring/resources/pushgateway/helm.yaml">pushgateway</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/snmp-exporter-helm.yaml">snmp-exporter</a></td>
+    <td><a href="services/monitoring/resources/snmp-exporter/helm.yaml">snmp-exporter</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/talos-logs.yaml">talos-logs</a></td>
+    <td><a href="services/monitoring/resources/talos-logs/helm.yaml">talos-logs</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/helm.yaml">thanos-compactor</a></td>
+    <td><a href="services/monitoring/resources/thanos-compactor/helm.yaml">thanos-compactor</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/helm.yaml">thanos-querier</a></td>
+    <td><a href="services/monitoring/resources/thanos-querier/helm.yaml">thanos-querier</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/monitoring/helm.yaml">thanos-store</a></td>
+    <td><a href="services/monitoring/resources/thanos-store/helm.yaml">thanos-store</a></td>
   </tr>
 </table>
 
