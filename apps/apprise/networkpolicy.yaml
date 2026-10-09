@@ -14,9 +14,6 @@ spec:
     - fromEntities:
         - host
     - fromEndpoints:
-        # itself: qbit-manage's apprise://.../torrents URL makes Apprise call its own /notify/torrents
-        - matchLabels:
-            io.kubernetes.pod.namespace: apprise
         - matchLabels:
             io.kubernetes.pod.namespace: cross-seed
         - matchLabels:
