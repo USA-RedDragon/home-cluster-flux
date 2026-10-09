@@ -231,6 +231,15 @@ data:
             annotations:
               summary: "Mount rejected {{ $value }} plate-solve syncs in 15m"
               description: "The AM5 refused SyncToCoordinates after a solve: it has lost its home position (or the target is within 5 deg of the pole). Its flip and limit decisions are wrong until it is re-homed. Query: {job=\"observatory\", app=\"nina\"} |= \"SyncToCoordinates\""
+          # nina-s3-uploader retries 3 times, then leaves the sub on A: (and a
+          # copy on C:) and never tries again. 2026-10-09: the PC lost DNS.
+          - alert: NINAUploadFailing
+            expr: sum(count_over_time({job="observatory", app="nina-s3-uploader"} |= "failed to upload after" [30m])) > 0
+            labels:
+              severity: critical
+            annotations:
+              summary: "{{ $value }} subs failed to upload from the observatory"
+              description: "nina-s3-uploader gave up on subs; they sit on A:\\NINA (lost on reboot) and C:\\Users\\NINA\\Documents\\N.I.N.A\\Images. Check DNS/route to s3.mcswain.dev from the PC, then copy them to the astro bucket. Query: {job=\"observatory\", app=\"nina-s3-uploader\"} |= \"ERR\""
           - alert: NINAPlateSolveFailing
             expr: sum(count_over_time({job="observatory", app="nina"} |= "Plate solve failed" [1h])) >= 20
             labels:
