@@ -21,8 +21,8 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: secrets
-  namespace: ses-email-service
+  name: ses-email-service-secrets
+  namespace: flux-system
 spec:
   interval: 1h
   targetNamespace: ses-email-service
