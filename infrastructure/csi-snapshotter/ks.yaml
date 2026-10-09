@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: kube-system
-  path: ./infrastructure/csi-snapshotter/crds
+  path: ./infrastructure/csi-snapshotter/resources/crds
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,7 +21,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: kube-system
-  path: ./infrastructure/csi-snapshotter/controller
+  path: ./infrastructure/csi-snapshotter/resources/controller
   prune: true
   dependsOn:
     - name: csi-snapshotter-crds
