@@ -507,7 +507,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>descheduler</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/descheduler/app/helm.yaml">descheduler</a></td>
+    <td><a href="infrastructure/descheduler/resources/app/helm.yaml">descheduler</a></td>
     <td></td>
   </tr>
 </table>
@@ -815,7 +815,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>json-exporter</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/json-exporter/app/helm.yaml">json-exporter</a></td>
+    <td><a href="services/json-exporter/resources/app/helm.yaml">json-exporter</a></td>
     <td></td>
   </tr>
 </table>
@@ -1111,16 +1111,16 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="3">mosquitto</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/mosquitto/app/helm.yaml">mosquitto</a></td>
+    <td><a href="services/mosquitto/resources/app/helm.yaml">mosquitto</a></td>
     <td rowspan="3"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/mosquitto/exporter/helm.yaml">mosquitto-exporter</a></td>
+    <td><a href="services/mosquitto/resources/exporter/helm.yaml">mosquitto-exporter</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/mosquitto/restic/helmrelease.yaml">restic</a></td>
+    <td><a href="services/mosquitto/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
@@ -1319,7 +1319,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>ping-exporter</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/ping-exporter/app/helm.yaml">ping-exporter</a></td>
+    <td><a href="infrastructure/ping-exporter/resources/app/helm.yaml">ping-exporter</a></td>
     <td></td>
   </tr>
 </table>
@@ -1759,8 +1759,8 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>zot</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/zot/app/helm.yaml">zot</a></td>
-    <td><a href="services/zot/app/valkey.yaml">valkey</a></td>
+    <td><a href="services/zot/resources/app/helm.yaml">zot</a></td>
+    <td><a href="services/zot/resources/app/valkey.yaml">valkey</a></td>
   </tr>
 </table>
 <!-- End apps section -->
