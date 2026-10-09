@@ -1,0 +1,131 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: disk-health
+  namespace: smartctl-exporter
+spec:
+  groups:
+    - name: disk-smart
+      rules:
+        # Keyed by node + serial_number: nvme0/nvme1 and sda/sdb names can swap
+        # across reboots. model_name!~"VIRTUAL-DISK" drops Longhorn iSCSI
+        # attachments that land on sda/sdb on NVMe-only nodes.
+        - record: disk:info
+          expr: max by (node, device, serial_number, model_name, firmware_version, interface) (smartctl_device{model_name!~".*VIRTUAL-DISK.*"})
+
+        - alert: DiskSmartFailed
+          expr: (smartctl_device_smart_status == 0) * on (node, device) group_left (serial_number, model_name) disk:info
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "SMART overall health FAILED on {{ $labels.node }} {{ $labels.model_name }} {{ $labels.serial_number }}"
+            description: "The drive reports its own SMART self-assessment as failed. Replace it."
+
+        - alert: DiskCriticalWarning
+          expr: (smartctl_device_critical_warning != 0) * on (node, device) group_left (serial_number, model_name) disk:info
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "NVMe critical warning on {{ $labels.node }} {{ $labels.model_name }} {{ $labels.serial_number }}"
+            description: "SMART CriticalWarning={{ $value }}. Replace it."
+
+        - alert: DiskAvailableSpareLow
+          expr: |
+            (smartctl_device_available_spare < on (node, device) smartctl_device_available_spare_threshold)
+              * on (node, device) group_left (serial_number, model_name) disk:info
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "NVMe spare blocks exhausted on {{ $labels.node }} {{ $labels.serial_number }}"
+            description: "AvailableSpare is {{ $value }}%, below the drive's own threshold."
+
+        - alert: DiskAvailableSpareDropping
+          expr: (smartctl_device_available_spare < 90) * on (node, device) group_left (serial_number, model_name) disk:info
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "NVMe spare blocks at {{ $value }}% on {{ $labels.node }} {{ $labels.serial_number }}"
+            description: "The drive has been retiring blocks. Healthy drives sit at 100%."
+
+        # Rated-endurance used: NVMe PercentageUsed, or for SATA 100 minus the
+        # normalized Wear_Leveling_Count (Samsung 870 EVO: 100 new -> 0 worn).
+        - record: disk:endurance_used:percent
+          expr: |
+            (
+              smartctl_device_percentage_used
+              or
+              (100 - smartctl_device_attribute{attribute_name="Wear_Leveling_Count", attribute_value_type="value"})
+            ) * on (node, device) group_left (serial_number, model_name) disk:info
+
+        - alert: DiskWearCritical
+          expr: max without (attribute_name, attribute_value_type, attribute_id, attribute_flags_short, attribute_flags_long) (disk:endurance_used:percent) >= 90
+          for: 1h
+          labels:
+            severity: critical
+          annotations:
+            summary: "{{ $labels.node }} {{ $labels.model_name }} {{ $labels.serial_number }} at {{ $value }}% of rated endurance"
+            description: "Replace this drive."
+
+        - alert: DiskWearHigh
+          expr: max without (attribute_name, attribute_value_type, attribute_id, attribute_flags_short, attribute_flags_long) (disk:endurance_used:percent) >= 75
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $labels.node }} {{ $labels.model_name }} {{ $labels.serial_number }} at {{ $value }}% of rated endurance"
+            description: "Plan a replacement and check what writes to this disk."
+
+        # Days left = remaining % / %-per-day, %-per-day from the 7d byte rate
+        # and the drive's lifetime %-per-byte. Bytes rather than the integer
+        # PercentageUsed, which ticks 2->3 and extrapolates wildly.
+        - alert: DiskWearExhaustionProjected
+          expr: |
+            (
+              (100 - smartctl_device_percentage_used)
+              / (
+                  rate(smartctl_device_bytes_written[7d]) * 86400
+                * smartctl_device_percentage_used / smartctl_device_bytes_written
+              ) < 180
+              and smartctl_device_percentage_used < 90
+            ) * on (node, device) group_left (serial_number, model_name) disk:info
+          for: 6h
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $labels.node }} {{ $labels.serial_number }} projected to exhaust endurance in {{ $value | humanize }} days"
+            description: "At the last 7 days' write rate this drive reaches 100% of rated endurance in under 180 days."
+
+        - alert: DiskMediaErrorsGrowing
+          expr: increase(smartctl_device_media_errors[24h]) * on (node, device) group_left (serial_number, model_name) disk:info > 0
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: "New media errors on {{ $labels.node }} {{ $labels.serial_number }}"
+            description: "{{ $value }} new uncorrectable media errors in 24h. This drive is failing."
+
+        - alert: DiskSataAttributeGrowing
+          expr: |
+            increase(smartctl_device_attribute{attribute_value_type="raw", attribute_name=~"Reallocated_Sector_Ct|Uncorrectable_Error_Cnt|CRC_Error_Count|Program_Fail_Cnt_Total|Erase_Fail_Count_Total"}[24h])
+              * on (node, device) group_left (serial_number, model_name) disk:info > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $labels.attribute_name }} rising on {{ $labels.node }} {{ $labels.serial_number }}"
+            description: "{{ $value }} new in 24h. CRC errors usually mean a cable/backplane fault; the others are the drive."
+
+        - alert: DiskBadBlocksGrowing
+          expr: |
+            increase(smartctl_device_attribute{attribute_value_type="raw", attribute_name="Added_Bad_Flash_Blk_Ct"}[24h])
+              * on (node, device) group_left (serial_number, model_name) disk:info > 10
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Bad flash blocks accumulating on {{ $labels.node }} {{ $labels.serial_number }}"
+            description: "{{ $value }} new bad flash blocks in 24h. A slow trickle is normal wear; a jump is not."

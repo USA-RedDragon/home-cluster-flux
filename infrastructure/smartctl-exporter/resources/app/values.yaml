@@ -73,6 +73,9 @@ serviceMonitor:
         path: /metrics
         interval: 2m
         scrapeTimeout: 60s
+        relabelings:
+          - sourceLabels: [__meta_kubernetes_pod_node_name]
+            targetLabel: node
 persistence:
   dev:
     type: hostPath
