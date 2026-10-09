@@ -53,8 +53,9 @@ spec:
 
         - alert: CNPGBackupStale
           expr: >-
-            time() - (max by (namespace, job) (cnpg_collector_last_available_backup_timestamp) > 0)
-            > 6 * 3600
+            (time() - (max by (namespace, job) (cnpg_collector_last_available_backup_timestamp{namespace!="rdio-scanner"}) > 0) > 6 * 3600)
+            or
+            (time() - (max by (namespace, job) (cnpg_collector_last_available_backup_timestamp{namespace="rdio-scanner"}) > 0) > 26 * 3600)
           for: 30m
           labels:
             severity: warning
