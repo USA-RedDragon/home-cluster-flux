@@ -9,7 +9,7 @@ defaultSettings:
   priorityClass: longhorn-critical
   logLevel: Warn
   # Per data engine since Longhorn 1.8; a bare number would also reset v2.
-  guaranteedInstanceManagerCPU: '{"v1":"12","v2":"31"}'
+  guaranteedInstanceManagerCPU: '{"v1":"6","v2":"31"}'
   offlineReplicaRebuilding: true
   orphanResourceAutoDeletion: instance
   concurrentAutomaticEngineUpgradePerNodeLimit: 3
