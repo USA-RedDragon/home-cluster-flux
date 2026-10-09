@@ -10,7 +10,7 @@ spec:
   dependsOn:
     - name: longhorn-config
       namespace: longhorn-system
-    - name: reflector-creds
+    - name: reflector
       namespace: reflector
     - name: cert-manager-certs
       namespace: cert-manager
