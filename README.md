@@ -105,7 +105,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#trunk-recorder">trunk-recorder</a></li>
   <li><a href="#ultrafeeder">ultrafeeder</a></li>
   <li><a href="#vaultwarden">vaultwarden</a></li>
-  <li><a href="#weave-gitops">weave-gitops</a></li>
   <li><a href="#weewx">weewx</a></li>
   <li><a href="#wheresmyscope">wheresmyscope</a></li>
   <li><a href="#zot">zot</a></li>
@@ -1710,22 +1709,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/vaultwarden/app/helm.yaml">vaultwarden</a></td>
-  </tr>
-</table>
-
-<h4>weave-gitops</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>flux-system</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="services/weave-gitops/weave-gitops-dashboard.yaml">weave</a></td>
-    <td></td>
   </tr>
 </table>
 
