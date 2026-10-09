@@ -8,9 +8,6 @@ spec:
   targetNamespace: monitoring
   path: ./services/monitoring/resources
   prune: true
-  commonMetadata:
-    annotations:
-      kustomize.toolkit.fluxcd.io/prune: disabled
   sourceRef:
     kind: GitRepository
     namespace: flux-system
