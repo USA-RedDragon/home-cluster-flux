@@ -1,0 +1,29 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: alloy
+  namespace: monitoring
+spec:
+  install:
+    remediation:
+      retries: -1
+  interval: 60m0s
+  maxHistory: 2
+  driftDetection:
+    mode: enabled
+  releaseName: alloy
+  dependsOn:
+    - name: loki
+  chart:
+    spec:
+      chart: alloy
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+      version: '1.13.1'
+      interval: 60m0s
+  valuesFrom:
+    - kind: ConfigMap
+      name: alloy-chart-values

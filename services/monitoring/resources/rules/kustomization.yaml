@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+resources:
+  - backup-alerts.yaml
+  - etcd-alerts.yaml
+  - flux-alerts.yaml
+  - log-alerts.yaml
+  - loki-alert-rules.yaml
+  - node-disk-alerts.yaml
+  - thanos-prom.yaml
