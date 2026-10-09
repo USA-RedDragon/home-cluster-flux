@@ -1,8 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: authentik
-commonAnnotations:
-  kustomize.toolkit.fluxcd.io/prune: disabled
 resources:
   - helm.yaml
   - pdb.yaml
