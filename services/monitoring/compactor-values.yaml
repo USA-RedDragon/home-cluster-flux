@@ -22,6 +22,9 @@ controllers:
         # Prometheus has tsdb.outOfOrderTimeWindow set, which writes separate blocks
         # overlapping the regular ones; without this the compactor halts on them.
         - --compact.enable-vertical-compaction
+        - --retention.resolution-raw=90d
+        - --retention.resolution-5m=365d
+        - --retention.resolution-1h=730d
         # Merging blocks spikes well above steady state; 650Mi was OOMKilled twice on
         # the first real compaction run.
         resources:
