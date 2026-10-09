@@ -1,237 +1,174 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: jacob.pub/ghcr.io/usa-reddragon/mesh-base
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:01729ac5569b39816023a33336afeb669b2d3a514b79a7f8ddfc6656016b4db6"
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-# OLSR-only node: mesh-base's babeld (and arednlink, which needs it) expect a
-# /tmp/babel-generated.conf that only mesh-manager writes, so babeld
-# crash-looped every second (~86k log lines/day). Drop them like vtund.
-command:
-- /bin/sh
-- -c
-- |
-  ip addr add 10.54.25.6/32 dev eth0 \
-  && ip r del default dev tunnel \
-  && sysctl -w net.ipv4.ip_forward=1 \
-  && rsyslogd -n & \
-  cat /etc/resolv.conf > /tmp/resolv.conf.auto \
-  && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
-  && rm -rf /etc/s6/vtund \
-  && rm -rf /etc/s6/babeld /etc/s6/arednlink \
-  && exec s6-svscan /etc/s6
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs:
-- name: olsrd-config
-  data:
-    olsrd.conf: |
-      DebugLevel 0
-      AllowNoInt yes
-      IpVersion 4
-      MainIp 10.54.25.6
-      LinkQualityAlgorithm "etx_ffeth"
-
-      LoadPlugin "olsrd_arprefresh.so.0.1"
-      {
-      }
-
-      LoadPlugin "olsrd_txtinfo.so.1.1"
-      {
-          PlParam "accept" "0.0.0.0"
-      }
-
-      LoadPlugin "olsrd_jsoninfo.so.1.1"
-      {
-          PlParam "accept" "0.0.0.0"
-      }
-
-      LoadPlugin "olsrd_dot_draw.so.0.3"
-      {
-          PlParam "accept" "0.0.0.0"
-          PlParam "port" "2004"
-      }
-
-      LoadPlugin "olsrd_watchdog.so.0.1"
-      {
-          PlParam "file" "/tmp/olsrd.watchdog"
-          PlParam "interval" "5"
-      }
-
-      LoadPlugin "olsrd_nameservice.so.0.4"
-      {
-          PlParam "sighup-pid-file" "/var/run/dnsmasq/dnsmasq.pid"
-          PlParam "interval" "30"
-          PlParam "timeout" "300"
-          PlParam "name" "KI5VMF-NTP"
-          PlParam "service" "http://KI5VMF-NTP.local.mesh:0/|udp|NTP Server"
-      }
-
-      Interface "tun60" "tunnel"
-      {
-          Ip4Broadcast 255.255.255.255
-          Mode "ether"
-      }
-
-      Interface "eth0"
-      {
-          Mode "ether"
-      }
-
-envFrom: []
-# - secretRef:
-#     name: app-creds
-# - configMapRef:
-#     name: app-config
-
-env: {}
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podSecurityContext:
-  privileged: true
-  capabilities:
-    add:
-    - NET_ADMIN
-
-securityContext:
-  sysctls:
-  - name: net.ipv4.conf.all.src_valid_mark
-    value: "1"
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+controllers:
+  aredn-ntp:
+    forceRename: aredn-ntp-app
+    pod:
+      enableServiceLinks: true
+      securityContext:
+        sysctls:
+        - name: net.ipv4.conf.all.src_valid_mark
+          value: '1'
+    initContainers:
+      wireguard-init:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/wireguard
+          tag: main@sha256:548372c47d0abf50e1a7e6d452798f91e252e4ce3f3dd203342f198eb25b151f
+          pullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -x && \
+          export GW=$(ip r list match default | awk '{ print $3 }') && \
+          ip l del tunnel 2>/dev/null || true && \
+          wg-quick up /etc/wireguard/tunnel.conf && \
+          ip6tables -P INPUT DROP && \
+          ip6tables -P OUTPUT DROP && \
+          ip6tables -P FORWARD DROP && \
+          iptables -P INPUT DROP && \
+          iptables -P FORWARD DROP && \
+          iptables -A INPUT -i lo -j ACCEPT && \
+          iptables -A INPUT -i tunnel -j ACCEPT && \
+          iptables -A INPUT -i eth0 -j ACCEPT && \
+          iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+          iptables -A FORWARD -i tunnel -o eth0 -j DROP && \
+          iptables -A FORWARD -i eth0 -o tunnel -j ACCEPT && \
+          iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
+          iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o tunnel -j SNAT --to-source 10.54.25.6 && \
+          iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE && \
+          ip r add 172.17.0.0/16 via $GW dev eth0 && \
+          ip r add 172.18.0.0/16 via $GW dev eth0
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+            - NET_ADMIN
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/mesh-base
+          tag: main@sha256:01729ac5569b39816023a33336afeb669b2d3a514b79a7f8ddfc6656016b4db6
+          pullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - |
+          ip addr add 10.54.25.6/32 dev eth0 \
+          && ip r del default dev tunnel \
+          && sysctl -w net.ipv4.ip_forward=1 \
+          && rsyslogd -n & \
+          cat /etc/resolv.conf > /tmp/resolv.conf.auto \
+          && echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf \
+          && rm -rf /etc/s6/vtund \
+          && rm -rf /etc/s6/babeld /etc/s6/arednlink \
+          && exec s6-svscan /etc/s6
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+            - NET_ADMIN
+        resources:
+          requests:
+            cpu: 20m
+            memory: 6Mi
+        ports:
+        - name: ntp
+          containerPort: 123
+          protocol: UDP
+      ntp:
+        image:
+          repository: jacob.pub/docker.io/cturra/ntp
+          digest: sha256:7224d4e7c7833aabbcb7dd70c46c8a8dcccda365314c6db047b9b10403ace3bc
+          pullPolicy: IfNotPresent
+        ports:
+        - name: ntp
+          containerPort: 123
+          protocol: UDP
 service:
-  type: ClusterIP
-  annotations:
-    tailscale.com/hostname: "ntp"
-    tailscale.com/expose: "true"
-    tailscale.com/tags: "tag:ntp,tag:k8s"
-  labels:
-    tailscale.com/proxy-class: "tailscale"
-  ports:
-  - name: ntp
-    port: 123
-    protocol: UDP
+  app:
+    forceRename: aredn-ntp-app
+    controller: aredn-ntp
+    annotations:
+      tailscale.com/hostname: ntp
+      tailscale.com/expose: 'true'
+      tailscale.com/tags: tag:ntp,tag:k8s
+    labels:
+      tailscale.com/proxy-class: tailscale
+    ports:
+      ntp:
+        port: 123
+        protocol: UDP
+configMaps:
+  olsrd-config:
+    forceRename: olsrd-config
+    data:
+      olsrd.conf: |
+        DebugLevel 0
+        AllowNoInt yes
+        IpVersion 4
+        MainIp 10.54.25.6
+        LinkQualityAlgorithm "etx_ffeth"
 
-persistentVolumes:
-- name: olsrd-config
-  mountPath: /etc/olsrd
-  configMap:
-    name: olsrd-config
-- name: server-wireguard-config
-  mountPath: /etc/wireguard
-  subPath: vtundsrv.conf
-  secret:
-    secretName: server-wireguard-config
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
+        LoadPlugin "olsrd_arprefresh.so.0.1"
+        {
+        }
 
-extraContainers:
-- name: ntp
-  image: jacob.pub/docker.io/cturra/ntp@sha256:7224d4e7c7833aabbcb7dd70c46c8a8dcccda365314c6db047b9b10403ace3bc
-  imagePullPolicy: IfNotPresent
-  ports:
-    - containerPort: 123
-      protocol: UDP
-      name: ntp
+        LoadPlugin "olsrd_txtinfo.so.1.1"
+        {
+            PlParam "accept" "0.0.0.0"
+        }
 
-ingress:
-  enabled: false
+        LoadPlugin "olsrd_jsoninfo.so.1.1"
+        {
+            PlParam "accept" "0.0.0.0"
+        }
 
-probes: {}
-  # liveness:
-  #   httpGet:
-  #     path: /health
-  #     port: 81
-  # readiness:
-  #   httpGet:
-  #     path: /health
-  #     port: 81
+        LoadPlugin "olsrd_dot_draw.so.0.3"
+        {
+            PlParam "accept" "0.0.0.0"
+            PlParam "port" "2004"
+        }
 
-resources:
-  requests:
-    cpu: 20m
-    memory: 6Mi
+        LoadPlugin "olsrd_watchdog.so.0.1"
+        {
+            PlParam "file" "/tmp/olsrd.watchdog"
+            PlParam "interval" "5"
+        }
 
-initContainers:
-- image: jacob.pub/ghcr.io/usa-reddragon/wireguard:main@sha256:548372c47d0abf50e1a7e6d452798f91e252e4ce3f3dd203342f198eb25b151f
-  name: wireguard-init
-  securityContext:
-    privileged: true
-    capabilities:
-      add:
-      - NET_ADMIN
-  command:
-  - /bin/sh
-  - -c
-  - |
-    set -x && \
-    export GW=$(ip r list match default | awk '{ print $3 }') && \
-    ip l del tunnel 2>/dev/null || true && \
-    wg-quick up /etc/wireguard/tunnel.conf && \
-    ip6tables -P INPUT DROP && \
-    ip6tables -P OUTPUT DROP && \
-    ip6tables -P FORWARD DROP && \
-    iptables -P INPUT DROP && \
-    iptables -P FORWARD DROP && \
-    iptables -A INPUT -i lo -j ACCEPT && \
-    iptables -A INPUT -i tunnel -j ACCEPT && \
-    iptables -A INPUT -i eth0 -j ACCEPT && \
-    iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
-    iptables -A FORWARD -i tunnel -o eth0 -j DROP && \
-    iptables -A FORWARD -i eth0 -o tunnel -j ACCEPT && \
-    iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT && \
-    iptables -t nat -A POSTROUTING -d 10.0.0.0/8 -o tunnel -j SNAT --to-source 10.54.25.6 && \
-    iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o tunnel -j MASQUERADE && \
-    ip r add 172.17.0.0/16 via $GW dev eth0 && \
-    ip r add 172.18.0.0/16 via $GW dev eth0
-  volumeMounts:
-  - mountPath: /etc/wireguard
+        LoadPlugin "olsrd_nameservice.so.0.4"
+        {
+            PlParam "sighup-pid-file" "/var/run/dnsmasq/dnsmasq.pid"
+            PlParam "interval" "30"
+            PlParam "timeout" "300"
+            PlParam "name" "KI5VMF-NTP"
+            PlParam "service" "http://KI5VMF-NTP.local.mesh:0/|udp|NTP Server"
+        }
+
+        Interface "tun60" "tunnel"
+        {
+            Ip4Broadcast 255.255.255.255
+            Mode "ether"
+        }
+
+        Interface "eth0"
+        {
+            Mode "ether"
+        }
+persistence:
+  olsrd-config:
+    type: configMap
+    identifier: olsrd-config
+    advancedMounts:
+      aredn-ntp:
+        app:
+        - path: /etc/olsrd
+  server-wireguard-config:
+    type: secret
     name: server-wireguard-config
-  imagePullPolicy: IfNotPresent
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+    advancedMounts:
+      aredn-ntp:
+        app:
+        - path: /etc/wireguard
+          subPath: vtundsrv.conf
+        wireguard-init:
+        - path: /etc/wireguard
