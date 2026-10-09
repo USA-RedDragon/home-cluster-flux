@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: nexrad-aws-notifier
+  namespace: nexrad-aws-notifier
+spec:
+  interval: 1h
+  targetNamespace: nexrad-aws-notifier
+  path: ./apps/nexrad-aws-notifier/resources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
