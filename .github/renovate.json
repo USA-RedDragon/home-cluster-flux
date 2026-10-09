@@ -314,6 +314,14 @@
             "matchPackageNames": [
                 "/gha-runner-scale-set/"
             ]
+        },
+        {
+            "matchPackageNames": [
+                "ghcr.io/fluxcd/flux-manifests",
+                "fluxcd/flux2",
+                "ghcr.io/fluxcd/flux-cli"
+            ],
+            "automerge": false
         }
     ]
 }
