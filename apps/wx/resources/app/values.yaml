@@ -86,3 +86,22 @@ persistence:
     retain: true
     globalMounts:
       - path: /data
+
+route:
+  wx:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - wx.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: wx
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
