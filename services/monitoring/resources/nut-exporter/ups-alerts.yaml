@@ -42,6 +42,25 @@ spec:
   scrapeInterval: 15s
   scrapeTimeout: 14s
 ---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: nut-control-plane
+  namespace: monitoring
+spec:
+  staticConfigs:
+    - targets: ["nut-exporter.monitoring.svc.cluster.local:9199"]
+      labels:
+        instance: closet-control-plane
+        job: nut-control-plane
+        ups: closet-control-plane
+  metricsPath: /ups_metrics
+  params:
+    server: ["192.168.1.19"]
+    ups: ["ups"]
+  scrapeInterval: 15s
+  scrapeTimeout: 14s
+---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -152,3 +171,70 @@ spec:
           annotations:
             summary: "Closet network UPS not readable"
             description: "No data from NUT on the router for 10m: nut-server is down or the UPS USB cable is out. Check: ssh root@192.168.1.1 upsc ups@127.0.0.1 (the USB device must be owned by nut; /etc/hotplug.d/usb/30-libhid-ups sets that when the UPS is plugged in)."
+        - alert: ControlPlaneUPSOnBattery
+          expr: network_ups_tools_ups_status{job="nut-control-plane", flag="OB"} == 1
+          for: 15s
+          labels:
+            severity: critical
+          annotations:
+            summary: "Mains is out: control-plane UPS on battery"
+            description: "The Back-UPS XS 1000M carrying chi, psi, omega, delta, epsilon and Home Assistant is on battery: {{ with query \"network_ups_tools_battery_runtime{job='nut-control-plane'}\" }}{{ . | first | value | humanizeDuration }}{{ end }} of runtime left."
+        - alert: ControlPlaneUPSLowBattery
+          expr: |
+            network_ups_tools_ups_status{job="nut-control-plane", flag="LB"} == 1
+              and on(instance) network_ups_tools_ups_status{job="nut-control-plane", flag="OB"} == 1
+          labels:
+            severity: critical
+          annotations:
+            summary: "Control-plane UPS battery low on battery"
+            description: "The Back-UPS XS 1000M is on battery with LB set. All three control-plane nodes lose power when it runs out."
+        - alert: ControlPlaneUPSRuntimeShort
+          expr: |
+            network_ups_tools_battery_runtime{job="nut-control-plane"} < 300
+              and on(instance) network_ups_tools_ups_status{job="nut-control-plane", flag="OL"} == 1
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Control-plane UPS runtime only {{ $value | humanizeDuration }} on mains"
+            description: "The Back-UPS XS 1000M estimates under 5 minutes of runtime at {{ with query \"network_ups_tools_ups_load{job='nut-control-plane'}\" }}{{ . | first | value }}{{ end }}% load while fully on mains. The battery is worn or the load is too high for a clean shutdown."
+        - alert: ControlPlaneUPSReplaceBattery
+          expr: network_ups_tools_ups_status{job="nut-control-plane", flag="RB"} == 1
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Control-plane UPS battery needs replacing"
+            description: "The Back-UPS XS 1000M sets RB (replace battery)."
+        - alert: ControlPlaneUPSLoadHigh
+          expr: network_ups_tools_ups_load{job="nut-control-plane"} > 80
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Control-plane UPS load at {{ $value }}%"
+            description: "The Back-UPS XS 1000M (600 W) has been above 80% load for 10m, which leaves very little runtime."
+        - alert: ControlPlaneUPSBatteryNotCharging
+          expr: |
+            network_ups_tools_battery_charge{job="nut-control-plane"} < 90
+              and on(instance) network_ups_tools_ups_status{job="nut-control-plane", flag="OL"} == 1
+          for: 12h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Control-plane UPS battery stuck at {{ $value }}% on mains"
+            description: "The Back-UPS XS 1000M has been on mains for 12h without recharging past 90%. The battery is probably worn out."
+        - alert: ControlPlaneUPSUnreachable
+          expr: |
+            up{job="nut-control-plane"} == 0
+              or
+            absent(
+              network_ups_tools_ups_status{job="nut-control-plane", flag="OL"} == 1
+              or network_ups_tools_ups_status{job="nut-control-plane", flag="OB"} == 1
+            )
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Control-plane UPS not readable"
+            description: "No data from the Home Assistant NUT add-on for 10m: the add-on is stopped or the AP9827 USB cable is out. Check: upsc ups@192.168.1.19."
