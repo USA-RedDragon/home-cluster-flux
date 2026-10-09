@@ -131,7 +131,7 @@ controllers:
         resources:
           requests:
             cpu: 3
-            memory: 6Gi
+            memory: 18944Mi
           limits:
             # Previews hold about 200 MB each; each stacking worker's
             # accumulator is 416 MB and a rebuild pass about 730 MB, plus
