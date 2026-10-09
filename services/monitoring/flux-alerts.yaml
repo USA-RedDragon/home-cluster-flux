@@ -37,11 +37,13 @@ spec:
             max by (namespace, kind, name) (max_over_time(gotk_resource_info{ready="False", suspended!="true", reason="DependencyNotReady"}[10m]))
             unless on (namespace, kind, name)
             max by (namespace, kind, name) (max_over_time(gotk_resource_info{ready="True"}[10m]))
+            unless on ()
+            count by (kind, namespace, name) (group by (kind, namespace, name, revision) (last_over_time(gotk_resource_info{kind=~"GitRepository|OCIRepository|Bucket"}[30m]))) > 1
           for: 50m
           labels:
             severity: warning
           annotations:
             summary: Flux {{ $labels.kind }} {{ $labels.namespace }}/{{ $labels.name }} waiting on dependencies for 1h
             description: >-
-              Flux {{ $labels.kind }} {{ $labels.namespace }}/{{ $labels.name }} has been waiting on a dependency for over 1h;
+              Flux {{ $labels.kind }} {{ $labels.namespace }}/{{ $labels.name }} has been waiting on a dependency for over 1h with no new source revision in the last 30m;
               a resource it depends on is stuck. Check `kubectl -n {{ $labels.namespace }} describe {{ $labels.kind | toLower }} {{ $labels.name }}`.
