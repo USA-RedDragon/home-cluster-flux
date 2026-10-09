@@ -4,7 +4,7 @@ controllers:
       mariadb:
         image:
           repository: jacob.pub/ghcr.io/mariadb/mariadb
-          tag: 12.3.3-noble@sha256:755ecf226b8be900c059bcb70234a5d1fb83cc27918fa70d7f0d48b4521aedc5
+          tag: 12.3.3-noble@sha256:8da72d6ab7f1edffd540486662663b163c83a2c4755a6611e880010f41fe761f
         env:
           MARIADB_DATABASE: weewx
           MARIADB_USER: weewx
