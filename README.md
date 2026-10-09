@@ -221,7 +221,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>aredn-dmrhub</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/aredn-dmrhub/helm.yaml">aredn-dmrhub</a></td>
+    <td><a href="services/aredn-dmrhub/resources/app/helm.yaml">aredn-dmrhub</a></td>
     <td></td>
   </tr>
 </table>
