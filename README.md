@@ -327,7 +327,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>astroframe</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/astroframe/helm.yaml">astroframe</a></td>
+    <td><a href="apps/astroframe/resources/app/helm.yaml">astroframe</a></td>
     <td></td>
   </tr>
 </table>
