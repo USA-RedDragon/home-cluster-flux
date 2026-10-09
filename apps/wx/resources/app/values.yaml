@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+controllers:
+  wx:
+    replicas: 1
+    strategy: Recreate
+    pod:
+      labels:
+        policy.mcswain.dev/egress-coredns: "true"
+        policy.mcswain.dev/egress-internet: "true"
+        policy.mcswain.dev/egress-lan: "true"
+        policy.mcswain.dev/egress-namespace: "true"
+        policy.mcswain.dev/public-gateway: "true"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+    containers:
+      wx:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/wx
+          tag: v1.0.0@sha256:180d3e1c2be56a037579f4f64478ded9de98a4355bf81cb49e82cf281a51a495
+          pullPolicy: IfNotPresent
+        env:
+          DATABASE_PATH: /data/wx.db
+          MQTT_BROKER: mqtt://192.168.254.11:1883
+          MQTT_USERNAME: wx
+          MQTT_CLIENT_ID: wx
+          MQTT_TOPIC: weather/station
+          MQTT_RAIN_TOPIC: rtl_433/Cotech-367959
+          STATION_LOCATION: Moore, OK
+          STATION_LATITUDE: "35.32472"
+          STATION_LONGITUDE: "-97.46061"
+          STATION_ALTITUDE_FEET: "1191"
+          STATION_TIMEZONE: America/Chicago
+          STATION_WEEK_START: "6"
+          STATION_RADAR_IMAGE: https://radar.weather.gov/ridge/standard/KTLX_loop.gif
+          STATION_RADAR_URL: https://radar.weather.gov/?settings=v1_eyJhZ2VuZGEiOnsiaWQiOiJsb2NhbCIsImNlbnRlciI6Wy05Ny4yNzc3LDM1LjMzMzA1XSwiem9vbSI6NywiZmlsdGVyIjoiV1NSLTg4RCIsImxheWVyIjoiYnJlZl9yYXciLCJzdGF0aW9uIjoiS1RMWCIsInRyYW5zcGFyZW50Ijp0cnVlLCJhbGVydHNPdmVybGF5Ijp0cnVlLCJzdGF0aW9uSWNvbnNPdmVybGF5Ijp0cnVlfSwiYW5pbWF0aW5nIjpmYWxzZSwiYmFzZSI6InN0YW5kYXJkIiwiY291bnR5IjpmYWxzZSwiY3dhIjpmYWxzZSwic3RhdGUiOmZhbHNlLCJtZW51Ijp0cnVlLCJzaG9ydEZ1c2VkT25seSI6dHJ1ZSwib3BhY2l0eSI6eyJhbGVydHMiOjAuOCwibG9jYWwiOjAuNiwibG9jYWxTdGF0aW9ucyI6MC44LCJuYXRpb25hbCI6MC42fX0%3D
+          STATION_SATELLITE_IMAGE: https://cdn.star.nesdis.noaa.gov/GOES16/ABI/SECTOR/sp/GEOCOLOR/GOES16-SP-GEOCOLOR-600x600.gif
+          STATION_SATELLITE_URL: https://www.star.nesdis.noaa.gov/GOES/sector_band.php?sat=G16&sector=sp&band=GEOCOLOR&length=36
+          NWS_ENABLED: "true"
+          NWS_USER_AGENT: (wx.mcswain.dev, wx-station@mcswain.dev)
+          GOMEMLIMIT: 48MiB
+        envFrom:
+          - secretRef:
+              name: wx
+        resources:
+          limits:
+            memory: 64Mi
+          requests:
+            cpu: 5m
+            memory: 32Mi
+        probes:
+          liveness: &probe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+          readiness: *probe
+          startup:
+            enabled: true
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+
+service:
+  wx:
+    controller: wx
+    ports:
+      http:
+        port: 8080
+
+persistence:
+  data:
+    type: persistentVolumeClaim
+    storageClass: longhorn-ssd
+    size: 1Gi
+    accessMode: ReadWriteOnce
+    retain: true
+    globalMounts:
+      - path: /data
