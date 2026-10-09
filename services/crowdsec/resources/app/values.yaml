@@ -55,13 +55,14 @@ config:
       group_threshold: 10
       max_retry: 5
       timeout: 15s
+      # No bare $vars that could match an env var: CrowdSec env-expands plugin configs ($_ is set by shells).
       # Every dynamic value goes through html: one stray '<' (e.g. a nil field's "<no value>") and Telegram 400s the message.
       format: |
         {
           "chat_id": "${TELEGRAM_CHAT_ID}",
           "parse_mode": "HTML",
           "disable_web_page_preview": true,
-          "text": "{{range . -}}{{$h := dict -}}{{range .Events}}{{range .Meta}}{{if eq .Key "target_fqdn"}}{{$_ := set $h .Value ""}}{{end}}{{end}}{{end -}}&#128683; <b>{{html .Source.IP}}</b>{{range .Decisions}} banned {{html .Duration}}{{end}}\n{{html .Source.Cn}} &#183; {{html .Source.AsName}} (AS{{html .Source.AsNumber}})\nRule: <code>{{html .Scenario}}</code> ({{len .Events}} events){{if $h}}\nHosts: {{html (keys $h | sortAlpha | join ", ")}}{{end}}\n<a href=\"https://app.crowdsec.net/cti/{{html .Source.IP}}\">CTI</a> &#183; unban: <code>cscli decisions delete --ip {{html .Source.IP}}</code>\n\n{{end}}"
+          "text": "{{range . -}}{{$tgHosts := dict -}}{{range .Events}}{{range .Meta}}{{if eq .Key "target_fqdn"}}{{if set $tgHosts .Value ""}}{{end}}{{end}}{{end}}{{end -}}&#128683; <b>{{html .Source.IP}}</b>{{range .Decisions}} banned {{html .Duration}}{{end}}\n{{html .Source.Cn}} &#183; {{html .Source.AsName}} (AS{{html .Source.AsNumber}})\nRule: <code>{{html .Scenario}}</code> ({{len .Events}} events){{if $tgHosts}}\nHosts: {{html (keys $tgHosts | sortAlpha | join ", ")}}{{end}}\n<a href=\"https://app.crowdsec.net/cti/{{html .Source.IP}}\">CTI</a> &#183; unban: <code>cscli decisions delete --ip {{html .Source.IP}}</code>\n\n{{end}}"
         }
       url: https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage
       method: POST
