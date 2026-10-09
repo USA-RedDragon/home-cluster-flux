@@ -5,6 +5,7 @@ controllers:
     strategy: Recreate
     pod:
       enableServiceLinks: true
+      hostname: rtl-433
     containers:
       app:
         image:
