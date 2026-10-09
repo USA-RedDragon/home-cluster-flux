@@ -4,7 +4,7 @@ metadata:
   name: atuin
   labels:
     app.kubernetes.io/instance: atuin
-    app.kubernetes.io/name: app
+    app.kubernetes.io/name: atuin
 spec:
   endpoints:
     - port: metrics
@@ -13,4 +13,4 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/instance: atuin
-      app.kubernetes.io/name: app
+      app.kubernetes.io/name: atuin

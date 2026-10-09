@@ -7,4 +7,5 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/instance: authentik
-      app.kubernetes.io/name: app
+      app.kubernetes.io/name: authentik
+      app.kubernetes.io/controller: server
