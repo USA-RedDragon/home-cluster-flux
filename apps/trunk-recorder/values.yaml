@@ -14,6 +14,27 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/trunk-recorder-soapysdrplay3-prometheus
           tag: main@sha256:ded68e497e630865408eec41f1469faf73ddf7ffc86351f44b5a99e312c54b46
           pullPolicy: IfNotPresent
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              exec: &probe
+                command:
+                - sh
+                - -c
+                - c=$(curl -sf -m 5 http://127.0.0.1:9842/metrics | awk '/^trunk_recorder_message_decodes/ {s+=$2} END {printf "%d", s}'); p=$(cat /tmp/decodes 2>/dev/null); echo "$c" > /tmp/decodes; [ "$c" -ge $(( ${p:-0} + 60 )) ]
+              periodSeconds: 60
+              timeoutSeconds: 10
+              failureThreshold: 3
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              exec: *probe
+              periodSeconds: 10
+              timeoutSeconds: 10
+              failureThreshold: 30
         env:
         - name: TZ
           value: America/Chicago
