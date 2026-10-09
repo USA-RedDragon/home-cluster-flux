@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: longhorn-system
-  path: ./infrastructure/longhorn/app
+  path: ./infrastructure/longhorn/resources/app
   prune: true
   dependsOn:
     - name: csi-snapshotter-controller
@@ -26,7 +26,7 @@ spec:
     - name: longhorn
   interval: 1h
   targetNamespace: longhorn-system
-  path: ./infrastructure/longhorn/config
+  path: ./infrastructure/longhorn/resources/config
   prune: true
   sourceRef:
     kind: GitRepository
@@ -47,7 +47,7 @@ spec:
       namespace: cert-manager
   interval: 1h
   targetNamespace: longhorn-system
-  path: ./infrastructure/longhorn/prometheus
+  path: ./infrastructure/longhorn/resources/prometheus
   prune: true
   sourceRef:
     kind: GitRepository
