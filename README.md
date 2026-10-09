@@ -1379,7 +1379,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>reflector</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/reflector/app/helm.yaml">reflector</a></td>
+    <td><a href="infrastructure/reflector/resources/app/helm.yaml">reflector</a></td>
     <td></td>
   </tr>
 </table>
