@@ -1,0 +1,25 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: smartctl-exporter
+  namespace: smartctl-exporter
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: -1
+  driftDetection:
+    mode: enabled
+  releaseName: smartctl-exporter
+  chart:
+    spec:
+      chart: app-template
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      version: '4.6.2'
+      interval: 1h
+  valuesFrom:
+    - kind: ConfigMap
+      name: chart-values
