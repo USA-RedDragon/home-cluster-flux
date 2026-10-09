@@ -22,6 +22,9 @@ spec:
     remediation:
       retries: -1
   values:
+    controllerServiceAccount:
+      namespace: actions-runner-system
+      name: arc-gha-rs-controller
     githubConfigSecret: github-app-squallar
     githubConfigUrl: "https://github.com/Squallar"
     # 2 CPU requested per runner; 4 keeps a CI burst from overcommitting the cluster.
