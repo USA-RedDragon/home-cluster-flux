@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: kyverno
 resources:
   - helm.yaml
+  - ../policy-reporter
