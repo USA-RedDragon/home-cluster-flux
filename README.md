@@ -237,7 +237,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>aredn-meshmap</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/aredn-meshmap/helm.yaml">aredn-meshmap</a></td>
+    <td><a href="apps/aredn-meshmap/resources/app/helm.yaml">aredn-meshmap</a></td>
     <td></td>
   </tr>
 </table>
