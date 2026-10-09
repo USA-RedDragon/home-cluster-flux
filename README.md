@@ -987,7 +987,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>mindustry</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/mindustry/helm.yaml">mindustry</a></td>
+    <td><a href="apps/mindustry/resources/app/helm.yaml">mindustry</a></td>
     <td></td>
   </tr>
 </table>
