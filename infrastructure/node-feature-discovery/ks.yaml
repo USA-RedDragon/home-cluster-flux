@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: node-feature-discovery
-  path: ./infrastructure/node-feature-discovery/resources/app
+  path: ./infrastructure/node-feature-discovery/resources
   prune: true
   sourceRef:
     kind: GitRepository

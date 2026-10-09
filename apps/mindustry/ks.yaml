@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: mindustry
-  path: ./apps/mindustry/resources/app
+  path: ./apps/mindustry/resources
   prune: true
   sourceRef:
     kind: GitRepository

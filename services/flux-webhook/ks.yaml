@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: flux-system
-  path: ./services/flux-webhook/resources/app
+  path: ./services/flux-webhook/resources
   prune: true
   sourceRef:
     kind: GitRepository

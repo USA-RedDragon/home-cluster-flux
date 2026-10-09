@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: intel-device-plugin
-  path: ./infrastructure/intel-device-plugin/resources/app
+  path: ./infrastructure/intel-device-plugin/resources
   prune: true
   sourceRef:
     kind: GitRepository

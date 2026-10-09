@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: descheduler
-  path: ./infrastructure/descheduler/resources/app
+  path: ./infrastructure/descheduler/resources
   prune: true
   sourceRef:
     kind: GitRepository

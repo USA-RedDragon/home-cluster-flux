@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: zot
-  path: ./services/zot/resources/app
+  path: ./services/zot/resources
   prune: true
   dependsOn:
     - name: secrets

@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: renovate-ce
-  path: ./apps/renovate-ce/resources/app
+  path: ./apps/renovate-ce/resources
   prune: true
   sourceRef:
     kind: GitRepository
