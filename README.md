@@ -851,12 +851,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">kosync</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/kosync/helm.yaml">kosync</a></td>
-    <td rowspan="2"><a href="apps/kosync/postgres.yaml">postgresql</a></td>
+    <td><a href="apps/kosync/resources/app/helm.yaml">kosync</a></td>
+    <td rowspan="2"><a href="apps/kosync/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/kosync/restic.yaml">restic</a></td>
+    <td><a href="apps/kosync/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
