@@ -1671,7 +1671,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>trunk-recorder</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/trunk-recorder/helm.yaml">trunk-recorder</a></td>
+    <td><a href="apps/trunk-recorder/resources/app/helm.yaml">trunk-recorder</a></td>
     <td></td>
   </tr>
 </table>
