@@ -69,6 +69,15 @@ data:
             annotations:
               summary: "No pod logs reaching Loki for 15m"
               description: "No pod logs have reached Loki for 15m (kube-system always logs). Check the alloy DaemonSet in monitoring."
+          - alert: LokiRulerRulesUnparseable
+            expr: |
+              sum(count_over_time({namespace="monitoring", container="loki"} |~ `^level=error .*msg="unable to list rules"` [10m])) > 0
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Loki ruler cannot load its rule files"
+              description: "The Loki ruler keeps running the last rules it loaded and ignores every change until the file parses again; after a Loki restart it runs no rules at all. Usually a YAML error in the loki-alert-rules ConfigMap. Query: {namespace=\"monitoring\", container=\"loki\"} |= \"level=error\""
 
       - name: log-hardware
         rules:
