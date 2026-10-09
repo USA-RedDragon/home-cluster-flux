@@ -12,15 +12,10 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: thanos-querier
-  chart:
-    spec:
-      chart: app
-      sourceRef:
-        kind: HelmRepository
-        name: usa-reddragon
-        namespace: flux-system
-      version: '0.1.35'
-      interval: 60m0s
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
   valuesFrom:
     - kind: ConfigMap
       name: querier-chart-values
@@ -38,15 +33,10 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: thanos-compactor
-  chart:
-    spec:
-      chart: app
-      sourceRef:
-        kind: HelmRepository
-        name: usa-reddragon
-        namespace: flux-system
-      version: '0.1.35'
-      interval: 60m0s
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
   valuesFrom:
     - kind: ConfigMap
       name: compactor-chart-values
@@ -64,15 +54,10 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: thanos-store
-  chart:
-    spec:
-      chart: app
-      sourceRef:
-        kind: HelmRepository
-        name: usa-reddragon
-        namespace: flux-system
-      version: '0.1.35'
-      interval: 60m0s
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
   valuesFrom:
     - kind: ConfigMap
       name: store-chart-values

@@ -1,132 +1,56 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: jacob.pub/quay.io/thanos/thanos
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: v0.42.4@sha256:b567818fe608067eb0f1d7c2c4fe361e7ad83c8a256234c97685f1d0bf670cc8
-
-imagePullSecrets:
-- name: registry-quay
-nameOverride: ""
-fullnameOverride: ""
-
-args:
-  - query
-  - --http-address
-  - "0.0.0.0:9090"
-  - --endpoint
-  - dnssrv+_grpc._tcp.prometheus-stack-kube-prom-thanos-discovery.monitoring.svc.cluster.local
-  # Blocks in the bucket, i.e. anything older than Prometheus' local retention.
-  - --endpoint
-  - dns+thanos-store-app.monitoring.svc.cluster.local:10901
-  # Read the compactor's 5m/1h downsampled blocks for long ranges.
-  - --query.auto-downsampling
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - configMapRef:
-#     name: app-config
-
-env: []
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+controllers:
+  thanos-querier:
+    forceRename: thanos-querier-app
+    strategy: Recreate
+    pod:
+      enableServiceLinks: true
+      imagePullSecrets:
+      - name: registry-quay
+    containers:
+      app:
+        image:
+          repository: jacob.pub/quay.io/thanos/thanos
+          tag: v0.42.4@sha256:b567818fe608067eb0f1d7c2c4fe361e7ad83c8a256234c97685f1d0bf670cc8
+          pullPolicy: IfNotPresent
+        args:
+        - query
+        - --http-address
+        - 0.0.0.0:9090
+        - --endpoint
+        - dnssrv+_grpc._tcp.prometheus-stack-kube-prom-thanos-discovery.monitoring.svc.cluster.local
+        # Blocks in the bucket, i.e. anything older than Prometheus' local retention.
+        - --endpoint
+        - dns+thanos-store-app.monitoring.svc.cluster.local:10901
+        # Read the compactor's 5m/1h downsampled blocks for long ranges.
+        - --query.auto-downsampling
+        resources:
+          limits:
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 400Mi
+        ports:
+        - name: query
+          containerPort: 9090
+          protocol: TCP
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 9090
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 9090
 service:
-  type: ClusterIP
-  ports:
-  - name: query
-    port: 9090
-
-persistentVolumes: []
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-# - name: keys
-#   mountPath: /keys
-#   readOnly: true
-#   secret:
-#     secretName: app-keyfile
-
-ingress:
-  enabled: false
-
-probes:
-  liveness:
-    tcpSocket:
-      port: 9090
-  readiness:
-    tcpSocket:
-      port: 9090
-
-resources:
-  limits:
-    memory: 500Mi
-  requests:
-    cpu: 100m
-    memory: 400Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+  app:
+    forceRename: thanos-querier-app
+    controller: thanos-querier
+    ports:
+      query:
+        port: 9090

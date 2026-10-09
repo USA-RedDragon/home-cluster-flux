@@ -1,141 +1,82 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: jacob.pub/quay.io/thanos/thanos
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: v0.42.4@sha256:b567818fe608067eb0f1d7c2c4fe361e7ad83c8a256234c97685f1d0bf670cc8
-
-imagePullSecrets:
-- name: registry-quay
-nameOverride: ""
-fullnameOverride: ""
-
-args:
-  - store
-  - --data-dir=/tmp/thanos-store
-  - --objstore.config-file=/etc/thanos/config.yaml
-  - --grpc-address=0.0.0.0:10901
-  - --http-address=0.0.0.0:10902
-  # Keep memory under the pod limit regardless of query size. The chunk pool
-  # defaults to 2GB, above the 1.5Gi limit; oversized queries fail instead.
-  - --chunk-pool-size=512MB
-  - --index-cache-size=256MB
-  - --store.limits.request-series=200000
-  - --store.limits.request-samples=50000000
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - configMapRef:
-#     name: app-config
-
-env: []
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+controllers:
+  thanos-store:
+    forceRename: thanos-store-app
+    strategy: Recreate
+    pod:
+      enableServiceLinks: true
+      imagePullSecrets:
+      - name: registry-quay
+    containers:
+      app:
+        image:
+          repository: jacob.pub/quay.io/thanos/thanos
+          tag: v0.42.4@sha256:b567818fe608067eb0f1d7c2c4fe361e7ad83c8a256234c97685f1d0bf670cc8
+          pullPolicy: IfNotPresent
+        args:
+        - store
+        - --data-dir=/tmp/thanos-store
+        - --objstore.config-file=/etc/thanos/config.yaml
+        - --grpc-address=0.0.0.0:10901
+        - --http-address=0.0.0.0:10902
+        # Keep memory under the pod limit regardless of query size. The chunk pool
+        # defaults to 2GB, above the 1.5Gi limit; oversized queries fail instead.
+        - --chunk-pool-size=512MB
+        - --index-cache-size=256MB
+        - --store.limits.request-series=200000
+        - --store.limits.request-samples=50000000
+        # Memory scales with how much data a query touches. Two 10-day queries
+        # against an almost empty bucket already peaked at 508Mi.
+        resources:
+          limits:
+            memory: 1536Mi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+        ports:
+        - name: grpc
+          containerPort: 10901
+          protocol: TCP
+        - name: http
+          containerPort: 10902
+          protocol: TCP
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /-/healthy
+                port: 10902
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /-/ready
+                port: 10902
 service:
-  type: ClusterIP
-  ports:
-  - name: grpc
-    port: 10901
-  - name: http
-    port: 10902
-
-persistentVolumes:
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-- name: bucket-config
-  mountPath: /etc/thanos
-  readOnly: true
-  secret:
-    secretName: minio-thanos
-# Index-header cache only; rebuilt from the bucket on start.
-- name: emptydir
-  mountPath: /tmp/thanos-store
-  emptyDir: {}
-
-ingress:
-  enabled: false
-
-probes:
-  liveness:
-    httpGet:
-      path: /-/healthy
-      port: 10902
-  readiness:
-    httpGet:
-      path: /-/ready
-      port: 10902
-
-# Memory scales with how much data a query touches. Two 10-day queries
-# against an almost empty bucket already peaked at 508Mi.
-resources:
-  limits:
-    memory: 1536Mi
-  requests:
-    cpu: 100m
-    memory: 512Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+  app:
+    forceRename: thanos-store-app
+    controller: thanos-store
+    ports:
+      grpc:
+        port: 10901
+      http:
+        port: 10902
+persistence:
+  bucket-config:
+    type: secret
+    name: minio-thanos
+    advancedMounts:
+      thanos-store:
+        app:
+        - path: /etc/thanos
+          readOnly: true
+  # Index-header cache only; rebuilt from the bucket on start.
+  emptydir:
+    type: emptyDir
+    advancedMounts:
+      thanos-store:
+        app:
+        - path: /tmp/thanos-store
