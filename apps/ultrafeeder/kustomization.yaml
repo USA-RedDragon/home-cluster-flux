@@ -1,20 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: ultrafeeder
-commonAnnotations:
-  kustomize.toolkit.fluxcd.io/prune: disabled
 resources:
   - ns.yaml
-  - helm.yaml
-configMapGenerator:
-  - name: chart-values
-    files:
-      - values.yaml=values.yaml
-  # Mounted by name from the chart values, so no hash suffix.
-  - name: telegraf-receiver
-    files:
-      - readsb_receiver_json.conf
-    options:
-      disableNameSuffixHash: true
-configurations:
-  - kustomizeconfig.yaml
+  - ks.yaml

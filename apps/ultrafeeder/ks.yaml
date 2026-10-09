@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: ultrafeeder
+  namespace: ultrafeeder
+spec:
+  interval: 1h
+  targetNamespace: ultrafeeder
+  path: ./apps/ultrafeeder/resources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
