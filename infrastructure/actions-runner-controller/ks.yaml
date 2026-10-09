@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: actions-runner-system
-  path: ./infrastructure/actions-runner-controller/scale-set-controller
+  path: ./infrastructure/actions-runner-controller/resources/scale-set-controller
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,7 +21,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: actions-runners
-  path: ./infrastructure/actions-runner-controller/scale-sets
+  path: ./infrastructure/actions-runner-controller/resources/scale-sets
   prune: true
   dependsOn:
     - name: scale-set-controller
