@@ -38,7 +38,7 @@ data:
   prune.py: |
     import datetime, json, os, ssl, urllib.error, urllib.request
 
-    MAX_AGE = datetime.timedelta(days=int(os.environ.get("MAX_AGE_DAYS", "28")))
+    MAX_AGE = datetime.timedelta(days=int(os.environ.get("MAX_AGE_DAYS", "7")))
     SA = "/var/run/secrets/kubernetes.io/serviceaccount"
     API = "https://kubernetes.default.svc/apis/postgresql.cnpg.io/v1"
     TOKEN = open(f"{SA}/token").read()
