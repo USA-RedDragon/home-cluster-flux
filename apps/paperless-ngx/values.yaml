@@ -8,6 +8,33 @@ controllers:
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+    initContainers:
+      redis:
+        restartPolicy: Always
+        image:
+          repository: jacob.pub/ghcr.io/valkey-io/valkey
+          tag: 9.1.2-alpine@sha256:48332870af354a799964c0012ae1194a0bf2bf894eb508f945810596dc2d8d11
+          pullPolicy: IfNotPresent
+        args:
+          - --save
+          - ""
+          - --appendonly
+          - "no"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 30Mi
+          limits:
+            memory: 128Mi
+        probes:
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 6379
+              periodSeconds: 1
+              failureThreshold: 60
     containers:
       app:
         image:
@@ -102,22 +129,6 @@ controllers:
             memory: 1Gi
           limits:
             memory: 2Gi
-      redis:
-        image:
-          repository: jacob.pub/ghcr.io/valkey-io/valkey
-          tag: 9.1.2-alpine@sha256:48332870af354a799964c0012ae1194a0bf2bf894eb508f945810596dc2d8d11
-          pullPolicy: IfNotPresent
-        args:
-          - --save
-          - ""
-          - --appendonly
-          - "no"
-        resources:
-          requests:
-            cpu: 10m
-            memory: 30Mi
-          limits:
-            memory: 128Mi
       tika:
         image:
           repository: jacob.pub/docker.io/apache/tika
