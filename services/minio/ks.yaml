@@ -6,63 +6,9 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: minio
-  path: ./services/minio/resources/app
+  path: ./services/minio/resources
   prune: true
   sourceRef:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: backup-astro
-  namespace: minio
-spec:
-  interval: 1h
-  targetNamespace: minio
-  path: ./services/minio/resources/backup-astro
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    namespace: flux-system
-    name: flux-system
-  commonMetadata:
-    annotations:
-      kustomize.toolkit.fluxcd.io/prune: disabled
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: backup-rtz-uploads
-  namespace: minio
-spec:
-  interval: 1h
-  targetNamespace: minio
-  path: ./services/minio/resources/backup-rtz-uploads
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    namespace: flux-system
-    name: flux-system
-  commonMetadata:
-    annotations:
-      kustomize.toolkit.fluxcd.io/prune: disabled
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: backup-tandoor
-  namespace: minio
-spec:
-  interval: 1h
-  targetNamespace: minio
-  path: ./services/minio/resources/backup-tandoor
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    namespace: flux-system
-    name: flux-system
-  commonMetadata:
-    annotations:
-      kustomize.toolkit.fluxcd.io/prune: disabled
