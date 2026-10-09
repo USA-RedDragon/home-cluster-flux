@@ -599,7 +599,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>external-dns-internal</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/external-dns-internal/external-dns.yaml">external-dns-internal</a></td>
+    <td><a href="services/external-dns-internal/resources/app/helm.yaml">external-dns-internal</a></td>
     <td></td>
   </tr>
 </table>
@@ -835,7 +835,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>k8s-oidc-discovery</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/k8s-oidc-discovery/helm.yaml">k8s-oidc-discovery</a></td>
+    <td><a href="infrastructure/k8s-oidc-discovery/resources/app/helm.yaml">k8s-oidc-discovery</a></td>
     <td></td>
   </tr>
 </table>
@@ -887,20 +887,20 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="4">kube-system</td>
     <td><code>CronJob</code></td>
-    <td><a href="services/kube-system/etcd-backup.yaml">backup</a></td>
+    <td><a href="services/kube-system/resources/etcd-backup/etcd-backup.yaml">backup</a></td>
     <td rowspan="4"></td>
   </tr>
   <tr>
     <td><code>CronJob</code></td>
-    <td><a href="services/kube-system/etcd-backup-prune.yaml">backup-prune</a></td>
+    <td><a href="services/kube-system/resources/etcd-backup/etcd-backup-prune.yaml">backup-prune</a></td>
   </tr>
   <tr>
     <td><code>CronJob</code></td>
-    <td><a href="services/kube-system/etcd-defrag.yaml">etcd-defrag</a></td>
+    <td><a href="services/kube-system/resources/etcd-backup/etcd-defrag.yaml">etcd-defrag</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/kube-system/metrics-server.yaml">metrics-server</a></td>
+    <td><a href="services/kube-system/resources/metrics-server/helm.yaml">metrics-server</a></td>
   </tr>
 </table>
 
@@ -987,7 +987,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>mindustry</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/mindustry/helm.yaml">mindustry</a></td>
+    <td><a href="apps/mindustry/resources/app/helm.yaml">mindustry</a></td>
     <td></td>
   </tr>
 </table>
@@ -1031,20 +1031,20 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="4">minio</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/minio/backup-astro.yaml">backup-astro</a></td>
+    <td><a href="services/minio/resources/backup-astro/helmrelease.yaml">backup-astro</a></td>
     <td rowspan="4"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/minio/backup-rtz-uploads.yaml">backup-rtz-uploads</a></td>
+    <td><a href="services/minio/resources/backup-rtz-uploads/helmrelease.yaml">backup-rtz-uploads</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/minio/backup-tandoor.yaml">backup-tandoor</a></td>
+    <td><a href="services/minio/resources/backup-tandoor/helmrelease.yaml">backup-tandoor</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/minio/helm.yaml">minio</a></td>
+    <td><a href="services/minio/resources/app/helm.yaml">minio</a></td>
   </tr>
 </table>
 
@@ -1203,8 +1203,8 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>obico</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/obico/helm.yaml">obico</a></td>
-    <td><a href="apps/obico/valkey.yaml">valkey</a></td>
+    <td><a href="apps/obico/resources/app/helm.yaml">obico</a></td>
+    <td><a href="apps/obico/resources/valkey/helmrelease.yaml">valkey</a></td>
   </tr>
 </table>
 
@@ -1431,7 +1431,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>renovate-ce</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/renovate-ce/helm.yaml">renovate-ce</a></td>
+    <td><a href="apps/renovate-ce/resources/app/helm.yaml">renovate-ce</a></td>
     <td></td>
   </tr>
 </table>
@@ -1659,8 +1659,8 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>tfe</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/tfe/hashicorp-helm.yaml">tfe</a></td>
-    <td><a href="apps/tfe/postgres.yaml">postgresql</a>, <a href="apps/tfe/redis-helm.yaml">redis</a></td>
+    <td><a href="apps/tfe/resources/app/helm.yaml">tfe</a></td>
+    <td><a href="apps/tfe/resources/app/postgres.yaml">postgresql</a>, <a href="apps/tfe/resources/redis/helm.yaml">redis</a></td>
   </tr>
 </table>
 
