@@ -139,22 +139,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>actions-runner-system</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/actions-runner-controller/scale-set-controller/helm.yaml">gha-runner-scale-set-controller</a></td>
+    <td><a href="infrastructure/actions-runner-controller/resources/scale-set-controller/helm.yaml">gha-runner-scale-set-controller</a></td>
     <td></td>
   </tr>
   <tr>
     <td rowspan="3">actions-runners</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/actions-runner-controller/scale-sets/dockers-private.yaml">dockers-private-runner-set</a></td>
+    <td><a href="infrastructure/actions-runner-controller/resources/scale-sets/dockers-private.yaml">dockers-private-runner-set</a></td>
     <td rowspan="3"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/actions-runner-controller/scale-sets/squallar-heavy.yaml">squallar-runner-set-heavy</a></td>
+    <td><a href="infrastructure/actions-runner-controller/resources/scale-sets/squallar-heavy.yaml">squallar-runner-set-heavy</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/actions-runner-controller/scale-sets/squallar-lite.yaml">squallar-runner-set-lite</a></td>
+    <td><a href="infrastructure/actions-runner-controller/resources/scale-sets/squallar-lite.yaml">squallar-runner-set-lite</a></td>
   </tr>
 </table>
 
