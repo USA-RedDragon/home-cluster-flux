@@ -12,3 +12,6 @@ spec:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
+  commonMetadata:
+    annotations:
+      kustomize.toolkit.fluxcd.io/prune: disabled
