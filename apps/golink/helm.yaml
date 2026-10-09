@@ -11,29 +11,10 @@ spec:
   driftDetection:
     mode: enabled
   releaseName: golink
-  chart:
-    spec:
-      chart: app
-      sourceRef:
-        kind: HelmRepository
-        name: usa-reddragon
-        namespace: flux-system
-      version: '0.1.35'
-      interval: 60m0s
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
-  postRenderers:
-  - kustomize:
-      patches:
-      - target:
-          version: v1
-          kind: PersistentVolumeClaim
-          name: data
-        patch: |
-          apiVersion: v1
-          kind: PersistentVolumeClaim
-          metadata:
-            name: data
-            annotations:
-              helm.sh/resource-policy: keep

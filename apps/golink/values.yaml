@@ -1,110 +1,58 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: jacob.pub/ghcr.io/tailscale/golink
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.0.0@sha256:e629f13cf8dcf9224e26317630172b3dcf1e69a44e5902207a38d4fe9e69bb3a"
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-args:
-- -sqlitedb
-- /data/golink.db
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs:
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-
-envFrom: []
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: TS_AUTHKEY
-  valueFrom:
-    secretKeyRef:
-      name: tailscale
-      key: authkey
-- name: XDG_CONFIG_HOME
-  value: /data
-
-podAnnotations: {}
-
-podSecurityContext:
-  fsGroup: 65534
-
-securityContext:
-  capabilities:
-    drop:
-    - ALL
-  readOnlyRootFilesystem: true
-  runAsUser: 65534
-  runAsGroup: 65534
-  fsGroup: 65534
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+controllers:
+  golink:
+    forceRename: golink-app
+    strategy: Recreate
+    pod:
+      enableServiceLinks: true
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/tailscale/golink
+          tag: 1.0.0@sha256:e629f13cf8dcf9224e26317630172b3dcf1e69a44e5902207a38d4fe9e69bb3a
+          pullPolicy: IfNotPresent
+        args:
+        - -sqlitedb
+        - /data/golink.db
+        env:
+        - name: TS_AUTHKEY
+          valueFrom:
+            secretKeyRef:
+              name: tailscale
+              key: authkey
+        - name: XDG_CONFIG_HOME
+          value: /data
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            cpu: 20m
+            memory: 50Mi
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 8080
-
-persistentVolumes:
-- name: data
-  mountPath: /data
-  subPath: data
-  size: 2Gi
-  persistentVolumeClaim:
-    name: data
+  app:
+    forceRename: golink-app
+    controller: golink
+    ports:
+      http:
+        port: 8080
+persistence:
+  data:
+    type: persistentVolumeClaim
+    forceRename: data
+    retain: true
     storageClass: longhorn-ssd
-
-ingress:
-  enabled: false
-
-probes: {}
-
-resources:
-  limits:
-    memory: 100Mi
-  requests:
-    cpu: 20m
-    memory: 50Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+    accessMode: ReadWriteOnce
+    size: 2Gi
+    advancedMounts:
+      golink:
+        app:
+        - path: /data
+          subPath: data
