@@ -44,8 +44,9 @@ config:
         duration: 4h
     on_success: break
 
-  # Telegram ban alerts (http plugin, runs in LAPI). ${TELEGRAM_*} come from the crowdsec-telegram
-  # secret via lapi.envFrom; CrowdSec expands env vars in plugin configs.
+  # Telegram ban alerts (http plugin, runs in LAPI). The bot token comes from the crowdsec-telegram
+  # secret via lapi.envFrom and is env-expanded in the URL. The chat id is literal: ${VARS} inside
+  # format went out unexpanded, and a group id is useless without the token.
   notifications:
     telegram.yaml: |
       type: http
