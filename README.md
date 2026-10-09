@@ -269,7 +269,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>aredn-piaware</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/aredn-piaware/helm.yaml">aredn-piaware</a></td>
+    <td><a href="services/aredn-piaware/resources/app/helm.yaml">aredn-piaware</a></td>
     <td></td>
   </tr>
 </table>
