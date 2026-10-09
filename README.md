@@ -107,6 +107,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#vaultwarden">vaultwarden</a></li>
   <li><a href="#weewx">weewx</a></li>
   <li><a href="#wheresmyscope">wheresmyscope</a></li>
+  <li><a href="#wx">wx</a></li>
   <li><a href="#zot">zot</a></li>
 </ul>
 
@@ -1752,6 +1753,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>wheresmyscope</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/wheresmyscope/resources/app/helm.yaml">wheresmyscope</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>wx</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>wx</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/wx/resources/app/helm.yaml">wx</a></td>
     <td></td>
   </tr>
 </table>
