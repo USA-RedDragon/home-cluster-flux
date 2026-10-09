@@ -31,6 +31,13 @@ repos:
         additional_dependencies:
           - pyyaml==6.0.3
         types: [yaml]
+      - id: check-embedded-rules
+        name: Check rule files embedded in ConfigMaps
+        entry: .github/scripts/check-embedded-rules.py
+        language: python
+        additional_dependencies:
+          - pyyaml==6.0.3
+        types: [yaml]
 
   - repo: https://github.com/gabe565/template-kubernetes-apps-markdown
     rev: v0.5.1
