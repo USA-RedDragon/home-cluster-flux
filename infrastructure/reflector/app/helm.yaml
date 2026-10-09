@@ -5,7 +5,7 @@ metadata:
   name: emberstack
   namespace: reflector
 spec:
-  interval: 1m0s
+  interval: 1h0m0s
   url: https://emberstack.github.io/helm-charts
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -17,7 +17,7 @@ spec:
   install:
     remediation:
       retries: -1
-  interval: 1m0s
+  interval: 1h0m0s
   driftDetection:
     mode: enabled
   releaseName: reflector
@@ -28,7 +28,7 @@ spec:
         kind: HelmRepository
         name: emberstack
       version: '9.1.45'
-      interval: 1m0s
+      interval: 1h0m0s
   values:
     image:
       repository: jacob.pub/docker.io/emberstack/kubernetes-reflector
