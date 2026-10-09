@@ -1,0 +1,34 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: unique-ingresses
+spec:
+  background: false
+  rules:
+    - name: check-host-path-combo
+      match:
+        any:
+        - resources:
+            kinds:
+              - Ingress
+      preconditions:
+        all:
+        - key: "{{ request.operation || 'BACKGROUND' }}"
+          operator: NotEquals
+          value: DELETE
+      context:
+        - name: rules
+          apiCall:
+            urlPath: "/apis/networking.k8s.io/v1/ingresses"
+            jmesPath: "items[].spec.rules[]"
+      validate:
+        failureAction: Audit
+        message: "The Ingress host and path combination must be unique across the cluster."
+        foreach:
+        - list: "request.object.spec.rules[]"
+          deny:
+            conditions:
+              all:
+              - key: "{{ element.http.paths[].path }}"
+                operator: AnyIn
+                value: "{{ rules[?host=='{{element.host}}'][].http.paths[].path }}"
