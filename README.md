@@ -105,7 +105,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#trunk-recorder">trunk-recorder</a></li>
   <li><a href="#ultrafeeder">ultrafeeder</a></li>
   <li><a href="#vaultwarden">vaultwarden</a></li>
-  <li><a href="#weewx">weewx</a></li>
   <li><a href="#wheresmyscope">wheresmyscope</a></li>
   <li><a href="#wx">wx</a></li>
   <li><a href="#zot">zot</a></li>
@@ -1714,30 +1713,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/vaultwarden/resources/app/helm.yaml">vaultwarden</a></td>
-  </tr>
-</table>
-
-<h4>weewx</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td rowspan="3">weewx</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/weewx/resources/restic/helmrelease.yaml">restic</a></td>
-    <td rowspan="3"></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/weewx/resources/app/helm.yaml">weewx</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/weewx/resources/mariadb/helm.yaml">weewx-mariadb</a></td>
   </tr>
 </table>
 
