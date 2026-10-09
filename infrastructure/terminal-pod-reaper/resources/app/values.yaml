@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+#
+# Deletes ReplicaSet-owned pods stuck in phase Succeeded/Failed.
+#
+# Why: after the 2026-10-09 rolling node reboots, Talos' graceful shutdown left
+# ~70 Deployment pods "Completed" (phase Succeeded) and several ReplicaSets never
+# created replacements (crowdsec-appsec, the enforcing WAF, sat at 0/1 for ~2h;
+# also astro-processing-backend, external-dns-internal, kosync, ...). Deleting
+# the dead pod made the ReplicaSet recreate it within seconds. A ReplicaSet pod
+# is never legitimately terminal (restartPolicy Always), so deleting one is
+# always safe; Job/CronJob pods are left alone.
+controllers:
+  terminal-pod-reaper:
+    type: cronjob
+    cronjob:
+      schedule: "*/5 * * * *"
+      concurrencyPolicy: Forbid
+      successfulJobsHistory: 1
+      failedJobsHistory: 3
+      ttlSecondsAfterFinished: 3600
+    serviceAccount:
+      identifier: terminal-pod-reaper
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+    containers:
+      app:
+        image:
+          repository: jacob.pub/docker.io/alpine/kubectl
+          tag: 1.37.1@sha256:b57b3bd3cd9f4f02dd444281857126aa78efa4b7b7e6ec57579dd927bf146fc3
+        command:
+          - /bin/sh
+          - -c
+          - |
+            set -eu
+            kubectl get pods -A \
+              --field-selector=status.phase!=Running,status.phase!=Pending,status.phase!=Unknown \
+              -o custom-columns=NS:.metadata.namespace,NAME:.metadata.name,PHASE:.status.phase,OWNER:.metadata.ownerReferences[0].kind \
+              --no-headers \
+            | awk '$4 == "ReplicaSet" {print $1, $2, $3}' \
+            | while read -r ns name phase; do
+                echo "deleting ${ns}/${name} (${phase})"
+                kubectl -n "$ns" delete pod "$name" --wait=false
+              done
+        env:
+          HOME: /tmp
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+serviceAccount:
+  terminal-pod-reaper: {}
+rbac:
+  roles:
+    terminal-pod-reaper:
+      type: ClusterRole
+      rules:
+        - apiGroups: [""]
+          resources: ["pods"]
+          verbs: ["list", "delete"]
+  bindings:
+    terminal-pod-reaper:
+      type: ClusterRoleBinding
+      roleRef:
+        identifier: terminal-pod-reaper
+      subjects:
+        - identifier: terminal-pod-reaper
+persistence:
+  tmp:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
