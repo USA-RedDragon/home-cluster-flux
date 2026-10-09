@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kromgo
+  namespace: kromgo
+spec:
+  interval: 1h
+  targetNamespace: kromgo
+  path: ./apps/kromgo/resources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
