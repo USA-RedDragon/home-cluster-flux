@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: tailscale-operator
-  path: ./infrastructure/tailscale-operator/app
+  path: ./infrastructure/tailscale-operator/resources/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -23,7 +23,7 @@ spec:
   dependsOn:
     - name: tailscale-operator
   targetNamespace: tailscale-operator
-  path: ./infrastructure/tailscale-operator/config
+  path: ./infrastructure/tailscale-operator/resources/config
   prune: true
   sourceRef:
     kind: GitRepository

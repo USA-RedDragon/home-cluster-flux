@@ -1,0 +1,18 @@
+operatorConfig:
+  image:
+    repository: jacob.pub/ghcr.io/tailscale/k8s-operator
+    tag: v1.102.4@sha256:3c8958c42fb3c46068e8553e11b944f2133b4671d4f36c86adc11f206746bf34
+  hostname: "tailscale-operator"
+
+  resources: {}
+
+proxyConfig:
+  image:
+    repository: jacob.pub/ghcr.io/tailscale/tailscale
+    tag: v1.102.5@sha256:c507f3a2a6ab1cabd8d809b98edeb41edbd5c3fb6ad9632ffd098b4c7d0b4065
+
+apiServerProxyConfig:
+  mode: "noauth"
+
+imagePullSecrets:
+- name: registry-zot
