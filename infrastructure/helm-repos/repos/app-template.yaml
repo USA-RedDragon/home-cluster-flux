@@ -1,0 +1,16 @@
+---
+# bjw-s app-template as an OCI artifact; every app-template HelmRelease
+# references it with spec.chartRef (one version for the whole repo).
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: app-template
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: oci://ghcr.io/bjw-s-labs/helm/app-template
+  ref:
+    tag: 4.6.2
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
