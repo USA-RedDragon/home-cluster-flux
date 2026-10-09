@@ -23,3 +23,17 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
+  postRenderers:
+  - kustomize:
+      patches:
+      - target:
+          version: v1
+          kind: PersistentVolumeClaim
+          name: data
+        patch: |
+          apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
+            name: data
+            annotations:
+              helm.sh/resource-policy: keep
