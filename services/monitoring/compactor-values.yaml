@@ -32,7 +32,7 @@ controllers:
             memory: 3Gi
           requests:
             cpu: 100m
-            memory: 2304Mi
+            memory: 1Gi
         ports:
         - name: http
           containerPort: 10902
