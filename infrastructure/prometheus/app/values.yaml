@@ -1132,8 +1132,11 @@ grafana:
           enabled: false
       provider:
         allowUiUpdates: false
+      skipReload: true
     datasources:
       enabled: true
+      skipReload: true
+      initDatasources: true
       defaultDatasourceEnabled: true
       isDefaultDatasource: false
 
