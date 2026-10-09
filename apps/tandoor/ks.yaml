@@ -6,27 +6,9 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: tandoor
-  path: ./apps/tandoor/resources/app
+  path: ./apps/tandoor/resources
   prune: true
   sourceRef:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: restic
-  namespace: tandoor
-spec:
-  interval: 1h
-  targetNamespace: tandoor
-  path: ./apps/tandoor/resources/restic
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    namespace: flux-system
-    name: flux-system
-  commonMetadata:
-    annotations:
-      kustomize.toolkit.fluxcd.io/prune: disabled
