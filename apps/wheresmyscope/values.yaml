@@ -17,7 +17,7 @@ controllers:
       wheresmyscope:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/wheresmyscope
-          tag: v1.1.3@sha256:d5c57e859430f90aff95bdae5df320acac302e4dbe4b678b1210d8b4e8ddf910
+          tag: v1.2.0@sha256:dd39488da04bda56cf2b83e8580f206850afd811ce369b74483d07fd86b4252c
           pullPolicy: IfNotPresent
         resources:
           requests:
@@ -48,6 +48,8 @@ controllers:
           # astro-stacker has no ingress policy.
           - name: PUBLIC_FRAME_STACKER_URL
             value: http://astro-stacker.astro-processing.svc.cluster.local:8080
+          - name: TRUSTED_PROXIES
+            value: "172.17.0.0/16"
         envFrom:
           - secretRef:
               name: wheresmyscope
