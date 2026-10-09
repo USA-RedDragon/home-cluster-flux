@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: immich
-  path: ./apps/immich/app
+  path: ./apps/immich/resources/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,7 +21,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: immich
-  path: ./apps/immich/restic
+  path: ./apps/immich/resources/restic
   prune: true
   sourceRef:
     kind: GitRepository
