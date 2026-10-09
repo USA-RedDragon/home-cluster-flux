@@ -96,6 +96,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#rtl-433">rtl-433</a></li>
   <li><a href="#rtz">rtz</a></li>
   <li><a href="#ses-email-service">ses-email-service</a></li>
+  <li><a href="#smartctl-exporter">smartctl-exporter</a></li>
   <li><a href="#srs-hosting">srs-hosting</a></li>
   <li><a href="#tailscale-operator">tailscale-operator</a></li>
   <li><a href="#tailscale-peer-relay">tailscale-peer-relay</a></li>
@@ -1541,6 +1542,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>ses-email-service</td>
     <td><code>GitRepository</code></td>
     <td><a href="https://github.com/USA-RedDragon/ses-email-service">ses-email-service</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>smartctl-exporter</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>smartctl-exporter</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="infrastructure/smartctl-exporter/resources/app/helm.yaml">smartctl-exporter</a></td>
     <td></td>
   </tr>
 </table>
