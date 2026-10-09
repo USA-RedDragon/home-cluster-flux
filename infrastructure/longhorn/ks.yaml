@@ -39,11 +39,8 @@ metadata:
   namespace: longhorn-system
 spec:
   dependsOn:
-    - name: longhorn
     - name: prometheus
       namespace: monitoring
-    - name: cert-manager-certs
-      namespace: cert-manager
   interval: 1h
   targetNamespace: longhorn-system
   path: ./infrastructure/longhorn/resources/prometheus
