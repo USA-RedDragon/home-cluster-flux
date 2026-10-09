@@ -8,12 +8,46 @@ controllers:
       priorityClassName: system-cluster-critical
       securityContext:
         fsGroup: 1883
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: NotIn
+                    values:
+                      - alpha
+                      - beta
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - delta
+      tolerations:
+        - key: node.kubernetes.io/not-ready
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 30
+        - key: node.kubernetes.io/unreachable
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 30
     containers:
       mosquitto:
         image:
           repository: jacob.pub/docker.io/eclipse-mosquitto
           tag: 2.0.22@sha256:914f529386804c8278a4e581526b9be5e1604df44b30daabc70aa97dcefe5268
           pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
         securityContext:
           readOnlyRootFilesystem: true
           runAsNonRoot: true
@@ -52,8 +86,6 @@ service:
       mqtt:
         port: 1883
         primary: true
-      mqtts:
-        port: 8883
 
 configMaps:
   config:
@@ -65,6 +97,7 @@ configMaps:
         persistence true
         persistence_location /mosquitto/data
         autosave_interval 1800
+        persistent_client_expiration 1d
         log_dest stderr
         log_type error
         log_type warning
