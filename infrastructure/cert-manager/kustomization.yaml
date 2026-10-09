@@ -4,4 +4,3 @@ namespace: cert-manager
 resources:
   - ns.yaml
   - ks.yaml
-  - cloudflare-api-token-secret.yaml

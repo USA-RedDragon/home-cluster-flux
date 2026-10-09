@@ -3,5 +3,4 @@ kind: Kustomization
 namespace: flux-system
 resources:
   - alerts.yaml
-  - github-api-token.yaml
   - providers.yaml
