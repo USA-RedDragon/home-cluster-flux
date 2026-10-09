@@ -1167,7 +1167,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>nginx-rtmp</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/nginx-rtmp/helm.yaml">nginx-rtmp</a></td>
+    <td><a href="apps/nginx-rtmp/resources/app/helm.yaml">nginx-rtmp</a></td>
     <td></td>
   </tr>
 </table>
