@@ -1591,7 +1591,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>tailscale-operator</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/tailscale-operator/app/helm.yaml">tailscale</a></td>
+    <td><a href="infrastructure/tailscale-operator/resources/app/helm.yaml">tailscale</a></td>
     <td></td>
   </tr>
 </table>
