@@ -423,7 +423,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>cert-manager</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/cert-manager/app/helm.yaml">cert-manager</a></td>
+    <td><a href="infrastructure/cert-manager/resources/app/helm.yaml">cert-manager</a></td>
     <td></td>
   </tr>
 </table>
