@@ -1303,7 +1303,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>piaware</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/piaware/helm.yaml">piaware</a></td>
+    <td><a href="apps/piaware/resources/app/helm.yaml">piaware</a></td>
     <td></td>
   </tr>
 </table>
