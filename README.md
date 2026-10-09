@@ -915,12 +915,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">kyverno</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/kyverno/app/helm.yaml">kyverno</a></td>
+    <td><a href="infrastructure/kyverno/resources/app/helm.yaml">kyverno</a></td>
     <td rowspan="2"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/kyverno/policy-reporter/helm.yaml">kyverno-policy-reporter</a></td>
+    <td><a href="infrastructure/kyverno/resources/policy-reporter/helm.yaml">kyverno-policy-reporter</a></td>
   </tr>
 </table>
 
