@@ -563,12 +563,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">dump978</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/dump978/helm.yaml">dump978</a></td>
+    <td><a href="apps/dump978/resources/app/helm.yaml">dump978</a></td>
     <td rowspan="2"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/dump978/restic.yaml">restic</a></td>
+    <td><a href="apps/dump978/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
