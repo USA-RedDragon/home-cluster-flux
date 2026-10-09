@@ -32,6 +32,8 @@ config:
       - type: ban
         duration: 4h
     duration_expr: Sprintf('%dh', min((GetDecisionsCount(Alert.GetValue()) + 1) * 4, 168))
+    notifications:
+      - telegram
     on_success: break
     ---
     name: default_range_remediation
@@ -41,6 +43,29 @@ config:
       - type: ban
         duration: 4h
     on_success: break
+
+  # Telegram ban alerts (http plugin, runs in LAPI). ${TELEGRAM_*} come from the crowdsec-telegram
+  # secret via lapi.envFrom; CrowdSec expands env vars in plugin configs.
+  notifications:
+    telegram.yaml: |
+      type: http
+      name: telegram
+      log_level: info
+      group_wait: 30s
+      group_threshold: 10
+      max_retry: 5
+      timeout: 15s
+      format: |
+        {
+          "chat_id": "${TELEGRAM_CHAT_ID}",
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true,
+          "text": "{{range . -}}{{$h := dict -}}{{range .Events}}{{range .Meta}}{{if eq .Key "target_fqdn"}}{{$_ := set $h .Value ""}}{{end}}{{end}}{{end -}}&#128683; <b>{{.Source.IP}}</b>{{range .Decisions}} banned {{.Duration}}{{end}}\n{{.Source.Cn}} &#183; {{.Source.AsName | replace "\"" "'"}} (AS{{.Source.AsNumber}})\nRule: <code>{{.Scenario}}</code> ({{.EventsCount}} events){{if $h}}\nHosts: {{keys $h | sortAlpha | join ", "}}{{end}}\n<a href=\"https://app.crowdsec.net/cti/{{.Source.IP}}\">CTI</a> &#183; unban: <code>cscli decisions delete --ip {{.Source.IP}}</code>\n\n{{end}}"
+        }
+      url: https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage
+      method: POST
+      headers:
+        Content-Type: application/json
 
   parsers:
     s01-parse:
@@ -190,6 +215,9 @@ agent:
 
 lapi:
   replicas: 1
+  envFrom:
+    - secretRef:
+        name: crowdsec-telegram
   env:
     # Pre-registered bouncers (key = what the bouncer is configured with).
     - name: BOUNCER_KEY_router
