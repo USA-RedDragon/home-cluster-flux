@@ -1,0 +1,18 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: flux-gitrepo
+spec:
+  rules:
+    - name: github-repositories-only
+      match:
+        any:
+        - resources:
+            kinds:
+              - GitRepository
+      validate:
+        failureAction: Audit
+        message: .spec.url must be from a repository within the USA-RedDragon GitHub user.
+        pattern:
+          spec:
+            url: https://github.com/USA-RedDragon/?* | ssh://git@github.com:USA-RedDragon/?*

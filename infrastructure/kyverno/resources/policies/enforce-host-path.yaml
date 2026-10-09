@@ -1,0 +1,39 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: host-path
+spec:
+  background: false
+  rules:
+    - name: host-path
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      exclude:
+        any:
+        - resources:
+            kinds:
+              - Deployment
+            namespaces:
+              - monitoring
+            names:
+              - prometheus-stack-prometheus-node-exporter
+        - resources:
+            namespaces:
+              - kube-system
+              - device-plugin
+              - gpu-operator
+              - intel-device-plugin
+              - longhorn-system
+              - node-feature-discovery
+              - scrypted
+      validate:
+        failureAction: Audit
+        message: >-
+          HostPath volumes are forbidden. The field spec.volumes[*].hostPath must be unset.
+        pattern:
+          spec:
+            =(volumes):
+              - X(hostPath): "null"

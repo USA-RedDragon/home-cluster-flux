@@ -1,0 +1,26 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: registries
+spec:
+  rules:
+  - name: registries
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    validate:
+      failureAction: Audit
+      message: This resource contains an image that is not from an approved registry.
+      foreach:
+      - list: "images.containers.*.registry"
+        deny:
+          conditions:
+            all:
+              - key: "{{element}}"
+                operator: AnyNotIn
+                value:
+                - ghcr.io
+                - images.releases.hashicorp.com
+                - jacob.pub

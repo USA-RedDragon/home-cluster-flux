@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: kyverno
-  path: ./infrastructure/kyverno/app
+  path: ./infrastructure/kyverno/resources/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,7 +21,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: kyverno
-  path: ./infrastructure/kyverno/policies
+  path: ./infrastructure/kyverno/resources/policies
   prune: true
   dependsOn:
     - name: kyverno
@@ -38,7 +38,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: kyverno
-  path: ./infrastructure/kyverno/policy-reporter
+  path: ./infrastructure/kyverno/resources/policy-reporter
   prune: true
   dependsOn:
     - name: kyverno-policies

@@ -1,0 +1,35 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-unique-service-selector
+spec:
+  background: false
+  rules:
+    - name: check-service-selector
+      match:
+        any:
+          - resources:
+              kinds:
+                - Service
+      preconditions:
+        all:
+          - key: "{{request.operation || 'BACKGROUND'}}"
+            operator: NotEquals
+            value: DELETE
+      context:
+        - name: services
+          apiCall:
+            urlPath: "/api/v1/namespaces/{{request.namespace}}/services"
+            jmesPath: "items[?spec.selector]"
+        - name: service_count
+          variable:
+            jmesPath: "services[?label_match(spec.selector, `{{request.object.spec.selector}}`)] | length(@)"
+      validate:
+        failureAction: Audit
+        message: "There is already a matching selector for this Service."
+        deny:
+          conditions:
+            any:
+              - key: "{{service_count}}"
+                operator: GreaterThan
+                value: 0
