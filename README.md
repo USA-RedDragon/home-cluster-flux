@@ -1359,12 +1359,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">rdio-scanner</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/rdio-scanner/helm.yaml">rdio-scanner</a></td>
-    <td rowspan="2"><a href="apps/rdio-scanner/postgres.yaml">postgresql</a></td>
+    <td><a href="apps/rdio-scanner/resources/app/helm.yaml">rdio-scanner</a></td>
+    <td rowspan="2"><a href="apps/rdio-scanner/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/rdio-scanner/restic.yaml">restic</a></td>
+    <td><a href="apps/rdio-scanner/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
