@@ -205,7 +205,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>aredn</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="services/aredn/helm.yaml">wireguard-tunnel</a></td>
+    <td><a href="services/aredn/resources/app/helm.yaml">wireguard-tunnel</a></td>
     <td></td>
   </tr>
 </table>
