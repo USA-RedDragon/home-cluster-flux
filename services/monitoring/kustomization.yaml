@@ -14,6 +14,7 @@ resources:
   - backup-alerts.yaml
   - node-disk-alerts.yaml
   - etcd-alerts.yaml
+  - flux-alerts.yaml
   - observatory-svc.yaml
   - observatory-alerts.yaml
   - nut-exporter-helm.yaml

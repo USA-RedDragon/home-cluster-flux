@@ -2036,6 +2036,15 @@ kube-state-metrics:
       - apiGroups: [longhorn.io]
         resources: [volumes]
         verbs: [list, watch]
+      - apiGroups: [kustomize.toolkit.fluxcd.io]
+        resources: [kustomizations]
+        verbs: [list, watch]
+      - apiGroups: [helm.toolkit.fluxcd.io]
+        resources: [helmreleases]
+        verbs: [list, watch]
+      - apiGroups: [source.toolkit.fluxcd.io]
+        resources: [gitrepositories, ocirepositories, helmrepositories, helmcharts]
+        verbs: [list, watch]
   releaseLabel: true
   prometheus:
     monitor:
@@ -2088,6 +2097,10 @@ kube-state-metrics:
         targetLabel: app_instance
         replacement: loki
         action: replace
+      - sourceLabels: [__name__, customresource_kind]
+        regex: 'gotk_resource_info;(.+)'
+        targetLabel: kind
+        action: replace
       # - action: keep
       #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
       #   sourceLabels: [__name__]
@@ -2133,6 +2146,125 @@ kube-state-metrics:
                   type: Gauge
                   gauge:
                     path: [metadata, creationTimestamp]
+          - groupVersionKind:
+              group: kustomize.toolkit.fluxcd.io
+              version: v1
+              kind: Kustomization
+            metricNamePrefix: gotk
+            labelsFromPath:
+              namespace: [metadata, namespace]
+              name: [metadata, name]
+            metrics:
+              - name: resource_info
+                help: The current state of a Flux resource
+                each:
+                  type: Info
+                  info:
+                    labelsFromPath:
+                      ready: [status, conditions, "[type=Ready]", status]
+                      reason: [status, conditions, "[type=Ready]", reason]
+                      stalled: [status, conditions, "[type=Stalled]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, lastAppliedRevision]
+          - groupVersionKind:
+              group: helm.toolkit.fluxcd.io
+              version: v2
+              kind: HelmRelease
+            metricNamePrefix: gotk
+            labelsFromPath:
+              namespace: [metadata, namespace]
+              name: [metadata, name]
+            metrics:
+              - name: resource_info
+                help: The current state of a Flux resource
+                each:
+                  type: Info
+                  info:
+                    labelsFromPath:
+                      ready: [status, conditions, "[type=Ready]", status]
+                      reason: [status, conditions, "[type=Ready]", reason]
+                      stalled: [status, conditions, "[type=Stalled]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, history, "0", chartVersion]
+          - groupVersionKind:
+              group: source.toolkit.fluxcd.io
+              version: v1
+              kind: GitRepository
+            metricNamePrefix: gotk
+            labelsFromPath:
+              namespace: [metadata, namespace]
+              name: [metadata, name]
+            metrics:
+              - name: resource_info
+                help: The current state of a Flux resource
+                each:
+                  type: Info
+                  info:
+                    labelsFromPath:
+                      ready: [status, conditions, "[type=Ready]", status]
+                      reason: [status, conditions, "[type=Ready]", reason]
+                      stalled: [status, conditions, "[type=Stalled]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, artifact, revision]
+          - groupVersionKind:
+              group: source.toolkit.fluxcd.io
+              version: v1
+              kind: OCIRepository
+            metricNamePrefix: gotk
+            labelsFromPath:
+              namespace: [metadata, namespace]
+              name: [metadata, name]
+            metrics:
+              - name: resource_info
+                help: The current state of a Flux resource
+                each:
+                  type: Info
+                  info:
+                    labelsFromPath:
+                      ready: [status, conditions, "[type=Ready]", status]
+                      reason: [status, conditions, "[type=Ready]", reason]
+                      stalled: [status, conditions, "[type=Stalled]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, artifact, revision]
+          - groupVersionKind:
+              group: source.toolkit.fluxcd.io
+              version: v1
+              kind: HelmRepository
+            metricNamePrefix: gotk
+            labelsFromPath:
+              namespace: [metadata, namespace]
+              name: [metadata, name]
+            metrics:
+              - name: resource_info
+                help: The current state of a Flux resource
+                each:
+                  type: Info
+                  info:
+                    labelsFromPath:
+                      ready: [status, conditions, "[type=Ready]", status]
+                      reason: [status, conditions, "[type=Ready]", reason]
+                      stalled: [status, conditions, "[type=Stalled]", status]
+                      suspended: [spec, suspend]
+          - groupVersionKind:
+              group: source.toolkit.fluxcd.io
+              version: v1
+              kind: HelmChart
+            metricNamePrefix: gotk
+            labelsFromPath:
+              namespace: [metadata, namespace]
+              name: [metadata, name]
+            metrics:
+              - name: resource_info
+                help: The current state of a Flux resource
+                each:
+                  type: Info
+                  info:
+                    labelsFromPath:
+                      ready: [status, conditions, "[type=Ready]", status]
+                      reason: [status, conditions, "[type=Ready]", reason]
+                      stalled: [status, conditions, "[type=Stalled]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, artifact, revision]
 
 ## Deploy node exporter as a daemonset to all nodes
 ##

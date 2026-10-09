@@ -1,0 +1,47 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: flux
+  namespace: monitoring
+spec:
+  groups:
+    - name: flux
+      rules:
+        - alert: FluxResourceNotReady
+          expr: |-
+            max by (namespace, kind, name) (max_over_time(gotk_resource_info{ready="False", suspended!="true", stalled!="True", reason!="DependencyNotReady"}[10m]))
+            unless on (namespace, kind, name)
+            max by (namespace, kind, name) (max_over_time(gotk_resource_info{ready="True"}[10m]))
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: Flux {{ $labels.kind }} {{ $labels.namespace }}/{{ $labels.name }} not ready
+            description: >-
+              Flux {{ $labels.kind }} {{ $labels.namespace }}/{{ $labels.name }} has not been Ready for 15m
+              ({{ with printf "gotk_resource_info{namespace=%q,kind=%q,name=%q}" $labels.namespace $labels.kind $labels.name | query }}{{ . | first | label "reason" }}{{ end }}).
+              Check `kubectl -n {{ $labels.namespace }} describe {{ $labels.kind | toLower }} {{ $labels.name }}`.
+        - alert: FluxResourceStalled
+          expr: max by (namespace, kind, name, reason) (gotk_resource_info{stalled="True", suspended!="true"})
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: Flux {{ $labels.kind }} {{ $labels.namespace }}/{{ $labels.name }} stalled
+            description: >-
+              Flux {{ $labels.kind }} {{ $labels.namespace }}/{{ $labels.name }} is stalled ({{ $labels.reason }})
+              and will not retry until its spec changes or it is reconciled manually.
+              Check `kubectl -n {{ $labels.namespace }} describe {{ $labels.kind | toLower }} {{ $labels.name }}`.
+        - alert: FluxDependencyNotReady
+          expr: |-
+            max by (namespace, kind, name) (max_over_time(gotk_resource_info{ready="False", suspended!="true", reason="DependencyNotReady"}[10m]))
+            unless on (namespace, kind, name)
+            max by (namespace, kind, name) (max_over_time(gotk_resource_info{ready="True"}[10m]))
+          for: 50m
+          labels:
+            severity: warning
+          annotations:
+            summary: Flux {{ $labels.kind }} {{ $labels.namespace }}/{{ $labels.name }} waiting on dependencies for 1h
+            description: >-
+              Flux {{ $labels.kind }} {{ $labels.namespace }}/{{ $labels.name }} has been waiting on a dependency for over 1h;
+              a resource it depends on is stuck. Check `kubectl -n {{ $labels.namespace }} describe {{ $labels.kind | toLower }} {{ $labels.name }}`.
