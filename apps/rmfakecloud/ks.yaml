@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: rmfakecloud
-  path: ./apps/rmfakecloud/app
+  path: ./apps/rmfakecloud/resources/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,7 +21,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: rmfakecloud
-  path: ./apps/rmfakecloud/restic
+  path: ./apps/rmfakecloud/resources/restic
   prune: true
   sourceRef:
     kind: GitRepository
