@@ -7,9 +7,6 @@ spec:
   interval: 1h
   targetNamespace: reflector
   path: ./infrastructure/reflector/resources/app
-  dependsOn:
-    - name: longhorn-config
-      namespace: longhorn-system
   prune: true
   sourceRef:
     kind: GitRepository
