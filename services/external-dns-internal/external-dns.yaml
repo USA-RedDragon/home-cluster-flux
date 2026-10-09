@@ -15,6 +15,7 @@ metadata:
   namespace: external-dns-internal
 spec:
   interval: 1h
+  maxHistory: 2
   driftDetection:
     mode: enabled
   chart:

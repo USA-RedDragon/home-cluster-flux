@@ -27,6 +27,7 @@ spec:
         namespace: obico
         name: obico
   interval: 1h
+  maxHistory: 2
   driftDetection:
     mode: enabled
   suspend: false

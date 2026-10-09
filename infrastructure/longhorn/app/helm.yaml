@@ -26,6 +26,7 @@ spec:
         name: longhorn
       version: 1.13.0
   interval: 60m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   valuesFrom:

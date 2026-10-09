@@ -6,6 +6,7 @@ metadata:
   namespace: actions-runners
 spec:
   interval: 1h0m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: dockers-private-runner-set

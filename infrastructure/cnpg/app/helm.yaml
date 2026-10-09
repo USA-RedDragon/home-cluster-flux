@@ -15,6 +15,7 @@ metadata:
   namespace: cnpg-system
 spec:
   interval: 1h0m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: cnpg
