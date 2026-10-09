@@ -130,8 +130,8 @@ controllers:
               key: S3_SECRET_KEY
         resources:
           requests:
-            cpu: 3
-            memory: 18944Mi
+            cpu: 1500m
+            memory: 12Gi
           limits:
             # Previews hold about 200 MB each; each stacking worker's
             # accumulator is 416 MB and a rebuild pass about 730 MB, plus
