@@ -1,0 +1,59 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mosquitto
+spec:
+  groups:
+    - name: mosquitto-broker
+      rules:
+        - alert: MQTTBrokerDown
+          expr: |
+            mosquitto_broker_connected{job="mosquitto-exporter"} == 0
+              or (time() - mosquitto_last_message_timestamp_seconds{job="mosquitto-exporter"}) > 60
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "MQTT broker is down"
+            description: "The exporter cannot hold an authenticated session on mosquitto:1883 or has received no $SYS updates for over a minute. Home automation messaging is offline."
+
+        - alert: MQTTPodNotReady
+          expr: |
+            kube_deployment_status_replicas_available{namespace="mosquitto",deployment="mosquitto"} < 1
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "MQTT broker pod is not ready"
+            description: "The mosquitto Deployment has had no available replica for 2 minutes."
+
+        - alert: MQTTBrokerRestarted
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="mosquitto",container="mosquitto"}[10m]) > 0
+          for: 0m
+          labels:
+            severity: warning
+          annotations:
+            summary: "MQTT broker container restarted"
+            description: "{{ $labels.pod }} restarted {{ $value | humanize }} times in 10 minutes. Check for OOMKilled or probe failures."
+
+        - alert: MQTTBrokerMemoryHigh
+          expr: |
+            max(container_memory_working_set_bytes{namespace="mosquitto",container="mosquitto"})
+              / max(kube_pod_container_resource_limits{namespace="mosquitto",container="mosquitto",resource="memory"}) > 0.8
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "MQTT broker memory is near its limit"
+            description: "Mosquitto is using {{ $value | humanizePercentage }} of its memory limit. Raise the limit before it is OOM killed."
+
+        - alert: MQTTExporterDown
+          expr: |
+            up{job="mosquitto-exporter"} == 0 or absent(up{job="mosquitto-exporter"})
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "MQTT exporter is not being scraped"
+            description: "mosquitto-exporter has been down or missing for 5 minutes, so MQTTBrokerDown cannot fire."
