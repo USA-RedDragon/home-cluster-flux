@@ -8,6 +8,11 @@ spec:
   targetNamespace: kyverno
   path: ./infrastructure/kyverno/resources/app
   prune: true
+  dependsOn:
+    - name: secrets
+      namespace: flux-system
+    - name: reflector
+      namespace: reflector
   sourceRef:
     kind: GitRepository
     namespace: flux-system
