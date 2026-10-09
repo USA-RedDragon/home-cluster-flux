@@ -26,6 +26,27 @@ controllers:
         - level
         - -M
         - time
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              exec: &probe
+                command:
+                - sh
+                - -c
+                - for n in /dev/bus/usb/*/*; do set -- $(stat -c '%t %T' "$n") && grep -qsx "$(printf '%d:%d' "0x$1" "0x$2")" /sys/bus/usb/devices/*/dev && ls -l /proc/[0-9]*/fd 2>/dev/null | grep -q " $n\$" || exit 1; done
+              periodSeconds: 60
+              timeoutSeconds: 10
+              failureThreshold: 3
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              exec: *probe
+              periodSeconds: 5
+              timeoutSeconds: 10
+              failureThreshold: 24
         env:
         - name: TZ
           value: America/Chicago
