@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: smartctl-exporter
 resources:
   - helm.yaml
+  - prometheusrule.yaml
 configMapGenerator:
   - name: chart-values
     files:
