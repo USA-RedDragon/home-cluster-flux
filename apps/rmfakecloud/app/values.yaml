@@ -44,7 +44,6 @@ controllers:
                 name: rmfakecloud
                 key: jwt-secret-key
         securityContext:
-          fsGroup: 65534
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
           capabilities:

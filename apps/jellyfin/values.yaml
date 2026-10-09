@@ -49,7 +49,6 @@ controllers:
           - name: TMPDIR
             value: /tmp
         securityContext:
-          fsGroup: 568
           readOnlyRootFilesystem: true
           capabilities:
             drop:
