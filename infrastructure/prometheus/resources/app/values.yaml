@@ -1119,6 +1119,7 @@ grafana:
       enabled: true
       label: grafana_dashboard
       labelValue: "1"
+      skipReload: true
       # Allow discovery in all namespaces for dashboards
       searchNamespace: ALL
 
@@ -1134,6 +1135,9 @@ grafana:
         allowUiUpdates: false
     datasources:
       enabled: true
+      skipReload: true
+      initDatasources: true
+      watchMethod: LIST
       defaultDatasourceEnabled: true
       isDefaultDatasource: false
 
