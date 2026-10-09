@@ -169,7 +169,7 @@ agent:
   additionalAcquisition:
     - source: loki
       url: http://loki.monitoring.svc.cluster.local:3100
-      query: '{namespace="envoy-gateway-system", container="envoy", pod=~"envoy-envoy-gateway-system-public-.*"}'
+      query: '{namespace="envoy-gateway-system", container="envoy", pod=~"envoy-envoy-gateway-system-public-.*"} |= "\"downstream_remote_address\""'
       wait_for_ready: 10s
       labels:
         type: envoy-gateway
