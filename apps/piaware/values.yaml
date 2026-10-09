@@ -36,8 +36,8 @@ controllers:
           limits:
             memory: 130Mi
           requests:
-            cpu: 100m
-            memory: 90Mi
+            cpu: 10m
+            memory: 112Mi
 
 service:
   piaware:

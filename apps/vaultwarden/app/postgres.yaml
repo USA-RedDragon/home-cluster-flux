@@ -32,8 +32,8 @@ spec:
     size: 4Gi
   resources:
     requests:
-      memory: 200Mi
-      cpu: 20m
+      memory: 256Mi
+      cpu: 100m
   smartShutdownTimeout: 30
   stopDelay: 300
 ---
