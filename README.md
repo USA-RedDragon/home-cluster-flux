@@ -1165,7 +1165,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>nexrad-aws-notifier</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/nexrad-aws-notifier/helm.yaml">nexrad-aws-notifier</a></td>
+    <td><a href="apps/nexrad-aws-notifier/resources/app/helm.yaml">nexrad-aws-notifier</a></td>
     <td></td>
   </tr>
 </table>
