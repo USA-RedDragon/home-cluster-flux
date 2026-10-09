@@ -78,7 +78,7 @@ spec:
       resyncPeriod: 6h
       resources:
         requests:
-          cpu: 300m
+          cpu: 100m
           memory: 400Mi
         limits:
           memory: 400Mi

@@ -51,8 +51,8 @@ controllers:
           MIRROR_PULL_REQUESTS: "false"
         resources:
           requests:
-            cpu: 200m
-            memory: 3584Mi
+            cpu: 100m
+            memory: 1Gi
           limits:
             memory: 4Gi
         probes:

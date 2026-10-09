@@ -38,7 +38,7 @@ spec:
       repository: jacob.pub/ghcr.io/cloudnative-pg/cloudnative-pg
     resources:
       requests:
-        memory: 600Mi
+        memory: 384Mi
         cpu: 40m
       limits:
         memory: 1Gi
