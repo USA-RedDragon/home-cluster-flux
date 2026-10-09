@@ -1,0 +1,42 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: cloudflare
+spec:
+  acme:
+    email: acme@mcswain.dev
+    profile: shortlived
+    preferredChain: ""
+    privateKeySecretRef:
+      name: cloudflare-issuer-account-key
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            key: api-token
+            name: cloudflare-api-token-secret
+          email: jacob.a.mcswain@gmail.com
+      selector:
+        dnsZones:
+        - dmrhub.app
+        - dmrhub.cloud
+        - dmrhub.net
+        - dmrhub.network
+        - dmrhub.org
+        - jacob.network
+        - jacob.pub
+        - kubewg.net
+        - mcswain.cloud
+        - mcswain.dev
+        - mcswain.photography
+        - mcswain.wiki
+        - srshost.ing
+        - thisspacedoesnotexist.com
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}

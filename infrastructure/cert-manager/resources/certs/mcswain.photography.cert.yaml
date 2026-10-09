@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mcswain.photography
+spec:
+  secretName: mcswain.photography-tls
+  issuerRef:
+    name: cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - mcswain.photography
+    - '*.mcswain.photography'
