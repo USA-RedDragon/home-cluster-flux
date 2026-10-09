@@ -739,12 +739,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">immich</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/immich/app/helm.yaml">immich</a></td>
-    <td rowspan="2"><a href="apps/immich/app/postgres.yaml">postgresql</a>, <a href="apps/immich/app/redis-helm.yaml">redis</a></td>
+    <td><a href="apps/immich/resources/app/helm.yaml">immich</a></td>
+    <td rowspan="2"><a href="apps/immich/resources/app/postgres.yaml">postgresql</a>, <a href="apps/immich/resources/app/redis-helm.yaml">redis</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/immich/restic/helmrelease.yaml">restic</a></td>
+    <td><a href="apps/immich/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
