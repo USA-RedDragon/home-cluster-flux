@@ -10,7 +10,7 @@ spec:
   url: oci://ghcr.io/fluxcd/flux-manifests
   ref:
     tag: v2.4.0
-    digest: sha256:456f82fce9bce6dbfbca1ad9f21a4c6f33ee0a35c846de1fac4a1b9bcdea98a7
+    digest: sha256:e007ec3c575b9089fc7e96ad1d2159407be03450da7c220c6d25c8e8c1b42d01
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
