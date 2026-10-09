@@ -2,25 +2,4 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: flux-system
 resources:
-  - alerts.yaml
-  - github-api-token.yaml
-  - providers.yaml
-patches:
-  - target:
-      kind: Alert
-    patch: |
-      apiVersion: notification.toolkit.fluxcd.io/v1beta3
-      kind: Alert
-      metadata:
-        name: all
-        annotations:
-          kustomize.toolkit.fluxcd.io/prune: disabled
-  - target:
-      kind: Provider
-    patch: |
-      apiVersion: notification.toolkit.fluxcd.io/v1beta3
-      kind: Provider
-      metadata:
-        name: all
-        annotations:
-          kustomize.toolkit.fluxcd.io/prune: disabled
+  - ks.yaml
