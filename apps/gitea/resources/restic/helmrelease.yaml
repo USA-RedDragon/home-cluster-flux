@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
-# The repos themselves are on TrueNAS NFS and backed up there; this covers the DB and gitea-mirror.
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -15,7 +14,6 @@ spec:
     mode: enabled
   values:
     defaultPodOptions:
-      # gitea-mirror's volume is RWO
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -51,7 +49,6 @@ spec:
             command:
               - sh
               - -c
-              # language=sh
               - |
                 exec > >(ts '%H:%M:%S') 2>&1
                 set -eu

@@ -1,5 +1,3 @@
-# CrowdSec LAPI on the tailnet as crowdsec-lapi:8080, for edges outside the LAN (the PoT VPS).
-# Only the API port; metrics (6060) stay LAN-only. The tailnet ACL pins tag:pots-vps to this IP:8080.
 apiVersion: v1
 kind: Service
 metadata:

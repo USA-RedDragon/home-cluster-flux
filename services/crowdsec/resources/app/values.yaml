@@ -1,14 +1,3 @@
-# CrowdSec: detection from Loki (no node log tailing), decisions enforced at the edges
-# (OpenWrt firewall bouncer for every WAN port-forward; the VPS runs its own bouncer).
-#
-# Sources:
-#   - public Envoy access logs: HTTP routes go through the hub HTTP scenarios, TCP/UDP routes
-#     through mcswain/envoy-l4-flood
-#   - router kernel log: "cs-dnat:" new connections to port-forwards that bypass Envoy
-#     (router-dnat-flood) and fw4 WAN rejects (hub iptables port-scan scenarios)
-#
-# LIVE since 2026-10-09: bans are enforced by the router and VPS firewall bouncers. Our own public
-# IPs (VPS, home WAN) are in the LAPI allowlist 'own-infra' (cscli allowlists; not in git).
 
 container_runtime: containerd
 
@@ -23,7 +12,6 @@ config:
   simulation.yaml: |
     simulation: false
 
-  # Repeat offenders: 4h for a first ban, +4h per earlier decision on the same IP, capped at 7 days.
   profiles.yaml: |
     name: default_ip_remediation
     filters:
@@ -44,9 +32,6 @@ config:
         duration: 4h
     on_success: break
 
-  # Telegram ban alerts (http plugin, runs in LAPI). The bot token comes from the crowdsec-telegram
-  # secret via lapi.envFrom and is env-expanded in the URL. The chat id is literal: ${VARS} inside
-  # format went out unexpanded, and a group id is useless without the token.
   notifications:
     telegram.yaml: |
       type: http
@@ -184,10 +169,8 @@ config:
           - attack.T1110
 
 agent:
-  # Reads from Loki, so one replica instead of a DaemonSet tailing node logs.
   isDeployment: true
   replicas: 1
-  # Logs come from Loki; no node log mounts.
   hostVarLog: false
   additionalAcquisition:
     - source: loki
@@ -222,7 +205,6 @@ lapi:
     - secretRef:
         name: crowdsec-telegram
   env:
-    # Pre-registered bouncers (key = what the bouncer is configured with).
     - name: BOUNCER_KEY_router
       valueFrom:
         secretKeyRef:
@@ -248,7 +230,6 @@ lapi:
       storageClassName: longhorn-nvme
       size: 100Mi
   service:
-    # Bouncers on the router (and anything else on the LAN) reach LAPI here.
     type: LoadBalancer
     loadBalancerClass: metallb
     annotations:
@@ -267,12 +248,6 @@ lapi:
     serviceMonitor:
       enabled: true
 
-# WAF: request inspection for Envoy via envoy-proxy-bouncer (resources/bouncer).
-#   :7422 mcswain/waf-full    -> minio.mcswain.dev (console): CVE virtual patching + generic rules
-#                                in-band, OWASP CRS out-of-band (detect only)
-#   :7423 mcswain/waf-vpatch  -> s3.mcswain.dev (S3 API): CVE virtual patching only (generic/CRS
-#                                rules false-positive on S3 XML/signed requests; bodies aren't sent)
-# Enforcing (in-band rules block; CRS stays out-of-band = alert only).
 appsec:
   enabled: true
   acquisitions:

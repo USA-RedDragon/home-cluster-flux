@@ -1,8 +1,5 @@
 fullnameOverride: snmp-exporter
 
-# The image's built-in snmp.yml already has the modules we need: if_mib (port
-# counters, link state and speed) and mikrotik (SFP DOM, board temperature,
-# fans). The switches take the default "public" v2c community (auth public_v2).
 image:
   repository: jacob.pub/quay.io/prometheus/snmp-exporter
 

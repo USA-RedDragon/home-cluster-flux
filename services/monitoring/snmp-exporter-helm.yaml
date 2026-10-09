@@ -1,5 +1,3 @@
-# Prometheus SNMP exporter for the MikroTik SwOS switches. Scraped per switch
-# by the ScrapeConfig in switch-alerts.yaml (/snmp?target=...&module=...).
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:

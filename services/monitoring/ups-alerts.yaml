@@ -23,10 +23,6 @@ spec:
   # one round trip at a time over the tailnet.
   scrapeTimeout: 14s
 ---
-# Closet network UPS: CyberPower CP1500AVRLCD3 on the router's USB, carrying the
-# router, the modem, the CRS310 and the hEX S that feeds the shelter fiber. It
-# is meant to outlast the closet nodes, so nothing on it shuts down early.
-# Served read-only by NUT on the router (upsd on 192.168.1.1:3493).
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: ScrapeConfig
 metadata:

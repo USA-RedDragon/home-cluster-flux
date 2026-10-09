@@ -1,4 +1,3 @@
-# Bot protection: Envoy asks the central Anubis (services/anubis) before every request.
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
@@ -10,7 +9,6 @@ spec:
       kind: HTTPRoute
       name: zot
   extAuth:
-    # Anubis down => let traffic through rather than take the site down.
     failOpen: true
     headersToExtAuth: [cookie, user-agent, accept, accept-language, accept-encoding, authorization, x-envoy-external-address]
     http:

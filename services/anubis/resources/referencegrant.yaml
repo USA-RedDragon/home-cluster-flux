@@ -1,4 +1,3 @@
-# Lets SecurityPolicies in app namespaces point extAuth at the central Anubis services.
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
 metadata:

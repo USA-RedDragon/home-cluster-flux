@@ -60,8 +60,6 @@ spec:
     interval: 1h
     triggerLoopOnEvent: true
     policy: sync
-    # Split horizon: a route annotated external-dns.mcswain.dev/internal=skip stays out of AdGuard
-    # (e.g. a public route whose LAN path is a different route on the internal gateway).
     annotationFilter: external-dns.mcswain.dev/internal notin (skip)
     registry: noop
 

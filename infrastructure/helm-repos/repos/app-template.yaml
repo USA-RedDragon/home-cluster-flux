@@ -1,6 +1,4 @@
 ---
-# bjw-s app-template as an OCI artifact; every app-template HelmRelease
-# references it with spec.chartRef (one version for the whole repo).
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: OCIRepository
 metadata:

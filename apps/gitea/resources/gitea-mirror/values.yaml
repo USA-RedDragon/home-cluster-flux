@@ -1,10 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 
-# GitHub -> gitea pull mirrors. Force-push protection (bundle before a rewriting sync) is configured
-# in the UI: Configuration -> Connections -> Destructive Update Protection. Defaults to on-force-push.
-# Needs a classic PAT (repo, read:org): fine-grained tokens cover only one owner.
-# NOTE: it deletes a same-named non-mirror gitea repo when it creates the mirror. Old repos whose
-# history GitHub no longer has live in the usa-reddragon-archive org for that reason.
 defaultPodOptions:
   securityContext:
     runAsUser: 1001
@@ -36,20 +31,15 @@ controllers:
           MIRROR_STARRED: "false"
           GITEA_URL: http://gitea:3000
           GITEA_USERNAME: USA-RedDragon
-          # Personal repos under GITEA_USERNAME, org repos into same-named gitea orgs.
           MIRROR_STRATEGY: preserve
           MIRROR_ORGANIZATIONS: "true"
-          # Allowlist; the classic PAT can also see hashicorp and the ROM orgs.
           INCLUDE_ORGANIZATIONS: SRS-Hosting,Squallar,AstroGardenLLC,kubewg-net,USA-RedDragon-ORG
-          # Orgs public; repo visibility follows GitHub per repo.
           GITEA_ORG_VISIBILITY: public
           GITEA_MIRROR_INTERVAL: 8h
           SCHEDULE_ENABLED: "true"
           AUTO_IMPORT_REPOS: "true"
           AUTO_MIRROR_REPOS: "true"
           INCLUDE_COLLABORATOR_REPOS: "false"
-          # The env loader turns unset booleans into false and overwrites the UI settings on every
-          # start, so the Mirror Content choices have to live here.
           MIRROR_RELEASES: "true"
           RELEASE_LIMIT: "10"
           GITEA_LFS: "true"
@@ -64,7 +54,6 @@ controllers:
             cpu: 20m
             memory: 256Mi
           limits:
-            # Release assets are buffered in memory; astro.garden-images has ~1GB tarballs (OOMKilled at 1Gi).
             memory: 4Gi
         probes:
           liveness: &probe
@@ -91,7 +80,6 @@ service:
         port: 4321
 
 persistence:
-  # sqlite + force-push backup bundles (data/repo-backups)
   data:
     enabled: true
     type: persistentVolumeClaim

@@ -1,6 +1,3 @@
-# Envoy ext_authz (gRPC) -> CrowdSec AppSec. WAF only: IP decisions are enforced at the edge
-# bouncers (router/VPS), not here. Routes opt in with a SecurityPolicy (services/minio/securitypolicy.yaml)
-# and must also be listed under waf.routes below (unlisted hosts are not inspected).
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -36,9 +33,7 @@ spec:
     config:
       server:
         logLevel: info
-      # Real client IP as resolved by Envoy (same header Anubis uses).
       trustedIPHeader: X-Envoy-External-Address
-      # Never inspect our own traffic (cluster backups to S3 hairpin through the public gateway).
       exemptIPs:
         - 10.0.0.0/8
         - 172.16.0.0/12
@@ -57,7 +52,6 @@ spec:
         apiKeySecretRef:
           name: crowdsec-bouncers
           key: envoy
-        # AppSec down => let traffic through.
         failOpen: true
         routes:
           - hosts: [s3.mcswain.dev]

@@ -1,15 +1,4 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
-#
-# Central Anubis, used as forward auth by Envoy Gateway (SecurityPolicy extAuth on an HTTPRoute).
-# One instance per registrable domain, because the pass cookie can't cross domains:
-#   anubis.mcswain.dev, anubis.jacob.pub, anubis.dmrhub.net serve the challenge for every host
-#   under that domain.
-# Each pod is Anubis (TARGET=" ", forward-auth only) plus an nginx adapter, because Envoy's
-# HTTP ext_authz calls /check<original path> while Anubis wants its exact check endpoint and the
-# original URL in X-Forwarded-*. The adapter also serves the "silly page" to denied bots (418).
-#
-# To protect a route: a SecurityPolicy in the app's namespace like
-#   apps/dmrhub/securitypolicy.yaml, plus its namespace in referencegrant.yaml.
 
 defaultPodOptions:
   securityContext:
@@ -38,7 +27,6 @@ controllers:
           COOKIE_DOMAIN: mcswain.dev
           REDIRECT_DOMAINS: "mcswain.dev,*.mcswain.dev"
         envFrom:
-          # ED25519_PRIVATE_KEY_HEX, shared by all instances
           - secretRef:
               name: anubis
         resources:
@@ -251,7 +239,6 @@ persistence:
       - path: /tmp
 
 route:
-  # The challenge pages for each domain.
   mcswain-dev: &challenge-route
     enabled: true
     kind: HTTPRoute

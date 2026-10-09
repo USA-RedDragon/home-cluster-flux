@@ -1,7 +1,3 @@
-# MikroTik SwOS switches over SNMP v2c (enabled per switch in SwOS: SNMP tab),
-# through the snmp-exporter in snmp-exporter-helm.yaml. Port names (ifName)
-# come from the names set in SwOS. SwOS has no syslog, so this is the only
-# view of the switches besides their web UI.
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: ScrapeConfig
 metadata:
@@ -30,7 +26,6 @@ spec:
     module: ["if_mib", "mikrotik"]
     auth: ["public_v2"]
   scrapeInterval: 30s
-  # A full walk of a 32-port switch takes ~0.1s.
   scrapeTimeout: 10s
   relabelings:
     - sourceLabels: [__address__]
@@ -38,11 +33,8 @@ spec:
     - targetLabel: __address__
       replacement: snmp-exporter.monitoring.svc.cluster.local:9116
   metricRelabelings:
-    # SwOS puts the port name in ifName, ifDescr and nothing in ifAlias.
     - regex: ifAlias|ifDescr
       action: labeldrop
-    # 32-bit duplicates of the ifHC* counters (they wrap in seconds at 10G),
-    # and ifSpeed, which caps at 4.29G (ifHighSpeed is in Mbit/s).
     - sourceLabels: [__name__]
       regex: if(In|Out)(Octets|UcastPkts|NUcastPkts|MulticastPkts|BroadcastPkts)|ifSpeed|ifSpecific|ifOutQLen|ifInUnknownProtos
       action: drop
@@ -64,9 +56,6 @@ spec:
           annotations:
             summary: "Switch {{ $labels.instance }} not answering SNMP"
             description: "No SNMP data from {{ $labels.instance }} for 5m. Either the switch is down or SNMP was turned off in SwOS (SNMP tab, community public)."
-        # Healthy links count zero errors. rack-10g QSFP+1.1 (the trunk to
-        # downstairs-10g) carries 3308 old FCS/runt errors from before
-        # 2026-09-19; this only fires if a counter grows.
         - alert: SwitchPortErrors
           expr: |
             increase(ifInErrors{job="switches"}[1h])
@@ -84,7 +73,6 @@ spec:
           annotations:
             summary: "{{ $labels.instance }} port {{ $labels.ifName }} is flapping"
             description: "The link on {{ $labels.instance }} {{ $labels.ifName }} went up/down {{ $value }} times in 30m."
-        # PCs drop to 1G when they sleep, so they are left out.
         - alert: SwitchPortSpeedDegraded
           expr: |
             ifHighSpeed{job="switches", ifName!~".*-pc"} > 0
@@ -96,8 +84,6 @@ spec:
           annotations:
             summary: "{{ $labels.instance }} port {{ $labels.ifName }} linked at {{ $value }} Mbit/s, below its usual speed"
             description: "{{ $labels.instance }} {{ $labels.ifName }} renegotiated down from {{ with printf \"max_over_time(ifHighSpeed{job='switches', instance='%s', ifName='%s'}[1d])\" $labels.instance $labels.ifName | query }}{{ . | first | value }}{{ end }} Mbit/s. Usually a failing cable/DAC or a module that fell back to 1G."
-        # mtxrHlProcessorTemperature is in tenths of a degree. The fanless
-        # CSS326 normally sits around 75C.
         - alert: SwitchHot
           expr: mtxrHlProcessorTemperature{job="switches"} / 10 > 85
           for: 15m
@@ -106,7 +92,6 @@ spec:
           annotations:
             summary: "Switch {{ $labels.instance }} at {{ $value }}C"
             description: "{{ $labels.instance }}'s CPU has been over 85C for 15m. Check its airflow and, on the CRS326s, the fans."
-        # Only the CRS326s have fans (two each).
         - alert: SwitchFanStopped
           expr: mtxrHlFanSpeed1{job="switches"} == 0 or mtxrHlFanSpeed2{job="switches"} == 0
           for: 5m
@@ -115,8 +100,6 @@ spec:
           annotations:
             summary: "Switch {{ $labels.instance }} has a stopped fan"
             description: "A fan on {{ $labels.instance }} reads 0 RPM."
-        # SFP module temperature in C. Passive DACs have no sensor and read
-        # -128 (4294967168 unsigned), hence the upper bound.
         - alert: SwitchSFPHot
           expr: mtxrOpticalTemperature{job="switches"} > 70 < 200
           for: 15m
