@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: mosquitto
-  path: ./services/mosquitto/app
+  path: ./services/mosquitto/resources/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,7 +21,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: mosquitto
-  path: ./services/mosquitto/restic
+  path: ./services/mosquitto/resources/restic
   prune: true
   sourceRef:
     kind: GitRepository
@@ -36,7 +36,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: mosquitto
-  path: ./services/mosquitto/exporter
+  path: ./services/mosquitto/resources/exporter
   prune: true
   sourceRef:
     kind: GitRepository
