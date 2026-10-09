@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: flux-system
-  path: ./infrastructure/helm-repos/resources/repos
+  path: ./infrastructure/helm-repos/resources
   prune: true
   sourceRef:
     kind: GitRepository

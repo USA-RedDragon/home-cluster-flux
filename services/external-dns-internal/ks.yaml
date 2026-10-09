@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: external-dns-internal
-  path: ./services/external-dns-internal/resources/app
+  path: ./services/external-dns-internal/resources
   prune: true
   sourceRef:
     kind: GitRepository

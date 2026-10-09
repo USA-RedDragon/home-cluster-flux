@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: flux-system
-  path: ./services/flux-notification/resources/app
+  path: ./services/flux-notification/resources
   prune: true
   sourceRef:
     kind: GitRepository

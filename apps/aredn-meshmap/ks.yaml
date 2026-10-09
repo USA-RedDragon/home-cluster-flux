@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: aredn-meshmap
-  path: ./apps/aredn-meshmap/resources/app
+  path: ./apps/aredn-meshmap/resources
   prune: true
   sourceRef:
     kind: GitRepository

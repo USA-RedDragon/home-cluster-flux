@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: reflector
-  path: ./infrastructure/reflector/resources/app
+  path: ./infrastructure/reflector/resources
   prune: true
   sourceRef:
     kind: GitRepository

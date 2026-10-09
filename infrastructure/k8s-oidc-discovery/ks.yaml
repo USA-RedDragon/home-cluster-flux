@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: k8s-oidc-discovery
-  path: ./infrastructure/k8s-oidc-discovery/resources/app
+  path: ./infrastructure/k8s-oidc-discovery/resources
   prune: true
   sourceRef:
     kind: GitRepository

@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: static-services
-  path: ./services/static-services/resources/app
+  path: ./services/static-services/resources
   prune: true
   sourceRef:
     kind: GitRepository
