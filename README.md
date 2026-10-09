@@ -1723,12 +1723,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">weewx</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/weewx/app/helm.yaml">weewx</a></td>
+    <td><a href="apps/weewx/resources/app/helm.yaml">weewx</a></td>
     <td rowspan="2"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/weewx/mariadb/helm.yaml">weewx-mariadb</a></td>
+    <td><a href="apps/weewx/resources/mariadb/helm.yaml">weewx-mariadb</a></td>
   </tr>
 </table>
 
