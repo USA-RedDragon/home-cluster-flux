@@ -971,7 +971,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>longhorn-system</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/longhorn/app/helm.yaml">longhorn</a></td>
+    <td><a href="infrastructure/longhorn/resources/app/helm.yaml">longhorn</a></td>
     <td></td>
   </tr>
 </table>
