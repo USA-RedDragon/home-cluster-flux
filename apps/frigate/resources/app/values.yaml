@@ -26,10 +26,10 @@ controllers:
           tag: "0.18.0@sha256:9678a83a76e4730ac7d9ea7428370e32ae656d6b312aaad30d6c69f3fef14d35"
         resources:
           requests:
-            cpu: 1000m
-            memory: 5Gi
+            cpu: 1400m
+            memory: 9Gi
           limits:
-            memory: 8Gi
+            memory: 11Gi
         env:
           - name: GOGC
             value: "400"

@@ -32,7 +32,7 @@ controllers:
         resources:
           requests:
             cpu: 30m
-            memory: 80Mi
+            memory: 384Mi
           limits:
             squat.ai/rtl-sdr-ads-b: 1
 

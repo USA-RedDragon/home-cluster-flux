@@ -23,13 +23,13 @@ controllers:
         # overlapping the regular ones; without this the compactor halts on them.
         - --compact.enable-vertical-compaction
         # Merging blocks spikes well above steady state; 650Mi was OOMKilled twice on
-        # the first real compaction run. Only the limit is raised, not the request.
+        # the first real compaction run.
         resources:
           limits:
-            memory: 2Gi
+            memory: 3Gi
           requests:
             cpu: 100m
-            memory: 512Mi
+            memory: 2304Mi
         ports:
         - name: http
           containerPort: 10902

@@ -53,8 +53,8 @@ server:
             IMMICH_JOB_METRICS: 'true'
           resources:
             requests:
-              memory: 750Mi
-              cpu: 300m
+              memory: 1664Mi
+              cpu: 50m
   persistence:
     config:
       enabled: true
