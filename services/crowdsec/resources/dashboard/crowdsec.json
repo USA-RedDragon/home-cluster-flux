@@ -1124,19 +1124,8 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (reason) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" [$__range]))",
+          "expr": "sum by (reason, outcome) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | label_format outcome=`{{ if .decision }}ban{{ else }}alert{{ end }}` [$__range]))",
           "refId": "A",
-          "legendFormat": "{{reason}}",
-          "queryType": "instant"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "sum by (reason) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | decision=\"ban\" [$__range]))",
-          "refId": "B",
-          "legendFormat": "{{reason}}",
           "queryType": "instant"
         }
       ],
@@ -1161,45 +1150,62 @@
       },
       "transformations": [
         {
-          "id": "labelsToFields",
+          "id": "organize",
           "options": {
-            "mode": "columns"
-          }
-        },
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "reason",
-            "mode": "outer"
-          }
-        },
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "pattern": "^(reason|Value #A|Value #B)$"
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "Value #A": "Count",
+              "Value": "Count"
             }
+          }
+        },
+        {
+          "id": "groupingToMatrix",
+          "options": {
+            "columnField": "outcome",
+            "rowField": "reason",
+            "valueField": "Count",
+            "emptyValue": "zero"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "reduceRow",
+            "reduce": {
+              "reducer": "sum",
+              "include": [
+                "alert",
+                "ban"
+              ]
+            },
+            "alias": "Alerts",
+            "replaceFields": false
           }
         },
         {
           "id": "organize",
           "options": {
+            "excludeByName": {
+              "alert": true
+            },
             "indexByName": {
-              "reason": 0,
-              "Value #A": 1,
-              "Value #B": 2
+              "reason\\outcome": 0,
+              "Alerts": 1,
+              "ban": 2
             },
             "renameByName": {
-              "reason": "Scenario",
-              "Value #A": "Alerts",
-              "Value #B": "Bans"
+              "reason\\outcome": "Scenario",
+              "ban": "Bans"
             }
           }
         }
       ]
     },
     {
-      "type": "bargauge",
+      "type": "barchart",
       "title": "Alerts by country",
       "id": 19,
       "datasource": {
@@ -1220,50 +1226,52 @@
           },
           "expr": "topk(10, sum by (country) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | country!=\"\" [$__range])))",
           "refId": "A",
-          "legendFormat": "{{country}}",
           "queryType": "instant"
         }
       ],
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-YlRd"
+            "mode": "fixed",
+            "fixedColor": "blue"
           },
           "min": 0,
           "decimals": 0,
-          "displayName": "${__data.fields.country}"
+          "custom": {
+            "fillOpacity": 80,
+            "lineWidth": 0,
+            "gradientMode": "none",
+            "axisPlacement": "auto"
+          }
         },
         "overrides": []
       },
       "options": {
         "orientation": "horizontal",
-        "displayMode": "basic",
-        "showUnfilled": true,
-        "valueMode": "color",
-        "namePlacement": "left",
-        "sizing": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "/^Alerts$/",
-          "values": true
+        "xField": "country",
+        "showValue": "always",
+        "stacking": "none",
+        "barWidth": 0.8,
+        "groupWidth": 0.7,
+        "xTickLabelRotation": 0,
+        "xTickLabelMaxLength": 24,
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
         }
       },
       "transformations": [
         {
-          "id": "labelsToFields",
-          "options": {
-            "mode": "columns"
-          }
-        },
-        {
-          "id": "merge",
-          "options": {}
-        },
-        {
           "id": "organize",
           "options": {
+            "excludeByName": {
+              "Time": true
+            },
             "renameByName": {
               "Value #A": "Alerts",
               "Value": "Alerts"
@@ -1290,7 +1298,7 @@
       ]
     },
     {
-      "type": "bargauge",
+      "type": "barchart",
       "title": "Alerts by AS",
       "id": 20,
       "datasource": {
@@ -1309,52 +1317,54 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "topk(10, sum by (asn) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | asn!=\"\" | asn!=\"0\" [$__range])))",
+          "expr": "topk(10, sum by (asn) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | asn!=\"\" | asn!=\"0\" | label_format asn=\"AS{{.asn}}\" [$__range])))",
           "refId": "A",
-          "legendFormat": "AS{{asn}}",
           "queryType": "instant"
         }
       ],
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-YlRd"
+            "mode": "fixed",
+            "fixedColor": "blue"
           },
           "min": 0,
           "decimals": 0,
-          "displayName": "AS${__data.fields.asn}"
+          "custom": {
+            "fillOpacity": 80,
+            "lineWidth": 0,
+            "gradientMode": "none",
+            "axisPlacement": "auto"
+          }
         },
         "overrides": []
       },
       "options": {
         "orientation": "horizontal",
-        "displayMode": "basic",
-        "showUnfilled": true,
-        "valueMode": "color",
-        "namePlacement": "left",
-        "sizing": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "/^Alerts$/",
-          "values": true
+        "xField": "asn",
+        "showValue": "always",
+        "stacking": "none",
+        "barWidth": 0.8,
+        "groupWidth": 0.7,
+        "xTickLabelRotation": 0,
+        "xTickLabelMaxLength": 24,
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
         }
       },
       "transformations": [
         {
-          "id": "labelsToFields",
-          "options": {
-            "mode": "columns"
-          }
-        },
-        {
-          "id": "merge",
-          "options": {}
-        },
-        {
           "id": "organize",
           "options": {
+            "excludeByName": {
+              "Time": true
+            },
             "renameByName": {
               "Value #A": "Alerts",
               "Value": "Alerts"
