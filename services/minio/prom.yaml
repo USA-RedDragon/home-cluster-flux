@@ -37,6 +37,17 @@ spec:
       relabelings:
         - targetLabel: job
           replacement: minio-node
+    - port: s3
+      path: /minio/v2/metrics/bucket
+      interval: 1m
+      authorization:
+        type: Bearer
+        credentials:
+          name: minio-prometheus
+          key: token
+      relabelings:
+        - targetLabel: job
+          replacement: minio-bucket
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
