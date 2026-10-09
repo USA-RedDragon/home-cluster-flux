@@ -1,0 +1,69 @@
+# Envoy ext_authz (gRPC) -> CrowdSec AppSec. WAF only: IP decisions are enforced at the edge
+# bouncers (router/VPS), not here. Routes opt in with a SecurityPolicy (services/minio/securitypolicy.yaml)
+# and must also be listed under waf.routes below (unlisted hosts are not inspected).
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: envoy-bouncer
+  namespace: crowdsec
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: -1
+  driftDetection:
+    mode: enabled
+  chart:
+    spec:
+      chart: envoy-proxy-bouncer
+      version: 0.8.2
+      sourceRef:
+        kind: HelmRepository
+        name: kdwils
+        namespace: crowdsec
+      interval: 1h
+  values:
+    fullnameOverride: envoy-bouncer
+    image:
+      repository: jacob.pub/ghcr.io/kdwils/envoy-proxy-bouncer
+      tag: v0.8.2@sha256:444dcf855e3e4aac290084733ecca127e55abb966938be919e0aa7caf209e5e6
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 128Mi
+    config:
+      server:
+        logLevel: info
+      # Real client IP as resolved by Envoy (same header Anubis uses).
+      trustedIPHeader: X-Envoy-External-Address
+      # Never inspect our own traffic (cluster backups to S3 hairpin through the public gateway).
+      exemptIPs:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+        - 100.64.0.0/10
+        - fd00::/8
+      bouncer:
+        enabled: false
+        lapiURL: http://crowdsec-service:8080
+        apiKeySecretRef:
+          name: crowdsec-bouncers
+          key: envoy
+      waf:
+        enabled: true
+        appSecURL: http://crowdsec-appsec-service:7422
+        apiKeySecretRef:
+          name: crowdsec-bouncers
+          key: envoy
+        # AppSec down => let traffic through.
+        failOpen: true
+        routes:
+          - hosts: [s3.mcswain.dev]
+            port: 7423
+          - hosts: [minio.mcswain.dev]
+      prometheus:
+        enabled: true
+        serviceMonitor:
+          enabled: true

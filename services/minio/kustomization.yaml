@@ -8,6 +8,7 @@ resources:
   - networkpolicy.yaml
   - prom.yaml
   - backend-traffic-policy.yaml
+  - securitypolicy.yaml
   - backup-astro.yaml
   - backup-rtz-uploads.yaml
   - backup-tandoor.yaml
