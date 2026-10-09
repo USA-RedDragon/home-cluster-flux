@@ -1773,7 +1773,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>wheresmyscope</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/wheresmyscope/helm.yaml">wheresmyscope</a></td>
+    <td><a href="apps/wheresmyscope/resources/app/helm.yaml">wheresmyscope</a></td>
     <td></td>
   </tr>
 </table>
