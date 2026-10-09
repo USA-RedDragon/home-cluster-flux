@@ -1507,16 +1507,16 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="3">rtz</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/rtz/nats.helm.yaml">nats</a></td>
-    <td rowspan="3"><a href="apps/rtz/postgres.yaml">postgresql</a></td>
+    <td><a href="apps/rtz/resources/nats/helmrelease.yaml">nats</a></td>
+    <td rowspan="3"><a href="apps/rtz/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/rtz/restic.yaml">restic</a></td>
+    <td><a href="apps/rtz/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/rtz/helm.yaml">rtz</a></td>
+    <td><a href="apps/rtz/resources/app/helm.yaml">rtz</a></td>
   </tr>
 </table>
 
