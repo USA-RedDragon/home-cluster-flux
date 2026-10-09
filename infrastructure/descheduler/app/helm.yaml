@@ -69,6 +69,17 @@ spec:
             - name: RemovePodsViolatingNodeTaints
             - name: RemovePodsViolatingInterPodAntiAffinity
             - name: RemovePodsViolatingTopologySpreadConstraint
+            - name: PodLifeTime
+              args:
+                maxPodLifeTimeSeconds: 300
+                states:
+                  - CreateContainerError
+                namespaces:
+                  include:
+                    - dump978
+                    - rtl-433
+                    - trunk-recorder
+                    - ultrafeeder
             # Relative to the worker average (fixed 20% floors never matched: every
             # worker sits at 60-99% requested). Underutilized = below average - 10
             # on all resources; overutilized = above average + 10 on any.
@@ -99,6 +110,7 @@ spec:
                 - RemovePodsViolatingNodeTaints
                 - RemovePodsViolatingNodeAffinity
                 - RemovePodsViolatingInterPodAntiAffinity
+                - PodLifeTime
   postRenderers:
     - kustomize:
         patches:
