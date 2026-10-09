@@ -1,12 +1,10 @@
 apiVersion: v1
 kind: Secret
 metadata:
-    annotations:
-        kustomize.toolkit.fluxcd.io/prune: disabled
     name: github-api-token
     namespace: flux-system
 stringData:
-    token: ENC[AES256_GCM,data:prdORBC6J3QFSIo4WjQaxRjMiDmG7AXP0a8AXLsWIlZ4MOtDtchYRQ==,iv:w5pcG92E2jgqhZp4swrtrx3lWwQJK+8FF7d/FwAk9HA=,tag:iJllJMFdjGPpjHgnbsKDjg==,type:str]
+    token: ENC[AES256_GCM,data:tieTeD43WIL/8vIoDFQ9uJzdTc+1jR861S4W2+n3K+Ch5IuV8orfow==,iv:fGuaxfLJGEN3zErC4mEvAeZQNZ6Bh/O0ipIX4q9EG8g=,tag:igkFoXnfzoxIOzQA9czKuw==,type:str]
 type: Opaque
 sops:
     kms: []
@@ -14,27 +12,27 @@ sops:
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2026-10-09T20:58:32Z"
-    mac: ENC[AES256_GCM,data:LU7vkXAOvkWQ7O7axxBkGmpy/hchAXJ4xh9hmlPCZo7Uf6ZUMOLpUQaStGgnCxle4T2YP/WzL/SBlLkEo4J2idqxyPVRCReW9tGGSYnLVsMfwtRL+sYLX2lYorywxuW+DL7RPH/zQNVHKTkgMU/5Bf2bmdrfhGKzHAIuEJiWIiQ=,iv:h/89Xg61MHQaQhc/7rdHLbeI5h+UT5Iu53//VwrBV7A=,tag:iOsypA2iPgqeqk0e/DabNg==,type:str]
+    lastmodified: "2024-03-17T21:05:02Z"
+    mac: ENC[AES256_GCM,data:KTgcA2ex79qoFH642PBYRyr9fZ/2OKqKGOFj6dY0uqnt/eS25O7GR7OGMHpq2g5qs8OcLcEbwnOf87JjLdqRJNkKkpjWhJ3C+eTeM4mcN6EbniZBPiAaAhr2SBW4ycAc512Sci/l5TMLwEj4ZJqyrtgQ96Uls9LEVUNE7I1LmN0=,iv:4/b5DeTu2USspILM0cHbwAwmH17TpzaS4p7LTJF54gw=,tag:J4Huv5CXIPWEQz9rx4UsQQ==,type:str]
     pgp:
-        - created_at: "2026-10-09T20:58:31Z"
+        - created_at: "2024-03-17T21:03:48Z"
           enc: |
             -----BEGIN PGP MESSAGE-----
 
-            hQIMA4MMKSOyI68lAQ//cf4conhVI4qZmusYlT4PB96hsDodIFb7tzQ6Sz/KpZkV
-            uC5Mzwm/hv3iBr//4QkbKhm0Hvm7sA+IO8PjfJysE5YgdUYF4Io5mqtqjahummGF
-            EdP9ReovENjv72hieqi1bq2zZjMQZhPvQeIgAmWx3xDCmAO0bCQ5Tj9jmGqEopxE
-            ZvtSHwib61xj1pWeRdB7yhHjYb7m2Ciouj0Yy+9gYzY/sh5i3FnbsPaLLbLoCrSN
-            1aMNCIT0/t0q3tnFxPRGnVqHGcowP0GGDGCcSeFn0AXAGqj5RSQOuKP3cGkVr9jD
-            zEoad3KdPZp3s9nrE6ZW4zCmWoT20yvmlPzl7M4yE+lMH6M9WB2tk3UtAZRLiyqj
-            oma4vZ4fCfI6lxY6lu13bKM3ar71qUrjbOplDQ32tJwkvJZC9iKsd2ReM85fkF+j
-            rUtDa5m3BixJuiC8YJ5UQ80+M4WLSwnbJ4VYuWnuVPCXHHYtoI0XdI5f3xwxkXtp
-            wqf2hYL3paZVpmcCCCTMEVSVFKC6qixXffJTYzF5jfIQNMQ2oMHkSmezPhsqmf8A
-            kmIDXN+e5vRh9GAwlcJ6HmKXd+plzN+MSqpFric8KQExkmm4O5wrbDH7yLAHBXoY
-            C7MbtPVkR09Q21paIX4q119nbegvlOrBUMVAxQ0IODx905I/76Rpq1VeDAkPjLHS
-            XgGGFLWoR2S3jQG+SJN2tMqT1lr4m58e1z8oDi44pBGrI4P7q+fh2FIbUQ5MVhM6
-            1clHXBfYVGltZ3IO+G8W6LpfIXxsOtRIO2SR9L08m6/I7oC7vDAEbvHE001MhHI=
-            =qFbC
+            hQIMA4MMKSOyI68lAQ//TVBuWjpnsTya9hnzfUeIZzKemBCi/9amW7blcznpMjGB
+            9HwofTKDFkH4PTCIhOZC8Ex3hnEMw6/2Kx3zYOmKuM1Z9d8rsDRnr+wAn5bJ/npu
+            PZ6q8VPkRDAdgwNf/9QqITaaeY/fsF7ZI1kCI9JrT0j5vI+Jc7D37mHFW3A/xfNd
+            EVhU6VVjWCtezYyzGXn0PMA75mGd2uNcLZ8ZL1Y+yJ3tW/1IM0sVsCKSl+n0vUwz
+            +uDjURhZ6j3jSwkTM7vyV/H9qY5g/3TD2M7BKGX+fGnraPb9c6olLkBDTQA+GOzB
+            Q/yASEa1ObmuheQxxjvR8Z7yh65ZiWwc+sTfREDveaWcmpRyqy+pjviOnWs5aqFS
+            tkRkW8TUxk0/6rDSYDDtEWBCXjwXzGNZuXEzQC1lhRXE/HNlHJPPQW+K8AeVeQDM
+            LrUIa0IaffJlhZcDFQN4+yvriqVbsYo6Hn2iXHrrILX6OXD87UlpHyq3fm2VVfkw
+            1s0N2HI339ZoU0KOqDRsQfSyMkVzIUT2xRiaLEVki9QhHbVDF+Ay1H1b6Z0X6ihl
+            Nc1HZZbToo3/tu9V6qJGawehQ5PjKqyxn9v6vvWtBOSW17TgIy614YMBXDWmg5lb
+            xzi8rPMY53ftuHZEe3fGscMtEPy0talar3eiIk7wX/vARAC/mBMl77cvoNrDQ3/S
+            XgGp8ZIVA8W3E0TJ6EVbO/+hTLnY4lups8YI78d7JjtMlZUbwP6zMLsWTC2ZooJV
+            d4dgib6Tg72Im8RCgxL0+eo7ADfRKSvrcT/Dp6htbsJGckw03RmB+EWe7Ql702Q=
+            =bmsX
             -----END PGP MESSAGE-----
           fp: A2BDE47C6914DA528CE96C6042D82D6196E0B4FF
     encrypted_regex: ^(data|stringData)$
