@@ -1,0 +1,44 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: rtz
+  namespace: rtz
+spec:
+  interval: 1h
+  targetNamespace: rtz
+  path: ./apps/rtz/resources/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: nats
+  namespace: rtz
+spec:
+  interval: 1h
+  targetNamespace: rtz
+  path: ./apps/rtz/resources/nats
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: restic
+  namespace: rtz
+spec:
+  interval: 1h
+  targetNamespace: rtz
+  path: ./apps/rtz/resources/restic
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
