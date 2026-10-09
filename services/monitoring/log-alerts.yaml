@@ -24,3 +24,26 @@ spec:
           annotations:
             summary: "{{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is logging {{ $value | humanize1024 }}B/s"
             description: "Sustained log flood, usually a component stuck retrying. Check it in Grafana: {container=\"{{ $labels.container }}\", namespace=\"{{ $labels.namespace }}\"}"
+    - name: loki-ruler
+      rules:
+        - alert: LokiRulerNoRules
+          expr: (sum(loki_prometheus_rule_group_rules{job="monitoring/loki"}) or vector(0)) == 0
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: Loki ruler has no rule groups loaded
+            description: >-
+              No log-based alerts are being evaluated: the Loki ruler has no rule groups
+              loaded or Loki is not being scraped. Check the loki-0 logs for
+              "unable to list rules" and the loki-alert-rules ConfigMap.
+        - alert: LokiRulerReloadFailed
+          expr: loki_ruler_config_last_reload_successful{job="monitoring/loki"} == 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Loki ruler failed to apply its rule config
+            description: >-
+              The Loki ruler could not apply the rules for tenant {{ $labels.user }}
+              and is still running the previous set. Check the loki-0 logs.
