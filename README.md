@@ -797,7 +797,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>iperf3</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/iperf3/helm.yaml">iperf3</a></td>
+    <td><a href="apps/iperf3/resources/app/helm.yaml">iperf3</a></td>
     <td></td>
   </tr>
 </table>
