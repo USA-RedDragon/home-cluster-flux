@@ -7,6 +7,15 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: piaware
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: ultrafeeder
+            app.kubernetes.io/instance: ultrafeeder
+      toPorts:
+        - ports:
+            - port: "30105"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
