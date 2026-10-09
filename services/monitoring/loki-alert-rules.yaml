@@ -293,9 +293,9 @@ data:
               description: "More than 20 {{ $labels.reason }} warning events in 15m, usually a controller stuck retrying. Query: {job=\"kubernetes-events\", type=\"Warning\", namespace=\"{{ $labels.namespace }}\"}"
           - alert: ResticDumpTooSmall
             expr: |
-              sum by (namespace, pod) (count_over_time({container="restic"} |= "processed 1 files, " | regexp `processed 1 files, (?P<size>[0-9.]+) (?P<unit>B|KiB) in` | unit="B" or (namespace!="kosync" and size < 4) | namespace!="path-of-titans" or pod=~"obsidibot-restic-.*" [1h])) > 0
+              sum by (namespace, pod) (count_over_time({container="restic"} |= "processed 1 files, " | regexp `processed 1 files, (?P<size>[0-9.]+) (?P<unit>B|KiB) in` | unit="B" or (namespace!="kosync" and size < 4) [1h])) > 0
             labels:
               severity: warning
             annotations:
               summary: "Restic database dump in {{ $labels.namespace }} is under 4 KiB"
-              description: "{{ $labels.namespace }}/{{ $labels.pod }} backed up a single-file dump under 4 KiB (under 1 KiB for kosync, whose real dump is ~3.3 KiB; the empty path-of-titans postgresql dump is excluded). An empty pg_dump is ~700 B, so the database is probably empty or the dump connected to the wrong database. Query: {namespace=\"{{ $labels.namespace }}\", container=\"restic\"} |= \"processed 1 files\""
+              description: "{{ $labels.namespace }}/{{ $labels.pod }} backed up a single-file dump under 4 KiB (under 1 KiB for kosync, whose real dump is ~3.3 KiB). An empty pg_dump is ~700 B, so the database is probably empty or the dump connected to the wrong database. Query: {namespace=\"{{ $labels.namespace }}\", container=\"restic\"} |= \"processed 1 files\""
