@@ -30,7 +30,7 @@ spec:
     # a minute and restarted a healthy recorder mid-call.
     - alert: TrunkRecorderControlChannelLost
       # ~40 msg/s when locked on; a fresh pod is back above 10 within a minute.
-      expr: sum by (system) (rate(trunk_recorder_message_decodes[2m])) < 10
+      expr: sum by (system) (rate(trunk_recorder_message_decodes[2m])) < 10 or absent(trunk_recorder_message_decodes)
       for: 3m
       labels:
         severity: warning
