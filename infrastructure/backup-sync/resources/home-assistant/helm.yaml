@@ -13,6 +13,9 @@ spec:
   maxHistory: 2
   driftDetection:
     mode: enabled
+  install:
+    remediation:
+      retries: -1
   valuesFrom:
     - kind: ConfigMap
       name: home-assistant-chart-values

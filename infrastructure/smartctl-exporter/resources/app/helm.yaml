@@ -4,18 +4,17 @@ metadata:
   name: smartctl-exporter
   namespace: smartctl-exporter
 spec:
-  interval: 1h
-  maxHistory: 2
-  install:
-    remediation:
-      retries: -1
-  driftDetection:
-    mode: enabled
-  releaseName: smartctl-exporter
   chartRef:
     kind: OCIRepository
     name: app-template
     namespace: flux-system
+  interval: 1h
+  maxHistory: 2
+  driftDetection:
+    mode: enabled
+  install:
+    remediation:
+      retries: -1
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
