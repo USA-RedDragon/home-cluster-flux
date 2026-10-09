@@ -127,6 +127,8 @@ configMaps:
         log_type error
         log_type warning
         log_type notice
+        log_type subscribe
+        log_type debug
 
         plugin /usr/lib/mosquitto_password_file.so
         plugin_opt_password_file /mosquitto/auth/passwd
