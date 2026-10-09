@@ -5,11 +5,15 @@ controllers:
     strategy: Recreate
     pod:
       enableServiceLinks: true
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
     containers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/mqtt-wx
-          tag: main@sha256:5cf34d6d46ad71b3f05f3d35d5d25e5452e3d8cb4af6a6b5824a33e88a66182c
+          tag: main@sha256:9d9dddbce44640b980d60a7d7a35e7ddbfef9dbdf01acbccd8fbfd5f9799644b
           pullPolicy: IfNotPresent
         envFrom:
         - secretRef:
@@ -31,6 +35,8 @@ controllers:
           value: weather-esphome/living-room-scd40
         - name: OUTPUT_TOPIC
           value: weather/station
+        - name: STATE_FILE
+          value: /data/state.json
         resources:
           limits:
             memory: 128Mi
@@ -48,3 +54,16 @@ service:
     ports:
       http:
         port: 80
+persistence:
+  data:
+    type: persistentVolumeClaim
+    forceRename: data
+    retain: true
+    storageClass: longhorn-ssd
+    accessMode: ReadWriteOnce
+    size: 128Mi
+    advancedMounts:
+      mqtt-wx:
+        app:
+        - path: /data
+          subPath: data
