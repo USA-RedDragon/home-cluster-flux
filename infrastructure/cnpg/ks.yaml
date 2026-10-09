@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: cnpg-system
-  path: ./infrastructure/cnpg/app
+  path: ./infrastructure/cnpg/resources/app
   prune: true
   sourceRef:
     kind: GitRepository
