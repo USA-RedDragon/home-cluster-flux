@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: astroframe
+  namespace: astroframe
+spec:
+  interval: 1h
+  targetNamespace: astroframe
+  path: ./apps/astroframe/resources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
