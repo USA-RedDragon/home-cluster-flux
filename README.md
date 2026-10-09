@@ -493,7 +493,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>cyberchef</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/cyberchef/helm.yaml">cyberchef</a></td>
+    <td><a href="apps/cyberchef/resources/app/helm.yaml">cyberchef</a></td>
     <td></td>
   </tr>
 </table>
