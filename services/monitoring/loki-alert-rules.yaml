@@ -172,11 +172,17 @@ data:
             annotations:
               summary: "No UPS attached to the NUT server on {{ $labels.host }}"
               description: "The NUT driver on {{ $labels.host }} finds no USB UPS and restart-loops, so it serves nothing to its clients. Check the UPS USB cable."
+          # Physical storage only. Generic sd* I/O / medium errors are left out:
+          # over 7 days every one came from Longhorn iSCSI volumes (e.g. a
+          # maintenance attach with the frontend disabled fails the kernel's
+          # sector-0 probe), which LonghornVolumeFaulted/Degraded cover. Real
+          # SATA faults also log ata* errors, and smartctl-exporter alerts on
+          # the drives themselves.
           - alert: KernelStorageErrors
             expr: |
               sum by (node) (count_over_time({job="talos", service="kernel"}
-                |~ "(?i)(I/O error|blk_update_request|critical medium error|nvme.*(timeout|reset controller|controller is down)|EXT4-fs error|XFS .*(metadata I/O error|corruption|shut down)|Out of memory: Killed process)"
-                != "Memory cgroup" [10m])) > 0
+                |~ "(?i)(nvme.*(timeout|reset controller|controller is down|I/O error)|(I/O error|critical medium error), dev nvme|ata[0-9.]+: (exception|failed command|error:|hard resetting)|EXT4-fs error|XFS .*(metadata I/O error|log I/O error|corruption|shut down)|Out of memory: Killed process)"
+                != "Memory cgroup" != "ommand line" !~ "EXT4-fs error \\(device sd[a-z]+\\)" [10m])) > 0
             labels:
               severity: critical
             annotations:
