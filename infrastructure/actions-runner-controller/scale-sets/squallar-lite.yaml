@@ -34,6 +34,16 @@ spec:
       spec:
         securityContext:
           fsGroup: 1001
+        # alpha's and beta's /var SSDs (870 EVO) are at 78% and 95% of rated
+        # endurance (2026-10-09); CI is the biggest writer to /var (~1.3-3 TB/day).
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: NotIn
+                      values: [alpha, beta]
         topologySpreadConstraints:
           - maxSkew: 1
             topologyKey: kubernetes.io/hostname
@@ -85,6 +95,16 @@ data:
       labels:
         actions.github.com/job-pod-of: squallar-runner-set-lite
     spec:
+      # alpha's and beta's /var SSDs (870 EVO) are at 78% and 95% of rated
+      # endurance (2026-10-09); CI is the biggest writer to /var (~1.3-3 TB/day).
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: NotIn
+                    values: [alpha, beta]
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
