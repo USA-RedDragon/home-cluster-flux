@@ -30,10 +30,10 @@ controllers:
                 key: rcon-password
         resources:
           requests:
-            cpu: 4
-            memory: 15500Mi
-          limits:
+            cpu: 500m
             memory: 16Gi
+          limits:
+            memory: 17Gi
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
