@@ -16,6 +16,9 @@ spec:
           - key: "{{request.operation || 'BACKGROUND'}}"
             operator: NotEquals
             value: DELETE
+          - key: "{{ request.object.spec.selector || `{}` | length(@) }}"
+            operator: GreaterThan
+            value: 0
       context:
         - name: services
           apiCall:
