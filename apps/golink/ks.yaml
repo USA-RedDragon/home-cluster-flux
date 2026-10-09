@@ -6,27 +6,9 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: golink
-  path: ./apps/golink/resources/app
+  path: ./apps/golink/resources
   prune: true
   sourceRef:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: restic
-  namespace: golink
-spec:
-  interval: 1h
-  targetNamespace: golink
-  path: ./apps/golink/resources/restic
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    namespace: flux-system
-    name: flux-system
-  commonMetadata:
-    annotations:
-      kustomize.toolkit.fluxcd.io/prune: disabled
