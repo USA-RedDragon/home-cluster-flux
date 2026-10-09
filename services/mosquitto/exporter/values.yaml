@@ -17,6 +17,8 @@ controllers:
           repository: jacob.pub/ghcr.io/d0ugal/mosquitto-exporter
           tag: v0.2.54@sha256:eec656d0bda1e847649677327d79020e5e300e68cb84d272bb87eb4941f9a88c
           pullPolicy: IfNotPresent
+        command:
+          - /app/mosquitto-exporter
         args:
           - --config
           - /config/config.yaml
