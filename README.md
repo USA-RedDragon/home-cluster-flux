@@ -675,7 +675,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>gpu-operator</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/gpu-operator/app/helm.yaml">gpu-operator</a></td>
+    <td><a href="infrastructure/gpu-operator/resources/app/helm.yaml">gpu-operator</a></td>
     <td></td>
   </tr>
 </table>
@@ -759,12 +759,12 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td rowspan="2">intel-device-plugin</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/intel-device-plugin/app/helm.yaml">intel-device-plugin</a></td>
+    <td><a href="infrastructure/intel-device-plugin/resources/app/helm.yaml">intel-device-plugin</a></td>
     <td rowspan="2"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/intel-device-plugin/app/helm.yaml">intel-device-plugins-gpu</a></td>
+    <td><a href="infrastructure/intel-device-plugin/resources/app/helm.yaml">intel-device-plugins-gpu</a></td>
   </tr>
 </table>
 
@@ -1183,7 +1183,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>node-feature-discovery</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/node-feature-discovery/app/helm.yaml">node-feature-discovery</a></td>
+    <td><a href="infrastructure/node-feature-discovery/resources/app/helm.yaml">node-feature-discovery</a></td>
     <td></td>
   </tr>
 </table>
