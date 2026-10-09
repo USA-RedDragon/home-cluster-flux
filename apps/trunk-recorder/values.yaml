@@ -1,121 +1,50 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: jacob.pub/ghcr.io/usa-reddragon/trunk-recorder-soapysdrplay3-prometheus
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "main@sha256:ded68e497e630865408eec41f1469faf73ddf7ffc86351f44b5a99e312c54b46"
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-command: []
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: TZ
-  value: America/Chicago
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext:
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 999
-  # runAsGroup: 999
-  # fsGroup: 999
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+controllers:
+  trunk-recorder:
+    forceRename: trunk-recorder-app
+    strategy: Recreate
+    pod:
+      enableServiceLinks: true
+      labels:
+        policy.mcswain.dev/egress-coredns: 'true'
+        policy.mcswain.dev/ingress-prometheus: 'true'
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/trunk-recorder-soapysdrplay3-prometheus
+          tag: main@sha256:ded68e497e630865408eec41f1469faf73ddf7ffc86351f44b5a99e312c54b46
+          pullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          value: America/Chicago
+        resources:
+          limits:
+            memory: 1Gi
+            squat.ai/sdrplay: 1
+          requests:
+            cpu: 2300m
+            memory: 500Mi
+        ports:
+        - name: metrics
+          containerPort: 9842
+          protocol: TCP
 service:
-  type: ClusterIP
-  ports:
-  - name: metrics
-    port: 9842
-
-persistentVolumes:
-- name: config
-  mountPath: /app
-  secret:
-    secretName: config
+  app:
+    forceRename: trunk-recorder-app
+    controller: trunk-recorder
+    ports:
+      metrics:
+        port: 9842
+persistence:
+  config:
+    type: secret
+    name: config
     items:
     - key: config.json
       path: config.json
     - key: talkgroups.csv
       path: talkgroups.csv
-
-ingress:
-  enabled: false
-
-probes: {}
-
-podLabels:
-  policy.mcswain.dev/egress-coredns: "true"
-  policy.mcswain.dev/ingress-prometheus: "true"
-
-resources:
-  limits:
-    memory: 1Gi
-    squat.ai/sdrplay: 1
-  requests:
-    cpu: 2300m
-    memory: 500Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+    advancedMounts:
+      trunk-recorder:
+        app:
+        - path: /app
