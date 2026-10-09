@@ -21,7 +21,7 @@ controllers:
       wx:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/wx
-          tag: v1.0.1@sha256:ec6f2c17b6fa6f6df19421a84d03ce3c1472e120b1716775d327fcc003818ad5
+          tag: v1.1.0@sha256:cbb0c9cf726dc2ac771951e96f52ee238a2082c50ed0b07625e1335076505743
           pullPolicy: IfNotPresent
         env:
           DATABASE_PATH: /data/wx.db
