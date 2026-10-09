@@ -68,22 +68,3 @@ persistence:
   config:
     type: secret
     name: weewx-config
-
-route:
-  weewx:
-    enabled: true
-    kind: HTTPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: https
-    hostnames:
-      - wx.mcswain.dev
-    rules:
-      - backendRefs:
-          - name: weewx
-            port: 3000
-        matches:
-          - path:
-              type: PathPrefix
-              value: /
