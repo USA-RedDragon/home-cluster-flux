@@ -121,7 +121,7 @@ configMaps:
         allow_anonymous false
         persistence true
         persistence_location /mosquitto/data
-        autosave_interval 1800
+        autosave_interval 300
         persistent_client_expiration 1d
         log_dest stderr
         log_type error
