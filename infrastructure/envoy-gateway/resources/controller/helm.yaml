@@ -23,6 +23,7 @@ spec:
   upgrade:
     crds: CreateReplace
   interval: 60m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: envoy-gateway

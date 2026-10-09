@@ -23,6 +23,7 @@ spec:
   upgrade:
     crds: CreateReplace
   interval: 1h0m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: intel-device-plugin
@@ -48,6 +49,7 @@ spec:
     remediation:
       retries: -1
   interval: 1h0m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: intel-device-plugins-gpu

@@ -9,6 +9,7 @@ spec:
     remediation:
       retries: -1
   interval: 60m0s
+  maxHistory: 2
   releaseName: tailscale-peer-relay
   driftDetection:
     mode: enabled

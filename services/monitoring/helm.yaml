@@ -9,6 +9,7 @@ spec:
     remediation:
       retries: -1
   interval: 60m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: thanos-querier
@@ -30,6 +31,7 @@ spec:
     remediation:
       retries: -1
   interval: 60m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: thanos-compactor
@@ -51,6 +53,7 @@ spec:
     remediation:
       retries: -1
   interval: 60m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: thanos-store
@@ -72,6 +75,7 @@ spec:
     remediation:
       retries: -1
   interval: 1h0m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: pushgateway
@@ -98,6 +102,7 @@ spec:
     remediation:
       retries: -1
   interval: 60m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: loki
@@ -173,6 +178,7 @@ spec:
     remediation:
       retries: -1
   interval: 60m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: alloy
@@ -201,6 +207,7 @@ spec:
     remediation:
       retries: -1
   interval: 60m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: alloy-gateway

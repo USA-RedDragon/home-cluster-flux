@@ -15,6 +15,7 @@ spec:
     name: app-template
     namespace: flux-system
   interval: 1h
+  maxHistory: 2
   driftDetection:
     mode: enabled
   dependsOn:

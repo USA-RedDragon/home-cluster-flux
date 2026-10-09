@@ -15,6 +15,7 @@ metadata:
   namespace: metallb-system
 spec:
   interval: 60m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: metallb

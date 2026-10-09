@@ -10,6 +10,7 @@ spec:
     remediation:
       retries: -1
   interval: 60m0s
+  maxHistory: 2
   driftDetection:
     mode: enabled
   releaseName: nut-exporter
