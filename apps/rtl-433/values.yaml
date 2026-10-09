@@ -1,142 +1,61 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: jacob.pub/ghcr.io/hertzg/rtl_433_docker
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "24.10-alpine@sha256:9bed79a5c5848fe9af2d2f73acd6c925204102e12d2f05c774437e3df5e1f2e9"
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-args:
-- -c
-- /etc/rtl_433/service.conf
-- -R
-- "153"
-- -R
-- "20"
-- -R
-- "55"
-- -R
-- "73"
-- -M
-- level
-- -M
-- time
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs: []
-# - name: app-config
-#   data:
-#     TEST_ENV: alive
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - secretRef:
-#     name: app-creds
-# - configMapRef:
-#     name: app-config
-
-env:
-- name: TZ
-  value: America/Chicago
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+controllers:
+  rtl-433:
+    forceRename: rtl-433-app
+    strategy: Recreate
+    pod:
+      enableServiceLinks: true
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/hertzg/rtl_433_docker
+          tag: 24.10-alpine@sha256:9bed79a5c5848fe9af2d2f73acd6c925204102e12d2f05c774437e3df5e1f2e9
+          pullPolicy: IfNotPresent
+        args:
+        - -c
+        - /etc/rtl_433/service.conf
+        - -R
+        - '153'
+        - -R
+        - '20'
+        - -R
+        - '55'
+        - -R
+        - '73'
+        - -M
+        - level
+        - -M
+        - time
+        env:
+        - name: TZ
+          value: America/Chicago
+        resources:
+          limits:
+            memory: 30Mi
+            squat.ai/rtl-sdr-433: 1
+          requests:
+            cpu: 3m
+            memory: 20Mi
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
 service:
-  type: ClusterIP
-
-persistentVolumes:
-- name: config
-  mountPath: /etc/rtl_433/
-  readOnly: true
-  secret:
-    secretName: config
+  app:
+    forceRename: rtl-433-app
+    controller: rtl-433
+    ports:
+      http:
+        port: 80
+persistence:
+  config:
+    type: secret
+    name: config
     items:
     - key: service.conf
       path: service.conf
-# - name: data
-#   mountPath: /var/lib/postgresql/data
-#   subPath: pg
-#   size: 10Gi
-#   persistentVolumeClaim:
-#     name: data
-#     storageClass: longhorn-nvme
-# - name: config
-#   mountPath: /config
-#   configMap:
-#     name: app-configfile
-#     items:
-#     - key: test.ini
-#       path: config.ini
-
-
-ingress:
-  enabled: false
-
-probes: {}
-
-resources:
-  limits:
-    memory: 30Mi
-    squat.ai/rtl-sdr-433: 1
-  requests:
-    cpu: 3m
-    memory: 20Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+    advancedMounts:
+      rtl-433:
+        app:
+        - path: /etc/rtl_433/
+          readOnly: true

@@ -1,175 +1,112 @@
-# Default values for app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: jacob.pub/ghcr.io/usa-reddragon/metrics-actioner
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.0.17@sha256:6bb7a44843ca5c6388bd0745752a9c8e9b915e590248113424766a6bdc2f82c8"
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-args:
-- --config=/config/config.yaml
-
-podLabels:
-  policy.mcswain.dev/egress-kubeapi: "true"
-  policy.mcswain.dev/egress-coredns: "true"
-  policy.mcswain.dev/egress-internet: "true"
-
-serviceAccountName: "metrics-actioner"
-
-secrets: []
-# - name: app-creds
-#   data:
-#     API_KEY: 'asdfgh123456'
-#     SMTP_PASSWORD: '123456asdfgh'
-# - name: app-secret-key
-#   data:
-#     SECRET_KEY: ashdfsfa
-# - name: app-keyfile
-#   data:
-#     keyfile.txt: |
-#       using
-#       multiline
-#       strings
-
-configs:
-- name: config
-  data:
-    config.yaml: |
-      http:
-        pprof:
-          enabled: true
-        metrics:
-          enabled: true
-          ipv4_host: '0.0.0.0'
-      actions:
-      - match_common_labels:
-          remediation: restart-trunk-recorder
-        action: rollout-restart-deployment
-        # The trunk-recorder alerts aggregate away the namespace label, so it
-        # has to be given here or every restart fails "missing namespace option".
-        options:
-          deployment: trunk-recorder-app
-          namespace: trunk-recorder
-      - match_common_labels:
-          alertname: TargetDown
-          job: aredn-manager
-        action: ssh
-        options:
-          command: 'docker restart oklahoma-tunnel'
-          host: 'kp4djt.zapto.org'
-          port: '333'
-          user: 'ki5vmf'
-          key: '/secrets/ki5vmf.pem'
-          hostKeys: |
-            [kp4djt.zapto.org]:333 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID8Dy1TZ1lN8WAZcgdODY9SNVWqWB+hGfsVEzMaUV7n+
-            [kp4djt.zapto.org]:333 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCHZiJbMMx0DobokUVLTxtp/mw1exJz/1W2sImlu4LXVEVSNdXrzaPovg7dtclDUemsWgIupBpWqN6+YpFG3V4SlCeljCmmK1uH0WW56RrLcMYSIAqH1rSbAtn/ieBZmV1NYM/CFG5J//V0E0g6XRuYG79+xXqHZP9XvPHYxoc9IseNwE9dw1DWwbWj/29mVcXjTBibDuO1vP75YezdsER/K60RtT4C3jLmC6zBuaKqdMgbWJKUFlt17w2DQelS1j4ZALR4hcAj4/hOdZVhZZhPuIUHHFC0GNYSrUZQuiEcc5MtCtHX1pBQuuV+IX3pnxXDLYPi0fZbxlhF75olWIdmfq2VRJburvV8hP9o8JxswYqiLYi2ZmmQ1rhcgvWkp7JjGmgf6ScseaLzLWU8qXSzAwYoywHK7WKuLPaNoljtJpL4tKMTnW5hWpcF/4jLR5iJvVTVeQDiOPBBQ2Wwhxt8MhDyMVz/j4+aSnqoMq/3q3W8M6yCbqYbMqWDFMQYp5s=
-            [kp4djt.zapto.org]:333 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBL7nYBnYt6DZYqQS3sVppbM5x9vKd3nNp5nZfSiaMU67PeYpzZ3mx/c+R3oWEY27RuLVuHm8DoZRpED4qyDgfL0=
-# - name: app-otherenv
-#   data:
-#     SPECIAL_KEY: here
-# - name: app-configfile
-#   data:
-#     test.ini: |
-#       [test]
-#       value=1
-
-envFrom: []
-# - secretRef:
-#     name: app-creds
-# - configMapRef:
-#     name: app-config
-
-env: []
-# - name: SPECIAL_KEY
-#   valueFrom:
-#     configMapKeyRef:
-#       name: app-otherenv
-#       key: SPECIAL_KEY
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+controllers:
+  metrics-actioner:
+    forceRename: metrics-actioner-app
+    strategy: Recreate
+    serviceAccount:
+      name: metrics-actioner
+    pod:
+      enableServiceLinks: true
+      labels:
+        policy.mcswain.dev/egress-kubeapi: 'true'
+        policy.mcswain.dev/egress-coredns: 'true'
+        policy.mcswain.dev/egress-internet: 'true'
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/metrics-actioner
+          tag: v0.0.17@sha256:6bb7a44843ca5c6388bd0745752a9c8e9b915e590248113424766a6bdc2f82c8
+          pullPolicy: IfNotPresent
+        args:
+        - --config=/config/config.yaml
+        resources:
+          requests:
+            cpu: 20m
+            memory: 40Mi
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: metrics
+          containerPort: 8081
+          protocol: TCP
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8080
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8080
 service:
-  type: ClusterIP
-  ports:
-  - name: http
-    port: 8080
-  - name: metrics
-    port: 8081
-
-persistentVolumes:
-- name: config
-  mountPath: /config
-  configMap:
+  app:
+    forceRename: metrics-actioner-app
+    controller: metrics-actioner
+    ports:
+      http:
+        port: 8080
+      metrics:
+        port: 8081
+configMaps:
+  config:
+    forceRename: config
+    data:
+      config.yaml: |
+        http:
+          pprof:
+            enabled: true
+          metrics:
+            enabled: true
+            ipv4_host: '0.0.0.0'
+        actions:
+        - match_common_labels:
+            remediation: restart-trunk-recorder
+          action: rollout-restart-deployment
+          # The trunk-recorder alerts aggregate away the namespace label, so it
+          # has to be given here or every restart fails "missing namespace option".
+          options:
+            deployment: trunk-recorder-app
+            namespace: trunk-recorder
+        - match_common_labels:
+            alertname: TargetDown
+            job: aredn-manager
+          action: ssh
+          options:
+            command: 'docker restart oklahoma-tunnel'
+            host: 'kp4djt.zapto.org'
+            port: '333'
+            user: 'ki5vmf'
+            key: '/secrets/ki5vmf.pem'
+            hostKeys: |
+              [kp4djt.zapto.org]:333 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID8Dy1TZ1lN8WAZcgdODY9SNVWqWB+hGfsVEzMaUV7n+
+              [kp4djt.zapto.org]:333 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCHZiJbMMx0DobokUVLTxtp/mw1exJz/1W2sImlu4LXVEVSNdXrzaPovg7dtclDUemsWgIupBpWqN6+YpFG3V4SlCeljCmmK1uH0WW56RrLcMYSIAqH1rSbAtn/ieBZmV1NYM/CFG5J//V0E0g6XRuYG79+xXqHZP9XvPHYxoc9IseNwE9dw1DWwbWj/29mVcXjTBibDuO1vP75YezdsER/K60RtT4C3jLmC6zBuaKqdMgbWJKUFlt17w2DQelS1j4ZALR4hcAj4/hOdZVhZZhPuIUHHFC0GNYSrUZQuiEcc5MtCtHX1pBQuuV+IX3pnxXDLYPi0fZbxlhF75olWIdmfq2VRJburvV8hP9o8JxswYqiLYi2ZmmQ1rhcgvWkp7JjGmgf6ScseaLzLWU8qXSzAwYoywHK7WKuLPaNoljtJpL4tKMTnW5hWpcF/4jLR5iJvVTVeQDiOPBBQ2Wwhxt8MhDyMVz/j4+aSnqoMq/3q3W8M6yCbqYbMqWDFMQYp5s=
+              [kp4djt.zapto.org]:333 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBL7nYBnYt6DZYqQS3sVppbM5x9vKd3nNp5nZfSiaMU67PeYpzZ3mx/c+R3oWEY27RuLVuHm8DoZRpED4qyDgfL0=
+persistence:
+  config:
+    type: configMap
     name: config
     items:
     - key: config.yaml
       path: config.yaml
-- name: secrets
-  mountPath: /secrets
-  readOnly: true
-  secret:
-    secretName: metrics-actioner-secrets
+    advancedMounts:
+      metrics-actioner:
+        app:
+        - path: /config
+  secrets:
+    type: secret
+    name: metrics-actioner-secrets
     items:
     - key: ki5vmf.pem
       path: ki5vmf.pem
-
-initContainers: []
-
-extraContainers: []
-
-extraVolumes: []
-
-ingress:
-  enabled: false
-
-probes:
-  liveness:
-    httpGet:
-      path: /health
-      port: 8080
-  readiness:
-    httpGet:
-      path: /health
-      port: 8080
-
-resources:
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  requests:
-    cpu: 20m
-    memory: 40Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-lifecycle: {}
-  # postStart:
-  #   exec:
-  #     command:
-  #       - /bin/sh
-  #       - -c
-  #       - cp /tmp/file /var/app/file
+    advancedMounts:
+      metrics-actioner:
+        app:
+        - path: /secrets
+          readOnly: true
