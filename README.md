@@ -440,7 +440,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
-    <td><a href="infrastructure/cnpg/app/helm.yaml">cnpg</a></td>
+    <td><a href="infrastructure/cnpg/resources/app/helm.yaml">cnpg</a></td>
   </tr>
 </table>
 
