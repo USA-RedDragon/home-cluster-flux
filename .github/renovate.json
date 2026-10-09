@@ -35,6 +35,18 @@
         {
             "customType": "regex",
             "managerFilePatterns": [
+                "/(^|/)\\.github\\/workflows\\/pre-commit\\.yaml$/"
+            ],
+            "matchStrings": [
+                "github\\.com\\/grafana\\/loki\\/releases\\/download\\/(?<currentValue>v.*)\\/lokitool-linux-amd64"
+            ],
+            "depNameTemplate": "grafana/loki",
+            "datasourceTemplate": "github-releases",
+            "versioningTemplate": "semver"
+        },
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
                 "/\\.yaml$/"
             ],
             "matchStrings": [
