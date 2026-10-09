@@ -94,3 +94,4 @@ parameters:
   fsType: ext4
   dataLocality: best-effort
   diskSelector: "fast"
+  recurringJobSelector: '[{"name":"trim","isGroup":false}]'
