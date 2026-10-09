@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+controllers:
+  mosquitto-exporter:
+    replicas: 1
+    strategy: RollingUpdate
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+    containers:
+      mosquitto-exporter:
+        image:
+          repository: jacob.pub/ghcr.io/d0ugal/mosquitto-exporter
+          tag: v0.2.54@sha256:eec656d0bda1e847649677327d79020e5e300e68cb84d272bb87eb4941f9a88c
+          pullPolicy: IfNotPresent
+        env:
+          - name: MOSQUITTO_BROKER_ENDPOINT
+            value: tcp://mosquitto.mosquitto.svc.cluster.local:1883
+          - name: MOSQUITTO_USERNAME
+            value: mqtt-exporter
+          - name: MOSQUITTO_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mosquitto-exporter
+                key: password
+          - name: LOG_LEVEL
+            value: warn
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 64Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: false
+
+service:
+  mosquitto-exporter:
+    controller: mosquitto-exporter
+    ports:
+      metrics:
+        port: 9234
+        primary: true
+        protocol: TCP
+
+serviceMonitor:
+  mosquitto-exporter:
+    enabled: true
+    serviceName: mosquitto-exporter
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 15s
+        scrapeTimeout: 10s

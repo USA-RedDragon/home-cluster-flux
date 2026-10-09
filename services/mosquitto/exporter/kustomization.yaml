@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: mosquitto
 resources:
   - helm.yaml
-  - prom.yaml
 configMapGenerator:
   - name: chart-values
     files:
