@@ -11,7 +11,7 @@ spec:
     - name: cert-manager-certs
       namespace: cert-manager
   targetNamespace: ses-email-service
-  path: ./infrastructure/ses-email-service/app
+  path: ./infrastructure/ses-email-service/resources/app
   prune: true
   sourceRef:
     kind: GitRepository
