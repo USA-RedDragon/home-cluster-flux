@@ -8,6 +8,9 @@ spec:
   targetNamespace: zot
   path: ./services/zot/resources/app
   prune: true
+  dependsOn:
+    - name: secrets
+      namespace: flux-system
   sourceRef:
     kind: GitRepository
     namespace: flux-system

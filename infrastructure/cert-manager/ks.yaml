@@ -22,6 +22,8 @@ spec:
   interval: 1h
   dependsOn:
     - name: cert-manager
+    - name: secrets
+      namespace: flux-system
   targetNamespace: cert-manager
   path: ./infrastructure/cert-manager/resources/certs
   prune: true

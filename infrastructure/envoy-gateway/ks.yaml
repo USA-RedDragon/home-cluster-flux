@@ -8,6 +8,11 @@ spec:
   targetNamespace: envoy-gateway-system
   path: ./infrastructure/envoy-gateway/resources/controller
   prune: true
+  dependsOn:
+    - name: secrets
+      namespace: flux-system
+    - name: reflector
+      namespace: reflector
   sourceRef:
     kind: GitRepository
     namespace: flux-system
