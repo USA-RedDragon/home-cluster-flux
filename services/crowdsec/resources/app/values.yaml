@@ -62,6 +62,7 @@ config:
         description: "Envoy Gateway JSON access logs from the public gateway (HTTP, TCP and UDP routes)"
         filter: |
           evt.Parsed.program == 'envoy-gateway' &&
+          evt.Parsed.message startsWith '{' &&
           UnmarshalJSON(evt.Parsed.message, evt.Unmarshaled, 'envoy') in ['', nil] &&
           evt.Unmarshaled.envoy.downstream_remote_address != nil
         onsuccess: next_stage
