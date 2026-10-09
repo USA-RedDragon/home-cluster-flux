@@ -2032,6 +2032,10 @@ kube-state-metrics:
     tag: v2.20.0@sha256:42cfe3723a5f058171c627537fb57a3ea0f26e4380fa18555a95cb1a1b4cfc5b
   rbac:
     create: true
+    extraRules:
+      - apiGroups: [longhorn.io]
+        resources: [volumes]
+        verbs: [list, watch]
   releaseLabel: true
   prometheus:
     monitor:
@@ -2101,6 +2105,34 @@ kube-state-metrics:
 
   selfMonitor:
     enabled: false
+  customResourceState:
+    enabled: true
+    config:
+      spec:
+        resources:
+          - groupVersionKind:
+              group: longhorn.io
+              version: v1beta2
+              kind: Volume
+            labelsFromPath:
+              volume: [metadata, name]
+              pvc_namespace: [status, kubernetesStatus, namespace]
+              pvc: [status, kubernetesStatus, pvcName]
+            metrics:
+              - name: longhorn_volume_recurring_job
+                help: Longhorn volume recurring job and group labels
+                each:
+                  type: Info
+                  info:
+                    labelsFromPath:
+                      default_group: [metadata, labels, recurring-job-group.longhorn.io/default]
+                      backup_job: [metadata, labels, recurring-job.longhorn.io/backup]
+              - name: longhorn_volume_created
+                help: Longhorn volume creation time
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [metadata, creationTimestamp]
 
 ## Deploy node exporter as a daemonset to all nodes
 ##

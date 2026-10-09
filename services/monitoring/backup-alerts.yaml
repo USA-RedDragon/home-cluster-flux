@@ -49,3 +49,25 @@ spec:
           annotations:
             summary: "Backup {{ $labels.namespace }}/{{ $labels.cronjob }} has never succeeded"
             description: "CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} is over 2 days old and has never completed successfully. Check its runs in Loki: {namespace=\"{{ $labels.namespace }}\", pod=~\"{{ $labels.cronjob }}-.*\"}"
+        - alert: LonghornVolumeBackupStale
+          expr: |
+            (
+              (time() - max by (volume, pvc_namespace, pvc) (longhorn_volume_last_backup_at)) / 86400 > 2
+            )
+            and on (volume)
+            (
+              max by (volume) (
+                kube_customresource_longhorn_volume_recurring_job{default_group="enabled"}
+                or kube_customresource_longhorn_volume_recurring_job{backup_job="enabled"}
+              )
+            )
+            and on (volume)
+            (
+              time() - max by (volume) (kube_customresource_longhorn_volume_created) > 2 * 86400
+            )
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Longhorn volume {{ $labels.pvc_namespace }}/{{ $labels.pvc }} has no backup in the last 2 days"
+            description: "Volume {{ $labels.volume }} ({{ $labels.pvc_namespace }}/{{ $labels.pvc }}) is in the nightly Longhorn backup job but its last backup is {{ $value | printf \"%.0f\" }} days old (over 20000 means never). Detached volumes are skipped by the recurring job; back them up by hand from the Longhorn UI, or check the backup-* Jobs in longhorn-system."
