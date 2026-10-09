@@ -8,6 +8,9 @@ spec:
   targetNamespace: monitoring
   path: ./services/monitoring/resources
   prune: true
+  dependsOn:
+    - name: secrets
+      namespace: flux-system
   sourceRef:
     kind: GitRepository
     namespace: flux-system
