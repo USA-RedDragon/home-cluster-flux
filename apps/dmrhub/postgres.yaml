@@ -21,25 +21,10 @@ spec:
       wal:
         compression: gzip
     retentionPolicy: "4w"
-  externalClusters:
-  - barmanObjectStore:
-      destinationPath: s3://cnpg/dmrhub
-      endpointURL: https://s3.mcswain.dev
-      s3Credentials:
-        accessKeyId:
-          key: AWS_ACCESS_KEY_ID
-          name: cnpg-minio
-        secretAccessKey:
-          key: AWS_SECRET_ACCESS_KEY
-          name: cnpg-minio
-      wal:
-        compression: gzip
-    name: postgresql
   bootstrap:
-    recovery:
+    initdb:
       database: dmrhub
       owner: dmrhub
-      source: postgresql
   storage:
     storageClass: longhorn-nvme-r1
     # Filled up (35Gi PVC, hand-expanded past the 30Gi here), which halted
