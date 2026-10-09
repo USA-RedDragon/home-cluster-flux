@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mqtt-wx
+  namespace: mqtt-wx
+spec:
+  interval: 1h
+  targetNamespace: mqtt-wx
+  path: ./apps/mqtt-wx/resources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
