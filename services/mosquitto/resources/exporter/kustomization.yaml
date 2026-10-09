@@ -4,7 +4,7 @@ namespace: mosquitto
 resources:
   - helm.yaml
 configMapGenerator:
-  - name: chart-values
+  - name: exporter-chart-values
     files:
       - values.yaml=values.yaml
 configurations:
