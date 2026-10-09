@@ -21,10 +21,10 @@ controllers:
         args: [server]
         resources:
           limits:
-            memory: 1Gi
+            memory: 1536Mi
           requests:
             cpu: 100m
-            memory: 600Mi
+            memory: 1216Mi
         env: &authentik-postgres-envs
           - name: AUTHENTIK_POSTGRESQL__PASSWORD
             valueFrom:
@@ -78,10 +78,10 @@ controllers:
         args: [worker]
         resources:
           limits:
-            memory: 700Mi
+            memory: 1Gi
           requests:
             cpu: 10m
-            memory: 600Mi
+            memory: 832Mi
         env: *authentik-postgres-envs
         envFrom: *authentik-envfrom
 

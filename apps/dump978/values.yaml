@@ -26,11 +26,11 @@ controllers:
               name: location
         resources:
           limits:
-            memory: 150Mi
+            memory: 224Mi
             squat.ai/rtl-sdr-uat: 1
           requests:
             cpu: 20m
-            memory: 100Mi
+            memory: 176Mi
 
 service:
   dump978:

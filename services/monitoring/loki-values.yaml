@@ -73,9 +73,9 @@ singleBinary:
   resources:
     requests:
       cpu: 100m
-      memory: 512Mi
-    limits:
       memory: 2Gi
+    limits:
+      memory: 2560Mi
 
 write:
   replicas: 0

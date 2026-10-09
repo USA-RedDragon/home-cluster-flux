@@ -19,7 +19,7 @@ image:
 # If you do want to specify resource limits, uncomment the following lines and adjust them as necessary.
 resources:
   requests:
-    memory: "2000Mi"
+    memory: "3840Mi"
     cpu: 20m
 #  limits:
 #    memory: ""

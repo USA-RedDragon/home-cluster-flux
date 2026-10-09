@@ -27,7 +27,7 @@ controllers:
         resources:
           requests:
             cpu: 100m
-            memory: 256Mi
+            memory: 448Mi
         env:
           - name: PYTHONUNBUFFERED
             value: "1"
