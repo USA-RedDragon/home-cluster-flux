@@ -278,10 +278,18 @@ alertmanager:
         equal:
           - 'namespace'
     route:
+      # alertname is part of the key so a new kind of alert opens its own group
+      # and is sent after group_wait. Grouping by namespace alone put every alert
+      # without a namespace label (LonghornVolumeFaulted uses pvc_namespace,
+      # KernelStorageErrors has none) into one long-lived group, so new criticals
+      # waited for that group's next group_interval tick, up to 30 min
+      # (2026-10-09: alpha NVMe failure went unsent).
       group_by:
       - namespace
+      - alertname
       group_wait: 30s
-      group_interval: 30m
+      # How long a new alert waits to be added to an already-notified group.
+      group_interval: 5m
       repeat_interval: 30m
       receiver: 'null'
       routes:
