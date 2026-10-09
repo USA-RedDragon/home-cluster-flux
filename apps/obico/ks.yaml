@@ -6,27 +6,9 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: obico
-  path: ./apps/obico/resources/app
+  path: ./apps/obico/resources
   prune: true
   sourceRef:
     kind: GitRepository
     namespace: flux-system
     name: flux-system
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: valkey
-  namespace: obico
-spec:
-  interval: 1h
-  targetNamespace: obico
-  path: ./apps/obico/resources/valkey
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    namespace: flux-system
-    name: flux-system
-  commonMetadata:
-    annotations:
-      kustomize.toolkit.fluxcd.io/prune: disabled
