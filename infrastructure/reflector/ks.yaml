@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   targetNamespace: reflector
-  path: ./infrastructure/reflector/app
+  path: ./infrastructure/reflector/resources/app
   dependsOn:
     - name: longhorn-config
       namespace: longhorn-system
@@ -30,7 +30,7 @@ spec:
   dependsOn:
     - name: reflector
   targetNamespace: reflector
-  path: ./infrastructure/reflector/creds
+  path: ./infrastructure/reflector/resources/creds
   prune: true
   sourceRef:
     kind: GitRepository

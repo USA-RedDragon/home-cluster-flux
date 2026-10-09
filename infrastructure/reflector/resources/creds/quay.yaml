@@ -1,0 +1,42 @@
+apiVersion: v1
+stringData:
+    .dockerconfigjson: ENC[AES256_GCM,data:1fyqEf0vmDC/z/vNz5D7VDK9rJJ94EJxUR52QKOJCd5q4r+wUolYk2117EQADtcfEBroW1BY4JfgP7nFZa8pXZHH4ZhY0GrKvMmrAKuMQa97HGjKYCSQBsFHNaXZlGBRzEEGZ0Z2NHNHEhLPFChIOLxziu3ZGQRhzs0yg4gGqo+vMEq/WVhR45g/ralSbYHQCwnd0GB/Y5HoNh+x9IwLAzSKuID5r7u96vSRCmMQAEtU5kca8Rftf4vNC1Gn5VzfYoZ57ZQwsR+C6sNiplVamgiGRMc+7etowk0rKbvgG584MmyMPo+wC+rjgdndVOuMpOmGjIQGMzj/nCiO8hQqeTYSyKR5iOhi9rQx6lPE4wWn8UBFoIrrko41RahK+BPM7uRSyvJioNOk5mJDNzwuE9PpwTx7ewMp4XZOgcTLvbXfSzf7oGW7VjVpcQ==,iv:wLkX94EmJOkDVL3euVwfCU1l+ny+mhXA1IC2tuUMvXQ=,tag:qF+Mc9If7QdmkqpIe0tbow==,type:str]
+kind: Secret
+metadata:
+    name: registry-quay
+    namespace: reflector
+    annotations:
+        reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+        reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
+type: kubernetes.io/dockerconfigjson
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2023-08-14T01:30:41Z"
+    mac: ENC[AES256_GCM,data:2mDJUwWoXXnKhpKAj5vsHOmij6lktEBwr9yh/+eD28dGdKHwNqXZgqFQTYK3S55ohrOVETkVf88i9LMr7ogWR+lWYuYAafzqYMloS+hqqRzUzc9zbkCVxm3qblnvFWJ1BB8e/qEBiLK/RKImZBeW/z45rUhE0xmmzLAcumRn20c=,iv:QHnEEv0eNvAOj4AAykeq11B8fxesn0tRRA1az7eU6lk=,tag:BJ8mhGgowjBPpPZHuNkZQA==,type:str]
+    pgp:
+        - created_at: "2023-08-14T01:30:41Z"
+          enc: |
+            -----BEGIN PGP MESSAGE-----
+
+            hQIMA4MMKSOyI68lARAAlifoqy72VwOQDwyuLWaeJ9dHO3Gex/o4iYocUtmJy/0K
+            oy6OShxKQ7fFV2NoG10f8jHCYuegmaqG2WQXvBGdXSzzjRNs5YYFRdGlp8/exW+R
+            B1QrRkbZFOg5HGcFuGaTkzEIbnXrLT9ZUJYX04vxAb7dOK7O0XuwSBLyZUccPM8E
+            F0Fju2ozfDuG+p/f2NycY92V8S6TUnEvOM6aXgg5B6cRLdVYyG1vpizAma4nt8a/
+            r6/OfK4WfMcAgOh68cP8OSFq2nTljS8Uo4bKmPXzCKPW9PaXlDRqQXPTdfU30V+B
+            0nrcwecaUxhxBkm9PpbH9yetNP1E7rDY47SeN2FPCsVQeuusEyU7gR5Np1ny+1xG
+            +dlHJEzSgrqoMjRD88EYaWK/QNvyjcLP5LPZbvwXZjthO9qv8cBG3uIvMLSqmtaA
+            xbamP0b2fbfleCV+GlMmkbc63HAepIb6ycwBLxuUKMNsjXuSa4/v39iGBbYHpSs4
+            Nxt7ZZl2cHs/2PwNecCnXxDmFFQ3JLcMyyUsor/yqEg3CEUMhn/nK1PBdMM3L/gm
+            NJaOgvcbUVAVpmLFy85B4tHbJO5mV2ooEB5Tug2D7LOGfPx77PvcM91djapqWBDk
+            3ze4xeo1y9tvs7uclIV40rywi/phmXRnlaeA5m6VTK06m9/G7JtG0g1jImMSVRHS
+            XgGIVJ3DNCGaQ5m2Iyf92XoBW66pttXzYHyVYQ1uf8AvVzCq3sh3qFnLjEVQQ5yK
+            QMW5f3mvyeUwYZRVvDonjpnYu2Vyj8TJiq8ifqvIiZLxvmB+RcALghLpHcd4Kf0=
+            =2xcO
+            -----END PGP MESSAGE-----
+          fp: A2BDE47C6914DA528CE96C6042D82D6196E0B4FF
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.3
