@@ -5,15 +5,10 @@ metadata:
   name: backup-sync-mcswain-router-backups
   namespace: backup-sync
 spec:
-  chart:
-    spec:
-      chart: app-template
-      version: 4.6.2
-      reconcileStrategy: ChartVersion
-      sourceRef:
-        kind: HelmRepository
-        namespace: flux-system
-        name: bjw-s
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
   interval: 1h
   driftDetection:
     mode: enabled
