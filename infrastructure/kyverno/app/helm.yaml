@@ -36,6 +36,13 @@ spec:
     features:
       backgroundScan:
         backgroundScanInterval: 24h
+      omitEvents:
+        eventTypes:
+          - PolicyApplied
+          - PolicySkipped
+          - PolicyViolation
+      ttlController:
+        reconciliationInterval: 1h
     global:
       image:
         registry: jacob.pub/reg.kyverno.io
@@ -53,6 +60,7 @@ spec:
         limits:
           memory: 400Mi
     reportsController:
+      resyncPeriod: 6h
       resources:
         requests:
           cpu: 300m
