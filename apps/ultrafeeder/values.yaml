@@ -11,6 +11,17 @@ controllers:
         probes:
           liveness:
             enabled: true
+            custom: true
+            spec:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - for n in /dev/bus/usb/*/*; do set -- $(stat -c '%t %T' "$n") && grep -qsx "$(printf '%d:%d' "0x$1" "0x$2")" /sys/bus/usb/devices/*/dev && ls -l /proc/[0-9]*/fd 2>/dev/null | grep -q " $n\$" || exit 1; done && jq -e '(now - .now) < 150 and .last1min.local.samples_processed > 0' /run/readsb/stats.json >/dev/null
+              initialDelaySeconds: 60
+              periodSeconds: 60
+              timeoutSeconds: 10
+              failureThreshold: 3
           readiness:
             enabled: true
           startup:
