@@ -709,7 +709,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>http-logger</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/http-logger/helm.yaml">http-logger</a></td>
+    <td><a href="apps/http-logger/resources/app/helm.yaml">http-logger</a></td>
     <td></td>
   </tr>
 </table>
