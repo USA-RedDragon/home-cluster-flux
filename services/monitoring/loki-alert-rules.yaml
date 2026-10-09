@@ -172,12 +172,6 @@ data:
             annotations:
               summary: "No UPS attached to the NUT server on {{ $labels.host }}"
               description: "The NUT driver on {{ $labels.host }} finds no USB UPS and restart-loops, so it serves nothing to its clients. Check the UPS USB cable."
-          # Physical storage only. Generic sd* I/O / medium errors are left out:
-          # over 7 days every one came from Longhorn iSCSI volumes (e.g. a
-          # maintenance attach with the frontend disabled fails the kernel's
-          # sector-0 probe), which LonghornVolumeFaulted/Degraded cover. Real
-          # SATA faults also log ata* errors, and smartctl-exporter alerts on
-          # the drives themselves.
           - alert: KernelStorageErrors
             expr: |
               sum by (node) (count_over_time({job="talos", service="kernel"}
@@ -198,10 +192,6 @@ data:
             annotations:
               summary: "TrueNAS storage event from {{ $labels.app }}"
               description: "ZFS pool/vdev state change or SMART failure on the NAS. Query: {host=\"truenas\", app=\"{{ $labels.app }}\"}"
-          # TrueNAS cloud sync (B2) results. A TrueNAS cron job runs
-          # /mnt/data/backups/Homelab/scripts/cloudsync-status.sh at :30 every
-          # hour and logs one line per enabled task: status=OK|STALE|RUNNING|
-          # FAILED|... (STALE = last success >36h ago; all tasks run daily).
           - alert: TrueNASCloudSyncFailed
             expr: |
               sum by (task) (count_over_time({host="truenas", app="cloudsync-status"}
@@ -220,7 +210,6 @@ data:
             annotations:
               summary: "TrueNAS cloud sync status reports stopped"
               description: "No cloudsync-status lines for 3h: the TrueNAS cron job is gone, the script failed, or the middleware is wedged (midclt timing out). On the NAS: /bin/sh /mnt/data/backups/Homelab/scripts/cloudsync-status.sh; systemctl status middlewared."
-          # Router config backup: /root/backup_to_b2.sh, cron 0 2 * * * (local).
           - alert: RouterBackupFailed
             expr: sum(count_over_time({host="OpenWrt", app="backup_to_b2"} |= "FAILED" [1h])) > 0
             labels:
@@ -269,8 +258,6 @@ data:
             annotations:
               summary: "Mount rejected {{ $value }} plate-solve syncs in 15m"
               description: "The AM5 refused SyncToCoordinates after a solve: it has lost its home position (or the target is within 5 deg of the pole). Its flip and limit decisions are wrong until it is re-homed. Query: {job=\"observatory\", app=\"nina\"} |= \"SyncToCoordinates\""
-          # nina-s3-uploader retries 3 times, then leaves the sub on A: (and a
-          # copy on C:) and never tries again. 2026-10-09: the PC lost DNS.
           - alert: NINAUploadFailing
             expr: sum(count_over_time({job="observatory", app="nina-s3-uploader"} |= "failed to upload after" [30m])) > 0
             labels:
