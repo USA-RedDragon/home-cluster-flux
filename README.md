@@ -741,7 +741,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td>imagescraper-sfro-allsky</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/imagescraper-sfro-allsky/helm.yaml">imagescraper-sfro-allsky</a></td>
+    <td><a href="apps/imagescraper-sfro-allsky/resources/app/helm.yaml">imagescraper-sfro-allsky</a></td>
     <td></td>
   </tr>
 </table>
