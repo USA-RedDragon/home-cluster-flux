@@ -35,6 +35,32 @@ controllers:
           operator: Exists
           effect: NoExecute
           tolerationSeconds: 30
+    initContainers:
+      copy-auth:
+        image:
+          repository: jacob.pub/docker.io/eclipse-mosquitto
+          tag: 2.0.22@sha256:914f529386804c8278a4e581526b9be5e1604df44b30daabc70aa97dcefe5268
+          pullPolicy: IfNotPresent
+        command:
+          - sh
+          - -c
+          - rm -f /auth/passwd /auth/acl && cp /secret/passwd /secret/acl /auth/ && chmod 0400 /auth/passwd /auth/acl
+        resources:
+          requests:
+            cpu: 50m
+            memory: 32Mi
+          limits:
+            cpu: 50m
+            memory: 32Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          runAsUser: 1883
+          runAsGroup: 1883
+          capabilities:
+            drop:
+              - ALL
     containers:
       mosquitto:
         image:
@@ -103,8 +129,8 @@ configMaps:
         log_type warning
         log_type notice
 
-        password_file /mosquitto/config/passwd
-        acl_file /mosquitto/config/acl
+        password_file /mosquitto/auth/passwd
+        acl_file /mosquitto/auth/acl
 
         # listener 8883
         # cafile /tls/ca/tls-1.crt
@@ -137,8 +163,18 @@ persistence:
     defaultMode: 0440
     advancedMounts:
       mosquitto:
+        copy-auth:
+          - path: /secret
+            readOnly: true
+  auth-runtime:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Mi
+    advancedMounts:
+      mosquitto:
+        copy-auth:
+          - path: /auth
         mosquitto:
-          - path: /mosquitto/config/passwd
-            subPath: passwd
-          - path: /mosquitto/config/acl
-            subPath: acl
+          - path: /mosquitto/auth
+            readOnly: true
