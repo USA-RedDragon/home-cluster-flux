@@ -60,7 +60,6 @@ controllers:
           startup:
             enabled: true
         securityContext:
-          fsGroup: 568
           readOnlyRootFilesystem: true
           capabilities:
             drop:

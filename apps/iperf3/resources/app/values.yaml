@@ -24,7 +24,6 @@ controllers:
           requests: {}
           limits: {}
         securityContext:
-          fsGroup: 65534
           readOnlyRootFilesystem: true
           capabilities:
             drop:
