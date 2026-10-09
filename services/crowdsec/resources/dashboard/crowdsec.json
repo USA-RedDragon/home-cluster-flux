@@ -1,7 +1,7 @@
 {
   "uid": "crowdsec",
   "title": "CrowdSec",
-  "description": "CrowdSec LAPI decisions, AppSec WAF, edge bouncers, detection pipeline and ban log.",
+  "description": "CrowdSec decisions, AppSec, bouncers and detection pipeline.",
   "tags": [
     "crowdsec",
     "security"
@@ -169,11 +169,11 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "All IPs/ranges the LAPI currently tells bouncers to block (community blocklist + local)."
+      "description": "All active LAPI decisions."
     },
     {
       "type": "stat",
-      "title": "Community blocklist (CAPI)",
+      "title": "Community blocklist",
       "id": 3,
       "datasource": {
         "type": "prometheus",
@@ -237,7 +237,7 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "CAPI decisions; normally ~15-17k and refreshed every ~2h. Alert CrowdSecCommunityBlocklistMissing fires below 1000 for 6h."
+      "description": "CAPI decisions. Normally 15-17k."
     },
     {
       "type": "stat",
@@ -297,7 +297,7 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "Bans produced by our own detections (cluster agent, AppSec, VPS agent)."
+      "description": "Decisions from our own agents and AppSec."
     },
     {
       "type": "stat",
@@ -357,11 +357,11 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "cscli-added decisions and third-party blocklists (origin cscli / lists)."
+      "description": "cscli and third-party list decisions."
     },
     {
       "type": "stat",
-      "title": "Local bans (range)",
+      "title": "Local bans",
       "id": 6,
       "datasource": {
         "type": "loki",
@@ -416,11 +416,11 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "Ban decisions recorded by the LAPI over the dashboard range (from LAPI logs; follows the scenario filter)."
+      "description": "Bans recorded in LAPI logs."
     },
     {
       "type": "stat",
-      "title": "Alerts (range)",
+      "title": "Alerts",
       "id": 7,
       "datasource": {
         "type": "loki",
@@ -475,11 +475,11 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "Alerts received by the LAPI over the dashboard range from all machines (cluster agent, AppSec, VPS), with or without a ban."
+      "description": "Alerts recorded in LAPI logs, all machines."
     },
     {
       "type": "stat",
-      "title": "AppSec blocks (range)",
+      "title": "AppSec blocks",
       "id": 8,
       "datasource": {
         "type": "prometheus",
@@ -535,11 +535,11 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "Requests the in-band WAF blocked over the dashboard range."
+      "description": "Requests blocked by the in-band WAF."
     },
     {
       "type": "stat",
-      "title": "AppSec requests (range)",
+      "title": "AppSec requests",
       "id": 9,
       "datasource": {
         "type": "prometheus",
@@ -595,11 +595,11 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "Requests inspected by AppSec (only the routes listed under waf.routes in the envoy-bouncer HelmRelease; internal IPs are exempt)."
+      "description": "Requests inspected by AppSec."
     },
     {
       "type": "stat",
-      "title": "Envoy ext_authz checks (range)",
+      "title": "Envoy checks",
       "id": 10,
       "datasource": {
         "type": "prometheus",
@@ -655,7 +655,7 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "Requests checked by the Envoy ext_authz bouncer (envoy-bouncer) over the range."
+      "description": "Requests checked by envoy-bouncer ext_authz."
     },
     {
       "type": "stat",
@@ -723,7 +723,7 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "Seconds since the OpenWrt bouncer last fetched /v1/decisions/stream (30s resolution, looks back 1h)."
+      "description": "Time since the OpenWrt bouncer last pulled decisions."
     },
     {
       "type": "stat",
@@ -791,7 +791,7 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "Seconds since the PoT VPS bouncer (vps@<pod ip>) last fetched /v1/decisions/stream (30s resolution, looks back 1h)."
+      "description": "Time since the PoT VPS bouncer last pulled decisions."
     },
     {
       "type": "stat",
@@ -859,7 +859,7 @@
         "textMode": "value",
         "justifyMode": "center"
       },
-      "description": "Scrape targets up in the crowdsec namespace (agent, LAPI, AppSec, envoy-bouncer)."
+      "description": "Scrape targets up in the crowdsec namespace."
     },
     {
       "type": "row",
@@ -938,12 +938,11 @@
           "mode": "multi",
           "sort": "desc"
         }
-      },
-      "description": "Active non-community decisions, by the scenario that produced them."
+      }
     },
     {
       "type": "timeseries",
-      "title": "Community blocklist (CAPI) by category",
+      "title": "Community blocklist by category",
       "id": 16,
       "datasource": {
         "type": "prometheus",
@@ -1005,12 +1004,11 @@
           "mode": "multi",
           "sort": "desc"
         }
-      },
-      "description": "Community blocklist decisions by behaviour category."
+      }
     },
     {
       "type": "timeseries",
-      "title": "Alerts and bans over time",
+      "title": "Alerts and bans",
       "id": 17,
       "datasource": {
         "type": "loki",
@@ -1040,7 +1038,7 @@
           },
           "expr": "sum(count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | decision=\"ban\" [$__interval]))",
           "refId": "B",
-          "legendFormat": "bans (all machines)",
+          "legendFormat": "bans",
           "queryType": "range"
         }
       ],
@@ -1067,7 +1065,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "bans (all machines)"
+              "options": "bans"
             },
             "properties": [
               {
@@ -1104,11 +1102,11 @@
           "sort": "desc"
         }
       },
-      "description": "Alerts the LAPI received per interval, by reporting machine, plus how many led to a ban."
+      "description": "Alerts by reporting machine, and bans."
     },
     {
       "type": "table",
-      "title": "Top scenarios (range)",
+      "title": "Top scenarios",
       "id": 18,
       "datasource": {
         "type": "loki",
@@ -1128,6 +1126,7 @@
           },
           "expr": "sum by (reason) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" [$__range]))",
           "refId": "A",
+          "legendFormat": "{{reason}}",
           "queryType": "instant"
         },
         {
@@ -1137,6 +1136,7 @@
           },
           "expr": "sum by (reason) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | decision=\"ban\" [$__range]))",
           "refId": "B",
+          "legendFormat": "{{reason}}",
           "queryType": "instant"
         }
       ],
@@ -1144,7 +1144,8 @@
         "defaults": {
           "custom": {
             "align": "auto"
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -1158,17 +1159,35 @@
         ],
         "cellHeight": "sm"
       },
-      "description": "Alerts and bans per scenario over the dashboard range (LAPI logs, all machines).",
       "transformations": [
         {
-          "id": "merge",
-          "options": {}
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "reason",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "^(reason|Value #A|Value #B)$"
+            }
+          }
         },
         {
           "id": "organize",
           "options": {
-            "excludeByName": {
-              "Time": true
+            "indexByName": {
+              "reason": 0,
+              "Value #A": 1,
+              "Value #B": 2
             },
             "renameByName": {
               "reason": "Scenario",
@@ -1181,7 +1200,7 @@
     },
     {
       "type": "bargauge",
-      "title": "Alerts by source country (range)",
+      "title": "Alerts by country",
       "id": 19,
       "datasource": {
         "type": "loki",
@@ -1199,7 +1218,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "topk(15, sum by (country) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | country!=\"\" [$__range])))",
+          "expr": "topk(10, sum by (country) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | country!=\"\" [$__range])))",
           "refId": "A",
           "legendFormat": "{{country}}",
           "queryType": "instant"
@@ -1211,7 +1230,8 @@
             "mode": "continuous-YlRd"
           },
           "min": 0,
-          "decimals": 0
+          "decimals": 0,
+          "displayName": "${__data.fields.country}"
         },
         "overrides": []
       },
@@ -1220,34 +1240,58 @@
         "displayMode": "basic",
         "showUnfilled": true,
         "valueMode": "color",
+        "namePlacement": "left",
+        "sizing": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "values": false
-        },
-        "minVizHeight": 10,
-        "maxVizHeight": 20
+          "fields": "/^Alerts$/",
+          "values": true
+        }
       },
-      "description": "Alerting source IPs' GeoIP country (from LAPI logs).",
       "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "Value #A": "Alerts",
+              "Value": "Alerts"
+            }
+          }
+        },
         {
           "id": "sortBy",
           "options": {
             "sort": [
               {
-                "field": "Value",
+                "field": "Alerts",
                 "desc": true
               }
             ]
+          }
+        },
+        {
+          "id": "limit",
+          "options": {
+            "limitField": 10
           }
         }
       ]
     },
     {
       "type": "bargauge",
-      "title": "Alerts by source AS (range)",
+      "title": "Alerts by AS",
       "id": 20,
       "datasource": {
         "type": "loki",
@@ -1265,7 +1309,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "topk(15, sum by (asn) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | asn!=\"\" | asn!=\"0\" [$__range])))",
+          "expr": "topk(10, sum by (asn) (count_over_time({job=\"crowdsec/crowdsec-lapi\"} |= \"module=db\" |= \" by ip \" | regexp `msg=\"\\((?P<machine>[a-z0-9-]+?)(?:-[0-9a-f]{8,10}-[a-z0-9]{5})?(?:/[^)]*)?\\) (?:alert : )?(?P<reason>\\S+) by ip (?P<ip>\\S+) \\((?P<country>[A-Z]*)/(?P<asn>\\d*)\\)(?: : (?P<duration>\\S+) (?P<decision>\\S+) on)?` | reason=~\"$scenario\" | asn!=\"\" | asn!=\"0\" [$__range])))",
           "refId": "A",
           "legendFormat": "AS{{asn}}",
           "queryType": "instant"
@@ -1277,7 +1321,8 @@
             "mode": "continuous-YlRd"
           },
           "min": 0,
-          "decimals": 0
+          "decimals": 0,
+          "displayName": "AS${__data.fields.asn}"
         },
         "overrides": []
       },
@@ -1286,17 +1331,54 @@
         "displayMode": "basic",
         "showUnfilled": true,
         "valueMode": "color",
+        "namePlacement": "left",
+        "sizing": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "values": false
-        },
-        "minVizHeight": 10,
-        "maxVizHeight": 20
+          "fields": "/^Alerts$/",
+          "values": true
+        }
       },
-      "description": "Alerting source IPs' autonomous system number (from LAPI logs)."
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "Value #A": "Alerts",
+              "Value": "Alerts"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Alerts",
+                "desc": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "limit",
+          "options": {
+            "limitField": 10
+          }
+        }
+      ]
     },
     {
       "type": "row",
@@ -1392,7 +1474,7 @@
           "sort": "desc"
         }
       },
-      "description": "envoy-bouncer: every request on protected routes passes ext_authz; only hosts in waf.routes and non-internal IPs are forwarded to AppSec (WAF)."
+      "description": "Only waf.routes hosts from non-internal IPs reach AppSec."
     },
     {
       "type": "timeseries",
@@ -1480,11 +1562,11 @@
           "sort": "desc"
         }
       },
-      "description": "Requests inspected / blocked per AppSec listener (7422 = generic+vpatch+CRS out-of-band, 7423 = vpatch only). Counters appear on first use, so a single first hit may not show here."
+      "description": "Per AppSec listener: 7422 full ruleset, 7423 vpatch only."
     },
     {
       "type": "timeseries",
-      "title": "AppSec processing time (p95)",
+      "title": "AppSec p95 processing time",
       "id": 24,
       "datasource": {
         "type": "prometheus",
@@ -1504,7 +1586,7 @@
           },
           "expr": "histogram_quantile(0.95, sum by (le) (rate(cs_appsec_inband_parsing_time_seconds_bucket[$__rate_interval])))",
           "refId": "A",
-          "legendFormat": "in-band p95",
+          "legendFormat": "in-band",
           "range": true,
           "instant": false
         },
@@ -1515,7 +1597,7 @@
           },
           "expr": "histogram_quantile(0.95, sum by (le) (rate(cs_appsec_outband_parsing_time_seconds_bucket[$__rate_interval])))",
           "refId": "B",
-          "legendFormat": "out-of-band p95",
+          "legendFormat": "out-of-band",
           "range": true,
           "instant": false
         }
@@ -1551,8 +1633,7 @@
           "mode": "multi",
           "sort": "desc"
         }
-      },
-      "description": "Time AppSec spends evaluating a request (in-band adds latency to the request)."
+      }
     },
     {
       "type": "timeseries",
@@ -1576,7 +1657,7 @@
           },
           "expr": "sum by (rule_name, type) (increase(cs_appsec_rule_hits[$__interval]))",
           "refId": "A",
-          "legendFormat": "{{rule_name}} ({{type}})",
+          "legendFormat": "{{rule_name}} {{type}}",
           "range": true,
           "instant": false
         }
@@ -1613,11 +1694,11 @@
           "sort": "desc"
         }
       },
-      "description": "Rule matches per interval. In-band matches block; out-of-band (CRS) matches only score."
+      "description": "In-band matches block; out-of-band matches only score."
     },
     {
       "type": "table",
-      "title": "Top AppSec rules (range)",
+      "title": "Top AppSec rules",
       "id": 26,
       "datasource": {
         "type": "prometheus",
@@ -1643,7 +1724,9 @@
         }
       ],
       "fieldConfig": {
-        "defaults": {},
+        "defaults": {
+          "decimals": 0
+        },
         "overrides": []
       },
       "options": {
@@ -1656,7 +1739,6 @@
         ],
         "cellHeight": "sm"
       },
-      "description": "Rule matches over the dashboard range.",
       "transformations": [
         {
           "id": "organize",
@@ -1688,7 +1770,7 @@
     },
     {
       "type": "timeseries",
-      "title": "Decision pulls per bouncer (per minute)",
+      "title": "Decision pulls per minute",
       "id": 28,
       "datasource": {
         "type": "prometheus",
@@ -1745,7 +1827,7 @@
           "sort": "desc"
         }
       },
-      "description": "GET /v1/decisions/stream per minute (firewall bouncers poll every ~10s, so ~6/min). A flat zero means that device's nftables sets are frozen (alert CrowdSecBouncerNotPulling)."
+      "description": "Firewall bouncers poll about every 10s."
     },
     {
       "type": "timeseries",
@@ -1805,8 +1887,7 @@
           "mode": "multi",
           "sort": "desc"
         }
-      },
-      "description": "Seconds since each registered agent (cluster agent, AppSec, LAPI's local agent, PoT VPS agent) last heartbeated to the LAPI."
+      }
     },
     {
       "type": "row",
@@ -1880,7 +1961,7 @@
           "sort": "desc"
         }
       },
-      "description": "Lines the agent pulls from Loki: envoy-gateway = public Envoy access logs, kernel = OpenWrt kernel log (cs-dnat + WAN rejects)."
+      "description": "envoy-gateway: public Envoy access logs. kernel: OpenWrt kernel log."
     },
     {
       "type": "timeseries",
@@ -1967,8 +2048,7 @@
           "mode": "multi",
           "sort": "desc"
         }
-      },
-      "description": "Lines that made it through the parsers vs lines no parser accepted (e.g. Envoy's non-JSON startup lines)."
+      }
     },
     {
       "type": "timeseries",
@@ -2028,8 +2108,7 @@
           "mode": "multi",
           "sort": "desc"
         }
-      },
-      "description": "Events dropped by whitelists (private ranges, tailnet/home WAN/GitHub hooks, CDNs)."
+      }
     },
     {
       "type": "timeseries",
@@ -2089,8 +2168,7 @@
           "mode": "multi",
           "sort": "desc"
         }
-      },
-      "description": "Events poured into scenario buckets."
+      }
     },
     {
       "type": "timeseries",
@@ -2151,7 +2229,7 @@
           "sort": "desc"
         }
       },
-      "description": "Scenario overflows on the cluster agent (each becomes an alert; the VPS agent's are not in Prometheus)."
+      "description": "Cluster agent only."
     },
     {
       "type": "timeseries",
@@ -2211,8 +2289,7 @@
           "mode": "multi",
           "sort": "desc"
         }
-      },
-      "description": "Leaky buckets currently tracking a source."
+      }
     },
     {
       "type": "timeseries",
@@ -2272,12 +2349,11 @@
           "mode": "multi",
           "sort": "desc"
         }
-      },
-      "description": "LAPI API calls from bouncers and agents."
+      }
     },
     {
       "type": "timeseries",
-      "title": "LAPI latency p95 by route",
+      "title": "LAPI p95 latency by route",
       "id": 38,
       "datasource": {
         "type": "prometheus",
@@ -2333,8 +2409,7 @@
           "mode": "multi",
           "sort": "desc"
         }
-      },
-      "description": "95th percentile LAPI response time."
+      }
     },
     {
       "type": "row",
@@ -2351,7 +2426,7 @@
     },
     {
       "type": "logs",
-      "title": "Alerts & bans (LAPI)",
+      "title": "Alert log",
       "id": 40,
       "datasource": {
         "type": "loki",
@@ -2385,11 +2460,11 @@
         "enableLogDetails": true,
         "dedupStrategy": "none"
       },
-      "description": "Every alert the LAPI stored (cluster agent, AppSec, PoT VPS) and the decision it produced. Use the search box for an IP, country or scenario."
+      "description": "LAPI alerts and decisions, all machines."
     },
     {
       "type": "logs",
-      "title": "AppSec (WAF) alerts",
+      "title": "AppSec alerts",
       "id": 41,
       "datasource": {
         "type": "loki",
@@ -2422,12 +2497,11 @@
         "sortOrder": "Descending",
         "enableLogDetails": true,
         "dedupStrategy": "none"
-      },
-      "description": "Alerts raised by the AppSec component (in-band vpatch blocks). AppSec does not log individual requests."
+      }
     },
     {
       "type": "logs",
-      "title": "Warnings & errors",
+      "title": "Warnings and errors",
       "id": 42,
       "datasource": {
         "type": "loki",
@@ -2460,8 +2534,7 @@
         "sortOrder": "Descending",
         "enableLogDetails": true,
         "dedupStrategy": "exact"
-      },
-      "description": "Warnings/errors from the agent, LAPI (incl. Telegram notification plugin), AppSec and envoy-bouncer. AppSec's startup 'conflicting id' noise is hidden."
+      }
     }
   ]
 }
