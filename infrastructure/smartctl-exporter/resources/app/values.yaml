@@ -1,0 +1,72 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+#
+# SMART for every drive on every node, read directly with smartctl.
+#
+# Why: Longhorn 1.13's disk health data (longhorn_disk_health_attribute_raw) is
+# a stale cache for disks mounted from NVMe partitions. On 2026-10-09
+# alpha-nvme-1 still reported pre-flash firmware and both alpha NVMe disks
+# claimed /dev/nvme1, while healthDataLastCollectedAt kept advancing.
+# DataUnitsWritten had been frozen since 10-04, so the wear alerts were blind.
+controllers:
+  smartctl-exporter:
+    type: daemonset
+    pod:
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      priorityClassName: system-node-critical
+    containers:
+      app:
+        image:
+          repository: jacob.pub/quay.io/prometheuscommunity/smartctl-exporter
+          tag: v0.15.0@sha256:a76e08dbf5db4781fefd1ed81c65ad46ae8d2849dae6b6d3acebcde2fc4e59d6
+        args:
+          - --smartctl.interval=120s
+          - --smartctl.rescan=10m
+          - --web.listen-address=:9633
+        securityContext:
+          # SMART pass-through ioctls on /dev/nvme* and /dev/sd* need it.
+          privileged: true
+          readOnlyRootFilesystem: true
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /metrics
+                port: 9633
+              periodSeconds: 60
+              timeoutSeconds: 30
+          readiness:
+            enabled: false
+          startup:
+            enabled: false
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+service:
+  app:
+    controller: smartctl-exporter
+    ports:
+      metrics:
+        port: 9633
+serviceMonitor:
+  app:
+    serviceName: smartctl-exporter
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 2m
+        scrapeTimeout: 60s
+persistence:
+  dev:
+    type: hostPath
+    hostPath: /dev
+    globalMounts:
+      - path: /dev
