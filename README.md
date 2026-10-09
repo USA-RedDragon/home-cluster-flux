@@ -1256,7 +1256,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td rowspan="10">path-of-titans</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/path-of-titans/resources/a2s-exporter/helm.yaml">a2s-exporter</a></td>
-    <td rowspan="10"><a href="apps/path-of-titans/resources/postgres/postgres.yaml">postgresql</a></td>
+    <td rowspan="10"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
