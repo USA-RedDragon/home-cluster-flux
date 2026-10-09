@@ -59,7 +59,6 @@ spec:
                 set -eu
                 restic backup --tag=server /data
                 restic backup --tag=filebrowser /filebrowser
-                restic backup --tag=db --tag=postgresql --stdin-filename=postgresql.sql --stdin-from-command -- backup-cnpg.sh
                 restic forget --prune --keep-daily=90 --keep-weekly=24 --keep-monthly=24 --keep-yearly=20
                 restic cache --cleanup
             resources:
@@ -87,6 +86,3 @@ spec:
         existingClaim: path-of-titans
       filebrowser:
         existingClaim: filebrowser
-      postgresql-app:
-        type: secret
-        name: postgresql-app
