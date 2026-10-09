@@ -33,7 +33,7 @@ controllers:
           limits:
             memory: 500Mi
           requests:
-            cpu: 100m
+            cpu: 10m
             memory: 100Mi
         env:
         - name: HTTP__CORS_HOSTS
