@@ -122,16 +122,12 @@ configMaps:
           - import: (data)/clients/git.yaml
           - import: (data)/apps/gitea-rss-feeds.yaml
 
-          # --- git.mcswain.dev (Gitea) ---
-          # git over smart HTTP and LFS: cheap, and git clients can't solve a challenge.
           - name: gitea-git-smart-http
             action: ALLOW
             expression:
               all:
                 - host == "git.mcswain.dev"
                 - path.matches("^/[^/]+/[^/]+/(info/refs|git-upload-pack|git-receive-pack)$") || path.matches("^/[^/]+/[^/]+\\.git/info/lfs/")
-          # The API can serve file contents, commits and diffs, i.e. a challenge-free way to crawl.
-          # Credentials pass; anonymous callers must be a browser holding a pass.
           - name: gitea-api-authenticated
             action: ALLOW
             expression:
@@ -151,7 +147,6 @@ configMaps:
               all:
                 - host == "git.mcswain.dev"
                 - path.startsWith("/api/")
-          # Expensive to render: challenge every client, not just browsers.
           - name: gitea-expensive
             action: CHALLENGE
             expression:
@@ -159,13 +154,10 @@ configMaps:
                 - host == "git.mcswain.dev"
                 - path.matches("^/[^/]+/[^/]+/(commits?|blame|compare|archive|graph|activity|src/commit|raw/commit)(/|$)")
 
-          # --- everything ---
           - name: generic-browser
             user_agent_regex: Mozilla|Opera
             action: CHALLENGE
 
-        # Forward-auth: a non-200 from the check denies. DENY gets an unusual code so the
-        # adapter can swap in the silly page.
         status_codes:
           CHALLENGE: 200
           DENY: 418
@@ -180,13 +172,9 @@ configMaps:
           server {
             listen 8080;
             location = /healthz { return 200 "ok\n"; }
-            # Envoy ext_authz (HTTP) calls /check<original path?query>. Recover the original
-            # request for Anubis and call its exact check endpoint. X-Real-IP comes from
-            # x-envoy-external-address, which Envoy sets from the real peer (not client-controllable).
             location ~ ^/check(?<orig>/.*)?$ {
               proxy_set_header X-Forwarded-Uri $orig$is_args$args;
               proxy_set_header X-Forwarded-Host $host;
-              # policy expressions match on `host`; nginx would otherwise send 127.0.0.1:8923
               proxy_set_header Host $host;
               proxy_set_header X-Forwarded-Proto https;
               proxy_set_header X-Real-IP $http_x_envoy_external_address;
