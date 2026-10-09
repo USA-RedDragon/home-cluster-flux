@@ -17,6 +17,9 @@ controllers:
           repository: jacob.pub/ghcr.io/d0ugal/mosquitto-exporter
           tag: v0.2.54@sha256:eec656d0bda1e847649677327d79020e5e300e68cb84d272bb87eb4941f9a88c
           pullPolicy: IfNotPresent
+        args:
+          - --config
+          - /config/config.yaml
         env:
           - name: MOSQUITTO_BROKER_ENDPOINT
             value: tcp://mosquitto.mosquitto.svc.cluster.local:1883
@@ -27,8 +30,6 @@ controllers:
               secretKeyRef:
                 name: mosquitto-exporter
                 key: password
-          - name: LOG_LEVEL
-            value: warn
         resources:
           requests:
             cpu: 10m
@@ -48,6 +49,22 @@ controllers:
             enabled: true
           startup:
             enabled: false
+
+configMaps:
+  config:
+    data:
+      config.yaml: |
+        logging:
+          level: warn
+          format: json
+
+persistence:
+  config:
+    type: configMap
+    identifier: config
+    globalMounts:
+      - path: /config
+        readOnly: true
 
 service:
   mosquitto-exporter:
