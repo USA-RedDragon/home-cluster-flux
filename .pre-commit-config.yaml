@@ -19,9 +19,18 @@ repos:
   - repo: https://github.com/gabe565/pre-commit-fluxcd
     rev: v0.5.1
     hooks:
-      - id: check-charts-pinned
       - id: check-charts-support-renovate
       - id: check-secrets-encrypted
+
+  - repo: local
+    hooks:
+      - id: check-charts-pinned
+        name: Check for unpinned chart versions
+        entry: .github/scripts/check-charts-pinned.py
+        language: python
+        additional_dependencies:
+          - pyyaml==6.0.3
+        types: [yaml]
 
   - repo: https://github.com/gabe565/template-kubernetes-apps-markdown
     rev: v0.5.1
