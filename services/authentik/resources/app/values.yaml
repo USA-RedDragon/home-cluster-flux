@@ -115,7 +115,8 @@ service:
 serviceMonitor:
   server:
     enabled: true
-    serviceName: server
+    service:
+      identifier: server
     endpoints:
       - port: metrics
         scheme: http
