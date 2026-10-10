@@ -23,7 +23,7 @@ controllers:
             memory: 48Mi
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing-frontend
-          tag: "beta@sha256:c2982d926a2166d016406cc891dfe65359be056a235d315ab5c26131e411bf97"
+          tag: "beta@sha256:0f086458a92bf6eab3c081be6cf9f530b4614f8c529d55ea2f90ee0705f02602"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -173,6 +173,11 @@ ingress:
           service:
               identifier: backend
               port: http
+        - path: /api/v1
+          pathType: Prefix
+          service:
+              name: astro-stacker
+              port: 8080
     tls:
       - hosts:
           - astro-processing
