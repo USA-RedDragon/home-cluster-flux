@@ -162,16 +162,6 @@
             ],
             "automerge": true,
             "matchPackageNames": [
-                "/^ghcr.io\\/usa-reddragon\\/meshmap$/"
-            ]
-        },
-        {
-            "matchUpdateTypes": [
-                "digest",
-                "pinDigest"
-            ],
-            "automerge": true,
-            "matchPackageNames": [
                 "/^ghcr.io\\/usa-reddragon\\/trunk-recorder-soapysdrplay3-prometheus$/"
             ]
         },
