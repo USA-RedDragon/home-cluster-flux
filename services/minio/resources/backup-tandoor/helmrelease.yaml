@@ -84,7 +84,7 @@ spec:
           rclone.conf: |
             [b2]
             type = b2
-            hard_delete = true
+            hard_delete = false
             [minio]
             type = s3
             provider = Minio
