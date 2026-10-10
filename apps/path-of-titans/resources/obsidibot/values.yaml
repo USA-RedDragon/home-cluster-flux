@@ -10,7 +10,7 @@ controllers:
       obsidibot:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/obsidibot
-          tag: v0.0.6
+          tag: v0.0.6@sha256:19f14b72687e302d1fcf69438ca072fdbbc0a42bd045589eb96c6b7b91de3c94
         env:
           - name: METRICS_ENABLED
             value: "true"

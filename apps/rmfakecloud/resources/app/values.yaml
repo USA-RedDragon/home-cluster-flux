@@ -20,7 +20,7 @@ controllers:
             memory: 64Mi
         image:
           repository: jacob.pub/git.scottlabs.io/scott-labs/rmfakecloud
-          tag: screenshare20
+          tag: screenshare20@sha256:71039cd6cdd1616204c30698015e19e4d024d7a159426a3c75df71206820b640
           pullPolicy: IfNotPresent
         # resources:
         #   requests:
