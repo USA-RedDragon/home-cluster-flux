@@ -137,7 +137,7 @@ controllers:
             - NET_ADMIN
         resources:
           limits:
-            memory: 12Mi
+            memory: 32Mi
           requests:
             cpu: 10m
             memory: 6Mi
