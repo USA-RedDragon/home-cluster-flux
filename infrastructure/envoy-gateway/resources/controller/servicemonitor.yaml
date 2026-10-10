@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: envoy-gateway
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: envoy-gateway
+      control-plane: envoy-gateway
+  endpoints:
+    - port: metrics
+      path: /metrics
