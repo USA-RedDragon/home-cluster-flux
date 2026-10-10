@@ -52,6 +52,7 @@
             "matchStrings": [
                 "imageName: ['\"]?(?<depName>.+?):(?<currentValue>.+)['\"]?"
             ],
+            "packageNameTemplate": "{{{replace '^jacob\\.pub/' '' depName}}}",
             "datasourceTemplate": "docker"
         },
         {
@@ -209,7 +210,7 @@
             ],
             "automerge": false,
             "matchPackageNames": [
-                "ghcr.io/cloudnative-pg/postgresql"
+                "/(^|/)ghcr\\.io/cloudnative-pg/postgresql$/"
             ]
         },
         {
@@ -227,9 +228,9 @@
                 "docker"
             ],
             "matchPackageNames": [
-                "ghcr.io/cloudnative-pg/postgresql"
+                "/(^|/)ghcr\\.io/cloudnative-pg/postgresql$/"
             ],
-            "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)-(?<build>\\d+)$"
+            "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)(-(?<build>\\d+))?$"
         },
         {
             "description": "Path of Titans tags are <build>h<hotfix>, e.g. 48554h25",
