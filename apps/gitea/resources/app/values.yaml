@@ -10,7 +10,7 @@ controllers:
       gitea:
         image:
           repository: jacob.pub/docker.gitea.com/gitea
-          tag: 1.26.2@sha256:7d13848af12645600a5f9d93ee2560daa9c6fa6b5b859b7bff3a5e1c0b661031
+          tag: 1.27.3@sha256:87a67ee09d3ae0d1df5fda5dcda3e2a1f9236a45b0a59025d6e00e46adc43bef
           pullPolicy: IfNotPresent
         resources:
           limits:
