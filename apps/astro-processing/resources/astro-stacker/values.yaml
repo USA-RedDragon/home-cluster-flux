@@ -123,6 +123,13 @@ controllers:
           # cluster. Not on any gateway route.
           PUBLIC_FRAMES_ENABLED:
             value: "true"
+          SCHEDULER_URL:
+            value: "http://observatory:8189"
+          SCHEDULER_TOKEN:
+            secretKeyRef:
+              name: astro-stacker-scheduler
+              key: SCHEDULER_TOKEN
+              optional: true
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
