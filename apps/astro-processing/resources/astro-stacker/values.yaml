@@ -130,6 +130,12 @@ controllers:
               name: astro-stacker-scheduler
               key: SCHEDULER_TOKEN
               optional: true
+          SCHEDULER_METRICS_URL:
+            value: "http://thanos-querier-app.monitoring:9090"
+          GOALS_ENABLED:
+            value: "true"
+          GOALS_PUBLISH:
+            value: "dry-run"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3

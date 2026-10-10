@@ -359,3 +359,64 @@ insert into sym_trigger_router (trigger_id, router_id, initial_load_order, creat
   ('ts_command', 'home to sqlite', -1, current_timestamp, current_timestamp),
   ('ts_command_result', 'sqlite to home', -1, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_goal (
+    target_guid text NOT NULL,
+    filter text NOT NULL,
+    kind integer NOT NULL DEFAULT 0,
+    snr_goal double precision NOT NULL DEFAULT 10,
+    depth_goal double precision,
+    plateau_stop integer NOT NULL DEFAULT 1,
+    region text,
+    updated_at text,
+    PRIMARY KEY (target_guid, filter)
+);
+
+create table if not exists ts_goal_progress (
+    target_guid text NOT NULL,
+    filter text NOT NULL,
+    kind integer,
+    goal_value double precision,
+    achieved_value double precision,
+    progress double precision,
+    snr double precision,
+    depth double precision,
+    effective_hours double precision,
+    hours_needed double precision,
+    gain_per_hour_pct double precision,
+    plateau integer,
+    low_confidence integer,
+    done integer,
+    measured_at timestamp,
+    PRIMARY KEY (target_guid, filter)
+);
+
+create table if not exists ts_target_season (
+    target_guid text NOT NULL,
+    nights_left integer,
+    out_of_season integer,
+    season_end text,
+    computed_for text,
+    computed_at text,
+    PRIMARY KEY (target_guid)
+);
+
+grant select on ts_goal, ts_target_season to "astro-processing";
+grant select, insert, update on ts_goal_progress to "astro-processing";
+grant select on sym_node_identity, sym_node_host, sym_incoming_batch to "astro-processing";
+
+insert into sym_channel (channel_id, processing_order, max_batch_size, max_batch_to_send, enabled, description, create_time, last_update_time) values
+  ('goal', 15, 50, 10, 1, 'observatory-scheduler goals, goal progress and seasons', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_goal', 'ts_goal', 'goal', 'reload', current_timestamp, current_timestamp),
+  ('ts_goal_progress', 'ts_goal_progress', 'goal', 'reload', current_timestamp, current_timestamp),
+  ('ts_target_season', 'ts_target_season', 'goal', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_goal', 'sqlite to home', 120, current_timestamp, current_timestamp),
+  ('ts_target_season', 'sqlite to home', 130, current_timestamp, current_timestamp),
+  ('ts_goal_progress', 'home to sqlite', -1, current_timestamp, current_timestamp)
+  on conflict do nothing;
