@@ -280,10 +280,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="3">astro-processing</td>
+    <td rowspan="4">astro-processing</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/astro-processing/resources/app/helm.yaml">astro-processing</a></td>
-    <td rowspan="3"><a href="apps/astro-processing/resources/postgres/postgres.yaml">postgresql</a></td>
+    <td rowspan="4"><a href="apps/astro-processing/resources/postgres/postgres.yaml">postgresql</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
@@ -294,10 +294,8 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><a href="apps/astro-processing/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
   <tr>
-    <td>symmetricds</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/astro-processing/resources/symmetricds/helm.yaml">symmetricds</a></td>
-    <td></td>
   </tr>
 </table>
 

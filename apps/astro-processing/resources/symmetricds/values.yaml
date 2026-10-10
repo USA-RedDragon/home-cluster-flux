@@ -193,5 +193,8 @@ configMaps:
         job.routing.period.time.ms=5000
         job.push.period.time.ms=10000
         job.pull.period.time.ms=10000
-        job.purge.period.time.ms=7200000
+        db.pool.max.active=10
+        db.pool.min.idle=2
+        db.pool.max.idle=10
+        purge.metric.stats.retention.minutes=10080
         auto.config.registration.svr.sql.script=/opt/symmetric-ds/bootstrap/home-config.sql
