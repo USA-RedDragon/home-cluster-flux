@@ -10,7 +10,7 @@ controllers:
       ultrafeeder:
         image:
           repository: jacob.pub/ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder
-          tag: telegraf-build-757@sha256:02a7e6a01b388f72798b5dedf39aba505c0cb69098b404a3543048a7d62ee143
+          tag: telegraf-build-971@sha256:1df784a7e3756d0a6483b93c429ec9eea9a7281e2be6a329fc3431b712fa81c5
         probes:
           liveness:
             enabled: true
