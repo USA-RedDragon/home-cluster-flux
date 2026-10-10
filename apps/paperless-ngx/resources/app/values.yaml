@@ -1,3 +1,6 @@
+defaultPodOptions:
+  automountServiceAccountToken: false
+
 controllers:
   paperless:
     strategy: Recreate

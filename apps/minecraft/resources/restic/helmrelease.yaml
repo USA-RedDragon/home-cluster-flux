@@ -18,6 +18,7 @@ spec:
       retries: -1
   values:
     defaultPodOptions:
+      automountServiceAccountToken: false
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

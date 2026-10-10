@@ -1,3 +1,6 @@
+defaultPodOptions:
+  automountServiceAccountToken: false
+
 controllers:
   cache-server:
     replicas: 2

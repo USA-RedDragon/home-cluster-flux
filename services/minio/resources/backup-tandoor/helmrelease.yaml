@@ -17,6 +17,9 @@ spec:
     remediation:
       retries: -1
   values:
+    defaultPodOptions:
+      automountServiceAccountToken: false
+
     controllers:
       backup-tandoor:
         type: cronjob
