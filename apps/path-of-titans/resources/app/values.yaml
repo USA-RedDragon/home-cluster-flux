@@ -94,7 +94,7 @@ controllers:
       path-of-titans:
         image:
           repository: jacob.pub/ghcr.io/srs-hosting/path-of-titans
-          tag: 52021h3@sha256:b29bb26cb85669fc0f2d31b439bb52e166bb9d60c0c29756d91c6b274cf80a0d
+          tag: 52021h3@sha256:cd33a05d94f94cbf418b33c81438bca693621f99dfd3ede491991b68076a7dfe
           pullPolicy: IfNotPresent
         resources:
           requests:
