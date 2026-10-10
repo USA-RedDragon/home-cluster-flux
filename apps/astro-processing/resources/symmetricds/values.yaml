@@ -29,7 +29,7 @@ controllers:
       clear-stale-hosts:
         image:
           repository: jacob.pub/ghcr.io/cloudnative-pg/postgresql
-          tag: "17.5-22@sha256:b1deeed2aa998b2f381e39c5cadb9ec06127708c8bd62965743af19abf21628f"
+          tag: "17.11@sha256:70664ebcfa1100361b5bdc28bbf06fdbe08db2dc4ad7bd14de33c5e05fe8ea8e"
         command:
           - psql
           - -v
