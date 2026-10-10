@@ -8,6 +8,7 @@ resources:
   - prom.yaml
   - backend-traffic-policy.yaml
   - securitypolicy.yaml
+  - routefilter.yaml
 configMapGenerator:
   - name: chart-values
     files:
