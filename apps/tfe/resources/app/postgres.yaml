@@ -23,7 +23,7 @@ spec:
           name: cnpg-minio
           key: AWS_SECRET_ACCESS_KEY
       wal:
-        compression: gzip
+        compression: zstd
     retentionPolicy: "4w"
   storage:
     storageClass: longhorn-nvme-r1
