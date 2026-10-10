@@ -81,6 +81,7 @@ spec:
                 - sonarr
                 - sonarr-anime
                 - qbittorrent
+                - path-of-titans
                 - aredn
                 - aredn-dmrhub
                 - aredn-ntp
@@ -101,7 +102,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       preconditions:
         all:
           - key: '{{ request.operation || ''BACKGROUND'' }}'
@@ -155,7 +155,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       preconditions:
         all:
           - key: '{{ request.operation || ''BACKGROUND'' }}'

@@ -25,7 +25,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       validate:
         failureAction: Enforce
         message: Privileged mode is disallowed. The fields spec.containers[*].securityContext.privileged, spec.initContainers[*].securityContext.privileged, and spec.ephemeralContainers[*].securityContext.privileged must be unset or set to `false`.

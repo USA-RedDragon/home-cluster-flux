@@ -24,7 +24,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       validate:
         failureAction: Enforce
         message: Use of the Docker Unix socket is not allowed.
@@ -53,7 +52,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       validate:
         failureAction: Enforce
         message: Use of the Containerd Unix socket is not allowed.
@@ -82,7 +80,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       validate:
         failureAction: Enforce
         message: Use of the CRI-O Unix socket is not allowed.
@@ -111,7 +108,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       validate:
         failureAction: Enforce
         message: Use of the Docker CRI socket is not allowed.
