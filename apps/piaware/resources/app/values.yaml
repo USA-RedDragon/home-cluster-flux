@@ -60,6 +60,42 @@ route:
     hostnames:
       - flights.mcswain.dev
     rules:
+      - matches:
+          - path:
+              type: Exact
+              value: /skyaware/data/receiver.json
+          - path:
+              type: Exact
+              value: /dump1090-fa/data/receiver.json
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: receiver-1090
+      - matches:
+          - path:
+              type: Exact
+              value: /skyaware/data-978/receiver.json
+          - path:
+              type: Exact
+              value: /skyaware978/data/receiver.json
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: receiver-978
+      - matches:
+          - path:
+              type: RegularExpression
+              value: '.*%.*'
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: not-found
       - backendRefs:
           - name: piaware
             port: 80
