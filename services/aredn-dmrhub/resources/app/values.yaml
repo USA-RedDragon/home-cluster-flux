@@ -176,16 +176,20 @@ configMaps:
           worker_connections 1024;
         }
         stream {
+          resolver 127.0.0.1 valid=30s;
           upstream mmdvm {
-            server dmrhub.dmrhub.svc.cluster.local:62031;
+            zone mmdvm 64k;
+            server dmrhub.dmrhub.svc.cluster.local:62031 resolve;
           }
 
           upstream openbridge {
-            server dmrhub.dmrhub.svc.cluster.local:62035;
+            zone openbridge 64k;
+            server dmrhub.dmrhub.svc.cluster.local:62035 resolve;
           }
 
           upstream ipsc {
-            server dmrhub.dmrhub.svc.cluster.local:50000;
+            zone ipsc 64k;
+            server dmrhub.dmrhub.svc.cluster.local:50000 resolve;
           }
 
           server {
@@ -204,8 +208,10 @@ configMaps:
           }
         }
         http {
+          resolver 127.0.0.1 valid=30s;
           upstream dmrhub {
-            server dmrhub.dmrhub.svc.cluster.local:3005;
+            zone dmrhub 64k;
+            server dmrhub.dmrhub.svc.cluster.local:3005 resolve;
           }
           include mime.types;
           server {
