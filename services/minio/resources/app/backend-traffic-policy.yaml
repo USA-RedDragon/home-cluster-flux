@@ -4,7 +4,13 @@ metadata:
   name: minio-no-compression
   namespace: minio
 spec:
-  targetRef:
-    group: gateway.networking.k8s.io
-    kind: HTTPRoute
-    name: minio-s3
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: minio-s3
+  connection:
+    bufferLimit: 4Mi
+  tcpKeepalive:
+    idleTime: 60s
+    interval: 10s
+    probes: 3
