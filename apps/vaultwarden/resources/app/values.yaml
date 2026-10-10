@@ -27,8 +27,6 @@ controllers:
         env:
         - name: SIGNUPS_ALLOWED
           value: 'false'
-        - name: WEBSOCKET_ENABLED
-          value: 'true'
         - name: DOMAIN
           value: https://bitwarden.mcswain.dev
         - name: PUSH_ENABLED
@@ -64,8 +62,6 @@ service:
       http:
         port: 80
         primary: true
-      websockets:
-        port: 3012
 
 route:
   vaultwarden:
@@ -85,13 +81,6 @@ route:
           - path:
               type: PathPrefix
               value: /
-      - backendRefs:
-          - name: vaultwarden
-            port: 3012
-        matches:
-          - path:
-              type: Exact
-              value: /notifications/hub
 
 persistence:
   data:
