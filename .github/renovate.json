@@ -47,6 +47,18 @@
         {
             "customType": "regex",
             "managerFilePatterns": [
+                "/(^|/)\\.github\\/workflows\\/kyverno[^/]*\\.yaml$/"
+            ],
+            "matchStrings": [
+                "KYVERNO_VERSION: (?<currentValue>v\\S+)"
+            ],
+            "depNameTemplate": "kyverno/kyverno",
+            "datasourceTemplate": "github-releases",
+            "versioningTemplate": "semver"
+        },
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
                 "/\\.yaml$/"
             ],
             "matchStrings": [
