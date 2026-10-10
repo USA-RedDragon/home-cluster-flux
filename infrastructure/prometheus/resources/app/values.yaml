@@ -247,7 +247,6 @@ alertmanager:
   podDisruptionBudget:
     enabled: true
     minAvailable: 1
-    maxUnavailable: ""
 
   ## Alertmanager configuration directives
   ## ref: https://prometheus.io/docs/alerting/configuration/#configuration-file
