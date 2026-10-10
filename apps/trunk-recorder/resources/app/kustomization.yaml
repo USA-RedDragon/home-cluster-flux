@@ -5,6 +5,7 @@ resources:
   - helm.yaml
   - networkpolicy.yaml
   - prom.yaml
+  - rbac.yaml
 configMapGenerator:
   - name: chart-values
     files:
