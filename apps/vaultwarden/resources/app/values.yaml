@@ -1,10 +1,26 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
+defaultPodOptions:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+    fsGroup: 65534
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+
 controllers:
   vaultwarden:
     replicas: 1
     containers:
       vaultwarden:
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
         image:
           repository: jacob.pub/ghcr.io/dani-garcia/vaultwarden
           tag: 1.37.4@sha256:efb3cde962015fcc036b2ea625242248611943b27212ebf4392841fb30fad055
@@ -25,6 +41,8 @@ controllers:
         - secretRef:
             name: vaultwarden-creds
         env:
+        - name: ROCKET_PORT
+          value: '8080'
         - name: SIGNUPS_ALLOWED
           value: 'false'
         - name: DOMAIN
@@ -61,6 +79,7 @@ service:
     ports:
       http:
         port: 80
+        targetPort: 8080
         primary: true
 
 route:
@@ -99,3 +118,7 @@ persistence:
     accessMode: ReadWriteOnce
     size: 8Gi
     storageClass: longhorn-nvme
+  tmp:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
