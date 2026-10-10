@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: srs-hosting
 resources:
   - helm.yaml
+  - rbac.yaml
 configMapGenerator:
   - name: reconciler-chart-values
     files:
