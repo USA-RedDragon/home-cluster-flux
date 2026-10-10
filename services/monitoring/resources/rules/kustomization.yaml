@@ -10,4 +10,5 @@ resources:
   - log-alerts.yaml
   - loki-alert-rules.yaml
   - node-disk-alerts.yaml
+  - platform-alerts.yaml
   - thanos-prom.yaml

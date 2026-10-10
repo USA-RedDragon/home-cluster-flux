@@ -1,0 +1,111 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: platform
+  namespace: monitoring
+spec:
+  groups:
+    - name: cilium
+      rules:
+        - alert: CiliumAgentDown
+          expr: up{job="cilium-agent"} == 0
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Cilium agent {{ $labels.pod }} on {{ $labels.node }} is not answering scrapes"
+            description: "Cilium agent {{ $labels.pod }} has been down for 10m. Pods on {{ $labels.node }} lose policy updates and new endpoints. Check `kubectl -n kube-system logs {{ $labels.pod }}`."
+        - alert: CiliumOperatorDown
+          expr: absent(up{job="cilium-operator"} == 1)
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: No Cilium operator is up
+            description: "No cilium-operator target has been up for 10m. IPAM and identity garbage collection stop."
+        - alert: CiliumUnreachableNodes
+          expr: max by (pod, node) (cilium_unreachable_nodes) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cilium on {{ $labels.node }} cannot reach {{ $value }} nodes"
+            description: "Cilium health checks from {{ $labels.node }} report {{ $value }} unreachable nodes for 10m. Run `kubectl -n kube-system exec {{ $labels.pod }} -- cilium-health status`."
+        - alert: CiliumUnreachableHealthEndpoints
+          expr: max by (pod, node) (cilium_unreachable_health_endpoints) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cilium on {{ $labels.node }} cannot reach {{ $value }} health endpoints"
+            description: "Pod-to-pod health checks from {{ $labels.node }} fail to {{ $value }} endpoints for 10m. Run `kubectl -n kube-system exec {{ $labels.pod }} -- cilium-health status`."
+        - alert: CiliumPolicyImportErrors
+          expr: sum by (pod, node) (increase(cilium_policy_change_total{outcome="fail"}[15m])) > 0
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cilium on {{ $labels.node }} failed to import a network policy"
+            description: "Cilium agent {{ $labels.pod }} rejected {{ $value | printf \"%.0f\" }} policy changes in 15m. Check `kubectl get cnp,ccnp -A` for VALID=False and the agent logs."
+        - alert: CiliumEndpointRegenerationFailing
+          expr: sum by (pod, node) (increase(cilium_endpoint_regenerations_total{outcome="fail"}[15m])) > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cilium endpoint regeneration is failing on {{ $labels.node }}"
+            description: "Cilium agent {{ $labels.pod }} has failed endpoint regenerations for 30m, so policy changes do not reach pods on {{ $labels.node }}. Run `kubectl -n kube-system exec {{ $labels.pod }} -- cilium-dbg endpoint list`."
+        - alert: CiliumControllersFailing
+          expr: max by (pod, node) (cilium_controllers_failing) > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $value }} Cilium controllers failing on {{ $labels.node }}"
+            description: "Run `kubectl -n kube-system exec {{ $labels.pod }} -- cilium-dbg status --all-controllers` to see which."
+        - alert: CiliumBPFMapPressure
+          expr: max by (node, map_name) (cilium_bpf_map_pressure) > 0.9
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Cilium BPF map {{ $labels.map_name }} on {{ $labels.node }} is {{ $value | humanizePercentage }} full"
+            description: "A full BPF map drops new connections or policy entries. Raise the map size in the cilium chart values."
+    - name: flux-controllers
+      rules:
+        - alert: FluxControllerDown
+          expr: |
+            group by (controller) (max_over_time(up{job="monitoring/flux-system"}[1d]))
+              unless
+            group by (controller) (up{job="monitoring/flux-system"} == 1)
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Flux {{ $labels.controller }} is down"
+            description: "Flux {{ $labels.controller }} has not answered scrapes for 10m. Check `kubectl -n flux-system get pods`."
+        - alert: FluxControllersAbsent
+          expr: absent(up{job="monitoring/flux-system"} == 1)
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: No Flux controller is up
+            description: "No Flux controller has answered scrapes for 10m. Check `kubectl -n flux-system get pods` and the flux-system PodMonitor."
+    - name: platform-services
+      rules:
+        - alert: ZotDown
+          expr: absent(up{job="zot", namespace="zot"} == 1)
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: zot (jacob.pub) is down
+            description: "No zot target has been up for 10m. Most workloads pull images through jacob.pub, so new pods and restarts fail to pull. Check `kubectl -n zot get pods` and MinIO."
+        - alert: CNPGOperatorDown
+          expr: absent(up{namespace="cnpg-system", pod=~"cnpg-cloudnative-pg-.*"} == 1)
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: CloudNativePG operator is down
+            description: "The CNPG operator has not answered scrapes for 10m. Failover, backups and switchover for every Postgres cluster stop. Check `kubectl -n cnpg-system get pods`."
