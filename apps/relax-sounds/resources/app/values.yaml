@@ -65,6 +65,19 @@ route:
     hostnames:
       - relax.mcswain.dev
     rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /_
+          - path:
+              type: PathPrefix
+              value: /api/collections/_superusers
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: not-found
       - backendRefs:
           - name: relax-sounds
             port: 80
