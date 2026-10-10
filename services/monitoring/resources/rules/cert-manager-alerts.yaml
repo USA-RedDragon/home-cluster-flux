@@ -1,0 +1,79 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cert-manager
+  namespace: monitoring
+spec:
+  groups:
+    - name: cert-manager
+      rules:
+        - alert: CertManagerAbsent
+          expr: absent(up{job="cert-manager", namespace="cert-manager"} == 1)
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: cert-manager controller is down or not scraped
+            description: >-
+              No cert-manager controller target has been up for 10m. Certificates are 6-day
+              Let's Encrypt shortlived certs and renew about 2 days before expiry, so renewals stop while it is down.
+        - alert: CertManagerRenewalOverdue
+          expr: (time() - certmanager_certificate_renewal_timestamp_seconds) > 3600
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Certificate {{ $labels.exported_namespace }}/{{ $labels.name }} renewal is overdue
+            description: >-
+              Certificate {{ $labels.exported_namespace }}/{{ $labels.name }} was due to renew
+              {{ $value | humanizeDuration }} ago and has not. Check
+              `kubectl -n {{ $labels.exported_namespace }} describe certificate {{ $labels.name }}` and its orders and challenges.
+        - alert: CertManagerCertExpirySoon
+          expr: (certmanager_certificate_expiration_timestamp_seconds - time()) < 2 * 86400
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Certificate {{ $labels.exported_namespace }}/{{ $labels.name }} expires in {{ $value | humanizeDuration }}
+            description: >-
+              Certificate {{ $labels.exported_namespace }}/{{ $labels.name }} expires in {{ $value | humanizeDuration }}.
+              It should have renewed about 53h before expiry. Check
+              `kubectl -n {{ $labels.exported_namespace }} describe certificate {{ $labels.name }}`.
+        - alert: CertManagerCertExpiryCritical
+          expr: (certmanager_certificate_expiration_timestamp_seconds - time()) < 86400
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Certificate {{ $labels.exported_namespace }}/{{ $labels.name }} expires in {{ $value | humanizeDuration }}
+            description: >-
+              Certificate {{ $labels.exported_namespace }}/{{ $labels.name }} expires in under a day and has not renewed.
+              Check the Cloudflare DNS-01 token and `kubectl -n {{ $labels.exported_namespace }} describe certificate {{ $labels.name }}`.
+        - alert: CertManagerCertNotReady
+          expr: max by (exported_namespace, name) (certmanager_certificate_ready_status{condition!="True"}) == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Certificate {{ $labels.exported_namespace }}/{{ $labels.name }} is not Ready
+            description: >-
+              Certificate {{ $labels.exported_namespace }}/{{ $labels.name }} has not been Ready for 15m. Check
+              `kubectl -n {{ $labels.exported_namespace }} describe certificate {{ $labels.name }}`.
+        - alert: CertManagerOrderErrors
+          expr: sum(increase(certmanager_controller_sync_error_count{controller=~"orders|challenges"}[1h])) > 10
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: cert-manager ACME orders keep failing
+            description: >-
+              cert-manager logged {{ $value | printf "%.0f" }} order or challenge sync errors in the last hour, for over an hour.
+              Normal renewals cause at most a few. Check `kubectl get orders,challenges -A` and the controller logs.
+        - alert: CertManagerIssuerNotReady
+          expr: max by (name) (certmanager_clusterissuer_ready_status{condition!="True"}) == 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: ClusterIssuer {{ $labels.name }} is not Ready
+            description: ClusterIssuer {{ $labels.name }} has not been Ready for 15m. Check `kubectl describe clusterissuer {{ $labels.name }}`.
