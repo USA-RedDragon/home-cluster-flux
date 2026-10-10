@@ -8,6 +8,14 @@ controllers:
     strategy: Recreate
     pod:
       enableServiceLinks: true
+      securityContext:
+        sysctls:
+        - name: net.ipv4.conf.all.src_valid_mark
+          value: '1'
+        - name: net.ipv4.ip_forward
+          value: '1'
+        - name: net.ipv6.conf.all.forwarding
+          value: '1'
     initContainers:
       wireguard-init:
         image:
@@ -18,6 +26,10 @@ controllers:
         - /bin/sh
         - -c
         - |
+          mkdir -p /tmp/shim && \
+          printf '%s\n' '#!/bin/sh' 'for a in "$@"; do case "$a" in *=*) k="${a%%=*}"; v="${a#*=}"; [ "$(cat "/proc/sys/$(echo "$k" | tr . /)")" = "$v" ] || exit 1;; esac; done' > /tmp/shim/sysctl && \
+          chmod +x /tmp/shim/sysctl && \
+          export PATH=/tmp/shim:$PATH && \
           set -x && \
           sleep 10 && \
           ip l del wgc1 2>/dev/null || true && \
@@ -37,7 +49,6 @@ controllers:
           iptables -t nat -A POSTROUTING -o wg+ ! -d 255.255.255.255 -j SNAT --to-source 10.54.25.12 && \
           iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o wgc1 -j MASQUERADE
         securityContext:
-          privileged: true
           capabilities:
             add:
             - NET_ADMIN
@@ -53,8 +64,6 @@ controllers:
         - |
           set -x && \
           NODE_NAME=KI5VMF-OKWIN-P25-SCANNER && \
-          sysctl -w net.ipv4.ip_forward=1 && \
-          sysctl -w net.ipv6.conf.all.forwarding=1 && \
           ip link add dev br-wan type bridge && \
           ip link add dev br-dtdlink type bridge && \
           ip link set dev eth0 master br-wan && \
@@ -122,7 +131,6 @@ controllers:
         - name: NODE_IP
           value: 10.54.25.12
         securityContext:
-          privileged: true
           capabilities:
             add:
             - NET_ADMIN
@@ -205,6 +213,7 @@ configMaps:
     forceRename: server-babel-config
     data:
       babel.conf: |
+        skip-kernel-setup true
         router-id 02:44:c0:a6:cb:12
         smoothing-half-life 10
         protocol-buffer-size 65536
