@@ -11,6 +11,9 @@ controllers:
       priorityClassName: game-server
       terminationGracePeriodSeconds: 700
       securityContext:
+        sysctls:
+          - name: net.ipv4.conf.all.src_valid_mark
+            value: "1"
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
@@ -27,6 +30,10 @@ controllers:
           - -c
           - |
             set -ex
+            mkdir -p /tmp/shim
+            printf '%s\n' '#!/bin/sh' 'for a in "$@"; do case "$a" in *=*) k="${a%%=*}"; v="${a#*=}"; [ "$(cat "/proc/sys/$(echo "$k" | tr . /)")" = "$v" ] || exit 1;; esac; done' > /tmp/shim/sysctl
+            chmod +x /tmp/shim/sysctl
+            export PATH=/tmp/shim:$PATH
             ip link del wg0 2>/dev/null || true
             wg-quick up /etc/wireguard/wg0.conf
             ip -4 rule del not fwmark 51820 table 51820 2>/dev/null || true
@@ -37,7 +44,6 @@ controllers:
             ip -4 rule add ipproto udp sport 7777 lookup 51820 pref 200
             ip -4 rule add ipproto udp sport 7781 lookup 51820 pref 200
         securityContext:
-          privileged: true
           runAsNonRoot: false
           runAsUser: 0
           capabilities:
