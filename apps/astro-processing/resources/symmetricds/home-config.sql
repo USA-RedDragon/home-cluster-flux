@@ -396,6 +396,11 @@ create table if not exists ts_goal_progress (
 alter table ts_goal_progress add column if not exists night_quality double precision;
 alter table ts_goal_progress add column if not exists night_quality_at timestamp;
 alter table ts_goal_progress add column if not exists season_boost double precision;
+alter table ts_goal_progress add column if not exists state text;
+alter table ts_goal_progress add column if not exists reason text;
+alter table ts_goal_progress add column if not exists stack_subs integer;
+alter table ts_goal_progress add column if not exists min_subs integer;
+alter table ts_goal_progress add column if not exists sub_limit integer;
 
 create table if not exists ts_target_season (
     target_guid text NOT NULL,
