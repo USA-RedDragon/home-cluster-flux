@@ -14,6 +14,25 @@ extraConfig:
 
 operator:
   replicas: 3
+  prometheus:
+    metricsService: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+
+prometheus:
+  enabled: true
+  metricsService: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    trustCRDsExist: true
+
+envoy:
+  prometheus:
+    serviceMonitor:
+      enabled: true
+      interval: 30s
 
 # Needed for pod-to-pod Wireguard connections
 socketLB:
@@ -88,6 +107,9 @@ k8sServicePort: 7445
 
 hubble:
   metrics:
+    serviceMonitor:
+      enabled: true
+      interval: 30s
     enabled:
     - dns:query;ignoreAAAA
     - drop
