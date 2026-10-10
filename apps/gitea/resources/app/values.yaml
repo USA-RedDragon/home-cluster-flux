@@ -41,6 +41,11 @@ controllers:
             value: "true"
           - name: GITEA__METRICS__ENABLED_ISSUE_BY_REPOSITORY
             value: "true"
+          - name: GITEA__METRICS__TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: gitea-metrics
+                key: token
           - name: GITEA__SERVICE__REQUIRE_SIGNIN_VIEW
             value: expensive
           - name: GITEA__SERVICE__DISABLE_REGISTRATION
@@ -170,5 +175,10 @@ serviceMonitor:
       - port: http
         scheme: http
         path: /metrics
+        authorization:
+          type: Bearer
+          credentials:
+            name: gitea-metrics
+            key: token
         interval: 30s
         scrapeTimeout: 10s
