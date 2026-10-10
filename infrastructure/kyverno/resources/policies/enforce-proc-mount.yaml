@@ -8,24 +8,41 @@ spec:
     - name: check-proc-mount
       match:
         any:
-        - resources:
-            kinds:
-              - Pod
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - longhorn-system
+                - gpu-operator
+                - device-plugin
+                - intel-device-plugin
+                - node-feature-discovery
+                - metallb-system
+                - smartctl-exporter
+                - tailscale-operator
+                - frigate
+                - aredn
+                - aredn-dmrhub
+                - aredn-ntp
+                - aredn-piaware
+                - aredn-scanner
+                - wireguard
+                - path-of-titans
       validate:
-        failureAction: Audit
-        message: >-
-          Changing the proc mount from the default is not allowed. The fields
-          spec.containers[*].securityContext.procMount, spec.initContainers[*].securityContext.procMount,
-          and spec.ephemeralContainers[*].securityContext.procMount must be unset or
-          set to `Default`.
+        failureAction: Enforce
+        message: Changing the proc mount from the default is not allowed. The fields spec.containers[*].securityContext.procMount, spec.initContainers[*].securityContext.procMount, and spec.ephemeralContainers[*].securityContext.procMount must be unset or set to `Default`.
         pattern:
           spec:
             =(ephemeralContainers):
               - =(securityContext):
-                  =(procMount): "Default"
+                  =(procMount): Default
             =(initContainers):
               - =(securityContext):
-                  =(procMount): "Default"
+                  =(procMount): Default
             containers:
               - =(securityContext):
-                  =(procMount): "Default"
+                  =(procMount): Default

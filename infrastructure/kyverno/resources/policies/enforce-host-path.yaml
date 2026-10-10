@@ -8,32 +8,47 @@ spec:
     - name: host-path
       match:
         any:
-        - resources:
-            kinds:
-              - Pod
+          - resources:
+              kinds:
+                - Pod
       exclude:
         any:
-        - resources:
-            kinds:
-              - Deployment
-            namespaces:
-              - monitoring
-            names:
-              - prometheus-stack-prometheus-node-exporter
-        - resources:
-            namespaces:
-              - kube-system
-              - device-plugin
-              - gpu-operator
-              - intel-device-plugin
-              - longhorn-system
-              - node-feature-discovery
-              - scrypted
+          - resources:
+              namespaces:
+                - kube-system
+                - longhorn-system
+                - gpu-operator
+                - device-plugin
+                - intel-device-plugin
+                - node-feature-discovery
+                - metallb-system
+                - smartctl-exporter
+                - tailscale-operator
+                - frigate
+                - aredn
+                - aredn-dmrhub
+                - aredn-ntp
+                - aredn-piaware
+                - aredn-scanner
+                - wireguard
+                - path-of-titans
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - monitoring
+              selector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - prometheus-node-exporter
+                      - alloy
+                      - talos-logs
       validate:
-        failureAction: Audit
-        message: >-
-          HostPath volumes are forbidden. The field spec.volumes[*].hostPath must be unset.
+        failureAction: Enforce
+        message: HostPath volumes are forbidden. The field spec.volumes[*].hostPath must be unset.
         pattern:
           spec:
             =(volumes):
-              - X(hostPath): "null"
+              - X(hostPath): 'null'

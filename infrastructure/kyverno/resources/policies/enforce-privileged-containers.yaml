@@ -8,22 +8,41 @@ spec:
     - name: privileged-containers
       match:
         any:
-        - resources:
-            kinds:
-              - Pod
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - longhorn-system
+                - gpu-operator
+                - device-plugin
+                - intel-device-plugin
+                - node-feature-discovery
+                - metallb-system
+                - smartctl-exporter
+                - tailscale-operator
+                - frigate
+                - aredn
+                - aredn-dmrhub
+                - aredn-ntp
+                - aredn-piaware
+                - aredn-scanner
+                - wireguard
+                - path-of-titans
       validate:
-        failureAction: Audit
-        message: >-
-          Privileged mode is disallowed. The fields spec.containers[*].securityContext.privileged,
-          spec.initContainers[*].securityContext.privileged, and spec.ephemeralContainers[*].securityContext.privileged must be unset or set to `false`.
+        failureAction: Enforce
+        message: Privileged mode is disallowed. The fields spec.containers[*].securityContext.privileged, spec.initContainers[*].securityContext.privileged, and spec.ephemeralContainers[*].securityContext.privileged must be unset or set to `false`.
         pattern:
           spec:
             =(ephemeralContainers):
               - =(securityContext):
-                  =(privileged): "false"
+                  =(privileged): 'false'
             =(initContainers):
               - =(securityContext):
-                  =(privileged): "false"
+                  =(privileged): 'false'
             containers:
               - =(securityContext):
-                  =(privileged): "false"
+                  =(privileged): 'false'
