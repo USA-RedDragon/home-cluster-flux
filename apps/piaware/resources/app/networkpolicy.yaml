@@ -16,6 +16,14 @@ spec:
         - ports:
             - port: "30105"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: aredn-piaware
+            app.kubernetes.io/instance: aredn-piaware
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
