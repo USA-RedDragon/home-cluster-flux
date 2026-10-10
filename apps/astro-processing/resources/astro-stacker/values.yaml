@@ -136,6 +136,8 @@ controllers:
             value: "true"
           GOALS_PUBLISH:
             value: "on"
+          DARKS_PUBLISH:
+            value: "on"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
