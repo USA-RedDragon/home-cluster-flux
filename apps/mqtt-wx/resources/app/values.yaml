@@ -7,7 +7,6 @@ controllers:
     forceRename: mqtt-wx-app
     strategy: Recreate
     pod:
-      enableServiceLinks: true
       securityContext:
         runAsUser: 65534
         runAsGroup: 65534
@@ -46,17 +45,6 @@ controllers:
           requests:
             cpu: 1m
             memory: 64Mi
-        ports:
-        - name: http
-          containerPort: 80
-          protocol: TCP
-service:
-  app:
-    forceRename: mqtt-wx-app
-    controller: mqtt-wx
-    ports:
-      http:
-        port: 80
 persistence:
   data:
     type: persistentVolumeClaim
