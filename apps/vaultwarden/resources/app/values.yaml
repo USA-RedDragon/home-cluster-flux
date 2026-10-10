@@ -40,6 +40,8 @@ controllers:
         envFrom:
         - secretRef:
             name: vaultwarden-creds
+        - secretRef:
+            name: vaultwarden-sso
         env:
         - name: ROCKET_PORT
           value: '8080'
@@ -73,6 +75,16 @@ controllers:
           value: 'false'
         - name: _ENABLE_YUBICO
           value: 'false'
+        - name: SSO_ENABLED
+          value: 'true'
+        - name: SSO_ONLY
+          value: 'false'
+        - name: SSO_SIGNUPS_ALLOWED
+          value: 'false'
+        - name: SSO_AUTHORITY
+          value: https://authentik.mcswain.dev/application/o/vaultwarden/
+        - name: SSO_SCOPES
+          value: email profile offline_access
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
