@@ -6,7 +6,7 @@ metadata:
 spec:
   instances: 3
   imageName: jacob.pub/ghcr.io/cloudnative-pg/postgresql:17.5-22
-  enableSuperuserAccess: true
+  enableSuperuserAccess: false
   bootstrap:
     initdb:
       database: vaultwarden
