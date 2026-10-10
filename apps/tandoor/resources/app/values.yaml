@@ -125,6 +125,16 @@ route:
     hostnames:
       - recipes.mcswain.dev
     rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /admin
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: not-found
       - backendRefs:
           - name: tandoor
             port: 8080
@@ -134,7 +144,7 @@ route:
               value: /
       - matches:
           - path:
-              type: Exact
+              type: PathPrefix
               value: /accounts/login
         filters:
           - type: RequestRedirect

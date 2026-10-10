@@ -4,6 +4,7 @@ namespace: tandoor
 resources:
   - helm.yaml
   - postgres.yaml
+  - routefilter.yaml
 configMapGenerator:
   - name: chart-values
     files:
