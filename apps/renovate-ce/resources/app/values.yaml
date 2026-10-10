@@ -157,7 +157,7 @@ renovateServer:
     repository: jacob.pub/ghcr.io/usa-reddragon/renovate-ee
     version: 11.5.0@sha256:91b006978db1413251a121492bf6b400c12db22269d53241dc9be09ec51e99d9
 
-  replicas: 2
+  replicas: 1
 
   extraEnvVars:
   - name: MEND_RNV_REPORTING_ENABLED
