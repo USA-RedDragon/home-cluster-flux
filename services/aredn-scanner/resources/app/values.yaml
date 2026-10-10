@@ -124,6 +124,7 @@ controllers:
           echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf && \
           rm -rf /etc/s6/vtund && \
           rm -rf /etc/s6/olsrd && \
+          mkdir -p /var/run/meshlink/hosts && \
           cp /etc/babel/babel.conf /tmp/babel-generated.conf && \
           sleep 10 && \
           exec s6-svscan /etc/s6
