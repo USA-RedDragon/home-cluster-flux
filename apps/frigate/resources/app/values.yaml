@@ -295,7 +295,11 @@ configMaps:
             objects:
               filters:
                 person:
-                  mask: 0.282,0.514,0.271,0.574,0.344,0.569,0.349,0.517
+                  mask:
+                    object_mask_1:
+                      friendly_name: Object Mask 1 (person)
+                      enabled: true
+                      coordinates: 0.282,0.514,0.271,0.574,0.344,0.569,0.349,0.517
             review:
               alerts:
                 required_zones:
@@ -325,7 +329,11 @@ configMaps:
                 loitering_time: 0
                 inertia: 3
             motion:
-              mask: 0.192,0.024,0.19,0.114,0.574,0.128,1,0.38,1,0.105
+              mask:
+                motion_mask_1:
+                  friendly_name: Motion Mask 1
+                  enabled: true
+                  coordinates: 0.192,0.024,0.19,0.114,0.574,0.128,1,0.38,1,0.105
             review:
               alerts:
                 required_zones:
@@ -335,8 +343,16 @@ configMaps:
               filters:
                 person:
                   mask:
-                    - 0.626,0.707,0.603,0.78,0.617,0.839,0.66,0.849,0.705,0.834,0.719,0.766,0.684,0.705
-                    - 0.281,0.42,0.271,0.444,0.273,0.495,0.269,0.523,0.241,0.568,0.239,0.627,0.253,0.72,0.259,0.836,0.267,0.939,0.299,0.997,0.362,1,0.425,0.988,0.434,0.911,0.445,0.814,0.438,0.725,0.42,0.664,0.397,0.585,0.359,0.531,0.313,0.517,0.309,0.439
+                    object_mask_1:
+                      friendly_name: Object Mask 1 (person)
+                      enabled: true
+                      coordinates:
+                        0.626,0.707,0.603,0.78,0.617,0.839,0.66,0.849,0.705,0.834,0.719,0.766,0.684,0.705
+                    object_mask_2:
+                      friendly_name: Object Mask 2 (person)
+                      enabled: true
+                      coordinates:
+                        0.281,0.42,0.271,0.444,0.273,0.495,0.269,0.523,0.241,0.568,0.239,0.627,0.253,0.72,0.259,0.836,0.267,0.939,0.299,0.997,0.362,1,0.425,0.988,0.434,0.911,0.445,0.814,0.438,0.725,0.42,0.664,0.397,0.585,0.359,0.531,0.313,0.517,0.309,0.439
           back_door:
             ffmpeg:
               inputs:
@@ -358,10 +374,22 @@ configMaps:
               contour_area: 10
               improve_contrast: true
               mask:
-                - 0,0,0.875,0,0.875,1,0,1
-                - 0.915,0,1,0,1,1,0.915,1
-                - 0.875,0,0.915,0,0.915,0.235,0.875,0.235
-                - 0.875,0.3,0.915,0.3,0.915,1,0.875,1
+                motion_mask_1:
+                  friendly_name: Motion Mask 1
+                  enabled: true
+                  coordinates: 0,0,0.875,0,0.875,1,0,1
+                motion_mask_2:
+                  friendly_name: Motion Mask 2
+                  enabled: true
+                  coordinates: 0.915,0,1,0,1,1,0.915,1
+                motion_mask_3:
+                  friendly_name: Motion Mask 3
+                  enabled: true
+                  coordinates: 0.875,0,0.915,0,0.915,0.235,0.875,0.235
+                motion_mask_4:
+                  friendly_name: Motion Mask 4
+                  enabled: true
+                  coordinates: 0.875,0.3,0.915,0.3,0.915,1,0.875,1
           front_gate:
             ffmpeg:
               inputs:
@@ -396,12 +424,20 @@ configMaps:
                   - Neighbor_Yard
             motion:
               mask:
-                0.185,0.035,0.188,0.155,0.376,0.11,0.57,0.094,0.751,0.117,0.927,0.17,0.935,0.095,0.781,0.007,0.402,0.003,0.192,0.001
+                motion_mask_1:
+                  friendly_name: Motion Mask 1
+                  enabled: true
+                  coordinates:
+                    0.185,0.035,0.188,0.155,0.376,0.11,0.57,0.094,0.751,0.117,0.927,0.17,0.935,0.095,0.781,0.007,0.402,0.003,0.192,0.001
             objects:
               filters:
                 person:
                   mask:
-                    0.418,0.009,0.421,0.107,0.451,0.147,0.703,0.151,0.92,0.289,0.943,0.306,0.964,0.118,0.778,0
+                    object_mask_1:
+                      friendly_name: Object Mask 1 (person)
+                      enabled: true
+                      coordinates:
+                        0.418,0.009,0.421,0.107,0.451,0.147,0.703,0.151,0.92,0.289,0.943,0.306,0.964,0.118,0.778,0
           left_driveway:
             ffmpeg:
               inputs:
@@ -436,14 +472,29 @@ configMaps:
                 loitering_time: 0
             motion:
               mask:
-                - 0.838,0.134,0.838,0.167,0.873,0.179,0.874,0.146
-                - 0.439,0.091,0.693,0.2,0.829,0.278,1,0.428,1,0.19,0.88,0.113,0.772,0.066,0.678,0.041,0.575,0.029,0.451,0.029,0.407,0.035,0.405,0.089
-                - 0.244,0.062,0.251,0.155,0.448,0.149,0.404,0.113,0.404,0.039
+                motion_mask_1:
+                  friendly_name: Motion Mask 1
+                  enabled: true
+                  coordinates: 0.838,0.134,0.838,0.167,0.873,0.179,0.874,0.146
+                motion_mask_2:
+                  friendly_name: Motion Mask 2
+                  enabled: true
+                  coordinates:
+                    0.439,0.091,0.693,0.2,0.829,0.278,1,0.428,1,0.19,0.88,0.113,0.772,0.066,0.678,0.041,0.575,0.029,0.451,0.029,0.407,0.035,0.405,0.089
+                motion_mask_3:
+                  friendly_name: Motion Mask 3
+                  enabled: true
+                  coordinates:
+                    0.244,0.062,0.251,0.155,0.448,0.149,0.404,0.113,0.404,0.039
             objects:
               filters:
                 person:
                   mask:
-                    0.427,0.029,0.239,0.059,0.254,0.187,0.51,0.167,0.756,0.235,0.759,0.051
+                    object_mask_1:
+                      friendly_name: Object Mask 1 (person)
+                      enabled: true
+                      coordinates:
+                        0.427,0.029,0.239,0.059,0.254,0.187,0.51,0.167,0.756,0.235,0.759,0.051
             review:
               alerts:
                 required_zones:
@@ -471,9 +522,19 @@ configMaps:
                 loitering_time: 0
             motion:
               mask:
-                - 0.673,0.002,0.676,0.101,0.763,0.117,0.773,0.005
-                - 0.848,0.031,0.851,0.144,0.997,0.234,0.998,0.093
-                - 0.306,0.063,0.315,0.206,0.491,0.163,0.487,0.08,0.525,0.077,0.528,0.048,0.501,0.017,0.485,0.002,0.42,0
+                motion_mask_1:
+                  friendly_name: Motion Mask 1
+                  enabled: true
+                  coordinates: 0.673,0.002,0.676,0.101,0.763,0.117,0.773,0.005
+                motion_mask_2:
+                  friendly_name: Motion Mask 2
+                  enabled: true
+                  coordinates: 0.848,0.031,0.851,0.144,0.997,0.234,0.998,0.093
+                motion_mask_3:
+                  friendly_name: Motion Mask 3
+                  enabled: true
+                  coordinates:
+                    0.306,0.063,0.315,0.206,0.491,0.163,0.487,0.08,0.525,0.077,0.528,0.048,0.501,0.017,0.485,0.002,0.42,0
             review:
               alerts:
                 required_zones: Side_Yard
@@ -481,11 +542,18 @@ configMaps:
               filters:
                 person:
                   mask:
-                    - 0.307,0.059,0.317,0.209,0.491,0.163,0.483,0.081,0.535,0.074,0.529,0.036,0.483,0,0.425,0
-                    - 0.844,0.029,1,0.081,1,0.228,0.845,0.145
+                    object_mask_1:
+                      friendly_name: Object Mask 1 (person)
+                      enabled: true
+                      coordinates:
+                        0.307,0.059,0.317,0.209,0.491,0.163,0.483,0.081,0.535,0.074,0.529,0.036,0.483,0,0.425,0
+                    object_mask_2:
+                      friendly_name: Object Mask 2 (person)
+                      enabled: true
+                      coordinates: 0.844,0.029,1,0.081,1,0.228,0.845,0.145
         detect:
           enabled: true
-        version: 0.17-0
+        version: 0.18-0
 persistence:
   # Backport of upstream #24510 (unreleased as of 0.18.0): TimelineProcessor
   # kept every tracked object that ended without a clip/snapshot in
