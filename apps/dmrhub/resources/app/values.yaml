@@ -45,6 +45,8 @@ controllers:
           - secretRef:
               name: secrets
         env:
+          - name: LOG_LEVEL
+            value: "info"
           - name: HTTP_CORS_ENABLED
             value: "true"
           - name: HTTP_CORS_EXTRA_HOSTS
