@@ -22,7 +22,7 @@ controllers:
       rdio-scanner:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/rdio-scanner
-          tag: v7.2.30
+          tag: v7.2.30@sha256:93c610aafb9a94eada4e4d1d3b8c1d0bef91675dcdc56e80339099d841885794
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true

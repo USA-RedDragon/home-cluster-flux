@@ -16,7 +16,7 @@ controllers:
       kosync:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/kosync
-          tag: v0.0.16
+          tag: v0.0.16@sha256:e2e39d2c7b9abbbc822beb2dd598b1216d3baefdeef9fc4f197c738229c6a0dc
           pullPolicy: IfNotPresent
         resources:
           requests: {}

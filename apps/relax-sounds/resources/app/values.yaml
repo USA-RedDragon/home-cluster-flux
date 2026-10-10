@@ -16,7 +16,7 @@ controllers:
       relax-sounds:
         image:
           repository: jacob.pub/ghcr.io/gabe565/relax-sounds
-          tag: 2.0.0
+          tag: 2.0.0@sha256:d9330eda7d8ee7bedbd86c99fcc351e5c552bc5befe7506e96b7a2b1dd7cb1be
           pullPolicy: IfNotPresent
         resources:
           limits:
