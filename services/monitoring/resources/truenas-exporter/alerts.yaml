@@ -1,0 +1,134 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: truenas
+  namespace: monitoring
+spec:
+  groups:
+    - name: truenas
+      rules:
+        - alert: TrueNASExporterDown
+          expr: absent(up{job="truenas-exporter", namespace="monitoring"} == 1)
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: truenas-exporter is down or not scraped
+            description: "No truenas-exporter target has been up for 10m, so NAS pool and disk alerts cannot fire. Check `kubectl -n monitoring get pods -l app.kubernetes.io/name=truenas-exporter`."
+        - alert: TrueNASCollectorFailing
+          expr: max by (collector) (truenas_collector_success) == 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "truenas-exporter cannot fetch {{ $labels.collector }} from the NAS"
+            description: "The {{ $labels.collector }} fetch from TrueNAS has failed for 15m, so its metrics are missing. Check the exporter logs: an expired API key, a changed NAS certificate (the fingerprint is pinned) or the deny-nas-api network policy."
+        - alert: TrueNASPoolNotOnline
+          expr: max by (pool) (truenas_pool_online) == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "NAS pool {{ $labels.pool }} is not ONLINE"
+            description: "{{ with printf \"truenas_pool_info{pool=%q}\" $labels.pool | query }}Pool {{ $labels.pool }} is {{ . | first | label \"status\" }}.{{ end }} MinIO, NFS and backups depend on it. Run `zpool status {{ $labels.pool }}` on the NAS."
+        - alert: TrueNASPoolUnhealthy
+          expr: max by (pool) (truenas_pool_healthy) == 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS marks pool {{ $labels.pool }} unhealthy"
+            description: "{{ with printf \"truenas_pool_info{pool=%q}\" $labels.pool | query }}Pool {{ $labels.pool }} status code is {{ . | first | label \"status_code\" }}.{{ end }} Run `zpool status -v {{ $labels.pool }}` on the NAS."
+        - alert: TrueNASPoolResilvering
+          expr: max by (pool) (truenas_pool_scan_active{function="resilver"}) == 1
+          for: 5m
+          labels:
+            severity: info
+          annotations:
+            summary: "NAS pool {{ $labels.pool }} is resilvering"
+            description: "{{ with printf \"truenas_pool_scan_progress_ratio{pool=%q,function=\\\"resilver\\\"}\" $labels.pool | query }}{{ . | first | value | humanizePercentage }} done.{{ end }} NAS I/O is slow until it finishes."
+        - alert: TrueNASDiskErrorsIncreasing
+          expr: (truenas_pool_vdev_read_errors - truenas_pool_vdev_read_errors offset 1h) > 0
+          labels:
+            severity: warning
+            errors: read
+          annotations:
+            summary: "Read errors increasing on NAS {{ $labels.pool }}/{{ $labels.vdev }} {{ $labels.disk }}"
+            description: "{{ $labels.disk }} ({{ $labels.name }}) in {{ $labels.pool }}/{{ $labels.vdev }} logged {{ $value }} new read errors in the last hour. Run `zpool status -v {{ $labels.pool }}` on the NAS."
+        - alert: TrueNASDiskErrorsIncreasing
+          expr: (truenas_pool_vdev_write_errors - truenas_pool_vdev_write_errors offset 1h) > 0
+          labels:
+            severity: warning
+            errors: write
+          annotations:
+            summary: "Write errors increasing on NAS {{ $labels.pool }}/{{ $labels.vdev }} {{ $labels.disk }}"
+            description: "{{ $labels.disk }} ({{ $labels.name }}) in {{ $labels.pool }}/{{ $labels.vdev }} logged {{ $value }} new write errors in the last hour. Run `zpool status -v {{ $labels.pool }}` on the NAS."
+        - alert: TrueNASDiskErrorsIncreasing
+          expr: (truenas_pool_vdev_checksum_errors - truenas_pool_vdev_checksum_errors offset 1h) > 0
+          labels:
+            severity: warning
+            errors: checksum
+          annotations:
+            summary: "Checksum errors increasing on NAS {{ $labels.pool }}/{{ $labels.vdev }} {{ $labels.disk }}"
+            description: "{{ $labels.disk }} ({{ $labels.name }}) in {{ $labels.pool }}/{{ $labels.vdev }} logged {{ $value }} new checksum errors in the last hour. Run `zpool status -v {{ $labels.pool }}` on the NAS."
+        - alert: TrueNASPoolDeviceNotOnline
+          expr: max by (pool, vdev, name, disk, type) (truenas_pool_vdev_online) == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "NAS {{ $labels.pool }}/{{ $labels.vdev }} {{ $labels.disk }} is not ONLINE"
+            description: "{{ $labels.type }} {{ $labels.name }} {{ $labels.disk }} in {{ $labels.pool }}/{{ $labels.vdev }} is degraded, faulted or missing. Run `zpool status {{ $labels.pool }}` on the NAS."
+        - alert: TrueNASPoolCapacityHigh
+          expr: max by (pool) (truenas_pool_allocated_bytes / truenas_pool_size_bytes) > 0.80
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "NAS pool {{ $labels.pool }} is {{ $value | humanizePercentage }} full"
+            description: "ZFS slows down above 80% full. Free space or add a vdev to {{ $labels.pool }}."
+        - alert: TrueNASPoolCapacityCritical
+          expr: max by (pool) (truenas_pool_allocated_bytes / truenas_pool_size_bytes) > 0.90
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: "NAS pool {{ $labels.pool }} is {{ $value | humanizePercentage }} full"
+            description: "Pool {{ $labels.pool }} is over 90% full. Writes from MinIO, NFS and backups will fail when it fills."
+        - alert: TrueNASScrubOverdue
+          expr: |
+            (time() - max by (pool) (truenas_pool_scan_end_timestamp_seconds)) / 86400 > 35
+              unless on (pool)
+            max by (pool) (truenas_pool_scan_active) == 1
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "NAS pool {{ $labels.pool }} has not finished a scrub in {{ $value | printf \"%.0f\" }} days"
+            description: "The last completed scrub or resilver of {{ $labels.pool }} ended {{ $value | printf \"%.0f\" }} days ago. Check the scrub task schedule in TrueNAS."
+        - alert: TrueNASDiskTemperatureHigh
+          expr: |
+            (max by (disk) (truenas_disk_temperature_celsius) > 55 and on (disk) truenas_disk_info{type="hdd"})
+              or
+            (max by (disk) (truenas_disk_temperature_celsius) > 70 and on (disk) truenas_disk_info{type!="hdd"})
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "NAS disk {{ $labels.disk }} is at {{ $value }}°C"
+            description: "{{ with printf \"truenas_disk_info{disk=%q}\" $labels.disk | query }}{{ . | first | label \"model\" }} {{ . | first | label \"serial\" }}{{ end }} has been above its limit (55°C for HDDs, 70°C for SSDs) for 15m. Check the NAS fans and airflow."
+        - alert: TrueNASSMARTTestFailed
+          expr: max by (disk, test, status) (truenas_disk_smart_last_test_failed) == 1
+          labels:
+            severity: warning
+          annotations:
+            summary: "SMART {{ $labels.test }} test on NAS disk {{ $labels.disk }} ended {{ $labels.status }}"
+            description: "{{ with printf \"truenas_disk_info{disk=%q}\" $labels.disk | query }}{{ . | first | label \"model\" }} {{ . | first | label \"serial\" }}{{ end }} failed its latest SMART self-test. Run `smartctl -a /dev/{{ $labels.disk }}` on the NAS."
+        - alert: TrueNASAlert
+          expr: sum by (klass, level) (truenas_alerts{level=~"ERROR|CRITICAL|ALERT|EMERGENCY", dismissed="false"}) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "TrueNAS {{ $labels.level }} alert {{ $labels.klass }}"
+            description: "TrueNAS has {{ $value }} active {{ $labels.level }} {{ $labels.klass }} alert(s) that are not dismissed. See the alert list at https://192.168.1.135/ui/dashboard."

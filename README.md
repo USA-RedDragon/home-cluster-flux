@@ -1038,10 +1038,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="11">monitoring</td>
+    <td rowspan="12">monitoring</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/resources/alloy/helm.yaml">alloy</a></td>
-    <td rowspan="11"></td>
+    <td rowspan="12"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
@@ -1082,6 +1082,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/monitoring/resources/thanos-store/helm.yaml">thanos-store</a></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="services/monitoring/resources/truenas-exporter/helm.yaml">truenas-exporter</a></td>
   </tr>
 </table>
 
