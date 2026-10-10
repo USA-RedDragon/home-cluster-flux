@@ -81,6 +81,12 @@ spec:
                 - sonarr
                 - sonarr-anime
                 - qbittorrent
+                - aredn
+                - aredn-dmrhub
+                - aredn-ntp
+                - aredn-piaware
+                - aredn-scanner
+                - wireguard
       exclude:
         any:
           - resources:
@@ -95,12 +101,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - aredn
-                - aredn-dmrhub
-                - aredn-ntp
-                - aredn-piaware
-                - aredn-scanner
-                - wireguard
                 - path-of-titans
       preconditions:
         all:
@@ -155,12 +155,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - aredn
-                - aredn-dmrhub
-                - aredn-ntp
-                - aredn-piaware
-                - aredn-scanner
-                - wireguard
                 - path-of-titans
       preconditions:
         all:

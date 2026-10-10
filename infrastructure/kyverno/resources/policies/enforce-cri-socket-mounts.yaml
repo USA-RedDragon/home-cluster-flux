@@ -24,12 +24,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - aredn
-                - aredn-dmrhub
-                - aredn-ntp
-                - aredn-piaware
-                - aredn-scanner
-                - wireguard
                 - path-of-titans
       validate:
         failureAction: Enforce
@@ -59,12 +53,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - aredn
-                - aredn-dmrhub
-                - aredn-ntp
-                - aredn-piaware
-                - aredn-scanner
-                - wireguard
                 - path-of-titans
       validate:
         failureAction: Enforce
@@ -94,12 +82,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - aredn
-                - aredn-dmrhub
-                - aredn-ntp
-                - aredn-piaware
-                - aredn-scanner
-                - wireguard
                 - path-of-titans
       validate:
         failureAction: Enforce
@@ -129,12 +111,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - aredn
-                - aredn-dmrhub
-                - aredn-ntp
-                - aredn-piaware
-                - aredn-scanner
-                - wireguard
                 - path-of-titans
       validate:
         failureAction: Enforce
