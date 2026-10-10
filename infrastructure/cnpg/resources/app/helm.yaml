@@ -36,6 +36,8 @@ spec:
   values:
     image:
       repository: jacob.pub/ghcr.io/cloudnative-pg/cloudnative-pg
+    monitoring:
+      podMonitorEnabled: true
     resources:
       requests:
         memory: 384Mi
