@@ -16,13 +16,9 @@ controllers:
           repository: jacob.pub/ghcr.io/tailscale/tailscale
           tag: v1.102.5@sha256:c507f3a2a6ab1cabd8d809b98edeb41edbd5c3fb6ad9632ffd098b4c7d0b4065
         env:
-          TS_HOSTNAME: home-peer-relay
           TS_KUBE_SECRET: tailscale-state
           TS_USERSPACE: "true"
-          TS_AUTH_ONCE: "true"
-        envFrom:
-          - secretRef:
-              name: tailscale-env
+          TS_EXPERIMENTAL_VERSIONED_CONFIG_DIR: /etc/tailscaled
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -30,6 +26,20 @@ controllers:
             drop: ["ALL"]
 
 persistence:
+  config:
+    enabled: true
+    type: configMap
+    name: tailscaled-config
+    globalMounts:
+      - path: /etc/tailscaled
+        readOnly: true
+  auth:
+    enabled: true
+    type: secret
+    name: tailscale-env
+    globalMounts:
+      - path: /etc/tailscale-auth
+        readOnly: true
   run:
     enabled: true
     type: emptyDir

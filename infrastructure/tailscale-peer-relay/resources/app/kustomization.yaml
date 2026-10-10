@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: tailscale-peer-relay
 resources:
   - helm.yaml
+  - tailscaled-config.yaml
 configMapGenerator:
   - name: chart-values
     files:

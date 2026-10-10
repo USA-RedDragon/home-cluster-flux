@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tailscaled-config
+data:
+  cap-120.hujson: |
+    {
+      "Version": "alpha0",
+      "Hostname": "home-peer-relay",
+      "AuthKey": "file:/etc/tailscale-auth/TS_AUTHKEY",
+      "acceptDNS": false,
+      "acceptRoutes": false,
+      "RelayServerPort": 40000,
+      "RelayServerStaticEndpoints": ["68.12.95.206:40000"]
+    }
