@@ -67,6 +67,12 @@ controllers:
           value: Bitwarden
         - name: REQUIRE_DEVICE_EMAIL
           value: 'false'
+        - name: IP_HEADER
+          value: X-Forwarded-For
+        - name: _ENABLE_DUO
+          value: 'false'
+        - name: _ENABLE_YUBICO
+          value: 'false'
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
