@@ -23,7 +23,7 @@ spec:
           name: cnpg-minio
           key: AWS_SECRET_ACCESS_KEY
       data:
-        compression: lz4
+        compression: snappy
       wal:
         compression: zstd
     retentionPolicy: "4w"
