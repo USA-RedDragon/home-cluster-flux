@@ -1,0 +1,56 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: generate-namespace-network-policies
+spec:
+  rules:
+    - name: namespace-ingress
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              selector:
+                matchLabels:
+                  policy.mcswain.dev/ingress-namespace: "true"
+      generate:
+        generateExisting: true
+        synchronize: false
+        apiVersion: cilium.io/v2
+        kind: CiliumNetworkPolicy
+        name: namespace-ingress
+        namespace: "{{request.object.metadata.namespace}}"
+        data:
+          spec:
+            endpointSelector:
+              matchLabels:
+                policy.mcswain.dev/ingress-namespace: "true"
+            ingress:
+              - fromEndpoints:
+                  - matchLabels:
+                      io.kubernetes.pod.namespace: "{{request.object.metadata.namespace}}"
+    - name: namespace-egress
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              selector:
+                matchLabels:
+                  policy.mcswain.dev/egress-namespace: "true"
+      generate:
+        generateExisting: true
+        synchronize: false
+        apiVersion: cilium.io/v2
+        kind: CiliumNetworkPolicy
+        name: namespace-egress
+        namespace: "{{request.object.metadata.namespace}}"
+        data:
+          spec:
+            endpointSelector:
+              matchLabels:
+                policy.mcswain.dev/egress-namespace: "true"
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      io.kubernetes.pod.namespace: "{{request.object.metadata.namespace}}"
