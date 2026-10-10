@@ -38,8 +38,8 @@ controllers:
           STATION_WEEK_START: "6"
           STATION_RADAR_IMAGE: https://radar.weather.gov/ridge/standard/KTLX_loop.gif
           STATION_RADAR_URL: https://radar.weather.gov/?settings=v1_eyJhZ2VuZGEiOnsiaWQiOiJsb2NhbCIsImNlbnRlciI6Wy05Ny4yNzc3LDM1LjMzMzA1XSwiem9vbSI6NywiZmlsdGVyIjoiV1NSLTg4RCIsImxheWVyIjoiYnJlZl9yYXciLCJzdGF0aW9uIjoiS1RMWCIsInRyYW5zcGFyZW50Ijp0cnVlLCJhbGVydHNPdmVybGF5Ijp0cnVlLCJzdGF0aW9uSWNvbnNPdmVybGF5Ijp0cnVlfSwiYW5pbWF0aW5nIjpmYWxzZSwiYmFzZSI6InN0YW5kYXJkIiwiY291bnR5IjpmYWxzZSwiY3dhIjpmYWxzZSwic3RhdGUiOmZhbHNlLCJtZW51Ijp0cnVlLCJzaG9ydEZ1c2VkT25seSI6dHJ1ZSwib3BhY2l0eSI6eyJhbGVydHMiOjAuOCwibG9jYWwiOjAuNiwibG9jYWxTdGF0aW9ucyI6MC44LCJuYXRpb25hbCI6MC42fX0%3D
-          STATION_SATELLITE_IMAGE: https://cdn.star.nesdis.noaa.gov/GOES16/ABI/SECTOR/sp/GEOCOLOR/GOES16-SP-GEOCOLOR-600x600.gif
-          STATION_SATELLITE_URL: https://www.star.nesdis.noaa.gov/GOES/sector_band.php?sat=G16&sector=sp&band=GEOCOLOR&length=36
+          STATION_SATELLITE_IMAGE: https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/sp/GEOCOLOR/GOES19-SP-GEOCOLOR-600x600.gif
+          STATION_SATELLITE_URL: https://www.star.nesdis.noaa.gov/GOES/sector_band.php?sat=G19&sector=sp&band=GEOCOLOR&length=36
           NWS_ENABLED: "true"
           NWS_USER_AGENT: (wx.mcswain.dev, wx-station@mcswain.dev)
           GOMEMLIMIT: 48MiB
