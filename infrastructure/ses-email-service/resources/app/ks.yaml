@@ -8,6 +8,8 @@ spec:
   interval: 60m0s
   path: ./infra/k8s
   prune: true
+  targetNamespace: ses-email-service
+  serviceAccountName: ses-email-service-reconciler
   sourceRef:
     kind: GitRepository
     name: ses-email-service
