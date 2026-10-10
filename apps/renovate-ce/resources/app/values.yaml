@@ -175,9 +175,6 @@ renovateServer:
   #   mendRnvServerApiSecret:
   existingSecret: renovate-secrets
 
-  # Optional, defaults to '0 * * * *' (hourly)
-  mendRnvCronJobSchedulerAll: '*/5 * * * *'
-
   mendRnvDiskUsageWarnThreshold: 0
 
   # Optional. valid values: 'disabled', 'enabled', 'managed' and default to unset (see documentation)
