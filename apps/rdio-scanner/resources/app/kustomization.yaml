@@ -5,6 +5,7 @@ resources:
   - helm.yaml
   - networkpolicy.yaml
   - postgres.yaml
+  - routefilter.yaml
 configMapGenerator:
   - name: chart-values
     files:
