@@ -19,6 +19,8 @@ spec:
     mode: enabled
   values:
     fullnameOverride: reloader
+    image:
+      repository: jacob.pub/ghcr.io/stakater/reloader
     reloader:
       readOnlyRootFileSystem: true
       reloadStrategy: annotations
