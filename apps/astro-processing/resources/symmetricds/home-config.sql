@@ -322,3 +322,40 @@ update sym_trigger_router set ping_back_enabled = 1, last_update_time = current_
 insert into sym_parameter (external_id, node_group_id, param_key, param_value, create_time, last_update_time) values
   ('ALL', 'home', 'auto.reload.reverse', 'true', current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_command (
+    id text NOT NULL,
+    kind text NOT NULL,
+    payload text NOT NULL,
+    author text NOT NULL,
+    undo_of text,
+    created_at timestamp NOT NULL,
+    cancelled integer NOT NULL DEFAULT 0,
+    PRIMARY KEY (id)
+);
+
+create table if not exists ts_command_result (
+    command_id text NOT NULL,
+    status text NOT NULL,
+    message text,
+    detail text,
+    updated_at timestamp NOT NULL,
+    PRIMARY KEY (command_id)
+);
+
+grant select, insert, update on ts_command to "astro-processing";
+grant select on ts_command_result to "astro-processing";
+
+insert into sym_channel (channel_id, processing_order, max_batch_size, max_batch_to_send, enabled, description, create_time, last_update_time) values
+  ('command', 5, 20, 10, 1, 'web UI commands for observatory-scheduler', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_command', 'ts_command', 'command', 'reload', current_timestamp, current_timestamp),
+  ('ts_command_result', 'ts_command_result', 'command', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_command', 'home to sqlite', -1, current_timestamp, current_timestamp),
+  ('ts_command_result', 'sqlite to home', -1, current_timestamp, current_timestamp)
+  on conflict do nothing;

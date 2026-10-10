@@ -4,6 +4,7 @@ namespace: astro-processing
 resources:
   - helm.yaml
   - httproute-latest-light.yaml
+  - tailscale-observatory.yaml
 configMapGenerator:
   - name: astro-stacker-chart-values
     files:
