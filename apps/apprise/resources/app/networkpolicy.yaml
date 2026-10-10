@@ -17,6 +17,9 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: qbit-manage
         - matchLabels:
+            io.kubernetes.pod.namespace: ledger
+            app.kubernetes.io/controller: ledger
+        - matchLabels:
             io.kubernetes.pod.namespace: tailscale-operator
             tailscale.com/parent-resource: apprise
             tailscale.com/parent-resource-ns: apprise
