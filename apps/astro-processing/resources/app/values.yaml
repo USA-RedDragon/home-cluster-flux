@@ -23,7 +23,7 @@ controllers:
             memory: 48Mi
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing-frontend
-          tag: "beta@sha256:3ad4461ee3323076bd48956e6f90cb4555f232aeef64e96105300c0a57e2d96d"
+          tag: "beta@sha256:767d1355b072fac47f972c4935a9970227b65b020498f4528aef39c2b5a8ef46"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
