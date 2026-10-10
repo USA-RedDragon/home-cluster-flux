@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: monitoring
 resources:
   - backup-alerts.yaml
+  - cert-manager-alerts.yaml
   - etcd-alerts.yaml
   - flux-alerts.yaml
   - log-alerts.yaml
