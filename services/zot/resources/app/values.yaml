@@ -110,6 +110,8 @@ configMaps:
               "pub/**":
                 defaultPolicy: [read]
                 anonymousPolicy: [read]
+            metrics:
+              anonymousPolicy: [read]
           auth:
             failDelay: 3
             sessionKeysFile: /etc/zot/sessionkeys.json
@@ -301,6 +303,17 @@ persistence:
         zot:
           - path: /zot
 
+serviceMonitor:
+  zot:
+    enabled: true
+    serviceName: zot
+    endpoints:
+      - port: http
+        scheme: http
+        path: /metrics
+        interval: 1m
+        scrapeTimeout: 30s
+
 route:
   zot:
     enabled: true
@@ -312,6 +325,16 @@ route:
     hostnames:
       - jacob.pub
     rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /metrics
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: not-found
       - backendRefs:
           - name: zot
             port: 5000

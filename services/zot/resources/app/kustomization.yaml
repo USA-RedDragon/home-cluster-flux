@@ -6,6 +6,7 @@ resources:
   - valkey.yaml
   - auth-cert.yaml
   - securitypolicy.yaml
+  - routefilter.yaml
 configMapGenerator:
   - name: chart-values
     files:
