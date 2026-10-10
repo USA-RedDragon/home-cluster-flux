@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: external-dns-internal
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: external-dns
+  ingress:
+    - fromEntities:
+        - host
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "7979"
+            - port: "8080"
+  egress:
+    - toCIDR:
+        - 192.168.1.1/32
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
