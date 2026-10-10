@@ -51,7 +51,8 @@ controllers:
                 name: minecraft
                 key: rcon-password
         resources:
-          limits: {}
+          limits:
+            memory: 64Mi
           requests: {}
         securityContext: *security-context
     pod:

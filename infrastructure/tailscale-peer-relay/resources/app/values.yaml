@@ -9,6 +9,9 @@ controllers:
         fsGroupChangePolicy: OnRootMismatch
     containers:
       app:
+        resources:
+          limits:
+            memory: 96Mi
         image:
           repository: jacob.pub/ghcr.io/tailscale/tailscale
           tag: v1.102.5@sha256:c507f3a2a6ab1cabd8d809b98edeb41edbd5c3fb6ad9632ffd098b4c7d0b4065

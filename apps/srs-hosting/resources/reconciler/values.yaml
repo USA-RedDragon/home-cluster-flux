@@ -21,7 +21,8 @@ controllers:
                 name: postgresql-app
                 key: uri
         resources:
-          limits: {}
+          limits:
+            memory: 160Mi
           requests: {}
         securityContext:
           readOnlyRootFilesystem: true

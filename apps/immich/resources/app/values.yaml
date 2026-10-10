@@ -8,6 +8,9 @@ controllers:
   main:
     containers:
       main:
+        resources:
+          limits:
+            memory: 2048Mi
         env:
           REDIS_HOSTNAME: redis-app
           DB_HOSTNAME: postgresql-rw

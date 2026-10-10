@@ -49,7 +49,8 @@ controllers:
                 name: obsidibot
                 key: ingest-secret
         resources:
-          limits: {}
+          limits:
+            memory: 64Mi
           requests: {}
         securityContext:
           readOnlyRootFilesystem: true

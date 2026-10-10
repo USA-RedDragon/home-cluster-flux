@@ -19,6 +19,8 @@ controllers:
           tag: 2.0.0
           pullPolicy: IfNotPresent
         resources:
+          limits:
+            memory: 96Mi
           requests:
             cpu: 10m
             memory: 30Mi

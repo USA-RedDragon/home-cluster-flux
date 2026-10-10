@@ -28,6 +28,8 @@ controllers:
         # A CPU request keeps it off the BestEffort share, so node-wide stalls
         # (astro-stacker bursts on epsilon) don't starve it first.
         resources:
+          limits:
+            memory: 704Mi
           requests:
             cpu: 100m
             memory: 448Mi

@@ -51,7 +51,8 @@ controllers:
                 name: srs-hosting
                 key: session-secret
         resources:
-          limits: {}
+          limits:
+            memory: 64Mi
           requests: {}
         securityContext:
           readOnlyRootFilesystem: true

@@ -44,11 +44,14 @@ spec:
               type: RuntimeDefault
     container:
       merge:
-          securityContext:
-            readOnlyRootFilesystem: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: [ALL]
+        resources:
+          limits:
+            memory: 64Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
       image:
         repository: jacob.pub/docker.io/nats
         tag: 2.15.0-alpine@sha256:004796a89b7ad925027a01d69d175734403f5b3b98d49f4ed2c861e6f9aafec4
@@ -63,11 +66,14 @@ spec:
     promExporter:
       enabled: true
       merge:
-          securityContext:
-            readOnlyRootFilesystem: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: [ALL]
+        resources:
+          limits:
+            memory: 48Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
       image:
         repository: jacob.pub/docker.io/natsio/prometheus-nats-exporter
         tag: 0.20.2@sha256:c623b608e148e31e1c1c878673a197f1828e58ce90de4f01d22f1baa84c8fee9
