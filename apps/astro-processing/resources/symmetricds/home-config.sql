@@ -431,3 +431,33 @@ insert into sym_trigger_router (trigger_id, router_id, initial_load_order, creat
   ('ts_target_season', 'sqlite to home', 130, current_timestamp, current_timestamp),
   ('ts_goal_progress', 'home to sqlite', -1, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_dark_need (
+    combo_key text NOT NULL PRIMARY KEY,
+    priority integer NOT NULL,
+    exposure double precision NOT NULL,
+    gain double precision NOT NULL,
+    camera_offset double precision NOT NULL,
+    binning double precision NOT NULL,
+    readout_mode text,
+    set_temp double precision NOT NULL,
+    frames_needed integer NOT NULL,
+    frames_have integer NOT NULL,
+    frames_rejected integer NOT NULL,
+    lights_blocked integer NOT NULL,
+    lights_scaled integer NOT NULL,
+    newest_dark_at timestamp,
+    session_gap_hours double precision NOT NULL,
+    basis text,
+    computed_at timestamp NOT NULL
+);
+
+grant select, insert, update, delete on ts_dark_need to "astro-processing";
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_dark_need', 'ts_dark_need', 'goal', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_dark_need', 'home to sqlite', -1, current_timestamp, current_timestamp)
+  on conflict do nothing;
