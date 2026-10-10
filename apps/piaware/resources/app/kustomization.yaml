@@ -4,6 +4,7 @@ namespace: piaware
 resources:
   - helm.yaml
   - networkpolicy.yaml
+  - routefilter.yaml
 configMapGenerator:
   - name: chart-values
     files:
