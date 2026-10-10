@@ -51,6 +51,9 @@ rules:
     resources: ["clusterroles"]
     resourceNames: ["srs-tenant"]
     verbs: ["bind"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["rolebindings"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ---
 apiVersion: policies.kyverno.io/v1
 kind: GeneratingPolicy
