@@ -21,7 +21,7 @@ controllers:
       truenas-exporter:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/truenas-exporter
-          tag: v1.0.0@sha256:eae2bc7514188bcaaddf7b221a10502bc309bd1c6998f2c1e201daf5c2ba919c
+          tag: v1.0.1@sha256:23ba24459815928642e1a44018dfe3df1be1090aba5aed1d7327d2d4b9be77b2
           pullPolicy: IfNotPresent
         envFrom:
           - secretRef:
