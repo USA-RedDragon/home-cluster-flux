@@ -15,7 +15,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/mqtt-wx
-          tag: main@sha256:9d9dddbce44640b980d60a7d7a35e7ddbfef9dbdf01acbccd8fbfd5f9799644b
+          tag: main@sha256:e0450d7a60423d2fc2b68cceb71e8d3e8e2c17e0b52b49b396f3e76377fe70b4
           pullPolicy: IfNotPresent
         envFrom:
         - secretRef:
