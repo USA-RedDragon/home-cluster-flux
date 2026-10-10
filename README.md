@@ -29,7 +29,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#apprise">apprise</a></li>
   <li><a href="#aredn">aredn</a></li>
   <li><a href="#aredn-dmrhub">aredn-dmrhub</a></li>
-  <li><a href="#aredn-meshmap">aredn-meshmap</a></li>
   <li><a href="#aredn-ntp">aredn-ntp</a></li>
   <li><a href="#aredn-piaware">aredn-piaware</a></li>
   <li><a href="#aredn-scanner">aredn-scanner</a></li>
@@ -221,22 +220,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>aredn-dmrhub</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/aredn-dmrhub/resources/app/helm.yaml">aredn-dmrhub</a></td>
-    <td></td>
-  </tr>
-</table>
-
-<h4>aredn-meshmap</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>aredn-meshmap</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/aredn-meshmap/resources/app/helm.yaml">aredn-meshmap</a></td>
     <td></td>
   </tr>
 </table>
