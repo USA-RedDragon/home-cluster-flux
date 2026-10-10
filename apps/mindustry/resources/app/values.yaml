@@ -18,6 +18,16 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/mindustry
           tag: v146@sha256:9a7166a7a479cfa13f1a211d28a1ca73fce75ffc3c3bef2e93aab638fc4c8d32
           pullPolicy: IfNotPresent
+        command:
+          - /bin/ash
+          - -c
+          - |
+            latest=$(ls -t /config/saves/auto_*.msav 2>/dev/null | head -n 1)
+            if [ -n "$latest" ]; then
+              cp "$latest" /config/saves/latest.msav
+              export MINDUSTRY_START_COMMANDS="load latest"
+            fi
+            exec /entrypoint.sh
         resources:
           requests:
             cpu: 50m
@@ -40,6 +50,8 @@ controllers:
             value: "false"
           - name: MINDUSTRY_MOTD
             value: "Welcome to USA-RedDragon's Mindustry Server!"
+          - name: MINDUSTRY_AUTOSAVE
+            value: "true"
           - name: MINDUSTRY_AUTOSAVE_AMOUNT
             value: "120"
           - name: MINDUSTRY_AUTOSAVE_SPACING
