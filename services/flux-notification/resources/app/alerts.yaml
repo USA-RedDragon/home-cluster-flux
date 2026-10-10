@@ -4,7 +4,8 @@ metadata:
   name: telegram
   namespace: flux-system
 spec:
-  summary: "Home Cluster"
+  eventMetadata:
+    summary: "Home Cluster"
   providerRef:
     name: telegram
   # info fired a message on every chart pull and reconcile; only send failures
