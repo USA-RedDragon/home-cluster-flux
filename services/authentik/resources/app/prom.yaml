@@ -101,13 +101,6 @@ spec:
         - record: job:django_db_errors_total:sum_rate30s
           expr: sum(rate(django_db_errors_total[30s])) by (alias, vendor, type)
 
-    - name: authentik Aggregate migrations
-      rules:
-        - record: job:django_migrations_applied_total:max
-          expr: max(django_migrations_applied_total) by (job, connection)
-        - record: job:django_migrations_unapplied_total:max
-          expr: max(django_migrations_unapplied_total) by (job, connection)
-
     - name: authentik Alerts
       rules:
         - alert: NoWorkersConnected
@@ -120,23 +113,14 @@ spec:
             message: authentik instance {{ $labels.instance }}'s worker are either not running or not connected.
 
 
-        - alert: PendingMigrations
+        - alert: TaskBacklog
           labels:
-            severity: critical
-          expr: max without (pid) (django_migrations_unapplied_total) > 0
-          for: 10m
-          annotations:
-            summary: Pending database migrations
-            message: authentik instance {{ $labels.instance }} has pending database migrations
-
-        - alert: FailedSystemTasks
-          labels:
-            severity: critical
-          expr: sum(increase(authentik_system_tasks{status="error"}[30m])) > 0
+            severity: warning
+          expr: sum(max by (actor_name, queue_name) (authentik_tasks_queued)) > 25
           for: 30m
           annotations:
-            summary: Failed system tasks
-            message: System task {{ $labels.task_name }} has failed
+            summary: authentik task queue is backing up
+            message: "{{ $value }} authentik tasks have been queued for over 30m. Check the authentik-worker pods and System > Tasks in the admin UI."
 
         - alert: DisconnectedOutposts
           labels:
