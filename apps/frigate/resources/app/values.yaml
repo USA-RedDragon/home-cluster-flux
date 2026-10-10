@@ -148,17 +148,6 @@ configMaps:
           user: frigate
           stats_interval: 60
 
-        model:
-          attributes_map:
-            person:
-              - amazon
-              - face
-            car:
-              - amazon
-              - fedex
-              - ups
-              - usps
-
         detectors:
           coral:
             type: edgetpu
