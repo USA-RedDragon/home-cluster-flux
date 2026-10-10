@@ -69,9 +69,9 @@ spec:
             (
               (100 - max without (attribute_name, attribute_value_type, attribute_id, attribute_flags_short, attribute_flags_long) (disk:endurance_used:percent))
               / on (node, device, serial_number, model_name) (
-                  rate(disk:bytes_written:total[7d]) * 86400
+                  max by (node, device, serial_number, model_name) (rate(disk:bytes_written:total[7d])) * 86400
                 * on (node, device, serial_number, model_name) max without (attribute_name, attribute_value_type, attribute_id, attribute_flags_short, attribute_flags_long) (disk:endurance_used:percent)
-                / disk:bytes_written:total
+                / on (node, device, serial_number, model_name) max by (node, device, serial_number, model_name) (disk:bytes_written:total)
               )
             ) < 90
           for: 6h
