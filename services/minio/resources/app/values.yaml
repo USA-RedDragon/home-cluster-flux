@@ -91,10 +91,12 @@ route:
             headers:
               - name: X-Amz-Content-Sha256
                 value: STREAMING-UNSIGNED-PAYLOAD-TRAILER
-            queryParams:
-              - name: X-Amz-Credential
+              - name: X-Amz-Meta-Snowball-Auto-Extract
                 type: RegularExpression
                 value: ".*"
+              - name: Authorization
+                type: RegularExpression
+                value: "AWS4-HMAC-SHA256 .+"
         filters:
           - type: ExtensionRef
             extensionRef:
@@ -108,9 +110,22 @@ route:
             headers:
               - name: X-Amz-Content-Sha256
                 value: STREAMING-UNSIGNED-PAYLOAD-TRAILER
-              - name: X-Amz-Meta-Snowball-Auto-Extract
+              - name: Authorization
                 type: RegularExpression
-                value: ".*"
+                value: "AWS4-HMAC-SHA256 .+"
+        backendRefs:
+          - name: minio
+            port: 9000
+        timeouts:
+          request: 24h
+          backendRequest: 23h
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /
+            headers:
+              - name: X-Amz-Content-Sha256
+                value: STREAMING-UNSIGNED-PAYLOAD-TRAILER
         filters:
           - type: ExtensionRef
             extensionRef:
