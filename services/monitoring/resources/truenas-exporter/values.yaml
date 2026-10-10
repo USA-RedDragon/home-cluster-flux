@@ -1,0 +1,71 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+  enableServiceLinks: false
+
+controllers:
+  truenas-exporter:
+    replicas: 1
+    strategy: Recreate
+    pod:
+      labels:
+        policy.mcswain.dev/nas-api: "true"
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+    containers:
+      truenas-exporter:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/truenas-exporter
+          tag: v1.0.0@sha256:eae2bc7514188bcaaddf7b221a10502bc309bd1c6998f2c1e201daf5c2ba919c
+          pullPolicy: IfNotPresent
+        envFrom:
+          - secretRef:
+              name: truenas-exporter
+        env:
+          TRUENAS_URL: wss://192.168.1.135/api/v25.04.0
+          TRUENAS_TLS_FINGERPRINT: e6153df5b75e92c251abb32afbe0c1f548993a1bd74cbe1a9aaf6354f92dde12
+          POLL_SMART_INTERVAL: "0"
+          HTTP_PORT: "9814"
+        resources:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        probes:
+          liveness: &probe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 9814
+          readiness: *probe
+
+service:
+  truenas-exporter:
+    controller: truenas-exporter
+    ports:
+      http:
+        port: 9814
+
+serviceMonitor:
+  truenas-exporter:
+    enabled: true
+    serviceName: truenas-exporter
+    endpoints:
+      - port: http
+        scheme: http
+        path: /metrics
+        interval: 1m
+        scrapeTimeout: 30s
