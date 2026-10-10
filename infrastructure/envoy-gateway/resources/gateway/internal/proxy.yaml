@@ -18,7 +18,21 @@ spec:
         loadBalancerClass: metallb
         annotations:
           metallb.universe.tf/loadBalancerIPs: "192.168.254.253"
+      envoyPDB:
+        minAvailable: 1
       envoyDeployment:
+        replicas: 2
+        pod:
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: envoy
+                  gateway.envoyproxy.io/owning-gateway-name: internal
+              matchLabelKeys:
+                - pod-template-hash
         container:
           resources:
             requests:
