@@ -1311,10 +1311,9 @@ kubeApiServer:
     metricRelabelings:
       # Drop excessively noisy apiserver buckets.
       - action: drop
-        regex: apiserver_request_duration_seconds_bucket;(0.15|0.2|0.3|0.35|0.4|0.45|0.6|0.7|0.8|0.9|1.25|1.5|1.75|2|3|3.5|4|4.5|6|7|8|9|15|25|40|50)
+        regex: (etcd_request_duration_seconds|apiserver_request_duration_seconds|apiserver_watch_events_dispatch_duration_seconds|apiserver_request_body_size_bytes|apiserver_storage_list_duration_seconds|apiserver_watch_list_duration_seconds|apiserver_watch_cache_read_wait_seconds|apiserver_watch_cache_initialization_duration_seconds|apiserver_response_sizes|apiserver_watch_events_sizes)_bucket
         sourceLabels:
           - __name__
-          - le
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
@@ -1407,7 +1406,7 @@ kubelet:
       # Drop less useful / always zero container memory metrics.
       - sourceLabels: [__name__]
         action: drop
-        regex: 'container_memory_(mapped_file|swap)'
+        regex: 'container_memory_(mapped_file|swap|failures_total)'
       # Drop less useful container process metrics.
       - sourceLabels: [__name__]
         action: drop
@@ -3525,7 +3524,7 @@ prometheus:
 
     ## Maximum size of metrics
     ##
-    retentionSize: ""
+    retentionSize: "125GB"
 
     ## Allow out-of-order/out-of-bounds samples ingested into Prometheus for a specified duration
     ## See https://prometheus.io/docs/prometheus/latest/configuration/configuration/#tsdb
