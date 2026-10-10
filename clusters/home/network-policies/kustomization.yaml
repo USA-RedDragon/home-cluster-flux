@@ -2,16 +2,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kube-system
 resources:
-  - cnpg.yaml
   - deny-nas.yaml
   - coredns.yaml
   - egress-coredns.yaml
   - egress-internet.yaml
   - egress-kubeapi.yaml
   - egress-lan.yaml
-  - egress-namespace.yaml
   - ingress-gateway.yaml
-  - ingress-namespace.yaml
   - ingress-nodes.yaml
   - ingress-prometheus.yaml
   - ingress-world.yaml
