@@ -1,0 +1,194 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: baseline-capabilities
+spec:
+  background: false
+  rules:
+    - name: baseline-capabilities
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - longhorn-system
+                - gpu-operator
+                - device-plugin
+                - intel-device-plugin
+                - node-feature-discovery
+                - metallb-system
+                - smartctl-exporter
+                - tailscale-operator
+                - frigate
+                - aredn
+                - aredn-dmrhub
+                - aredn-ntp
+                - aredn-piaware
+                - aredn-scanner
+                - wireguard
+                - path-of-titans
+                - prowlarr
+                - camo
+                - radarr
+                - sonarr
+                - sonarr-anime
+                - qbittorrent
+                - ping-exporter
+      preconditions:
+        all:
+          - key: '{{ request.operation || ''BACKGROUND'' }}'
+            operator: NotEquals
+            value: DELETE
+      validate:
+        failureAction: Enforce
+        message: Adding capabilities other than AUDIT_WRITE, CHOWN, DAC_OVERRIDE, FOWNER, FSETID, KILL, MKNOD, NET_BIND_SERVICE, SETFCAP, SETGID, SETPCAP, SETUID, SYS_CHROOT is disallowed.
+        foreach:
+          - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+            deny:
+              conditions:
+                all:
+                  - key: '{{ element.securityContext.capabilities.add[] || `[]` }}'
+                    operator: AnyNotIn
+                    value:
+                      - AUDIT_WRITE
+                      - CHOWN
+                      - DAC_OVERRIDE
+                      - FOWNER
+                      - FSETID
+                      - KILL
+                      - MKNOD
+                      - NET_BIND_SERVICE
+                      - SETFCAP
+                      - SETGID
+                      - SETPCAP
+                      - SETUID
+                      - SYS_CHROOT
+    - name: wireguard-capabilities
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - prowlarr
+                - camo
+                - radarr
+                - sonarr
+                - sonarr-anime
+                - qbittorrent
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - longhorn-system
+                - gpu-operator
+                - device-plugin
+                - intel-device-plugin
+                - node-feature-discovery
+                - metallb-system
+                - smartctl-exporter
+                - tailscale-operator
+                - frigate
+                - aredn
+                - aredn-dmrhub
+                - aredn-ntp
+                - aredn-piaware
+                - aredn-scanner
+                - wireguard
+                - path-of-titans
+      preconditions:
+        all:
+          - key: '{{ request.operation || ''BACKGROUND'' }}'
+            operator: NotEquals
+            value: DELETE
+      validate:
+        failureAction: Enforce
+        message: Adding capabilities other than AUDIT_WRITE, CHOWN, DAC_OVERRIDE, FOWNER, FSETID, KILL, MKNOD, NET_BIND_SERVICE, SETFCAP, SETGID, SETPCAP, SETUID, SYS_CHROOT, NET_ADMIN, NET_RAW is disallowed.
+        foreach:
+          - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+            deny:
+              conditions:
+                all:
+                  - key: '{{ element.securityContext.capabilities.add[] || `[]` }}'
+                    operator: AnyNotIn
+                    value:
+                      - AUDIT_WRITE
+                      - CHOWN
+                      - DAC_OVERRIDE
+                      - FOWNER
+                      - FSETID
+                      - KILL
+                      - MKNOD
+                      - NET_BIND_SERVICE
+                      - SETFCAP
+                      - SETGID
+                      - SETPCAP
+                      - SETUID
+                      - SYS_CHROOT
+                      - NET_ADMIN
+                      - NET_RAW
+    - name: ping-exporter-capabilities
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - ping-exporter
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - longhorn-system
+                - gpu-operator
+                - device-plugin
+                - intel-device-plugin
+                - node-feature-discovery
+                - metallb-system
+                - smartctl-exporter
+                - tailscale-operator
+                - frigate
+                - aredn
+                - aredn-dmrhub
+                - aredn-ntp
+                - aredn-piaware
+                - aredn-scanner
+                - wireguard
+                - path-of-titans
+      preconditions:
+        all:
+          - key: '{{ request.operation || ''BACKGROUND'' }}'
+            operator: NotEquals
+            value: DELETE
+      validate:
+        failureAction: Enforce
+        message: Adding capabilities other than AUDIT_WRITE, CHOWN, DAC_OVERRIDE, FOWNER, FSETID, KILL, MKNOD, NET_BIND_SERVICE, SETFCAP, SETGID, SETPCAP, SETUID, SYS_CHROOT, NET_RAW is disallowed.
+        foreach:
+          - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+            deny:
+              conditions:
+                all:
+                  - key: '{{ element.securityContext.capabilities.add[] || `[]` }}'
+                    operator: AnyNotIn
+                    value:
+                      - AUDIT_WRITE
+                      - CHOWN
+                      - DAC_OVERRIDE
+                      - FOWNER
+                      - FSETID
+                      - KILL
+                      - MKNOD
+                      - NET_BIND_SERVICE
+                      - SETFCAP
+                      - SETGID
+                      - SETPCAP
+                      - SETUID
+                      - SYS_CHROOT
+                      - NET_RAW

@@ -8,16 +8,50 @@ spec:
     - name: app-armor
       match:
         any:
-        - resources:
-            kinds:
-              - Pod
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - longhorn-system
+                - gpu-operator
+                - device-plugin
+                - intel-device-plugin
+                - node-feature-discovery
+                - metallb-system
+                - smartctl-exporter
+                - tailscale-operator
+                - frigate
+                - aredn
+                - aredn-dmrhub
+                - aredn-ntp
+                - aredn-piaware
+                - aredn-scanner
+                - wireguard
+                - path-of-titans
       validate:
-        failureAction: Audit
-        message: >-
-          Specifying other AppArmor profiles is disallowed. The annotation
-          `container.apparmor.security.beta.kubernetes.io` if defined
-          must not be set to anything other than `runtime/default` or `localhost/*`.
+        failureAction: Enforce
+        message: AppArmor must not be Unconfined. The annotation container.apparmor.security.beta.kubernetes.io and the field securityContext.appArmorProfile.type must be unset, runtime/default/RuntimeDefault, or localhost/*/Localhost.
         pattern:
           =(metadata):
             =(annotations):
-              =(container.apparmor.security.beta.kubernetes.io/*): "runtime/default | localhost/*"
+              =(container.apparmor.security.beta.kubernetes.io/*): runtime/default | localhost/*
+          spec:
+            =(securityContext):
+              =(appArmorProfile):
+                =(type): RuntimeDefault | Localhost
+            =(ephemeralContainers):
+              - =(securityContext):
+                  =(appArmorProfile):
+                    =(type): RuntimeDefault | Localhost
+            =(initContainers):
+              - =(securityContext):
+                  =(appArmorProfile):
+                    =(type): RuntimeDefault | Localhost
+            containers:
+              - =(securityContext):
+                  =(appArmorProfile):
+                    =(type): RuntimeDefault | Localhost
