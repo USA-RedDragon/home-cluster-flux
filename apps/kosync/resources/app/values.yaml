@@ -76,25 +76,6 @@ service:
       pprof:
         port: 9999
 
-route:
-  kosync:
-    enabled: true
-    kind: HTTPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: https
-    hostnames:
-      - kosync.mcswain.dev
-    rules:
-      - backendRefs:
-          - name: kosync
-            port: 8080
-        matches:
-          - path:
-              type: PathPrefix
-              value: /
-
 ingress:
   tailscale:
     enabled: true
