@@ -58,7 +58,7 @@ configMaps:
       rclone.conf: |
         [b2]
         type = b2
-        hard_delete = true
+        hard_delete = false
         [s3]
         type = s3
         provider = AWS
