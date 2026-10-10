@@ -190,7 +190,7 @@ spec:
             description: "The Back-UPS XS 1000M is on battery with LB set. All three control-plane nodes lose power when it runs out."
         - alert: ControlPlaneUPSRuntimeShort
           expr: |
-            network_ups_tools_battery_runtime{job="nut-control-plane"} < 300
+            avg_over_time(network_ups_tools_battery_runtime{job="nut-control-plane"}[30m]) < 300
               and on(instance) network_ups_tools_ups_status{job="nut-control-plane", flag="OL"} == 1
           for: 30m
           labels:
