@@ -74,7 +74,7 @@ jobs:
 
       - name: Add comment
         if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-        uses: mshick/add-pr-comment@f102bb3ebc97eedd4e2a98a9e71e462cc257fe80 # v3.9.1
+        uses: mshick/add-pr-comment@ec328af66588ab8f77cdeb2c264f14aba45bbf59 # v3.12.0
         with:
           message-id: ${{ github.event.pull_request.number }}/kyverno
           message-path: summary.md
