@@ -245,6 +245,16 @@
             "versioning": "regex:^(?<major>\\d+)h(?<minor>\\d+)$"
         },
         {
+            "description": "sdr-enthusiasts tags are <variant>-build-<n>, e.g. telegraf-build-845; docker versioning rejects them",
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchPackageNames": [
+                "/(^|\\/)ghcr\\.io\\/sdr-enthusiasts\\//"
+            ],
+            "versioning": "regex:^(?<compatibility>[a-z]+(-[a-z]+)*)-build-(?<patch>\\d+)$"
+        },
+        {
             "matchUpdateTypes": [
                 "minor"
             ],
