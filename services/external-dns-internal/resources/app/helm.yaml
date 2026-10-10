@@ -55,9 +55,18 @@ spec:
                 name: adguard-home
                 key: password
           - name: SERVER_HOST
-            value: 0.0.0.0
+            value: 127.0.0.1
         securityContext:
+          runAsNonRoot: true
+          runAsUser: 20000
+          runAsGroup: 20000
           readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
+    podLabels:
+      policy.mcswain.dev/egress-kubeapi: "true"
+      policy.mcswain.dev/egress-coredns: "true"
     interval: 1h
     triggerLoopOnEvent: true
     policy: sync

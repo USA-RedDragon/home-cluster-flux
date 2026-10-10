@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: external-dns-internal
 resources:
   - helm.yaml
+  - networkpolicy.yaml
