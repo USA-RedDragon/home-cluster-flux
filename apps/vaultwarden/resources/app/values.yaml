@@ -74,6 +74,16 @@ route:
     hostnames:
       - bitwarden.mcswain.dev
     rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /admin
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: not-found
       - backendRefs:
           - name: vaultwarden
             port: 80
