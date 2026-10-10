@@ -31,9 +31,6 @@ controllers:
           MQTT_TOPIC: weather/station
           MQTT_RAIN_TOPIC: rtl_433/Cotech-367959
           STATION_LOCATION: Moore, OK
-          STATION_LATITUDE: "35.32472"
-          STATION_LONGITUDE: "-97.46061"
-          STATION_ALTITUDE_FEET: "1191"
           STATION_TIMEZONE: America/Chicago
           STATION_WEEK_START: "6"
           STATION_RADAR_IMAGE: https://radar.weather.gov/ridge/standard/KTLX_loop.gif
