@@ -93,6 +93,12 @@ controllers:
                 key: password
           - name: GITEA__OPENID__ENABLE_OPENID_SIGNIN
             value: "false"
+          - name: GITEA__OAUTH2_CLIENT__ENABLE_AUTO_REGISTRATION
+            value: "true"
+          - name: GITEA__OAUTH2_CLIENT__ACCOUNT_LINKING
+            value: auto
+          - name: GITEA__OAUTH2_CLIENT__USERNAME
+            value: nickname
 
 
 service:
