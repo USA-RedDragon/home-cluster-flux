@@ -299,3 +299,19 @@ data:
             annotations:
               summary: "Restic database dump in {{ $labels.namespace }} is under 4 KiB"
               description: "{{ $labels.namespace }}/{{ $labels.pod }} backed up a single-file dump under 4 KiB (under 1 KiB for kosync, whose real dump is ~3.3 KiB). An empty pg_dump is ~700 B, so the database is probably empty or the dump connected to the wrong database. Query: {namespace=\"{{ $labels.namespace }}\", container=\"restic\"} |= \"processed 1 files\""
+          - alert: WeatherStationSilent
+            expr: absent_over_time({namespace="rtl-433"} |= "Cotech-367959" [1h])
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "No weather station packets for 1h"
+              description: "rtl-433 has decoded no Cotech-367959 packets for 1h, so mqtt-wx and wx (wx.mcswain.dev) get no new observations. Check the 433 MHz RTL-SDR and the rtl-433 pod logs for PLL or i2c errors. Query: {namespace=\"rtl-433\"}"
+          - alert: PaperlessConsumeErrors
+            expr: |
+              sum(count_over_time({namespace="paperless-ngx", container="app"} |~ `\[ERROR\] \[paperless\.(consumer|tasks|parsing)` [1h])) > 0
+            labels:
+              severity: warning
+            annotations:
+              summary: "paperless-ngx failed to consume a document"
+              description: "{{ $value }} paperless consumer errors in the last hour. Query: {namespace=\"paperless-ngx\", container=\"app\"} |= \"[ERROR]\""

@@ -6,6 +6,7 @@ resources:
   - cert-manager-alerts.yaml
   - etcd-alerts.yaml
   - flux-alerts.yaml
+  - functional-alerts.yaml
   - log-alerts.yaml
   - loki-alert-rules.yaml
   - node-disk-alerts.yaml
