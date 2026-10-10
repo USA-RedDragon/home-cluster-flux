@@ -1,0 +1,104 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: functional
+  namespace: monitoring
+spec:
+  groups:
+    - name: envoy-routes
+      rules:
+        - alert: EnvoyRouteHigh5xxRate
+          expr: |
+            label_replace(
+              (
+                sum by (gateway, envoy_cluster_name) (rate(envoy_cluster_upstream_rq_xx{job="envoy-gateway-system/envoy-proxy", envoy_cluster_name=~"httproute/.*", envoy_cluster_name!~"httproute/tfe/.*", envoy_response_code_class="5"}[15m]))
+                  /
+                sum by (gateway, envoy_cluster_name) (rate(envoy_cluster_upstream_rq_xx{job="envoy-gateway-system/envoy-proxy", envoy_cluster_name=~"httproute/.*"}[15m]))
+                > 0.10
+              )
+              and
+              sum by (gateway, envoy_cluster_name) (rate(envoy_cluster_upstream_rq_xx{job="envoy-gateway-system/envoy-proxy", envoy_cluster_name=~"httproute/.*", envoy_response_code_class="5"}[15m])) > 0.05,
+              "namespace", "$1", "envoy_cluster_name", "httproute/([^/]+)/.*"
+            )
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Route {{ $labels.envoy_cluster_name }} returns {{ $value | humanizePercentage }} 5xx"
+            description: >-
+              Over {{ $value | humanizePercentage }} of requests through the {{ $labels.gateway }} gateway to
+              {{ $labels.envoy_cluster_name }} have returned 5xx for 15m. Check the backend pods in {{ $labels.namespace }}.
+    - name: frigate
+      rules:
+        - alert: FrigateCameraNoFrames
+          expr: max by (namespace, camera_name) (max_over_time(frigate_camera_fps[10m])) == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Frigate camera {{ $labels.camera_name }} has had 0 fps for 15m"
+            description: "Frigate gets no frames from camera {{ $labels.camera_name }}. Check the camera, its PoE port and the go2rtc stream."
+        - alert: FrigateCameraMetricsMissing
+          expr: absent(frigate_camera_fps)
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Frigate reports no camera metrics
+            description: "No frigate_camera_fps series for 15m. Frigate is down or its ServiceMonitor target is failing."
+        - alert: FrigateDetectorSlow
+          expr: max by (namespace, name) (avg_over_time(frigate_detector_inference_speed_seconds[15m])) > 0.05
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Frigate detector {{ $labels.name }} inference is {{ $value | humanizeDuration }}"
+            description: "Average inference time for detector {{ $labels.name }} has been over 50ms for 15m (normal is about 8ms on the Coral). The Coral may have dropped off USB and Frigate fell back to CPU."
+        - alert: FrigateStorageLow
+          expr: min by (namespace, storage) (frigate_storage_free_bytes / frigate_storage_total_bytes) < 0.10
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Frigate storage {{ $labels.storage }} is {{ $value | humanizePercentage }} free"
+            description: "Frigate storage {{ $labels.storage }} has under 10% free space."
+    - name: adsb
+      rules:
+        - alert: UltrafeederNoMessages
+          expr: |
+            max by (namespace) (max_over_time(readsb_stats_messages{job="ultrafeeder"}[30m])) == 0
+              or
+            label_replace(absent_over_time(readsb_stats_messages{job="ultrafeeder"}[30m]), "namespace", "ultrafeeder", "", "")
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: ultrafeeder has decoded no ADS-B messages for 30m
+            description: "readsb reports no 1090 MHz messages for 30m. Check the RTL-SDR (serial 00001090) and the ultrafeeder pod."
+        - alert: Dump978NoMessages
+          expr: |
+            max by (namespace) (max_over_time(stats_total_raw_messages{job="dump978"}[3d])) == 0
+              or
+            label_replace(absent_over_time(stats_total_raw_messages{job="dump978"}[1h]), "namespace", "dump978", "", "")
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: dump978 has received no UAT messages for 3 days
+            description: "UAT traffic is sparse here and gaps of a day are normal, but 3 days with no 978 MHz messages means the receiver is down. Check the RTL-SDR (serial 00000978) and the dump978 pod."
+    - name: cronjobs
+      rules:
+        - alert: CronJobStale
+          expr: |
+            (
+              (time() - kube_cronjob_status_last_successful_time{cronjob!~".*(restic|backup).*"})
+                > 2 * (kube_cronjob_next_schedule_time - kube_cronjob_status_last_schedule_time)
+            )
+            and on (namespace, cronjob) ((time() - kube_cronjob_status_last_successful_time) > 3600)
+            and on (namespace, cronjob) (kube_cronjob_spec_suspend == 0)
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} has missed two runs"
+            description: "CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} last succeeded {{ $value | humanizeDuration }} ago, more than twice its schedule interval. Check its runs in Loki: {namespace=\"{{ $labels.namespace }}\", pod=~\"{{ $labels.cronjob }}-.*\"}"
