@@ -31,7 +31,24 @@ spec:
       version: '1.3.16'
       interval: 1h0m0s
   values:
+    podTemplate:
+      merge:
+        spec:
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
     container:
+      merge:
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
       image:
         repository: jacob.pub/docker.io/nats
         tag: 2.15.0-alpine@sha256:004796a89b7ad925027a01d69d175734403f5b3b98d49f4ed2c861e6f9aafec4
@@ -45,6 +62,12 @@ spec:
       enabled: false
     promExporter:
       enabled: true
+      merge:
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
       image:
         repository: jacob.pub/docker.io/natsio/prometheus-nats-exporter
         tag: 0.20.2@sha256:c623b608e148e31e1c1c878673a197f1828e58ce90de4f01d22f1baa84c8fee9
