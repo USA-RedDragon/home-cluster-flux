@@ -227,7 +227,7 @@ lapi:
     type: LoadBalancer
     loadBalancerClass: metallb
     annotations:
-      metallb.universe.tf/loadBalancerIPs: 192.168.254.14
+      metallb.io/loadBalancerIPs: 192.168.254.14
     externalTrafficPolicy: Local
   dashboard:
     enabled: false
