@@ -107,6 +107,24 @@ spec:
       target:
         kind: Deployment
         name: (kustomize-controller|helm-controller|source-controller)
+    - patch: |
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: not-used
+        spec:
+          template:
+            spec:
+              containers:
+                - name: manager
+                  resources:
+                    requests:
+                      cpu: 200m
+                    limits:
+                      cpu: "2"
+      target:
+        kind: Deployment
+        name: kustomize-controller
     # Enable in-memory-kustomize builds
     # Ref: https://fluxcd.io/flux/installation/configuration/vertical-scaling/#enable-in-memory-kustomize-builds
     - patch: |
