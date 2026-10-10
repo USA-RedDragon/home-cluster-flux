@@ -40,7 +40,7 @@ spec:
             summary: "TrueNAS marks pool {{ $labels.pool }} unhealthy"
             description: "{{ with printf \"truenas_pool_info{pool=%q}\" $labels.pool | query }}Pool {{ $labels.pool }} status code is {{ . | first | label \"status_code\" }}.{{ end }} Run `zpool status -v {{ $labels.pool }}` on the NAS."
         - alert: TrueNASPoolResilvering
-          expr: max by (pool) (truenas_pool_scan_active{function="resilver"}) == 1
+          expr: max by (pool) (max_over_time(truenas_pool_scan_active{function="resilver"}[10m])) == 1
           for: 5m
           labels:
             severity: info
