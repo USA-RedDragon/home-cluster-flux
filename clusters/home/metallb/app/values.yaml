@@ -1,7 +1,7 @@
 loadBalancerClass: "metallb"
 
 prometheus:
-  podMonitor:
+  serviceMonitor:
     enabled: true
 
   prometheusRule:
