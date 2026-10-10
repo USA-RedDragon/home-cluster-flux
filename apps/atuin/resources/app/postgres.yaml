@@ -24,7 +24,7 @@ spec:
           name: cnpg-minio
           key: AWS_SECRET_ACCESS_KEY
       wal:
-        compression: gzip
+        compression: zstd
     retentionPolicy: "4w"
   externalClusters:
   - barmanObjectStore:
@@ -38,7 +38,7 @@ spec:
           key: AWS_SECRET_ACCESS_KEY
           name: cnpg-minio
       wal:
-        compression: gzip
+        compression: zstd
     name: postgresql
   storage:
     storageClass: longhorn-nvme-r1
