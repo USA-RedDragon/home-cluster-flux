@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: relax-sounds
 resources:
   - helm.yaml
+  - routefilter.yaml
 configMapGenerator:
   - name: chart-values
     files:
