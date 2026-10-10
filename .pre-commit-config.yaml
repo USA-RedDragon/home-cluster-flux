@@ -38,6 +38,14 @@ repos:
         additional_dependencies:
           - pyyaml==6.0.3
         types: [yaml]
+      - id: check-flux-alert-sources
+        name: Check the Telegram Flux Alert covers every namespace
+        entry: .github/scripts/check-flux-alert-sources.py
+        language: python
+        additional_dependencies:
+          - pyyaml==6.0.3
+        types: [yaml]
+        pass_filenames: false
 
   - repo: https://github.com/gabe565/template-kubernetes-apps-markdown
     rev: v0.5.1
