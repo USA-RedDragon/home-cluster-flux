@@ -84,6 +84,39 @@ route:
     hostnames:
       - s3.mcswain.dev
     rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /
+            headers:
+              - name: X-Amz-Content-Sha256
+                value: STREAMING-UNSIGNED-PAYLOAD-TRAILER
+            queryParams:
+              - name: X-Amz-Credential
+                type: RegularExpression
+                value: ".*"
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: forbidden
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /
+            headers:
+              - name: X-Amz-Content-Sha256
+                value: STREAMING-UNSIGNED-PAYLOAD-TRAILER
+              - name: X-Amz-Meta-Snowball-Auto-Extract
+                type: RegularExpression
+                value: ".*"
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: forbidden
       - backendRefs:
           - name: minio
             port: 9000
