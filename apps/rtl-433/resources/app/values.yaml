@@ -30,16 +30,18 @@ controllers:
         - level
         - -M
         - time
+        - -F
+        - json:/run/rtl_433/events.json
         probes:
           liveness:
             enabled: true
             custom: true
             spec:
-              exec: &probe
+              exec:
                 command:
                 - sh
                 - -c
-                - for n in /dev/bus/usb/*/*; do set -- $(stat -c '%t %T' "$n") && grep -qsx "$(printf '%d:%d' "0x$1" "0x$2")" /sys/bus/usb/devices/*/dev && ls -l /proc/[0-9]*/fd 2>/dev/null | grep -q " $n\$" || exit 1; done
+                - f=/run/rtl_433/events.json; [ $(($(date +%s) - $(stat -c %Y $f))) -lt 600 ] || exit 1; [ $(stat -c %s $f) -lt 1048576 ] || :> $f; for n in /dev/bus/usb/*/*; do set -- $(stat -c '%t %T' "$n") && grep -qsx "$(printf '%d:%d' "0x$1" "0x$2")" /sys/bus/usb/devices/*/dev && ls -l /proc/[0-9]*/fd 2>/dev/null | grep -q " $n\$" || exit 1; done
               periodSeconds: 60
               timeoutSeconds: 10
               failureThreshold: 3
@@ -47,7 +49,11 @@ controllers:
             enabled: true
             custom: true
             spec:
-              exec: *probe
+              exec:
+                command:
+                - sh
+                - -c
+                - for n in /dev/bus/usb/*/*; do set -- $(stat -c '%t %T' "$n") && grep -qsx "$(printf '%d:%d' "0x$1" "0x$2")" /sys/bus/usb/devices/*/dev && ls -l /proc/[0-9]*/fd 2>/dev/null | grep -q " $n\$" || exit 1; done
               periodSeconds: 5
               timeoutSeconds: 10
               failureThreshold: 24
@@ -84,3 +90,10 @@ persistence:
         app:
         - path: /etc/rtl_433/
           readOnly: true
+  events:
+    type: emptyDir
+    sizeLimit: 16Mi
+    advancedMounts:
+      rtl-433:
+        app:
+        - path: /run/rtl_433
