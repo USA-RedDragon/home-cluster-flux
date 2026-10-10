@@ -314,6 +314,11 @@ alertmanager:
           - alertname != ""
       - receiver: 'telegram'
         matchers:
+          - alertname="TrueNASPoolResilvering"
+        repeat_interval: 24h
+        continue: false
+      - receiver: 'telegram'
+        matchers:
           # pass all alerts
           - alertname != ""
     receivers:
