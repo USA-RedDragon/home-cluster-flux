@@ -55,7 +55,7 @@ route:
     enabled: true
     kind: HTTPRoute
     parentRefs:
-      - name: public
+      - name: internal
         namespace: envoy-gateway-system
         sectionName: https
     hostnames:
