@@ -274,6 +274,7 @@ alertmanager:
           - 'alertname = InfoInhibitor'
         target_matchers:
           - 'severity = info'
+          - 'alertname != TrueNASPoolResilvering'
         equal:
           - 'namespace'
     route:
