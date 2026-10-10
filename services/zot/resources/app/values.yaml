@@ -12,11 +12,46 @@ controllers:
         fsGroup: 65534
       labels:
         valkey-client: "true"
+    initContainers:
+      render:
+        image:
+          repository: ghcr.io/valkey-io/valkey
+          tag: 8.1.10-alpine@sha256:b21fd94099dcd4bc6b2b9230daef69b6558b887ad4a2a1afe56ff6e745a88cdb
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -ec
+          - |
+            umask 077
+            awk '{ while ((i = index($0, "__VALKEY_PASSWORD__")) > 0) $0 = substr($0, 1, i - 1) ENVIRON["VALKEY_PASSWORD"] substr($0, i + 19); print }' /etc/zot/template/config.yaml > /etc/zot/rendered/config.yaml
+            printf '{"clientid":"%s","clientsecret":"%s"}' "$OIDC_CLIENT_ID" "$OIDC_CLIENT_SECRET" > /etc/zot/rendered/oidc.json
+        env:
+          - name: VALKEY_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: valkey-password
+                key: valkey_password
+          - name: OIDC_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: zot-oidc
+                key: zot_oidc_clientid
+          - name: OIDC_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: zot-oidc
+                key: zot_oidc_clientsecret
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop: ["ALL"]
     containers:
       zot:
         args:
         - serve
-        - /etc/zot/config.yaml
+        - /etc/zot/rendered/config.yaml
         image:
           repository: ghcr.io/project-zot/zot
           tag: v2.1.22@sha256:96cda11459ce6f8c60da3b03f03e9f67fd11b3ae2d82c4c04c92b3c608996080
@@ -83,8 +118,7 @@ configMaps:
                 oidc:
                   issuer: https://authentik.mcswain.dev/application/o/zot/
                   scopes: [openid, profile, email, groups]
-                  clientid: ${zot_oidc_clientid}
-                  clientsecret: ${zot_oidc_clientsecret}
+                  credentialsFile: /etc/zot/rendered/oidc.json
         log:
           level: info
         extensions:
@@ -198,7 +232,7 @@ configMaps:
           fastRestart: true
           cacheDriver:
             name: redis
-            url: redis://:${valkey_password}@valkey:6379
+            url: redis://:__VALKEY_PASSWORD__@valkey:6379
           dedupe: false
           storageDriver:
             name: s3
@@ -215,9 +249,21 @@ persistence:
     name: zot
     advancedMounts:
       zot:
+        render:
+          - path: /etc/zot/template
+            readOnly: true
+  rendered:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Mi
+    advancedMounts:
+      zot:
+        render:
+          - path: /etc/zot/rendered
         zot:
-          - path: /etc/zot/config.yaml
-            subPath: config.yaml
+          - path: /etc/zot/rendered
+            readOnly: true
   registry-credentials:
     enabled: true
     type: secret
