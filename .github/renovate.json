@@ -91,6 +91,17 @@
             "versioningTemplate": "semver"
         },
         {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)ks\\.yaml$/"
+            ],
+            "matchStrings": [
+                "newName: (?<depName>\\S+)\\n\\s+newTag: (?<currentValue>\\S+)"
+            ],
+            "packageNameTemplate": "{{{replace '^jacob\\.pub/' '' depName}}}",
+            "datasourceTemplate": "docker"
+        },
+        {
             "description": "The alloy chart builds the app.kubernetes.io/version label from image.tag and fails on tag@digest, so its image pins through a separate digest key that only this manager updates",
             "customType": "regex",
             "managerFilePatterns": [
