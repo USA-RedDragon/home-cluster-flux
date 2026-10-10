@@ -62,7 +62,7 @@
                 "/\\.yaml$/"
             ],
             "matchStrings": [
-                "imageName: ['\"]?(?<depName>.+?):(?<currentValue>.+)['\"]?"
+                "imageName: ['\"]?(?<depName>[^\\s'\"@]+?):(?<currentValue>[^\\s'\"@]+)(@(?<currentDigest>sha256:[a-f0-9]+))?['\"]?"
             ],
             "packageNameTemplate": "{{{replace '^jacob\\.pub/' '' depName}}}",
             "datasourceTemplate": "docker"
@@ -262,13 +262,14 @@
             ]
         },
         {
+            "description": "CloudNativePG tags are <major>.<minor>-system-<distro>; the old <major>.<minor>-<build> series ended at 17.5-22",
             "matchDatasources": [
                 "docker"
             ],
             "matchPackageNames": [
                 "/(^|/)ghcr\\.io/cloudnative-pg/postgresql$/"
             ],
-            "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)(-(?<build>\\d+))?$"
+            "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)-system-(?<compatibility>[a-z]+)$"
         },
         {
             "description": "Path of Titans tags are <build>h<hotfix>, e.g. 48554h25",
