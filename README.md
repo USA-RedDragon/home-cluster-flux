@@ -76,7 +76,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#mosquitto">mosquitto</a></li>
   <li><a href="#mqtt-wx">mqtt-wx</a></li>
   <li><a href="#nexrad-aws-notifier">nexrad-aws-notifier</a></li>
-  <li><a href="#nginx-rtmp">nginx-rtmp</a></li>
   <li><a href="#node-feature-discovery">node-feature-discovery</a></li>
   <li><a href="#obico">obico</a></li>
   <li><a href="#openspeedtest">openspeedtest</a></li>
@@ -1156,22 +1155,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>nexrad-aws-notifier</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/nexrad-aws-notifier/resources/app/helm.yaml">nexrad-aws-notifier</a></td>
-    <td></td>
-  </tr>
-</table>
-
-<h4>nginx-rtmp</h2>
-<table>
-  <tr>
-    <th>Namespace</th>
-    <th>Kind</th>
-    <th>Name</th>
-    <th>Supporting Services</th>
-  </tr>
-  <tr>
-    <td>nginx-rtmp</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/nginx-rtmp/resources/app/helm.yaml">nginx-rtmp</a></td>
     <td></td>
   </tr>
 </table>
