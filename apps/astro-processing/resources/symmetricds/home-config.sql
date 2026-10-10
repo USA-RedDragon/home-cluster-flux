@@ -390,6 +390,9 @@ create table if not exists ts_goal_progress (
     measured_at timestamp,
     PRIMARY KEY (target_guid, filter)
 );
+alter table ts_goal_progress add column if not exists night_quality double precision;
+alter table ts_goal_progress add column if not exists night_quality_at timestamp;
+alter table ts_goal_progress add column if not exists season_boost double precision;
 
 create table if not exists ts_target_season (
     target_guid text NOT NULL,
