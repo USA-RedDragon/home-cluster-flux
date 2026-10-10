@@ -173,8 +173,10 @@ configMaps:
           worker_connections 1024;
         }
         http {
+          resolver 127.0.0.1 valid=30s;
           upstream scanner {
-            server rdio-scanner.rdio-scanner.svc.cluster.local:3000;
+            zone scanner 64k;
+            server rdio-scanner.rdio-scanner.svc.cluster.local:3000 resolve;
           }
           include mime.types;
           server {

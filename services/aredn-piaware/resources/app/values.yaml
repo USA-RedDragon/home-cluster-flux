@@ -173,8 +173,10 @@ configMaps:
           worker_connections 1024;
         }
         http {
+          resolver 127.0.0.1 valid=30s;
           upstream app {
-            server piaware.piaware.svc.cluster.local:80;
+            zone app 64k;
+            server piaware.piaware.svc.cluster.local:80 resolve;
           }
           include mime.types;
           server {
