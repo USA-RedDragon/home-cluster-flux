@@ -222,8 +222,8 @@ configMaps:
               - stun:8555
           streams:
             doorbell:
-              - rtsp://{FRIGATE_DOORBELL_USERNAME}:{FRIGATE_DOORBELL_PASSWORD}@{FRIGATE_DOORBELL_ADDRESS}/Preview_01_main
               - ffmpeg:http://{FRIGATE_DOORBELL_ADDRESS}/flv?port=1935&app=bcs&stream=channel0_main.bcs&user={FRIGATE_DOORBELL_USERNAME}&password={FRIGATE_DOORBELL_PASSWORD}#video=copy#audio=copy#audio=opus
+              - rtsp://{FRIGATE_DOORBELL_USERNAME}:{FRIGATE_DOORBELL_PASSWORD}@{FRIGATE_DOORBELL_ADDRESS}/Preview_01_sub
             doorbell_sub:
               - rtsp://{FRIGATE_DOORBELL_USERNAME}:{FRIGATE_DOORBELL_PASSWORD}@{FRIGATE_DOORBELL_ADDRESS}/Preview_01_sub
             back_porch:
