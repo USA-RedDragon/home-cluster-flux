@@ -122,5 +122,5 @@ configMaps:
     data:
       settings.json: |
         {
-          "disableExec": false
+          "disableExec": true
         }
