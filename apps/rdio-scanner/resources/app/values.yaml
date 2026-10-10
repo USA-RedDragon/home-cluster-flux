@@ -78,6 +78,22 @@ route:
     hostnames:
       - scanner.mcswain.dev
     rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /admin
+          - path:
+              type: PathPrefix
+              value: /api/admin
+          - path:
+              type: PathPrefix
+              value: /metrics
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: not-found
       - backendRefs:
           - name: rdio-scanner
             port: 3000
