@@ -1,0 +1,91 @@
+name: Kyverno
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  kyverno:
+    name: Kyverno
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      KYVERNO_VERSION: v1.19.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version: '>=1.27.2'
+          cache: false
+
+      - name: Setup flate
+        run: go install github.com/home-operations/flate/cmd/flate@ff32c0becff81024e2f2ba6b81a6c53889936fd5
+
+      - name: Cache flate
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/flate
+          key: ${{ runner.os }}-flate-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys:
+            ${{ runner.os }}-flate-
+
+      - name: Render Changed Resources
+        env:
+          FLATE_CACHE_DIR: ${{ runner.temp }}/flate
+          FLATE_NO_PROGRESS: "true"
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          flate build all --path=clusters/home --base="$BASE" --allow-missing-secrets > resources.yaml
+          yq -i 'del(.. | select(tag == "!!null"))' resources.yaml
+
+      - name: Install Kyverno CLI
+        run: |
+          mkdir -p "$RUNNER_TEMP/bin"
+          curl -fsSL "https://github.com/kyverno/kyverno/releases/download/${KYVERNO_VERSION}/kyverno-cli_${KYVERNO_VERSION}_linux_x86_64.tar.gz" | tar -xz -C "$RUNNER_TEMP/bin" kyverno
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+      - name: Test resources against policies
+        shell: bash
+        run: >-
+          kyverno apply infrastructure/kyverno/resources/policies
+          --audit-warn
+          --remove-color
+          --resource=resources.yaml
+          2>&1 | tee apply.log
+
+      - name: Summarize results
+        if: ${{ !cancelled() }}
+        run: |
+          .github/scripts/kyverno-summary.sh apply.log "Kyverno Policy Checks" > summary.md
+          cat summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Add comment
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        uses: mshick/add-pr-comment@f102bb3ebc97eedd4e2a98a9e71e462cc257fe80 # v3.9.1
+        with:
+          message-id: ${{ github.event.pull_request.number }}/kyverno
+          message-path: summary.md
+          truncate: simple
+
+  kyverno-success:
+    name: Kyverno Successful
+    runs-on: ubuntu-24.04
+    needs: [kyverno]
+    if: ${{ always() }}
+    steps:
+      - if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        name: Check status
+        run: exit 1
