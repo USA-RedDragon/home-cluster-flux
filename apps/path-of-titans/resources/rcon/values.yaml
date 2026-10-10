@@ -22,7 +22,8 @@ controllers:
           - name: RCON_HOST
             value: "path-of-titans-rcon.path-of-titans.svc.cluster.local"
         resources:
-          limits: {}
+          limits:
+            memory: 32Mi
           requests: {}
         securityContext:
           readOnlyRootFilesystem: true

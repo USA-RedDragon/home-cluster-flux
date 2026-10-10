@@ -71,6 +71,8 @@ controllers:
             add:
             - NET_ADMIN
         resources:
+          limits:
+            memory: 32Mi
           requests:
             cpu: 20m
             memory: 6Mi
@@ -79,6 +81,9 @@ controllers:
           containerPort: 123
           protocol: UDP
       ntp:
+        resources:
+          limits:
+            memory: 32Mi
         image:
           repository: jacob.pub/docker.io/cturra/ntp
           digest: sha256:7224d4e7c7833aabbcb7dd70c46c8a8dcccda365314c6db047b9b10403ace3bc

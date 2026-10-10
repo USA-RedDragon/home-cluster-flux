@@ -38,7 +38,9 @@ controllers:
           - /app/.reticulum-lxmd
           - --config
           - /app/.lxmd
-        resources: {}
+        resources:
+          limits:
+            memory: 1664Mi
         env:
           - name: PYTHONUNBUFFERED
             value: "1"

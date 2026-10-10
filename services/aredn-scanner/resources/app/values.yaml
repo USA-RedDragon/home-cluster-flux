@@ -137,6 +137,9 @@ controllers:
           containerPort: 80
           protocol: TCP
       nginx:
+        resources:
+          limits:
+            memory: 32Mi
         image:
           repository: jacob.pub/docker.io/nginx
           tag: mainline-alpine@sha256:8b1e78743a03dbb2c95171cc58639fef29abc8816598e27fb910ed2e621e589a

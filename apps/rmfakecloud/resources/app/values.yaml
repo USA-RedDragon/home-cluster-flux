@@ -15,6 +15,9 @@ controllers:
         fsGroupChangePolicy: OnRootMismatch
     containers:
       rmfakecloud:
+        resources:
+          limits:
+            memory: 64Mi
         image:
           repository: jacob.pub/git.scottlabs.io/scott-labs/rmfakecloud
           tag: screenshare20

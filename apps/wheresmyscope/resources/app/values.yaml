@@ -23,6 +23,8 @@ controllers:
           tag: v1.2.1@sha256:aad5e5180b4b1fb9bb3930f34f660a71dc38ad7b9cebcbb447faa6591948c3d1
           pullPolicy: IfNotPresent
         resources:
+          limits:
+            memory: 32Mi
           requests:
             cpu: 5m
             memory: 15Mi

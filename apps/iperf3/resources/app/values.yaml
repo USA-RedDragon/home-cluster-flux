@@ -25,7 +25,8 @@ controllers:
           - "3"
         resources:
           requests: {}
-          limits: {}
+          limits:
+            memory: 32Mi
         securityContext:
           readOnlyRootFilesystem: true
           capabilities:

@@ -56,6 +56,9 @@ spec:
                 key: password
           - name: SERVER_HOST
             value: 127.0.0.1
+        resources:
+          limits:
+            memory: 80Mi
         securityContext:
           runAsNonRoot: true
           runAsUser: 20000
@@ -64,6 +67,9 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop: [ALL]
+    resources:
+      limits:
+        memory: 320Mi
     podLabels:
       policy.mcswain.dev/egress-kubeapi: "true"
       policy.mcswain.dev/egress-coredns: "true"

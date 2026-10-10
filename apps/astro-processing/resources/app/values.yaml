@@ -18,6 +18,9 @@ controllers:
 
     containers:
       frontend:
+        resources:
+          limits:
+            memory: 48Mi
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing-frontend
           tag: "beta@sha256:c2982d926a2166d016406cc891dfe65359be056a235d315ab5c26131e411bf97"
@@ -48,6 +51,9 @@ controllers:
 
     containers:
       backend:
+        resources:
+          limits:
+            memory: 112Mi
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-processing
           tag: "beta@sha256:3098fd5fa808f9335d164b708976a3f4d1306683a86a0305864769f7451e61c4"

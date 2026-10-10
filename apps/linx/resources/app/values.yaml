@@ -24,7 +24,8 @@ controllers:
           pullPolicy: IfNotPresent
         resources:
           requests: {}
-          limits: {}
+          limits:
+            memory: 32Mi
         probes:
           liveness:
             enabled: true
