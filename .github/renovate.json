@@ -89,6 +89,17 @@
             "depNameTemplate": "sensy-one/S1",
             "datasourceTemplate": "github-releases",
             "versioningTemplate": "semver"
+        },
+        {
+            "description": "The alloy chart builds the app.kubernetes.io/version label from image.tag and fails on tag@digest, so its image pins through a separate digest key that only this manager updates",
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)services\\/monitoring\\/resources\\/alloy(-gateway)?\\/values\\.yaml$/"
+            ],
+            "matchStrings": [
+                "repository: (?<depName>grafana\\/alloy)\\n\\s+tag: (?<currentValue>\\S+)\\n\\s+digest: (?<currentDigest>sha256:[a-f0-9]+)"
+            ],
+            "datasourceTemplate": "docker"
         }
     ],
     "packageRules": [
@@ -111,6 +122,20 @@
                 "/prometheus\\/(prometheus|alertmanager|node-exporter)$/"
             ],
             "pinDigests": false
+        },
+        {
+            "description": "The alloy image is managed by the custom regex manager for its separate digest key; helm-values would rewrite the tag to tag@digest and break the chart's version label",
+            "matchFileNames": [
+                "**/services/monitoring/resources/alloy/values.yaml",
+                "**/services/monitoring/resources/alloy-gateway/values.yaml"
+            ],
+            "matchManagers": [
+                "helm-values"
+            ],
+            "matchPackageNames": [
+                "/grafana\\/alloy$/"
+            ],
+            "enabled": false
         },
         {
             "automerge": false,
