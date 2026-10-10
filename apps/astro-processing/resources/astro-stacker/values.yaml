@@ -135,7 +135,7 @@ controllers:
           GOALS_ENABLED:
             value: "true"
           GOALS_PUBLISH:
-            value: "dry-run"
+            value: "on"
           S3_ACCESS_KEY:
             secretKeyRef:
               name: astro-stacker-s3
