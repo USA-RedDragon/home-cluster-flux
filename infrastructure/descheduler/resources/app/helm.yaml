@@ -44,9 +44,9 @@ spec:
       maxNoOfPodsToEvictPerNode: 2
       maxNoOfPodsToEvictTotal: 4
       # Control-plane nodes are tainted; don't let them skew the averages.
-      nodeSelector: "!node-role.kubernetes.io/control-plane"
-      metricsCollector:
-        enabled: true
+      nodeSelector: "!node-role.kubernetes.io/control-plane,!descheduler.mcswain.dev/exclude"
+      metricsProviders:
+        - source: KubernetesMetrics
       profiles:
         - name: default
           pluginConfig:
@@ -88,6 +88,8 @@ spec:
                 # No pods threshold: the evicted pods are small, so pod count on
                 # the target fills up long before its CPU/memory do.
                 useDeviationThresholds: true
+                metricsUtilization:
+                  source: KubernetesMetrics
                 thresholds:
                   cpu: 10
                   memory: 10
@@ -111,23 +113,3 @@ spec:
                 - RemovePodsViolatingNodeAffinity
                 - RemovePodsViolatingInterPodAntiAffinity
                 - PodLifeTime
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: ClusterRole
-            patch: |
-              - op: add
-                path: /rules/-
-                value:
-                  verbs: ["get", "watch", "list"]
-                  apiGroups: ["policy"]
-                  resources: ["poddisruptionbudgets"]
-              # metricsCollector reads actual usage for LowNodeUtilization;
-              # the chart's role doesn't grant it.
-              - op: add
-                path: /rules/-
-                value:
-                  verbs: ["get", "list"]
-                  apiGroups: ["metrics.k8s.io"]
-                  resources: ["nodes", "pods"]
