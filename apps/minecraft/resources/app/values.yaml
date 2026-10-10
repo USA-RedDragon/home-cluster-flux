@@ -109,14 +109,3 @@ route:
       - backendRefs:
           - name: minecraft
             port: 25565
-  rcon:
-    enabled: true
-    kind: TCPRoute
-    parentRefs:
-      - name: public
-        namespace: envoy-gateway-system
-        sectionName: minecraft-rcon
-    rules:
-      - backendRefs:
-          - name: minecraft-rcon
-            port: 25575
