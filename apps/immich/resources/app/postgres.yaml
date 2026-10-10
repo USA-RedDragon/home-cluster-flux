@@ -4,6 +4,10 @@ metadata:
   name: postgresql
   namespace: immich
 spec:
+  inheritedMetadata:
+    labels:
+      recurring-job.longhorn.io/source: enabled
+      recurring-job.longhorn.io/trim: enabled
   instances: 3
   imageName: jacob.pub/ghcr.io/tensorchord/cloudnative-vectorchord:17.5-0.4.3
   enableSuperuserAccess: true
