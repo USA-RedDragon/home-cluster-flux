@@ -232,7 +232,8 @@ configMaps:
           fastRestart: true
           cacheDriver:
             name: redis
-            url: redis://:__VALKEY_PASSWORD__@valkey:6379
+            addr: [valkey:6379]
+            password: "__VALKEY_PASSWORD__"
           dedupe: false
           storageDriver:
             name: s3
