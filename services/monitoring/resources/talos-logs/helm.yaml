@@ -25,6 +25,7 @@ spec:
     - name: loki
   values:
     defaultPodOptions:
+      automountServiceAccountToken: false
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       tolerations:

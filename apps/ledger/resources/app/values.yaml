@@ -1,5 +1,8 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 
+defaultPodOptions:
+  automountServiceAccountToken: false
+
 controllers:
   ledger:
     annotations:
