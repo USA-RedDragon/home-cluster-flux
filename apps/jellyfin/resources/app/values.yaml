@@ -120,6 +120,16 @@ route:
     hostnames:
       - jellyfin.mcswain.dev
     rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /metrics
+        filters:
+          - type: ExtensionRef
+            extensionRef:
+              group: gateway.envoyproxy.io
+              kind: HTTPRouteFilter
+              name: not-found
       - backendRefs:
           - name: jellyfin
             port: 8096
