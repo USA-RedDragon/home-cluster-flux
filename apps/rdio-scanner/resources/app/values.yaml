@@ -1,5 +1,16 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
+defaultPodOptions:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+    fsGroup: 65534
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+
 controllers:
   rdio-scanner:
     replicas: 1
@@ -13,6 +24,11 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/rdio-scanner
           tag: v7.2.30
           pullPolicy: IfNotPresent
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
         resources:
           limits:
             memory: 150Mi
@@ -57,6 +73,16 @@ controllers:
               secretKeyRef:
                 name: postgresql-app
                 key: username
+
+persistence:
+  data:
+    type: emptyDir
+    globalMounts:
+      - path: /app/data
+  tmp:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
 
 service:
   rdio-scanner:
