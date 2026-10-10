@@ -199,6 +199,9 @@ create table if not exists acquiredimage (
     guid text,
     PRIMARY KEY ("Id")
 );
+create index if not exists acquiredimage_target_idx on acquiredimage ("targetId");
+create index if not exists acquiredimage_project_idx on acquiredimage ("projectId");
+
 
 create table if not exists imagedata (
     "Id" integer NOT NULL,
