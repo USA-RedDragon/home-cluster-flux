@@ -25,7 +25,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       validate:
         failureAction: Enforce
         message: Setting the SELinux type is restricted. The fields spec.securityContext.seLinuxOptions.type, spec.containers[*].securityContext.seLinuxOptions.type, , spec.initContainers[*].securityContext.seLinuxOptions, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.type must either be unset or set to one of the allowed values (container_t, container_init_t, or container_kvm_t).
@@ -66,7 +65,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       validate:
         failureAction: Enforce
         message: Setting the SELinux user or role is forbidden. The fields spec.securityContext.seLinuxOptions.user, spec.securityContext.seLinuxOptions.role, spec.containers[*].securityContext.seLinuxOptions.user, spec.containers[*].securityContext.seLinuxOptions.role, spec.initContainers[*].securityContext.seLinuxOptions.user, spec.initContainers[*].securityContext.seLinuxOptions.role, spec.ephemeralContainers[*].securityContext.seLinuxOptions.user, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.role must be unset.

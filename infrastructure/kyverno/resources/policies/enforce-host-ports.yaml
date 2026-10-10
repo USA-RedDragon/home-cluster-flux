@@ -25,7 +25,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
           - resources:
               kinds:
                 - Pod

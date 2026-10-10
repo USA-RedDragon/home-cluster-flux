@@ -59,6 +59,7 @@ spec:
                 - sonarr
                 - sonarr-anime
                 - qbittorrent
+                - path-of-titans
       exclude:
         any:
           - resources:
@@ -73,7 +74,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       validate:
         failureAction: Enforce
         message: 'Setting sysctls other than the safe set is disallowed. Allowed: kernel.shm_rmid_forced, net.ipv4.ip_local_port_range, net.ipv4.ip_unprivileged_port_start, net.ipv4.tcp_syncookies, net.ipv4.ping_group_range, net.ipv4.ip_local_reserved_ports, net.ipv4.tcp_keepalive_time, net.ipv4.tcp_fin_timeout, net.ipv4.tcp_keepalive_intvl, net.ipv4.tcp_keepalive_probes, net.ipv4.tcp_rmem, net.ipv4.tcp_wmem, net.ipv4.conf.all.src_valid_mark.'
@@ -109,7 +109,6 @@ spec:
                 - smartctl-exporter
                 - tailscale-operator
                 - frigate
-                - path-of-titans
       validate:
         failureAction: Enforce
         message: 'Setting sysctls other than the safe set is disallowed. Allowed: kernel.shm_rmid_forced, net.ipv4.ip_local_port_range, net.ipv4.ip_unprivileged_port_start, net.ipv4.tcp_syncookies, net.ipv4.ping_group_range, net.ipv4.ip_local_reserved_ports, net.ipv4.tcp_keepalive_time, net.ipv4.tcp_fin_timeout, net.ipv4.tcp_keepalive_intvl, net.ipv4.tcp_keepalive_probes, net.ipv4.tcp_rmem, net.ipv4.tcp_wmem, net.ipv4.conf.all.src_valid_mark, net.ipv4.ip_forward, net.ipv6.conf.all.forwarding.'
