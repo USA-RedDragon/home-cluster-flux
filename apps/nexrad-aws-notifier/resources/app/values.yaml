@@ -1,5 +1,15 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
 
+defaultPodOptions:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+    fsGroup: 65534
+    seccompProfile:
+      type: RuntimeDefault
+
 controllers:
   nexrad-aws-notifier:
     replicas: 1
@@ -10,6 +20,11 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/nexrad-aws-notifier
           tag: v0.0.16@sha256:76154db51a6ff6ff3796f60972014d4cb6173cd9a2d49d5156972308d84ff67b
           pullPolicy: IfNotPresent
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
         env:
           HTTP_TRUSTED_PROXIES: "172.17.0.0/16"
           HTTP_CORS_HOSTS: "*"
