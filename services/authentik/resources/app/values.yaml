@@ -143,3 +143,5 @@ route:
           - path:
               type: PathPrefix
               value: /
+        timeouts:
+          request: 120s
