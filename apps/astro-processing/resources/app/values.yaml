@@ -163,13 +163,13 @@ ingress:
               identifier: frontend
               port: http
         - path: /query
-          pathType: Exact
+          pathType: Prefix
           service:
               identifier: backend
               port: http
         # Server-sent events: previews, masters and stacker progress.
         - path: /events
-          pathType: Exact
+          pathType: Prefix
           service:
               identifier: backend
               port: http
