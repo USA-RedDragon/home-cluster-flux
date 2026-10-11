@@ -1,0 +1,33 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: paperless-ngx
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: paperless-ngx
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: paperless-ngx-ingress
+  namespace: paperless-ngx
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: paperless
+      app.kubernetes.io/instance: paperless-ngx
+      app.kubernetes.io/name: paperless-ngx
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: paperless-ngx
+            tailscale.com/parent-resource-ns: paperless-ngx
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
