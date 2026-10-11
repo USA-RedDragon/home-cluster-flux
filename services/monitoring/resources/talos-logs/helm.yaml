@@ -83,9 +83,15 @@ spec:
                 decoding:
                   codec: json
             transforms:
+              drop_kernel_copy:
+                type: filter
+                inputs: [talos_service]
+                condition: |
+                  msg = to_string(.msg) ?? ""
+                  !(is_null(."talos-service") && match(msg, r'^(kern: |(SUBSYSTEM|DEVICE)=)'))
               talos:
                 type: remap
-                inputs: [talos_service, talos_kernel]
+                inputs: [drop_kernel_copy, talos_kernel]
                 source: |
                   .node = get_env_var("NODE_NAME") ?? "unknown"
                   svc = del(."talos-service")
