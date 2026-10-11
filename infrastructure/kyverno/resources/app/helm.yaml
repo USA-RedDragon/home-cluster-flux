@@ -34,6 +34,8 @@ spec:
     # Policies are Audit-only; an hourly rescan rewrote ~2000 policy reports
     # (~8k etcd writes/h) for no new information.
     features:
+      logging:
+        verbosity: 1
       backgroundScan:
         backgroundScanInterval: 24h
       omitEvents:
