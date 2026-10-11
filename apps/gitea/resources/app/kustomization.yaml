@@ -4,6 +4,7 @@ namespace: gitea
 resources:
   - helm.yaml
   - securitypolicy.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:

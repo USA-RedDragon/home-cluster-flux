@@ -1,0 +1,72 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: gitea
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: gitea
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gitea-ingress
+  namespace: gitea
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: gitea
+      app.kubernetes.io/instance: gitea
+      app.kubernetes.io/name: gitea
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: internal
+      toPorts:
+        - ports:
+            - port: "22"
+              protocol: TCP
+            - port: "3000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gitea-mirror-ingress
+  namespace: gitea
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: gitea-mirror
+      app.kubernetes.io/instance: gitea-mirror
+      app.kubernetes.io/name: gitea-mirror
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: gitea-mirror
+            tailscale.com/parent-resource-ns: gitea
+      toPorts:
+        - ports:
+            - port: "4321"
+              protocol: TCP
