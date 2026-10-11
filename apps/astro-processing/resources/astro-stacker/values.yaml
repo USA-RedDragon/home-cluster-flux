@@ -100,6 +100,8 @@ controllers:
             value: /tmp/stacking
           STACKING_SIRIL_THREADS:
             value: "4"
+          STACKING_ASTROMETRY_INDEX_DIR:
+            value: /astrometry
           # Share of the pod's memory limit Siril may use. Registration needs
           # about 320 MiB per thread; Siril runs while the accumulator is idle.
           STACKING_SIRIL_MEMORY:
@@ -161,6 +163,15 @@ controllers:
             cpu: 8
 
 persistence:
+  astrometry:
+    type: persistentVolumeClaim
+    forceRename: astro-stacker-astrometry
+    retain: true
+    storageClass: longhorn-r1
+    accessMode: ReadWriteOnce
+    size: 2Gi
+    globalMounts:
+      - path: /astrometry
   # Downloads, calibration masters and Siril output; the root filesystem is
   # read-only. A per-pod volume on the "fast" NVMes, not an emptyDir: rebuilds
   # write ~60 MB/s of 32-bit FITS, which saturated gamma's Talos system disk
