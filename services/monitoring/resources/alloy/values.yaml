@@ -118,6 +118,19 @@ alloy:
           }
         }
 
+        stage.match {
+          selector = "{namespace=\"monitoring\", container=\"loki\"}"
+          stage.drop {
+            expression = `^level=info ts=\S+ caller=(table_manager\.go:195|engine\.go:\d+|roundtrip\.go:\d+|compat\.go:\d+|evaluator_local\.go:\d+) `
+          }
+          stage.drop {
+            expression = `^level=info ts=\S+ caller=metrics\.go:\d+ .* latency=fast `
+          }
+          stage.drop {
+            expression = `^level=warn ts=\S+ caller=limits\.go:\d+ .* msg="could not determine query overlaps on tsdb vs non-tsdb schemas`
+          }
+        }
+
         stage.label_drop {
           values = ["filename"]
         }
