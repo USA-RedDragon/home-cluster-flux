@@ -65,7 +65,8 @@
                 "imageName: ['\"]?(?<depName>[^\\s'\"@]+?):(?<currentValue>[^\\s'\"@]+)(@(?<currentDigest>sha256:[a-f0-9]+))?['\"]?"
             ],
             "packageNameTemplate": "{{{replace '^jacob\\.pub/' '' depName}}}",
-            "datasourceTemplate": "docker"
+            "datasourceTemplate": "docker",
+            "autoReplaceStringTemplate": "imageName: {{depName}}:{{newValue}}{{#if newDigest}}@{{newDigest}}{{/if}}"
         },
         {
             "customType": "regex",
@@ -96,10 +97,11 @@
                 "/(^|/)ks\\.yaml$/"
             ],
             "matchStrings": [
-                "newName: (?<depName>\\S+)\\n\\s+newTag: (?<currentValue>\\S+)"
+                "newName: (?<depName>\\S+)\\n(?<indentation>[ \\t]+)newTag: (?<currentValue>\\S+)(\\n[ \\t]+digest: (?<currentDigest>sha256:[a-f0-9]+))?"
             ],
             "packageNameTemplate": "{{{replace '^jacob\\.pub/' '' depName}}}",
-            "datasourceTemplate": "docker"
+            "datasourceTemplate": "docker",
+            "autoReplaceStringTemplate": "newName: {{depName}}\n{{indentation}}newTag: {{newValue}}{{#if newDigest}}\n{{indentation}}digest: {{newDigest}}{{/if}}"
         },
         {
             "description": "The alloy chart builds the app.kubernetes.io/version label from image.tag and fails on tag@digest, so its image pins through a separate digest key that only this manager updates",
@@ -120,6 +122,29 @@
                 "pinDigest"
             ],
             "automerge": false
+        },
+        {
+            "description": "A HelmRelease chart from an OCI HelmRepository has no field that can hold a digest, so a pin can never be written and fails the whole branch with update failure",
+            "matchManagers": [
+                "flux"
+            ],
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchJsonata": [
+                "$not($exists(replaceString))"
+            ],
+            "pinDigests": false
+        },
+        {
+            "description": "Environment values that end in _IMAGE but hold image URLs, not container images",
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchDepNames": [
+                "/^https?:\\/\\//"
+            ],
+            "enabled": false
         },
         {
             "description": "prometheus-operator derives spec.version from the image tag and rejects a digest there, which silently halts reconciliation of the Prometheus and Alertmanager CRs (no ServiceMonitor or PrometheusRule changes get applied). The node-exporter subchart runs semverCompare on its tag, so a digest there fails every kube-prometheus-stack upgrade. Keep these tags bare; every other image in this chart pins normally.",
