@@ -4,6 +4,7 @@ namespace: relax-sounds
 resources:
   - helm.yaml
   - routefilter.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:
