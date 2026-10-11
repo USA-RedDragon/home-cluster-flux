@@ -85,6 +85,14 @@ alloy:
         // on arrival, so the observatory's parsed NINA/TS times (and anything
         // caught up after an outage) landed at the time it reached the gateway.
         use_incoming_timestamp = true
+        forward_to = [loki.process.push.receiver]
+      }
+
+      loki.process "push" {
+        stage.match {
+          selector = "{job=\"observatory\", app=\"target-scheduler\", level=\"DEBUG\"}"
+          action   = "drop"
+        }
         forward_to = [loki.write.default.receiver]
       }
 
