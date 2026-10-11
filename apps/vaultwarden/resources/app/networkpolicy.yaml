@@ -1,0 +1,32 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: vaultwarden
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: vaultwarden
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vaultwarden-ingress
+  namespace: vaultwarden
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: vaultwarden
+      app.kubernetes.io/instance: vaultwarden
+      app.kubernetes.io/name: vaultwarden
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
