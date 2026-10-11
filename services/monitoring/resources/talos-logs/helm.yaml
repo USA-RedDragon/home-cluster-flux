@@ -103,7 +103,7 @@ spec:
               drop_audit:
                 type: filter
                 inputs: [talos]
-                condition: '!match(to_string(.msg) ?? "", r''^type=(AVC|USER_AVC|SYSCALL|PATH|PROCTITLE|CWD|EOE|SOCKADDR|MAC_STATUS) '')'
+                condition: '!match(to_string(.msg) ?? "", r''^type=(AVC|USER_AVC|SYSCALL|PATH|PROCTITLE|CWD|EOE|SOCKADDR|MAC_STATUS|BPF) '')'
               # The Talos console dashboard polls machined over localhost with
               # the same 10 read-only calls, and each call logs an authz line
               # plus an OK line: ~14k lines/h per node. Drop those calls and
