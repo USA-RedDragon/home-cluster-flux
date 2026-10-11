@@ -257,6 +257,14 @@ data:
             annotations:
               summary: "Observatory SymmetricDS logged {{ $value }} errors in 30m"
               description: "Target Scheduler sync to astro-processing is failing repeatedly (often SQLITE_BUSY). Query: {job=\"observatory\", app=\"symmetricds\"} |= \" ERROR \""
+          - alert: SymmetricDSTriggerFailed
+            expr: |
+              sum by (table) (count_over_time({job="observatory", app="symmetricds"} |~ `Failed to create triggers for |Error while dropping trigger|Table not found: ` | regexp `(?:Failed to create triggers for|for table|Table not found:) (?P<table>[^\s:]+)` [1h])) > 0
+            labels:
+              severity: warning
+            annotations:
+              summary: "Observatory SymmetricDS failed to rebuild the capture triggers on {{ $labels.table }}"
+              description: "A trigger sync dropped or failed to create a capture trigger, so changes to {{ $labels.table }} on the observatory may not reach astro-processing until the next successful trigger sync. Rows written meanwhile are not captured. Query: {job=\"observatory\", app=\"symmetricds\"} |~ \"Failed to create triggers|Dropping SYM_ON|Creating SYM_ON\""
           # The AM5 refuses a sync more than a few degrees from where it thinks
           # it points. On 2026-10-05/06 it had lost its position by ~20 deg:
           # NINA still centred by offset, but flips and limits ran on the wrong
