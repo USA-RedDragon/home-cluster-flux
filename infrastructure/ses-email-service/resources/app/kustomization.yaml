@@ -4,3 +4,4 @@ resources:
 - rbac.yaml
 - repo.yaml
 - ks.yaml
+- networkpolicy.yaml
