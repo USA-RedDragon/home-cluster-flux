@@ -95,6 +95,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: authentik}
     - {kind: Kustomization, name: '*', namespace: authentik}
     - {kind: OCIRepository, name: '*', namespace: authentik}
+    - {kind: GitRepository, name: '*', namespace: b2-backup-operator-system}
+    - {kind: HelmChart, name: '*', namespace: b2-backup-operator-system}
+    - {kind: HelmRelease, name: '*', namespace: b2-backup-operator-system}
+    - {kind: HelmRepository, name: '*', namespace: b2-backup-operator-system}
+    - {kind: Kustomization, name: '*', namespace: b2-backup-operator-system}
+    - {kind: OCIRepository, name: '*', namespace: b2-backup-operator-system}
     - {kind: GitRepository, name: '*', namespace: backup-sync}
     - {kind: HelmChart, name: '*', namespace: backup-sync}
     - {kind: HelmRelease, name: '*', namespace: backup-sync}

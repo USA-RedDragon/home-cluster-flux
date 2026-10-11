@@ -1,0 +1,78 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: b2-backup-operator
+  namespace: b2-backup-operator-system
+spec:
+  interval: 1h
+  url: oci://ghcr.io/usa-reddragon/b2-backup-operator-manifests
+  ref:
+    tag: v0.1.0
+    digest: sha256:3e805a5cb58eaba794e1faa6b2b1e9d5d017f0723bf4d3b35403148bd8a784a0
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: b2-backup-operator
+  namespace: b2-backup-operator-system
+spec:
+  interval: 1h
+  targetNamespace: b2-backup-operator-system
+  path: ./
+  prune: true
+  wait: true
+  timeout: 5m
+  sourceRef:
+    kind: OCIRepository
+    name: b2-backup-operator
+  images:
+    - name: ghcr.io/usa-reddragon/b2-backup-operator
+      newName: jacob.pub/ghcr.io/usa-reddragon/b2-backup-operator
+  patches:
+    - target:
+        kind: Namespace
+        name: b2-backup-operator-system
+      patch: |
+        $patch: delete
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: not-used
+    - target:
+        kind: CustomResourceDefinition
+        name: .*\.b2backup\.mcswain\.dev
+      patch: |
+        - op: add
+          path: /metadata/annotations/kustomize.toolkit.fluxcd.io~1prune
+          value: disabled
+    - target:
+        kind: Deployment
+        name: b2-backup-operator-controller-manager
+      patch: |
+        - op: add
+          path: /spec/template/spec/containers/0/args/-
+          value: --backup-image=jacob.pub/ghcr.io/usa-reddragon/restic:0.19.1@sha256:9853f70ae715fcede61d19e496f34931dc9fb7b739cccd488837bf30750196b7
+        - op: add
+          path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-kubeapi
+          value: "true"
+        - op: add
+          path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-coredns
+          value: "true"
+        - op: add
+          path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-internet
+          value: "true"
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: b2-backup-operator-config
+  namespace: b2-backup-operator-system
+spec:
+  interval: 1h
+  targetNamespace: b2-backup-operator-system
+  path: ./infrastructure/b2-backup-operator/resources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
