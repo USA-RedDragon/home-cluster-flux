@@ -1,0 +1,102 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: mosquitto
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: mosquitto
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: mosquitto-ingress
+  namespace: mosquitto
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: mosquitto
+      app.kubernetes.io/instance: mosquitto
+      app.kubernetes.io/name: mosquitto
+  ingress:
+    - fromEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "1883"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: frigate
+            app.kubernetes.io/name: frigate
+      toPorts:
+        - ports:
+            - port: "1883"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: mqtt-wx
+            app.kubernetes.io/controller: mqtt-wx
+            app.kubernetes.io/instance: mqtt-wx
+            app.kubernetes.io/name: mqtt-wx
+      toPorts:
+        - ports:
+            - port: "1883"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: rtl-433
+            app.kubernetes.io/name: rtl-433
+      toPorts:
+        - ports:
+            - port: "1883"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: mosquitto
+            tailscale.com/parent-resource-ns: mosquitto
+      toPorts:
+        - ports:
+            - port: "1883"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: wheresmyscope
+            app.kubernetes.io/name: wheresmyscope
+      toPorts:
+        - ports:
+            - port: "1883"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: wx
+            app.kubernetes.io/name: wx
+      toPorts:
+        - ports:
+            - port: "1883"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: mosquitto-exporter-ingress
+  namespace: mosquitto
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: mosquitto-exporter
+      app.kubernetes.io/instance: mosquitto-exporter
+      app.kubernetes.io/name: mosquitto-exporter
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9234"
+              protocol: TCP
