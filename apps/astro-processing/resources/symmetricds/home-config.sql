@@ -461,3 +461,40 @@ insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_chann
 insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
   ('ts_dark_need', 'home to sqlite', -1, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_bias_need (
+    combo_key text NOT NULL PRIMARY KEY,
+    priority integer NOT NULL,
+    gain double precision NOT NULL,
+    camera_offset double precision NOT NULL,
+    binning double precision NOT NULL,
+    readout_mode text,
+    frames_needed integer NOT NULL,
+    frames_have integer NOT NULL,
+    newest_bias_at timestamp,
+    session_gap_hours double precision NOT NULL,
+    basis text,
+    computed_at timestamp NOT NULL
+);
+
+create table if not exists ts_flat_request (
+    request_id text NOT NULL PRIMARY KEY,
+    target_id integer NOT NULL,
+    target_name text NOT NULL,
+    night text NOT NULL,
+    filters text,
+    requested_at timestamp NOT NULL,
+    computed_at timestamp NOT NULL
+);
+
+grant select, insert, update, delete on ts_bias_need, ts_flat_request to "astro-processing";
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_bias_need', 'ts_bias_need', 'goal', 'reload', current_timestamp, current_timestamp),
+  ('ts_flat_request', 'ts_flat_request', 'goal', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_bias_need', 'home to sqlite', -1, current_timestamp, current_timestamp),
+  ('ts_flat_request', 'home to sqlite', -1, current_timestamp, current_timestamp)
+  on conflict do nothing;
