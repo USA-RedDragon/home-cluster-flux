@@ -137,6 +137,16 @@
             "pinDigests": false
         },
         {
+            "description": "An OCIRepository tag pinned as tag@digest becomes the artifact revision, which no longer matches the chart version every chartRef HelmRelease checks",
+            "matchManagers": [
+                "flux"
+            ],
+            "matchFileNames": [
+                "infrastructure/helm-repos/**"
+            ],
+            "pinDigests": false
+        },
+        {
             "description": "Environment values that end in _IMAGE but hold image URLs, not container images",
             "matchDatasources": [
                 "docker"
