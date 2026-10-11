@@ -9,7 +9,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/docker.io/redis
-          tag: '8'
+          tag: '8@sha256:2c2dff791878316e3b083188be0d578423b24813cdda5de0e80ea4f7b3e6bfd6'
           pullPolicy: IfNotPresent
         ports:
         - name: redis
