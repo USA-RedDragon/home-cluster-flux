@@ -1,0 +1,71 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: tailscale-operator
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: tailscale.com/parent-resource-ns
+        operator: NotIn
+        values:
+          - astro-processing
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+    - fromEntities:
+        - all
+      toPorts:
+        - ports:
+            - port: "1"
+              endPort: 65535
+              protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: observatory-monitoring-ingress
+  namespace: tailscale-operator
+spec:
+  endpointSelector:
+    matchLabels:
+      tailscale.com/parent-resource-ns: monitoring
+      tailscale.com/parent-resource: observatory
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9182"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: nut-exporter
+      toPorts:
+        - ports:
+            - port: "3493"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: observatory-json-exporter-ingress
+  namespace: tailscale-operator
+spec:
+  endpointSelector:
+    matchLabels:
+      tailscale.com/parent-resource-ns: json-exporter
+      tailscale.com/parent-resource: observatory
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: json-exporter
+            app.kubernetes.io/name: json-exporter
+      toPorts:
+        - ports:
+            - port: "1888"
+              protocol: TCP
