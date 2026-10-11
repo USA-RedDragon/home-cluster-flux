@@ -1,0 +1,41 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: iperf3
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: iperf3
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: iperf3-ingress
+  namespace: iperf3
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: iperf3
+      app.kubernetes.io/instance: iperf3
+      app.kubernetes.io/name: iperf3
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "5201"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: iperf3
+            tailscale.com/parent-resource-ns: iperf3
+      toPorts:
+        - ports:
+            - port: "5201"
+              protocol: TCP
