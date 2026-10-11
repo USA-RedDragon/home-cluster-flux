@@ -4,3 +4,4 @@ namespace: tailscale-operator
 resources:
   - proxyclass.yaml
   - connector.yaml
+  - networkpolicy.yaml
