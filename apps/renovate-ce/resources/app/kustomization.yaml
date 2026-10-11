@@ -4,6 +4,7 @@ namespace: renovate-ce
 resources:
   - helm.yaml
   - route.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:
