@@ -45,8 +45,6 @@ spec:
       maxNoOfPodsToEvictTotal: 4
       # Control-plane nodes are tainted; don't let them skew the averages.
       nodeSelector: "!node-role.kubernetes.io/control-plane,!descheduler.mcswain.dev/exclude"
-      metricsProviders:
-        - source: KubernetesMetrics
       profiles:
         - name: default
           pluginConfig:
@@ -57,7 +55,6 @@ spec:
                 evictSystemCriticalPods: false
                 evictDaemonSetPods: false
                 evictFailedBarePods: true
-            - name: RemoveDuplicates
             - name: RemovePodsHavingTooManyRestarts
               args:
                 podRestartThreshold: 3
@@ -68,7 +65,6 @@ spec:
                 - requiredDuringSchedulingIgnoredDuringExecution
             - name: RemovePodsViolatingNodeTaints
             - name: RemovePodsViolatingInterPodAntiAffinity
-            - name: RemovePodsViolatingTopologySpreadConstraint
             - name: PodLifeTime
               args:
                 maxPodLifeTimeSeconds: 300
@@ -80,6 +76,26 @@ spec:
                     - rtl-433
                     - trunk-recorder
                     - ultrafeeder
+          plugins:
+            deschedule:
+              enabled:
+                - RemovePodsHavingTooManyRestarts
+                - RemovePodsViolatingNodeTaints
+                - RemovePodsViolatingNodeAffinity
+                - RemovePodsViolatingInterPodAntiAffinity
+                - PodLifeTime
+        - name: balance
+          pluginConfig:
+            - name: DefaultEvictor
+              args:
+                ignorePvcPods: true
+                evictLocalStoragePods: false
+                evictSystemCriticalPods: false
+                evictDaemonSetPods: false
+                nodeFit: true
+                minPodAge: 1h
+            - name: RemoveDuplicates
+            - name: RemovePodsViolatingTopologySpreadConstraint
             # Relative to the worker average (fixed 20% floors never matched: every
             # worker sits at 60-99% requested). Underutilized = below average - 10
             # on all resources; overutilized = above average + 10 on any.
@@ -88,8 +104,6 @@ spec:
                 # No pods threshold: the evicted pods are small, so pod count on
                 # the target fills up long before its CPU/memory do.
                 useDeviationThresholds: true
-                metricsUtilization:
-                  source: KubernetesMetrics
                 thresholds:
                   cpu: 10
                   memory: 10
@@ -98,18 +112,43 @@ spec:
                   memory: 10
                 evictableNamespaces:
                   exclude:
+                    - actions-runner-system
+                    - anubis
+                    - aredn-piaware
+                    - authentik
+                    - cert-manager
+                    - cnpg-system
+                    - crowdsec
+                    - descheduler
+                    - dump978
+                    - envoy-gateway-system
+                    - external-dns-internal
+                    - flux-system
+                    - frigate
+                    - gigalearn
+                    - kube-system
+                    - kyverno
+                    - longhorn-system
+                    - metallb-system
                     - minecraft
+                    - minio
+                    - monitoring
+                    - mosquitto
                     - path-of-titans
+                    - piaware
+                    - reflector
+                    - reloader
+                    - rtl-433
+                    - tailscale-operator
+                    - tailscale-peer-relay
+                    - tfe
+                    - trunk-recorder
+                    - ultrafeeder
+                    - wireguard
+                    - zot
           plugins:
             balance:
               enabled:
                 - RemoveDuplicates
                 - RemovePodsViolatingTopologySpreadConstraint
                 - LowNodeUtilization
-            deschedule:
-              enabled:
-                - RemovePodsHavingTooManyRestarts
-                - RemovePodsViolatingNodeTaints
-                - RemovePodsViolatingNodeAffinity
-                - RemovePodsViolatingInterPodAntiAffinity
-                - PodLifeTime
