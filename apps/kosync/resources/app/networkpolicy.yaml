@@ -1,0 +1,41 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: kosync
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kosync
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: kosync-ingress
+  namespace: kosync
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: kosync
+      app.kubernetes.io/instance: kosync
+      app.kubernetes.io/name: kosync
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: kosync
+            tailscale.com/parent-resource-ns: kosync
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
