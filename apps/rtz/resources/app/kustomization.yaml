@@ -4,6 +4,7 @@ namespace: rtz
 resources:
   - helm.yaml
   - postgres.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:
