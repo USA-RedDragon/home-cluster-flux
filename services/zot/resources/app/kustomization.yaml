@@ -7,6 +7,7 @@ resources:
   - auth-cert.yaml
   - securitypolicy.yaml
   - routefilter.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:
