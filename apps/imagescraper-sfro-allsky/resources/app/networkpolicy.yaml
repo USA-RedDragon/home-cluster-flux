@@ -1,0 +1,32 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: imagescraper-sfro-allsky
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: imagescraper-sfro-allsky
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: imagescraper-sfro-allsky-viewer-ingress
+  namespace: imagescraper-sfro-allsky
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: viewer
+      app.kubernetes.io/instance: imagescraper-sfro-allsky
+      app.kubernetes.io/name: imagescraper-sfro-allsky
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
