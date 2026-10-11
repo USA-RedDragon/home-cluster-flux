@@ -1,0 +1,44 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: metallb-system
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: metallb-system
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: metallb-controller-ingress
+  namespace: metallb-system
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/instance: metallb
+      app.kubernetes.io/name: metallb
+  ingress:
+    - fromEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "9443"
+              protocol: TCP
+    - fromEntities:
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "9443"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9120"
+              protocol: TCP
