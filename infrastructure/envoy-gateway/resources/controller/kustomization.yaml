@@ -4,6 +4,7 @@ namespace: envoy-gateway-system
 resources:
   - helm.yaml
   - servicemonitor.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:
