@@ -1,0 +1,51 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: ultrafeeder
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: ultrafeeder
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ultrafeeder-ingress
+  namespace: ultrafeeder
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: ultrafeeder
+      app.kubernetes.io/instance: ultrafeeder
+      app.kubernetes.io/name: ultrafeeder
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9273"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: piaware
+            app.kubernetes.io/controller: piaware
+            app.kubernetes.io/instance: piaware
+            app.kubernetes.io/name: piaware
+      toPorts:
+        - ports:
+            - port: "30005"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: ultrafeeder
+            tailscale.com/parent-resource-ns: ultrafeeder
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
