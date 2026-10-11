@@ -46,11 +46,15 @@ controllers:
             value: "480"
           - name: IMAGE_WIDTH
             value: "800"
-          # While the observatory images the target, show its newest accepted
-          # sub (astro-stacker's watermarked public frame, polled and cached
-          # here, served at /image.jpg) instead of the survey cutout. The
-          # egress policy below already allows in-cluster pods, and
-          # astro-stacker has no ingress policy.
+          # Show astro-stacker's watermarked public frame of the scope's
+          # current target (its newest accepted sub still in a master; the
+          # stacker renders targets imaged in the last 14 days) whenever the
+          # stacker has one, imaging or not. It is polled and cached here and
+          # served at /image.jpg. A 404 falls back to the hips2fits survey
+          # cutout; other stacker errors keep the frame already shown.
+          # astro.garden credits whichever image the page shows. The egress
+          # policy below already allows in-cluster pods, and astro-stacker
+          # has no ingress policy.
           - name: PUBLIC_FRAME_STACKER_URL
             value: http://astro-stacker.astro-processing.svc.cluster.local:8080
           - name: TRUSTED_PROXIES
