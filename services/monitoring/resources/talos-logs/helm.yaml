@@ -86,9 +86,7 @@ spec:
               drop_kernel_copy:
                 type: filter
                 inputs: [talos_service]
-                condition: |
-                  msg = to_string(.msg) ?? ""
-                  !(is_null(."talos-service") && match(msg, r'^(kern: |(SUBSYSTEM|DEVICE)=)'))
+                condition: '."talos-service" != "kernel"'
               talos:
                 type: remap
                 inputs: [drop_kernel_copy, talos_kernel]
