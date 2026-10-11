@@ -461,3 +461,28 @@ insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_chann
 insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
   ('ts_dark_need', 'home to sqlite', -1, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_sub_length (
+    target_guid text NOT NULL,
+    filter text NOT NULL,
+    gain integer NOT NULL,
+    bucket text NOT NULL,
+    exposure double precision NOT NULL,
+    ideal double precision,
+    current double precision,
+    sky_rate double precision,
+    snr_change double precision,
+    basis text,
+    computed_at timestamp NOT NULL,
+    PRIMARY KEY (target_guid, filter, gain, bucket)
+);
+
+grant select, insert, update, delete on ts_sub_length to "astro-processing";
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_sub_length', 'ts_sub_length', 'goal', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_sub_length', 'home to sqlite', -1, current_timestamp, current_timestamp)
+  on conflict do nothing;
