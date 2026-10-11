@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: cnpg-system
 resources:
   - helm.yaml
+  - networkpolicy.yaml
