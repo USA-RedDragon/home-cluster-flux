@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: k8s-oidc-discovery
 resources:
   - helm.yaml
+  - networkpolicy.yaml
