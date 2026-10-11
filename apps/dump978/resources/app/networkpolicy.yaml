@@ -1,0 +1,63 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: dump978
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dump978
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: dump978-ingress
+  namespace: dump978
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: dump978
+      app.kubernetes.io/instance: dump978
+      app.kubernetes.io/name: dump978
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9273"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: piaware
+            app.kubernetes.io/controller: piaware
+            app.kubernetes.io/instance: piaware
+            app.kubernetes.io/name: piaware
+      toPorts:
+        - ports:
+            - port: "30978"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: dump978
+            tailscale.com/parent-resource-ns: dump978
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: ultrafeeder
+            app.kubernetes.io/controller: ultrafeeder
+            app.kubernetes.io/instance: ultrafeeder
+            app.kubernetes.io/name: ultrafeeder
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "30978"
+              protocol: TCP
