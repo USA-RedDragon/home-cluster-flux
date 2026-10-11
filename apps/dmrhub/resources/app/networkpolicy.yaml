@@ -1,0 +1,60 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: dmrhub
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dmrhub
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: dmrhub-ingress
+  namespace: dmrhub
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: dmrhub
+      app.kubernetes.io/instance: dmrhub
+      app.kubernetes.io/name: dmrhub
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: aredn-dmrhub
+            app.kubernetes.io/name: aredn-dmrhub
+      toPorts:
+        - ports:
+            - port: "3005"
+              protocol: TCP
+            - port: "50000"
+              protocol: UDP
+            - port: "62031"
+              protocol: UDP
+            - port: "62035"
+              protocol: UDP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "3005"
+              protocol: TCP
+            - port: "50000"
+              protocol: UDP
+            - port: "62031"
+              protocol: UDP
+            - port: "62035"
+              protocol: UDP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9001"
+              protocol: TCP
