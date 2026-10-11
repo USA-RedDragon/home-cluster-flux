@@ -1,0 +1,30 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: tailscale-peer-relay
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-peer-relay
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: tailscale-peer-relay-ingress
+  namespace: tailscale-peer-relay
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: tailscale
+      app.kubernetes.io/instance: tailscale-peer-relay
+      app.kubernetes.io/name: tailscale-peer-relay
+  ingress:
+    - fromEntities:
+        - cluster
+      toPorts:
+        - ports:
+            - port: "40000"
+              protocol: UDP

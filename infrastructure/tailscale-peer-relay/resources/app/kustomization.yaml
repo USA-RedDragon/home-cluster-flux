@@ -4,6 +4,7 @@ namespace: tailscale-peer-relay
 resources:
   - helm.yaml
   - tailscaled-config.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:
