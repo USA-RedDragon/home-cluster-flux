@@ -22,7 +22,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:a46bdc9f8a95765b8043c0008c253839f974c268bd24b22b70fc33c2dad106d7"
+          tag: "beta@sha256:47173d8c81e1fd0205018dc12d2763dc7c8d4bf1ea62f6fbcf80f08a3db87d2e"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
