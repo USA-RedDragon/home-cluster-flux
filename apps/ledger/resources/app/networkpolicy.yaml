@@ -17,3 +17,45 @@ spec:
         - ports:
             - port: "8000"
               protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: ledger
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: ledger
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ledger-ingress
+  namespace: ledger
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: ledger
+      app.kubernetes.io/instance: ledger
+      app.kubernetes.io/name: ledger
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: ledger
+            tailscale.com/parent-resource-ns: ledger
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
