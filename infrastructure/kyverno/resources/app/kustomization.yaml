@@ -4,3 +4,4 @@ namespace: kyverno
 resources:
   - helm.yaml
   - ../policy-reporter
+  - networkpolicy.yaml
