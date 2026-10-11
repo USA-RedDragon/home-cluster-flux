@@ -21,6 +21,14 @@ spec:
             - port: "1"
               endPort: 65535
               protocol: UDP
+    - fromEntities:
+        - all
+      icmps:
+        - fields:
+            - type: 3
+              family: IPv4
+            - type: 11
+              family: IPv4
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy

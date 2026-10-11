@@ -28,3 +28,11 @@ spec:
         - ports:
             - port: "40000"
               protocol: UDP
+    - fromEntities:
+        - all
+      icmps:
+        - fields:
+            - type: 3
+              family: IPv4
+            - type: 11
+              family: IPv4
