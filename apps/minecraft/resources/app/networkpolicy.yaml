@@ -35,3 +35,86 @@ spec:
             - 172.16.0.0/12
             - 192.168.0.0/16
             - 100.64.0.0/10
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: minecraft
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: minecraft
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: filebrowser-ingress
+  namespace: minecraft
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: filebrowser
+      app.kubernetes.io/instance: filebrowser
+      app.kubernetes.io/name: filebrowser
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: filebrowser
+            tailscale.com/parent-resource-ns: minecraft
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: minecraft-ingress
+  namespace: minecraft
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: minecraft
+      app.kubernetes.io/instance: minecraft
+      app.kubernetes.io/name: minecraft
+  ingress:
+    - fromEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "25565"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "25565"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: rcon-ingress
+  namespace: minecraft
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: rcon
+      app.kubernetes.io/instance: rcon
+      app.kubernetes.io/name: rcon
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: rcon
+            tailscale.com/parent-resource-ns: minecraft
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
