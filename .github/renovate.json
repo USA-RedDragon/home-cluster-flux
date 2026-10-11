@@ -104,6 +104,18 @@
             "autoReplaceStringTemplate": "newName: {{depName}}\n{{indentation}}newTag: {{newValue}}{{#if newDigest}}\n{{indentation}}digest: {{newDigest}}{{/if}}"
         },
         {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)infrastructure\\/b2-backup-operator\\/ks\\.yaml$/"
+            ],
+            "matchStrings": [
+                "--backup-image=(?<depName>[^\\s:@]+):(?<currentValue>[^\\s@]+)(@(?<currentDigest>sha256:[a-f0-9]+))?"
+            ],
+            "packageNameTemplate": "{{{replace '^jacob\\.pub/' '' depName}}}",
+            "datasourceTemplate": "docker",
+            "autoReplaceStringTemplate": "--backup-image={{depName}}:{{newValue}}{{#if newDigest}}@{{newDigest}}{{/if}}"
+        },
+        {
             "description": "The alloy chart builds the app.kubernetes.io/version label from image.tag and fails on tag@digest, so its image pins through a separate digest key that only this manager updates",
             "customType": "regex",
             "managerFilePatterns": [
