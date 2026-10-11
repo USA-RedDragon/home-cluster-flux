@@ -55,3 +55,243 @@ spec:
               protocol: TCP
             - port: "7917"
               protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: path-of-titans
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/instance
+        operator: NotIn
+        values:
+          - path-of-titans
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: path-of-titans
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: a2s-exporter-ingress
+  namespace: path-of-titans
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: a2s-exporter
+      app.kubernetes.io/instance: a2s-exporter
+      app.kubernetes.io/name: a2s-exporter
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: filebrowser-ingress
+  namespace: path-of-titans
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: filebrowser
+      app.kubernetes.io/instance: filebrowser
+      app.kubernetes.io/name: filebrowser
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: filebrowser
+            tailscale.com/parent-resource-ns: path-of-titans
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: mtail-ingress
+  namespace: path-of-titans
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: mtail
+      app.kubernetes.io/instance: mtail
+      app.kubernetes.io/name: mtail
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "3903"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: obsidibot-ingress
+  namespace: path-of-titans
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: obsidibot
+      app.kubernetes.io/instance: obsidibot
+      app.kubernetes.io/name: obsidibot
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: path-map-ingress
+  namespace: path-of-titans
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: path-map
+      app.kubernetes.io/instance: path-map
+      app.kubernetes.io/name: path-map
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: path-map
+            tailscale.com/parent-resource-ns: path-of-titans
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: rcon-ingress
+  namespace: path-of-titans
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: rcon
+      app.kubernetes.io/instance: rcon
+      app.kubernetes.io/name: rcon
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: rcon
+            tailscale.com/parent-resource-ns: path-of-titans
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: rcon-exporter-ingress
+  namespace: path-of-titans
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: rcon-exporter
+      app.kubernetes.io/instance: rcon-exporter
+      app.kubernetes.io/name: rcon-exporter
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: path-of-titans-ingress
+  namespace: path-of-titans
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: path-of-titans
+      app.kubernetes.io/instance: path-of-titans
+      app.kubernetes.io/name: path-of-titans
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: path-of-titans
+            app.kubernetes.io/name: rcon
+        - matchLabels:
+            io.kubernetes.pod.namespace: path-of-titans
+            app.kubernetes.io/name: rcon-exporter
+        - matchLabels:
+            io.kubernetes.pod.namespace: path-of-titans
+            app.kubernetes.io/name: obsidibot
+        - matchLabels:
+            io.kubernetes.pod.namespace: path-of-titans
+            app.kubernetes.io/name: path-map
+        - matchLabels:
+            io.kubernetes.pod.namespace: path-of-titans
+            app.kubernetes.io/name: filebrowser
+      toPorts:
+        - ports:
+            - port: "7779"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: path-of-titans
+            app.kubernetes.io/name: a2s-exporter
+      toPorts:
+        - ports:
+            - port: "7781"
+              protocol: UDP
