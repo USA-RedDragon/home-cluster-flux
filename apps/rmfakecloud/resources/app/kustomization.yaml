@@ -6,6 +6,7 @@ resources:
   - cert.yaml
   - backends.yaml
   - referencegrant.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:
