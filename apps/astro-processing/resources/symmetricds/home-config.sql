@@ -414,7 +414,7 @@ create table if not exists ts_target_season (
 
 grant select on ts_goal, ts_target_season to "astro-processing";
 grant select, insert, update on ts_goal_progress to "astro-processing";
-grant select on sym_node_identity, sym_node_host, sym_incoming_batch to "astro-processing";
+grant select on sym_node_identity, sym_node_host, sym_incoming_batch, sym_outgoing_batch to "astro-processing";
 
 insert into sym_channel (channel_id, processing_order, max_batch_size, max_batch_to_send, enabled, description, create_time, last_update_time) values
   ('goal', 15, 50, 10, 1, 'observatory-scheduler goals, goal progress and seasons', current_timestamp, current_timestamp)
