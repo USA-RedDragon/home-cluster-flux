@@ -67,3 +67,15 @@ spec:
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: envoy-gateway-system
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: envoy-gateway-system
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
