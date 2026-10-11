@@ -131,6 +131,34 @@ alloy:
           }
         }
 
+        stage.match {
+          selector = "{container=\"exporter\", namespace=~\"sonarr|sonarr-anime|radarr|prowlarr|bazarr\"}"
+          stage.drop {
+            expression = `^\S+\tINFO\tSending HTTP request\t`
+          }
+        }
+
+        stage.match {
+          selector = "{container=\"wireguard\"}"
+          stage.drop {
+            expression = `^Ping ok$`
+          }
+        }
+
+        stage.match {
+          selector = "{namespace=\"monitoring\", app=\"metrics-actioner\"}"
+          stage.drop {
+            expression = `^\[GIN\] [^|]+\| 200 \|[^|]+\|[^|]+\| GET +"/(health|metrics)"$`
+          }
+        }
+
+        stage.match {
+          selector = "{namespace=\"monitoring\", container=\"grafana-image-renderer\"}"
+          stage.drop {
+            expression = ` msg="request complete" method=GET mux_pattern="\S*" uri=/healthz status=200 `
+          }
+        }
+
         stage.label_drop {
           values = ["filename"]
         }
