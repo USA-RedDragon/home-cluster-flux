@@ -13,7 +13,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/hertzg/rtl_433_docker
-          tag: 24.10-alpine@sha256:6330fb6523957a84d41aa1bda23e81132c65e8fff67dbdc98fbb31248168efe7
+          tag: 24.10-alpine@sha256:92ec508cc454fe4b580313b4b07337c10ec18b895208a289678c1ca28cef59b0
           pullPolicy: IfNotPresent
         args:
         - -c
