@@ -1,0 +1,32 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: openspeedtest
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: openspeedtest
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: openspeedtest-ingress
+  namespace: openspeedtest
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: openspeedtest
+      app.kubernetes.io/instance: openspeedtest
+      app.kubernetes.io/name: openspeedtest
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
