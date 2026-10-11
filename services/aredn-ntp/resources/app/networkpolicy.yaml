@@ -29,3 +29,37 @@ spec:
       - ports:
           - port: "5564"
             protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: aredn-ntp
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: aredn-ntp
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: aredn-ntp-app-ingress
+  namespace: aredn-ntp
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: aredn-ntp
+      app.kubernetes.io/instance: aredn-ntp
+      app.kubernetes.io/name: aredn-ntp
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: aredn-ntp-app
+            tailscale.com/parent-resource-ns: aredn-ntp
+      toPorts:
+        - ports:
+            - port: "123"
+              protocol: UDP
