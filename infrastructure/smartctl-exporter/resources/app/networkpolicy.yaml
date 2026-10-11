@@ -1,0 +1,32 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: smartctl-exporter
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: smartctl-exporter
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: smartctl-exporter-ingress
+  namespace: smartctl-exporter
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: smartctl-exporter
+      app.kubernetes.io/instance: smartctl-exporter
+      app.kubernetes.io/name: smartctl-exporter
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9633"
+              protocol: TCP

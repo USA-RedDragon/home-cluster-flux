@@ -4,6 +4,7 @@ namespace: smartctl-exporter
 resources:
   - helm.yaml
   - prometheusrule.yaml
+  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:
