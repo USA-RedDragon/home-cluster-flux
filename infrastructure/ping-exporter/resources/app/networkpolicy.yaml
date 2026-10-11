@@ -12,3 +12,36 @@ spec:
         - cidr: 192.168.1.1/32
         - cidr: 1.1.1.1/32
         - cidr: 8.8.8.8/32
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: ping-exporter
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: ping-exporter
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ping-exporter-ingress
+  namespace: ping-exporter
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: ping-exporter
+      app.kubernetes.io/instance: ping-exporter
+      app.kubernetes.io/name: ping-exporter
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9427"
+              protocol: TCP
