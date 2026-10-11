@@ -1,0 +1,32 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: json-exporter
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: json-exporter
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: json-exporter-ingress
+  namespace: json-exporter
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: json-exporter
+      app.kubernetes.io/instance: json-exporter
+      app.kubernetes.io/name: json-exporter
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "7979"
+              protocol: TCP
