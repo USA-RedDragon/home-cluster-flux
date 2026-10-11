@@ -91,6 +91,15 @@ spec:
         - ports:
             - port: "3100"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: loki-tailnet
+            tailscale.com/parent-resource-ns: monitoring
+      toPorts:
+        - ports:
+            - port: "3100"
+              protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy

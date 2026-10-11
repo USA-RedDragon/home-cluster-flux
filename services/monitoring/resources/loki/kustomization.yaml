@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: monitoring
 resources:
   - helm.yaml
+  - tailnet-svc.yaml
 configMapGenerator:
   - name: loki-chart-values
     files:
