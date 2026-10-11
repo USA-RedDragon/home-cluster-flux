@@ -1,0 +1,32 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: imagescraper-mesonet
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: imagescraper-mesonet
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: imagescraper-mesonet-viewer-ingress
+  namespace: imagescraper-mesonet
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: viewer
+      app.kubernetes.io/instance: imagescraper-mesonet
+      app.kubernetes.io/name: imagescraper-mesonet
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
