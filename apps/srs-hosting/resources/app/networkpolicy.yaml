@@ -1,0 +1,82 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-ingress
+  namespace: srs-hosting
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: srs-hosting
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: discord-ingress
+  namespace: srs-hosting
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: discord
+      app.kubernetes.io/instance: discord
+      app.kubernetes.io/name: discord
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: reconciler-ingress
+  namespace: srs-hosting
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: reconciler
+      app.kubernetes.io/instance: reconciler
+      app.kubernetes.io/name: reconciler
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: srs-hosting-ingress
+  namespace: srs-hosting
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: srs-hosting
+      app.kubernetes.io/instance: srs-hosting
+      app.kubernetes.io/name: srs-hosting
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
