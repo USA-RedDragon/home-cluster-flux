@@ -129,17 +129,6 @@
     ],
     "packageRules": [
         {
-            "description": "Upstream can publish a broken image (nats 2.15.1 shipped an index with no platforms and was automerged 28 min later); let automerged docker releases age first",
-            "matchDatasources": [
-                "docker"
-            ],
-            "matchUpdateTypes": [
-                "minor",
-                "patch"
-            ],
-            "minimumReleaseAge": "3 days"
-        },
-        {
             "matchUpdateTypes": [
                 "digest",
                 "pinDigest"
