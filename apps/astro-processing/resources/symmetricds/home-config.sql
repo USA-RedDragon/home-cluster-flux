@@ -697,3 +697,43 @@ insert into sym_trigger_router (trigger_id, router_id, initial_load_order, creat
   ('ts_template_role', 'sqlite to home', 150, current_timestamp, current_timestamp),
   ('ts_template_migration', 'sqlite to home', 151, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_moon_keep (
+    filter text NOT NULL,
+    narrowband integer NOT NULL,
+    moon_down integer NOT NULL,
+    illum_bin integer NOT NULL,
+    alt_bin integer NOT NULL,
+    sep_bin integer NOT NULL,
+    illum_from double precision NOT NULL,
+    illum_to double precision NOT NULL,
+    alt_from double precision NOT NULL,
+    alt_to double precision NOT NULL,
+    sep_from double precision NOT NULL,
+    sep_to double precision NOT NULL,
+    subs integer NOT NULL,
+    kept integer NOT NULL,
+    nights integer NOT NULL,
+    rate double precision NOT NULL,
+    rate_low double precision NOT NULL,
+    rate_high double precision NOT NULL,
+    worth double precision NOT NULL,
+    usable integer NOT NULL,
+    skips integer NOT NULL,
+    computed_at timestamp NOT NULL,
+    PRIMARY KEY (filter, narrowband, illum_bin, alt_bin, sep_bin)
+);
+
+grant select, insert, update, delete on ts_moon_keep to "astro-processing";
+
+insert into sym_channel (channel_id, processing_order, max_batch_size, max_batch_to_send, enabled, description, create_time, last_update_time) values
+  ('moonkeep', 17, 1000, 10, 1, 'astro-stacker kept rates under the Moon', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_moon_keep', 'ts_moon_keep', 'moonkeep', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_moon_keep', 'home to sqlite', 160, current_timestamp, current_timestamp)
+  on conflict do nothing;
