@@ -2154,6 +2154,12 @@ kube-state-metrics:
                   type: Gauge
                   gauge:
                     path: [metadata, creationTimestamp]
+              - name: longhorn_volume_last_pod_ref
+                help: When the last pod stopped using the Longhorn volume
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, kubernetesStatus, lastPodRefAt]
           - groupVersionKind:
               group: kustomize.toolkit.fluxcd.io
               version: v1

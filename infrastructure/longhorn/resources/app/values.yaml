@@ -14,7 +14,7 @@ defaultSettings:
   orphanResourceAutoDeletion: replica-data;instance
   concurrentAutomaticEngineUpgradePerNodeLimit: 3
   concurrentReplicaRebuildPerNodeLimit: 10
-  allowRecurringJobWhileVolumeDetached: true
+  allowRecurringJobWhileVolumeDetached: false
   # The backup target is the `default` BackupTarget CR; 1.13 ignores
   # defaultSettings.backupTarget, so it's set via defaultBackupStore below.
 # Every poll rewrites the status of all ~740 backup volumes (~18k etcd
