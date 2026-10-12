@@ -523,3 +523,45 @@ insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_chann
 insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
   ('ts_sub_length', 'home to sqlite', -1, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_autofocus_run (
+    id text NOT NULL,
+    profile_id text,
+    started_at timestamp,
+    finished_at timestamp NOT NULL,
+    duration_seconds double precision,
+    success integer NOT NULL,
+    error text,
+    filter text,
+    temperature double precision,
+    autofocuser text,
+    method text,
+    fitting text,
+    initial_position double precision,
+    previous_position double precision,
+    previous_value double precision,
+    chosen_position double precision,
+    chosen_value double precision,
+    points text NOT NULL,
+    fit text,
+    target_name text,
+    target_guid text,
+    source text NOT NULL,
+    recorded_at timestamp NOT NULL,
+    PRIMARY KEY (id)
+);
+create index if not exists ts_autofocus_run_finished_idx on ts_autofocus_run (finished_at);
+
+grant select on ts_autofocus_run to "astro-processing";
+
+insert into sym_channel (channel_id, processing_order, max_batch_size, max_batch_to_send, enabled, description, create_time, last_update_time) values
+  ('autofocus', 20, 50, 10, 1, 'observatory-scheduler autofocus runs', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_autofocus_run', 'ts_autofocus_run', 'autofocus', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_autofocus_run', 'sqlite to home', 140, current_timestamp, current_timestamp)
+  on conflict do nothing;
