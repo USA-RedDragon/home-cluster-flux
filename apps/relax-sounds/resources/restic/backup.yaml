@@ -24,6 +24,8 @@ spec:
           matchLabels:
             app.kubernetes.io/name: relax-sounds
         topologyKey: kubernetes.io/hostname
+  cache:
+    enabled: false
   concurrencyPolicy: Forbid
   repositoryRef:
     name: restic
