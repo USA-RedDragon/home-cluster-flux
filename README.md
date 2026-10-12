@@ -1260,14 +1260,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">rdio-scanner</td>
+    <td>rdio-scanner</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/rdio-scanner/resources/app/helm.yaml">rdio-scanner</a></td>
-    <td rowspan="2"><a href="apps/rdio-scanner/resources/app/postgres.yaml">postgresql</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/rdio-scanner/resources/restic/helmrelease.yaml">restic</a></td>
+    <td><a href="apps/rdio-scanner/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
