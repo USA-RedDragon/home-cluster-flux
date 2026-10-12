@@ -1076,18 +1076,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="3">mosquitto</td>
+    <td rowspan="2">mosquitto</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/mosquitto/resources/app/helm.yaml">mosquitto</a></td>
-    <td rowspan="3"></td>
+    <td rowspan="2"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/mosquitto/resources/exporter/helm.yaml">mosquitto-exporter</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="services/mosquitto/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
