@@ -627,3 +627,32 @@ insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_chann
 insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
   ('ts_target_window', 'sqlite to home', 141, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_body_night (
+    target_guid text NOT NULL,
+    night text NOT NULL,
+    at timestamp NOT NULL,
+    designation text NOT NULL,
+    ra double precision NOT NULL,
+    dec double precision NOT NULL,
+    ra_rate double precision NOT NULL,
+    dec_rate double precision NOT NULL,
+    mag double precision,
+    mag_limit double precision,
+    computed_at timestamp NOT NULL,
+    PRIMARY KEY (target_guid, night)
+);
+
+grant select, insert, update, delete on ts_body_night to "astro-processing";
+
+insert into sym_channel (channel_id, processing_order, max_batch_size, max_batch_to_send, enabled, description, create_time, last_update_time) values
+  ('bodynight', 16, 200, 10, 1, 'observatory-scheduler body season nights', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_body_night', 'ts_body_night', 'bodynight', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_body_night', 'home to sqlite', 150, current_timestamp, current_timestamp)
+  on conflict do nothing;
