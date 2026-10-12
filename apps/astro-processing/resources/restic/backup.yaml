@@ -1,0 +1,42 @@
+apiVersion: b2backup.mcswain.dev/v1
+kind: Repository
+metadata:
+  name: restic
+  namespace: astro-processing
+spec:
+  bucket: mcswain-kubernetes-backups
+  mode: Prefix
+  passwordSecretRef:
+    key: RESTIC_PASSWORD
+    name: restic-envs
+  path: k8s/astro-processing
+---
+apiVersion: b2backup.mcswain.dev/v1
+kind: ScheduledBackup
+metadata:
+  name: restic
+  namespace: astro-processing
+spec:
+  cache:
+    enabled: false
+  concurrencyPolicy: Forbid
+  database:
+    engine: cnpg
+    secretName: postgresql-superuser
+  env:
+    CNPG_SECRET_PATH: /var/run/secrets/b2backup/database
+  repositoryRef:
+    name: restic
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: 10m
+      memory: 256Mi
+  schedule: '@daily'
+  script: |
+    restic backup --tag=db --tag=astro-processing --stdin-filename=astro-processing.sql --stdin-from-command -- backup-cnpg.sh --dbname=astro-processing
+    restic backup --tag=db --tag=schedulerdb --stdin-filename=schedulerdb.sql --stdin-from-command -- backup-cnpg.sh --dbname=schedulerdb
+    restic forget --prune --keep-daily=90 --keep-weekly=24 --keep-monthly=24 --keep-yearly=20
+  timeZone: America/Chicago
