@@ -1,0 +1,58 @@
+apiVersion: b2backup.mcswain.dev/v1
+kind: Repository
+metadata:
+  name: restic
+  namespace: vaultwarden
+spec:
+  bucket: mcswain-kubernetes-backups
+  mode: Prefix
+  passwordSecretRef:
+    key: RESTIC_PASSWORD
+    name: restic-envs
+  path: k8s/vaultwarden
+---
+apiVersion: b2backup.mcswain.dev/v1
+kind: ScheduledBackup
+metadata:
+  name: restic
+  namespace: vaultwarden
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: vaultwarden
+        topologyKey: kubernetes.io/hostname
+  cache:
+    enabled: false
+  concurrencyPolicy: Forbid
+  database:
+    engine: cnpg
+    secretName: postgresql-app
+  repositoryRef:
+    name: restic
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: 10m
+      memory: 256Mi
+  retention:
+    daily: 90
+    monthly: 24
+    weekly: 24
+    yearly: 20
+  schedule: '@daily'
+  sources:
+  - tag: db
+    type: cnpg
+  - paths:
+    - /data
+    tag: files
+    type: files
+  timeZone: America/Chicago
+  volumes:
+  - existingClaim: vaultwarden
+    mountPath: /data
