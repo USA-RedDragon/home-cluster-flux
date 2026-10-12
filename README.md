@@ -764,14 +764,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">jellyfin</td>
+    <td>jellyfin</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/jellyfin/resources/app/helm.yaml">jellyfin</a></td>
-    <td rowspan="2"></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/jellyfin/resources/restic/helmrelease.yaml">restic</a></td>
+    <td></td>
   </tr>
 </table>
 
