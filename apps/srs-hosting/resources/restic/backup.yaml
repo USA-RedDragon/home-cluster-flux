@@ -1,0 +1,44 @@
+apiVersion: b2backup.mcswain.dev/v1
+kind: Repository
+metadata:
+  name: restic
+  namespace: srs-hosting
+spec:
+  bucket: mcswain-kubernetes-backups
+  mode: Prefix
+  passwordSecretRef:
+    key: RESTIC_PASSWORD
+    name: restic-envs
+  path: k8s/srs-hosting
+---
+apiVersion: b2backup.mcswain.dev/v1
+kind: ScheduledBackup
+metadata:
+  name: restic
+  namespace: srs-hosting
+spec:
+  cache:
+    enabled: false
+  concurrencyPolicy: Forbid
+  database:
+    engine: cnpg
+    secretName: postgresql-app
+  repositoryRef:
+    name: restic
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: 10m
+      memory: 256Mi
+  retention:
+    daily: 90
+    monthly: 24
+    weekly: 24
+    yearly: 20
+  schedule: '@daily'
+  sources:
+  - tag: db
+    type: cnpg
+  timeZone: America/Chicago
