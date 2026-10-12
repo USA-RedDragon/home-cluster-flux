@@ -880,14 +880,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">ledger</td>
+    <td>ledger</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/ledger/resources/app/helm.yaml">ledger</a></td>
-    <td rowspan="2"><a href="apps/ledger/resources/app/postgres.yaml">postgresql</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/ledger/resources/restic/helmrelease.yaml">restic</a></td>
+    <td><a href="apps/ledger/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
