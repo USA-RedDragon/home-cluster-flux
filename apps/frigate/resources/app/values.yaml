@@ -191,6 +191,9 @@ configMaps:
           track:
             - person
             - car
+          filters:
+            person:
+              min_score: 0.4
 
         auth:
           enabled: false
@@ -251,12 +254,11 @@ configMaps:
                   input_args: preset-rtsp-restream
                   roles:
                     - record
-                - path: rtsp://127.0.0.1:8554/doorbell_sub
-                  input_args: preset-rtsp-restream
-                  roles:
                     - detect
             detect:
               enabled: true
+              width: 1280
+              height: 960
             motion:
               threshold: 30
               contour_area: 26
@@ -285,7 +287,7 @@ configMaps:
                     object_mask_1:
                       friendly_name: Object Mask 1 (person)
                       enabled: true
-                      coordinates: 0.282,0.514,0.271,0.574,0.344,0.569,0.349,0.517
+                      coordinates: 0.282,0.514,0.271,0.574,0.37,0.574,0.37,0.514
             review:
               alerts:
                 required_zones:
@@ -539,6 +541,7 @@ configMaps:
                       coordinates: 0.844,0.029,1,0.081,1,0.228,0.845,0.145
         detect:
           enabled: true
+          max_disappeared: 75
         version: 0.18-0
 persistence:
   # Backport of upstream #24510 (unreleased as of 0.18.0): TimelineProcessor
