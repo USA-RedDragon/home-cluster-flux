@@ -7,8 +7,8 @@ spec:
   interval: 1h
   url: oci://ghcr.io/usa-reddragon/b2-backup-operator-manifests
   ref:
-    tag: v0.1.2
-    digest: sha256:afcc11bdb526ef0589a35f4cba0ca2c1e2ffb46eec69d8e0f039b87075df6216
+    tag: v0.1.6
+    digest: sha256:174521024dc6403ea839b66b7e4009bc3faadbf177e0a88d24eeffb57cfb0dc7
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -51,7 +51,7 @@ spec:
       patch: |
         - op: add
           path: /spec/template/spec/containers/0/args/-
-          value: --backup-image=jacob.pub/ghcr.io/usa-reddragon/restic:0.19.1@sha256:9853f70ae715fcede61d19e496f34931dc9fb7b739cccd488837bf30750196b7
+          value: --backup-image=jacob.pub/ghcr.io/usa-reddragon/restic:0.19.1@sha256:db566112ce1d490c47b04f3cfec2436f30de3e6187b2b0f092d3b3ea50da519e
         - op: add
           path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-kubeapi
           value: "true"
