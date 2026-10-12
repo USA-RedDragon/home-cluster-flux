@@ -1,0 +1,54 @@
+apiVersion: b2backup.mcswain.dev/v1
+kind: Repository
+metadata:
+  name: restic
+  namespace: wx
+spec:
+  bucket: mcswain-kubernetes-backups
+  mode: Prefix
+  passwordSecretRef:
+    key: RESTIC_PASSWORD
+    name: restic-envs
+  path: k8s/wx
+---
+apiVersion: b2backup.mcswain.dev/v1
+kind: ScheduledBackup
+metadata:
+  name: restic
+  namespace: wx
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/controller: wx
+            app.kubernetes.io/instance: wx
+            app.kubernetes.io/name: wx
+        topologyKey: kubernetes.io/hostname
+  cache:
+    enabled: false
+  concurrencyPolicy: Forbid
+  repositoryRef:
+    name: restic
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: 10m
+      memory: 256Mi
+  schedule: '@daily'
+  scratch:
+    mountPath: /backup
+  script: |
+    sqlite3 -readonly -bail /data/wx.db ".backup /backup/wx.db"
+    test "$(sqlite3 -bail /backup/wx.db 'PRAGMA integrity_check')" = ok
+    restic backup --tag=sqlite /backup/wx.db
+    restic forget --prune --keep-daily=90 --keep-weekly=24 --keep-monthly=24 --keep-yearly=20
+  timeZone: America/Chicago
+  volumes:
+  - existingClaim: wx
+    mountPath: /data
+    readOnly: true
+  workingDir: /backup
