@@ -588,18 +588,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="3">gitea</td>
+    <td rowspan="2">gitea</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/gitea/resources/app/helm.yaml">gitea</a></td>
-    <td rowspan="3"><a href="apps/gitea/resources/postgres/postgres.yaml">postgresql</a></td>
+    <td rowspan="2"><a href="apps/gitea/resources/postgres/postgres.yaml">postgresql</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/gitea/resources/gitea-mirror/helm.yaml">gitea-mirror</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/gitea/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
