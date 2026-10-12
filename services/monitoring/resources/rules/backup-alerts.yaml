@@ -65,9 +65,15 @@ spec:
             (
               time() - max by (volume) (kube_customresource_longhorn_volume_created) > 2 * 86400
             )
+            unless on (volume)
+            (
+              max by (volume) (longhorn_volume_last_backup_at)
+                > on (volume)
+              max by (volume) (kube_customresource_longhorn_volume_last_pod_ref)
+            )
           for: 1h
           labels:
             severity: warning
           annotations:
             summary: "Longhorn volume {{ $labels.pvc_namespace }}/{{ $labels.pvc }} has no backup in the last 2 days"
-            description: "Volume {{ $labels.volume }} ({{ $labels.pvc_namespace }}/{{ $labels.pvc }}) is in the nightly Longhorn backup job but its last backup is {{ $value | printf \"%.0f\" }} days old (over 20000 means never). Detached volumes are skipped by the recurring job; back them up by hand from the Longhorn UI, or check the backup-* Jobs in longhorn-system."
+            description: "Volume {{ $labels.volume }} ({{ $labels.pvc_namespace }}/{{ $labels.pvc }}) is in the nightly Longhorn backup job but its last backup is {{ $value | printf \"%.0f\" }} days old (over 20000 means never). Detached volumes are skipped by the recurring job, so this only fires for one whose last backup predates its detach; back it up by hand from the Longhorn UI. For attached volumes check the backup-* Jobs in longhorn-system."
