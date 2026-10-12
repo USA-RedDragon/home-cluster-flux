@@ -565,3 +565,62 @@ insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_chann
 insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
   ('ts_autofocus_run', 'sqlite to home', 140, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_target_body (
+    target_guid text NOT NULL PRIMARY KEY,
+    designation text NOT NULL,
+    kind text NOT NULL DEFAULT 'comet',
+    updated_at text
+);
+
+create table if not exists ts_body_position (
+    target_guid text NOT NULL,
+    at timestamp NOT NULL,
+    designation text NOT NULL,
+    night text NOT NULL,
+    ra double precision NOT NULL,
+    dec double precision NOT NULL,
+    ra_app double precision,
+    dec_app double precision,
+    ra_rate double precision NOT NULL,
+    dec_rate double precision NOT NULL,
+    mag double precision,
+    delta double precision,
+    unc_ra double precision,
+    unc_dec double precision,
+    computed_at timestamp NOT NULL,
+    PRIMARY KEY (target_guid, at)
+);
+
+grant select on ts_target_body to "astro-processing";
+grant select, insert, update, delete on ts_body_position to "astro-processing";
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_target_body', 'ts_target_body', 'goal', 'reload', current_timestamp, current_timestamp),
+  ('ts_body_position', 'ts_body_position', 'goal', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_target_body', 'sqlite to home', 140, current_timestamp, current_timestamp),
+  ('ts_body_position', 'home to sqlite', -1, current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+create table if not exists ts_target_window (
+    target_guid text NOT NULL PRIMARY KEY,
+    start_utc text NOT NULL,
+    end_utc text NOT NULL,
+    priority text NOT NULL DEFAULT 'normal',
+    event_id text,
+    ignore_moon integer NOT NULL DEFAULT 0,
+    updated_at text
+);
+
+grant select on ts_target_window to "astro-processing";
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_target_window', 'ts_target_window', 'goal', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_target_window', 'sqlite to home', 141, current_timestamp, current_timestamp)
+  on conflict do nothing;
