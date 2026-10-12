@@ -22,7 +22,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:98db07c65b94fdbc7bf8d70522eff259a7e7353c112f10b83f2b8009a0496e4a"
+          tag: "beta@sha256:474987ae7c336835324cd5b50146e8e6f0aec85a07ddef50f889f635cfa85c52"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -145,6 +145,8 @@ controllers:
           CALIBRATION_PUBLISH:
             value: "on"
           SUB_LENGTH_PUBLISH:
+            value: "on"
+          SCHEDULING_AUTO:
             value: "on"
           S3_ACCESS_KEY:
             secretKeyRef:
