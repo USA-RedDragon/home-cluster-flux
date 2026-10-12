@@ -516,14 +516,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">dmrhub</td>
+    <td>dmrhub</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/dmrhub/resources/app/helm.yaml">dmrhub</a></td>
-    <td rowspan="2"><a href="apps/dmrhub/resources/app/postgres.yaml">postgresql</a>, <a href="apps/dmrhub/resources/valkey/helmrelease.yaml">valkey</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/dmrhub/resources/restic/helmrelease.yaml">restic</a></td>
+    <td><a href="apps/dmrhub/resources/app/postgres.yaml">postgresql</a>, <a href="apps/dmrhub/resources/valkey/helmrelease.yaml">valkey</a></td>
   </tr>
 </table>
 
