@@ -336,14 +336,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">authentik</td>
+    <td>authentik</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/authentik/resources/app/helm.yaml">authentik</a></td>
-    <td rowspan="2"><a href="services/authentik/resources/app/postgres.yaml">postgresql</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="services/authentik/resources/restic/helmrelease.yaml">restic</a></td>
+    <td><a href="services/authentik/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
