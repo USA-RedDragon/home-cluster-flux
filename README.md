@@ -1148,10 +1148,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="10">path-of-titans</td>
+    <td rowspan="9">path-of-titans</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/path-of-titans/resources/a2s-exporter/helm.yaml">a2s-exporter</a></td>
-    <td rowspan="10"></td>
+    <td rowspan="9"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
@@ -1164,10 +1164,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>Cluster</code></td>
     <td><a href="apps/path-of-titans/resources/obsidibot/postgres.yaml">obsidibot</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/path-of-titans/resources/obsidibot/restic.yaml">obsidibot-restic</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>

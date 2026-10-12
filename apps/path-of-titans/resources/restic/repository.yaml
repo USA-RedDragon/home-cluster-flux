@@ -1,0 +1,12 @@
+apiVersion: b2backup.mcswain.dev/v1
+kind: Repository
+metadata:
+  name: restic
+  namespace: path-of-titans
+spec:
+  bucket: mcswain-kubernetes-backups
+  mode: Prefix
+  passwordSecretRef:
+    key: RESTIC_PASSWORD
+    name: restic-envs
+  path: k8s/path-of-titans
