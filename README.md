@@ -1156,14 +1156,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">paperless-ngx</td>
+    <td>paperless-ngx</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/paperless-ngx/resources/app/helm.yaml">paperless-ngx</a></td>
-    <td rowspan="2"><a href="apps/paperless-ngx/resources/postgres/postgres.yaml">postgresql</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/paperless-ngx/resources/restic/helm.yaml">restic</a></td>
+    <td><a href="apps/paperless-ngx/resources/postgres/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
