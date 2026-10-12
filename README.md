@@ -1508,14 +1508,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">tandoor</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/tandoor/resources/restic/helmrelease.yaml">restic</a></td>
-    <td rowspan="2"><a href="apps/tandoor/resources/app/postgres.yaml">postgresql</a></td>
-  </tr>
-  <tr>
+    <td>tandoor</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/tandoor/resources/app/helm.yaml">tandoor</a></td>
+    <td><a href="apps/tandoor/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
