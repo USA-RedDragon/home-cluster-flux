@@ -656,3 +656,44 @@ insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_chann
 insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
   ('ts_body_night', 'home to sqlite', 150, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_template_role (
+    template_id integer NOT NULL PRIMARY KEY,
+    template_guid text,
+    profile_id text NOT NULL,
+    filter text NOT NULL,
+    role text NOT NULL,
+    changed_at text NOT NULL
+);
+
+create table if not exists ts_template_migration (
+    plan_id integer NOT NULL,
+    plan_guid text,
+    target_id integer,
+    profile_id text NOT NULL,
+    filter text NOT NULL,
+    old_template_id integer NOT NULL,
+    old_template_guid text,
+    old_template_name text,
+    new_template_id integer NOT NULL,
+    migrated_at text NOT NULL,
+    reverted_at text,
+    PRIMARY KEY (plan_id, migrated_at)
+);
+
+grant select on ts_template_role to "astro-processing";
+grant select on ts_template_migration to "astro-processing";
+
+insert into sym_channel (channel_id, processing_order, max_batch_size, max_batch_to_send, enabled, description, create_time, last_update_time) values
+  ('templates', 15, 1000, 10, 1, 'observatory-scheduler template roles and migration history', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_template_role', 'ts_template_role', 'templates', 'reload', current_timestamp, current_timestamp),
+  ('ts_template_migration', 'ts_template_migration', 'templates', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_template_role', 'sqlite to home', 150, current_timestamp, current_timestamp),
+  ('ts_template_migration', 'sqlite to home', 151, current_timestamp, current_timestamp)
+  on conflict do nothing;
