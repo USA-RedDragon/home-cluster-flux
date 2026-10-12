@@ -1324,14 +1324,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">relax-sounds</td>
+    <td>relax-sounds</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/relax-sounds/resources/app/helm.yaml">relax-sounds</a></td>
-    <td rowspan="2"></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/relax-sounds/resources/restic/helmrelease.yaml">restic</a></td>
+    <td></td>
   </tr>
 </table>
 
