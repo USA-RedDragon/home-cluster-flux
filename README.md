@@ -932,10 +932,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="4">minecraft</td>
+    <td rowspan="3">minecraft</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/minecraft/resources/filebrowser/helm.yaml">filebrowser</a></td>
-    <td rowspan="4"></td>
+    <td rowspan="3"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
@@ -944,10 +944,6 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/minecraft/resources/rcon/helm.yaml">rcon</a></td>
-  </tr>
-  <tr>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/minecraft/resources/restic/helmrelease.yaml">restic</a></td>
   </tr>
 </table>
 
