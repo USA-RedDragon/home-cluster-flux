@@ -737,3 +737,36 @@ insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_chann
 insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
   ('ts_moon_keep', 'home to sqlite', 160, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_alt_keep (
+    filter text NOT NULL,
+    narrowband integer NOT NULL,
+    alt_bin integer NOT NULL,
+    alt_from double precision NOT NULL,
+    alt_to double precision NOT NULL,
+    subs integer NOT NULL,
+    kept integer NOT NULL,
+    nights integer NOT NULL,
+    rate double precision NOT NULL,
+    rate_low double precision NOT NULL,
+    rate_high double precision NOT NULL,
+    worth double precision NOT NULL,
+    usable integer NOT NULL,
+    skips integer NOT NULL,
+    computed_at timestamp NOT NULL,
+    PRIMARY KEY (filter, narrowband, alt_bin)
+);
+
+grant select, insert, update, delete on ts_alt_keep to "astro-processing";
+
+insert into sym_channel (channel_id, processing_order, max_batch_size, max_batch_to_send, enabled, description, create_time, last_update_time) values
+  ('altkeep', 18, 1000, 10, 1, 'astro-stacker kept rates by target altitude', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_alt_keep', 'ts_alt_keep', 'altkeep', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_alt_keep', 'home to sqlite', 161, current_timestamp, current_timestamp)
+  on conflict do nothing;
