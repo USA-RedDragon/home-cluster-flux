@@ -49,6 +49,24 @@ spec:
           annotations:
             summary: "Backup {{ $labels.namespace }}/{{ $labels.cronjob }} has never succeeded"
             description: "CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} is over 2 days old and has never completed successfully. Check its runs in Loki: {namespace=\"{{ $labels.namespace }}\", pod=~\"{{ $labels.cronjob }}-.*\"}"
+        - alert: B2ScheduledBackupNotReady
+          expr: |
+            kube_customresource_b2backup_scheduledbackup_info{ready!="True", reason!="Suspended"}
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "ScheduledBackup {{ $labels.namespace }}/{{ $labels.name }} is not Ready ({{ $labels.reason }})"
+            description: "b2-backup-operator reports ScheduledBackup {{ $labels.namespace }}/{{ $labels.name }} Ready={{ $labels.ready }} with reason {{ $labels.reason }} for over 1h, so its CronJob may not be current or may not fire. Run: b2bk doctor -n {{ $labels.namespace }} sb/{{ $labels.name }}"
+        - alert: B2RepositoryNotReady
+          expr: |
+            kube_customresource_b2backup_repository_info{ready!="True", reason!="Suspended"}
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup Repository {{ $labels.namespace }}/{{ $labels.name }} is not Ready ({{ $labels.reason }})"
+            description: "b2-backup-operator reports Repository {{ $labels.namespace }}/{{ $labels.name }} Ready={{ $labels.ready }} with reason {{ $labels.reason }} for over 1h. Backups into it cannot run until it is Ready. Run: b2bk doctor -n {{ $labels.namespace }} repo/{{ $labels.name }}"
         - alert: LonghornVolumeBackupStale
           expr: |
             (
