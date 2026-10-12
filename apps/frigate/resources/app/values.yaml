@@ -11,6 +11,8 @@ controllers:
       priorityClassName: system-cluster-critical
       nodeSelector:
         google.feature.node.kubernetes.io/coral: "true"
+      imagePullSecrets:
+        - name: registry-zot
 
     initContainers:
       config-copy:
@@ -152,6 +154,13 @@ configMaps:
           coral:
             type: edgetpu
             device: usb
+
+        model:
+          model_type: yolo-generic
+          width: 320
+          height: 320
+          path: /models/yolov9s-ft/yolov9-s-relu6-ft_320_int8_edgetpu.tflite
+          labelmap_path: /models/yolov9s-ft/labels-coco17.txt
 
         birdseye:
           enabled: true
@@ -561,6 +570,16 @@ persistence:
             readOnly: true
           - path: /opt/frigate/frigate/events/cleanup.py
             subPath: cleanup.py
+            readOnly: true
+  model:
+    enabled: true
+    type: image
+    image: jacob.pub/ghcr.io/usa-reddragon/frigate-coral-yolov9s-ft:v1@sha256:f49e2f56a3067d77e6caca2183726f34353ba27a587130c44c1c84b308ae4994
+    pullPolicy: IfNotPresent
+    advancedMounts:
+      frigate:
+        frigate:
+          - path: /models/yolov9s-ft
             readOnly: true
   configmap:
     enabled: true
