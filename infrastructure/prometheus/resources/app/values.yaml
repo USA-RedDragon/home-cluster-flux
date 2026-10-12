@@ -2053,6 +2053,9 @@ kube-state-metrics:
       - apiGroups: [source.toolkit.fluxcd.io]
         resources: [gitrepositories, ocirepositories, helmrepositories, helmcharts]
         verbs: [list, watch]
+      - apiGroups: [b2backup.mcswain.dev]
+        resources: [repositories, scheduledbackups]
+        verbs: [list, watch]
   releaseLabel: true
   prometheus:
     monitor:
@@ -2279,6 +2282,41 @@ kube-state-metrics:
                       stalled: [status, conditions, "[type=Stalled]", status]
                       suspended: [spec, suspend]
                       revision: [status, artifact, revision]
+          - groupVersionKind:
+              group: b2backup.mcswain.dev
+              version: v1
+              kind: ScheduledBackup
+            labelsFromPath:
+              namespace: [metadata, namespace]
+              name: [metadata, name]
+            metrics:
+              - name: b2backup_scheduledbackup_info
+                help: The Ready condition of a b2-backup-operator ScheduledBackup
+                each:
+                  type: Info
+                  info:
+                    labelsFromPath:
+                      ready: [status, conditions, "[type=Ready]", status]
+                      reason: [status, conditions, "[type=Ready]", reason]
+                      suspended: [spec, suspend]
+                      repository: [spec, repositoryRef, name]
+          - groupVersionKind:
+              group: b2backup.mcswain.dev
+              version: v1
+              kind: Repository
+            labelsFromPath:
+              namespace: [metadata, namespace]
+              name: [metadata, name]
+            metrics:
+              - name: b2backup_repository_info
+                help: The Ready condition of a b2-backup-operator Repository
+                each:
+                  type: Info
+                  info:
+                    labelsFromPath:
+                      ready: [status, conditions, "[type=Ready]", status]
+                      reason: [status, conditions, "[type=Ready]", reason]
+                      suspended: [spec, suspend]
 
 ## Deploy node exporter as a daemonset to all nodes
 ##
