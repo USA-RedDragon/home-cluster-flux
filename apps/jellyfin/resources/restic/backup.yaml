@@ -24,6 +24,8 @@ spec:
           matchLabels:
             app.kubernetes.io/name: jellyfin
         topologyKey: kubernetes.io/hostname
+  cache:
+    enabled: false
   concurrencyPolicy: Forbid
   repositoryRef:
     name: restic

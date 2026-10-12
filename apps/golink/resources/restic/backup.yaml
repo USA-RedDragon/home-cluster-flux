@@ -26,6 +26,8 @@ spec:
             app.kubernetes.io/instance: golink
             app.kubernetes.io/name: golink
         topologyKey: kubernetes.io/hostname
+  cache:
+    enabled: false
   concurrencyPolicy: Forbid
   repositoryRef:
     name: restic
