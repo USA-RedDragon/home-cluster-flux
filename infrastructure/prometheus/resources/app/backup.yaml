@@ -1,0 +1,51 @@
+apiVersion: b2backup.mcswain.dev/v1
+kind: Repository
+metadata:
+  name: restic
+  namespace: monitoring
+spec:
+  bucket: mcswain-kubernetes-backups
+  mode: Prefix
+  passwordSecretRef:
+    key: RESTIC_PASSWORD
+    name: restic-envs
+  path: k8s/grafana
+---
+apiVersion: b2backup.mcswain.dev/v1
+kind: ScheduledBackup
+metadata:
+  name: restic
+  namespace: monitoring
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: grafana
+        topologyKey: kubernetes.io/hostname
+  concurrencyPolicy: Forbid
+  repositoryRef:
+    name: restic
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: 10m
+      memory: 256Mi
+  retention:
+    daily: 90
+    monthly: 24
+    weekly: 24
+    yearly: 20
+  schedule: '@daily'
+  sources:
+  - paths:
+    - /data
+    tag: files
+    type: files
+  timeZone: America/Chicago
+  volumes:
+  - existingClaim: prometheus-stack-grafana
+    mountPath: /data
