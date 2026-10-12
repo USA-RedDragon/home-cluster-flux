@@ -1396,14 +1396,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">rmfakecloud</td>
-    <td><code>HelmRelease</code></td>
-    <td><a href="apps/rmfakecloud/resources/restic/helmrelease.yaml">restic</a></td>
-    <td rowspan="2"></td>
-  </tr>
-  <tr>
+    <td>rmfakecloud</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/rmfakecloud/resources/app/helm.yaml">rmfakecloud</a></td>
+    <td></td>
   </tr>
 </table>
 
