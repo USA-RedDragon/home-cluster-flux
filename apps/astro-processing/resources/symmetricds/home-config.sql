@@ -592,6 +592,9 @@ create table if not exists ts_body_position (
     PRIMARY KEY (target_guid, at)
 );
 
+alter table ts_target_body add column if not exists rotation_deg double precision;
+alter table ts_target_body add column if not exists offset_frac double precision;
+
 grant select on ts_target_body to "astro-processing";
 grant select, insert, update, delete on ts_body_position to "astro-processing";
 
