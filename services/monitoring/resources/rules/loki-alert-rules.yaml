@@ -203,9 +203,12 @@ data:
               description: "ZFS pool/vdev state change or SMART failure on the NAS. Query: {host=\"truenas\", app=\"{{ $labels.app }}\"}"
           - alert: TrueNASCloudSyncFailed
             expr: |
-              sum by (task) (count_over_time({host="truenas", app="cloudsync-status"}
-                |~ "status=" !~ "status=(OK|RUNNING) "
-                | regexp "status=(?P<status>\\S+) .* task=(?P<task>.*)" [90m])) > 0
+              max by (task) (last_over_time({host="truenas", app="cloudsync-status"}
+                |~ "status="
+                | regexp "status=(?P<status>\\S+) .* task=(?P<task>.*)"
+                | label_format bad=`{{ if or (eq .status "OK") (eq .status "RUNNING") }}0{{ else }}1{{ end }}`
+                | keep task, bad
+                | unwrap bad [90m])) > 0
             labels:
               severity: warning
             annotations:
