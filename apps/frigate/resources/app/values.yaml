@@ -200,6 +200,9 @@ configMaps:
           track:
             - person
             - car
+            - dog
+            - cat
+            - bird
           filters:
             person:
               min_score: 0.5
@@ -218,6 +221,9 @@ configMaps:
             labels:
               - car
               - person
+              - dog
+              - cat
+              - bird
 
         proxy:
           auth_secret: '{FRIGATE_PROXY_SECRET}'
