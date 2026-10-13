@@ -270,8 +270,9 @@ configMaps:
               width: 1280
               height: 960
             motion:
-              threshold: 30
-              contour_area: 26
+              threshold: 20
+              contour_area: 6
+              frame_height: 200
               improve_contrast: true
             zones:
               Yard:
