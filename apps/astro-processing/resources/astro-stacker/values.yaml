@@ -22,7 +22,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:7554a98f01ebad67da7b29944d1122f1f2d15ac661a56a643b445aa9e7e64f6e"
+          tag: "beta@sha256:bf3bd12cfb0e4055709e8b45e9b0fea569ab53f1b65f6715fa0361726b0aaa9e"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -129,6 +129,8 @@ controllers:
             value: "true"
           SCHEDULER_URL:
             value: "http://observatory:8189"
+          SCHEDULER_NINA_URL:
+            value: "http://observatory:1888/v2/api"
           SCHEDULER_TOKEN:
             valueFrom:
               secretKeyRef:
