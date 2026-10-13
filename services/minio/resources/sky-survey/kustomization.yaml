@@ -4,6 +4,7 @@ namespace: minio
 resources:
   - networkpolicy.yaml
   - iam-job.yaml
+  - copy-job.yaml
 configMapGenerator:
   - name: sky-survey-iam
     files:
