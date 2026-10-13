@@ -10,7 +10,7 @@ defaultSettings:
   logLevel: Warn
   # Per data engine since Longhorn 1.8; a bare number would also reset v2.
   guaranteedInstanceManagerCPU: '{"v1":"6","v2":"31"}'
-  offlineReplicaRebuilding: true
+  offlineReplicaRebuilding: false
   orphanResourceAutoDeletion: replica-data;instance
   concurrentAutomaticEngineUpgradePerNodeLimit: 3
   concurrentReplicaRebuildPerNodeLimit: 10
