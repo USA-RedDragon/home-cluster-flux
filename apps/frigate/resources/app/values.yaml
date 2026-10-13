@@ -422,6 +422,9 @@ configMaps:
                   - Street
                   - Neighbor_Yard
             motion:
+              threshold: 20
+              contour_area: 6
+              frame_height: 150
               mask:
                 motion_mask_1:
                   friendly_name: Motion Mask 1
@@ -520,6 +523,9 @@ configMaps:
                   0.248,0.291,0.281,0.673,0.336,0.997,0.998,0.992,0.998,0.45,0.495,0.168,0.251,0.229
                 loitering_time: 0
             motion:
+              threshold: 20
+              contour_area: 6
+              frame_height: 150
               mask:
                 motion_mask_1:
                   friendly_name: Motion Mask 1
