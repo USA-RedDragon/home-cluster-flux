@@ -25,6 +25,10 @@ spec:
   prune: true
   dependsOn:
     - name: metallb
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: home-ipv6
   sourceRef:
     kind: GitRepository
     namespace: flux-system

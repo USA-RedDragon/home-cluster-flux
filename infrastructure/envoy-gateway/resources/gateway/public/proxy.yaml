@@ -18,7 +18,7 @@ spec:
         type: LoadBalancer
         loadBalancerClass: metallb
         annotations:
-          metallb.io/loadBalancerIPs: "192.168.254.254,2600:8800:0:0::e:1"
+          metallb.io/address-pool: public
       envoyPDB:
         minAvailable: 1
       envoyDeployment:
