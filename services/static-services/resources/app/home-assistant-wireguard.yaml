@@ -1,0 +1,46 @@
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: home-assistant-wireguard
+  namespace: static-services
+  labels:
+    kubernetes.io/service-name: home-assistant-wireguard
+    endpointslice.kubernetes.io/managed-by: cluster-admins
+addressType: IPv4
+endpoints:
+  - addresses:
+    - 192.168.1.19
+    conditions:
+      ready: true
+ports:
+  - name: wireguard
+    port: 51820
+    protocol: UDP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant-wireguard
+  namespace: static-services
+spec:
+  ports:
+  - name: wireguard
+    port: 51820
+    protocol: UDP
+    targetPort: 51820
+  type: ClusterIP
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: UDPRoute
+metadata:
+  name: home-assistant-wireguard
+  namespace: static-services
+spec:
+  parentRefs:
+    - name: public
+      namespace: envoy-gateway-system
+      sectionName: home-assistant-wireguard
+  rules:
+    - backendRefs:
+        - name: home-assistant-wireguard
+          port: 51820

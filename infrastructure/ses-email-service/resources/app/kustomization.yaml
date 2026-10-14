@@ -5,3 +5,4 @@ resources:
 - repo.yaml
 - ks.yaml
 - networkpolicy.yaml
+- route.yaml

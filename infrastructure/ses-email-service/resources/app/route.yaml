@@ -1,0 +1,14 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+  name: ses-email-service
+  namespace: ses-email-service
+spec:
+  parentRefs:
+    - name: public
+      namespace: envoy-gateway-system
+      sectionName: email-smtps
+  rules:
+    - backendRefs:
+        - name: ses-email-service
+          port: 465
