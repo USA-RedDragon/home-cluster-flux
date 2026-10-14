@@ -7,6 +7,7 @@ resources:
   - etcd-alerts.yaml
   - flux-alerts.yaml
   - functional-alerts.yaml
+  - ipv6-prefix-alerts.yaml
   - log-alerts.yaml
   - loki-alert-rules.yaml
   - node-disk-alerts.yaml
