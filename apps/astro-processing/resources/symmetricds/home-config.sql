@@ -770,3 +770,40 @@ insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_chann
 insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
   ('ts_alt_keep', 'home to sqlite', 161, current_timestamp, current_timestamp)
   on conflict do nothing;
+
+create table if not exists ts_cooler_setpoint (
+    id text NOT NULL PRIMARY KEY,
+    decided_at timestamp NOT NULL,
+    night text NOT NULL,
+    action text NOT NULL,
+    outcome text NOT NULL,
+    from_setpoint double precision,
+    setpoint double precision,
+    power double precision,
+    ambient double precision,
+    predicted_power double precision,
+    target_power double precision NOT NULL,
+    low_power double precision NOT NULL,
+    high_power double precision NOT NULL,
+    max_predicted_power double precision NOT NULL,
+    fit_intercept double precision,
+    fit_slope double precision,
+    fit_samples integer,
+    reason text NOT NULL
+);
+
+create index if not exists ts_cooler_setpoint_night_idx on ts_cooler_setpoint (night, decided_at);
+
+grant select on ts_cooler_setpoint to "astro-processing";
+
+insert into sym_channel (channel_id, processing_order, max_batch_size, max_batch_to_send, enabled, description, create_time, last_update_time) values
+  ('cooler', 19, 1000, 10, 1, 'observatory-scheduler cooler setpoint decisions', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger (trigger_id, source_table_name, channel_id, reload_channel_id, create_time, last_update_time) values
+  ('ts_cooler_setpoint', 'ts_cooler_setpoint', 'cooler', 'reload', current_timestamp, current_timestamp)
+  on conflict do nothing;
+
+insert into sym_trigger_router (trigger_id, router_id, initial_load_order, create_time, last_update_time) values
+  ('ts_cooler_setpoint', 'sqlite to home', 170, current_timestamp, current_timestamp)
+  on conflict do nothing;
