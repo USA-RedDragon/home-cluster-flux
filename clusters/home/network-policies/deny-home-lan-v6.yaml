@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v2
+kind: CiliumCIDRGroup
+metadata:
+  name: home-lan-v6
+spec:
+  externalCIDRs:
+    - 2600:8803:a30a:2a00::/56
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: deny-home-lan-v6
+spec:
+  endpointSelector: {}
+  enableDefaultDeny:
+    egress: false
+    ingress: false
+  egressDeny:
+    - toCIDRSet:
+        - cidrGroupRef: home-lan-v6
