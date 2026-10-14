@@ -7,16 +7,44 @@ spec:
   groups:
     - name: ipv6-prefix
       rules:
-        - alert: NodeIPv6PrefixOutsideHomeLanGroup
+        - alert: NodeIPv6OutsideDenyRange
           expr: |
             count by (instance, device, address) (
-              node_network_address_info{job="node-exporter", scope="global", address=~"[23][0-9a-f]{0,3}:.*", address!~"2600:8803:a30a:2a[0-9a-f]{2}:.*"}
+              node_network_address_info{job="node-exporter", scope="global", address=~"[23][0-9a-f]{0,3}:.*", address!~"2600:8803:[89a-f][0-9a-f]{3}:.*"}
             ) > 0
           for: 15m
           labels:
             severity: critical
           annotations:
-            summary: "Node {{ $labels.instance }} has IPv6 address {{ $labels.address }} outside 2600:8803:a30a:2a00::/56"
+            summary: "Node {{ $labels.instance }} has IPv6 address {{ $labels.address }} outside the static LAN deny range"
             description: |
-              The ISP delegated prefix changed or a node got a GUA from another prefix. The CiliumCIDRGroup home-lan-v6 (clusters/home/network-policies/deny-home-lan-v6.yaml) no longer covers the LAN, so pods with egress-internet can reach LAN hosts over IPv6.
-              Renumber runbook: 1) read the new /56 from the router (ssh root@192.168.1.1 ifstatus wan6). 2) Replace 2600:8803:a30a:2a00::/56 with it in deny-home-lan-v6.yaml, in this alert, and in the CrowdSec mcswain/whitelists (services/crowdsec/resources/app/values.yaml), and run cscli allowlists add own-infra <new /56>. 3) Restart ds/cilium in kube-system so CiliumNode IPv6 addresses update. 4) Check hubble observe --verdict DROPPED shows the deny again for a pod to a LAN GUA. 5) Public Envoy IPv6 (keep this order or Envoy also loses 192.168.254.254): a) append <new prefix>::e:1/128 to the pool in clusters/home/metallb/config/metallb.yaml and reconcile; b) change 2600:8803:a30a:2a00::e:1 in infrastructure/envoy-gateway/resources/gateway/public/proxy.yaml; c) remove the old /128 from the pool. 6) Add the new /56 to exemptIPs in services/crowdsec/resources/bouncer/helmrelease.yaml. The router rules Allow-Envoy-v6-tcp/udp match the ::e:1 suffix and the edge.mcswain.dev AAAA is updated by /root/ddns-envoy6.sh on the router, so neither needs an edit.
+              CiliumCIDRGroup home-lan-v6 (clusters/home/network-policies/deny-home-lan-v6.yaml) denies pods the Cox Oklahoma range 2600:8803:8000::/33, so pods cannot reach LAN hosts by their public IPv6. This node now has a global address outside that range, so Cox moved us to another block and pods with egress-internet can reach LAN hosts over IPv6. Add the new Cox block (see https://rdap.arin.net/registry/ip/<address>) to home-lan-v6.
+        - alert: PublicEnvoyIPv6NotOnLan
+          expr: |
+            label_replace(
+              kube_service_status_load_balancer_ingress{namespace="envoy-gateway-system", service=~"envoy-envoy-gateway-system-public-.*", ip=~".*:.*"},
+              "lan64", "$1", "ip", "^([0-9a-f]+:[0-9a-f]+:[0-9a-f]+:[0-9a-f]+):.*"
+            )
+            unless on (lan64)
+            label_replace(
+              node_network_address_info{job="node-exporter", scope="global", address=~"[23][0-9a-f]{0,3}:.*"},
+              "lan64", "$1", "address", "^([0-9a-f]+:[0-9a-f]+:[0-9a-f]+:[0-9a-f]+):.*"
+            )
+          for: 20m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Public Envoy IPv6 {{ $labels.ip }} is not in the current LAN prefix"
+            description: |
+              The ISP prefix changed but the public Envoy address did not follow, so inbound IPv6 to every site fails (clients fall back to IPv4). The router pushes the prefix into the home-ipv6 ConfigMaps (metallb-system, crowdsec, tailscale-peer-relay) through /root/home-ipv6-push.sh (hotplug + cron every 10 min). Check: ssh root@192.168.1.1 'logread -e home-ipv6 | tail', kubectl -n metallb-system get cm home-ipv6 -o yaml, and the home-ipv6-prefix ValidatingAdmissionPolicy rejecting the value.
+        - alert: PublicEnvoyMissingAddress
+          expr: |
+            count(kube_service_status_load_balancer_ingress{namespace="envoy-gateway-system", service=~"envoy-envoy-gateway-system-public-.*"}) < 2
+            or absent(kube_service_status_load_balancer_ingress{namespace="envoy-gateway-system", service=~"envoy-envoy-gateway-system-public-.*"})
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Public Envoy has fewer than 2 load balancer addresses"
+            description: |
+              MetalLB pool public (clusters/home/metallb/config/metallb.yaml) should give the public Envoy Service 192.168.254.254 and <LAN /64>::e:1. A missing address means the pool content is invalid or overlaps another pool; check kubectl -n metallb-system logs deploy/metallb-controller.
