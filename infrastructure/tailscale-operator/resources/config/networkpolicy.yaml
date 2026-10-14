@@ -88,6 +88,10 @@ spec:
     matchExpressions:
       - key: tailscale.com/parent-resource-type
         operator: Exists
+      - key: tailscale.com/parent-resource-ns
+        operator: NotIn
+        values:
+          - astro-processing
   ingress:
     - fromEndpoints:
         - matchLabels:
