@@ -6,6 +6,10 @@ prometheus:
 
   prometheusRule:
     enabled: true
+    addressPoolExhausted:
+      excludePools: public
+    addressPoolUsage:
+      excludePools: public
 
   rbacPrometheus: false
 
