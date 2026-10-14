@@ -41,3 +41,17 @@ spec:
           annotations:
             summary: "Dew margin is {{ $value | printf \"%.1f\" }} C and the dew heaters are not at 100%"
             description: "While the mount tracks, the sequence should run the dew heaters at 100% when air temperature minus dew point is under 4 C. They are still on UPB AutoDew, so the boost did not run or did not apply."
+        - alert: ObservatoryWindowDustChanged
+          expr: sum by (kind) (astro_stacker_flat_dust_events{scope="window"}) > 0
+          labels:
+            severity: warning
+          annotations:
+            summary: "Dust on the camera window changed: {{ $value }} {{ $labels.kind }} shadow(s) in the latest flats"
+            description: "The latest flats show a dust shadow on the camera window that is {{ $labels.kind }} since the last flats of the same filter. Lights from before the change need the older flats. The morning report shows where, with before and after crops."
+        - alert: ObservatoryLightsDustMismatch
+          expr: max(astro_stacker_lights_dust_mismatches) > 0
+          labels:
+            severity: warning
+          annotations:
+            summary: "Last night's lights hold {{ $value }} dust shadow(s) their flats do not match"
+            description: "The lights check found dust in last night's calibrated lights that their flats do not correct: dust came or moved before the flats were taken, or the lights got flats from before a dust change. The morning report has the residual image."
