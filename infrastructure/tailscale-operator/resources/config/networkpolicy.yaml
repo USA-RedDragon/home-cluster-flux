@@ -101,3 +101,67 @@ spec:
         - ports:
             - port: "9002"
               protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: astro-processing-proxies-ingress
+  namespace: tailscale-operator
+spec:
+  endpointSelector:
+    matchLabels:
+      tailscale.com/parent-resource-ns: astro-processing
+  ingress:
+    - fromEntities:
+        - all
+      toPorts:
+        - ports:
+            - port: "1"
+              endPort: 65535
+              protocol: UDP
+    - fromEntities:
+        - all
+      icmps:
+        - fields:
+            - type: 3
+              family: IPv4
+            - type: 11
+              family: IPv4
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9002"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: observatory-astro-processing-ingress
+  namespace: tailscale-operator
+spec:
+  endpointSelector:
+    matchLabels:
+      tailscale.com/parent-resource-ns: astro-processing
+      tailscale.com/parent-resource: observatory
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: astro-processing
+            app.kubernetes.io/name: astro-stacker
+      toPorts:
+        - ports:
+            - port: "8189"
+              protocol: TCP
+            - port: "1888"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: astro-processing
+            app.kubernetes.io/name: symmetricds
+      toPorts:
+        - ports:
+            - port: "31415"
+              protocol: TCP
