@@ -8,8 +8,8 @@ spec:
     matchLabels:
       k8s-app: kube-dns
   egress:
-    - toEntities:
-        - world-ipv4
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
       toPorts:
         - ports:
             - port: "53"
