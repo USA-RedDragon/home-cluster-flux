@@ -262,8 +262,22 @@ configMaps:
             side_gate_sub:
               - rtsp://{FRIGATE_AMCREST_USERNAME}:{FRIGATE_AMCREST_PASSWORD}@{FRIGATE_SIDE_GATE_ADDRESS}/cam/realmonitor?channel=1&subtype=2
 
+        profiles:
+          day:
+            friendly_name: Day
+          night:
+            friendly_name: Night
         cameras:
           doorbell:
+            profiles:
+              day:
+                motion:
+                  threshold: 30
+                  contour_area: 10
+              night:
+                motion:
+                  threshold: 20
+                  contour_area: 10
             ffmpeg:
               inputs:
                 - path: rtsp://127.0.0.1:8554/doorbell
@@ -311,6 +325,15 @@ configMaps:
                   - Porch
                   - Street
           back_porch:
+            profiles:
+              day:
+                motion:
+                  threshold: 20
+                  contour_area: 26
+              night:
+                motion:
+                  threshold: 40
+                  contour_area: 26
             ffmpeg:
               inputs:
                 - path: rtsp://127.0.0.1:8554/back_porch
@@ -395,6 +418,15 @@ configMaps:
                   enabled: true
                   coordinates: 0.875,0.3,0.915,0.3,0.915,1,0.875,1
           front_gate:
+            profiles:
+              day:
+                motion:
+                  threshold: 40
+                  contour_area: 6
+              night:
+                motion:
+                  threshold: 25
+                  contour_area: 6
             ffmpeg:
               inputs:
                 - path: rtsp://127.0.0.1:8554/front_gate
@@ -443,6 +475,15 @@ configMaps:
                       coordinates:
                         0.418,0.009,0.421,0.107,0.451,0.147,0.703,0.151,0.92,0.289,0.943,0.306,0.964,0.118,0.778,0
           left_driveway:
+            profiles:
+              day:
+                motion:
+                  threshold: 30
+                  contour_area: 6
+              night:
+                motion:
+                  threshold: 30
+                  contour_area: 10
             ffmpeg:
               inputs:
                 - path: rtsp://127.0.0.1:8554/left_driveway
@@ -507,6 +548,15 @@ configMaps:
                   - Near_Yard
                   - Street
           side_gate:
+            profiles:
+              day:
+                motion:
+                  threshold: 30
+                  contour_area: 26
+              night:
+                motion:
+                  threshold: 40
+                  contour_area: 26
             ffmpeg:
               inputs:
                 - path: rtsp://127.0.0.1:8554/side_gate
