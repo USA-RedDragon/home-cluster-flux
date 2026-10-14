@@ -5,6 +5,9 @@ metadata:
   namespace: envoy-gateway-system
 spec:
   http3: {}
+  http2:
+    initialStreamWindowSize: 1Mi
+    initialConnectionWindowSize: 4Mi
   connection:
     bufferLimit: 4Mi
     maxAcceptPerSocketEvent: 1
