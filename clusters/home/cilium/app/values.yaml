@@ -66,11 +66,6 @@ ipv6:
 
 enableIPv6Masquerade: false
 
-global:
-  encryption:
-    enabled: true
-    nodeEncryption: true
-
 policyEnforcementMode: default
 
 kubeProxyReplacement: true
