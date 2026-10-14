@@ -10,7 +10,7 @@ controllers:
     pod:
       priorityClassName: system-cluster-critical
       nodeSelector:
-        google.feature.node.kubernetes.io/coral: "true"
+        intel.feature.node.kubernetes.io/gpu: "true"
       imagePullSecrets:
         - name: registry-zot
 
@@ -35,6 +35,7 @@ controllers:
             memory: 8Gi
           limits:
             memory: 11Gi
+            gpu.intel.com/i915: 1
         env:
           - name: GOGC
             value: "400"
@@ -151,16 +152,18 @@ configMaps:
           stats_interval: 60
 
         detectors:
-          coral:
-            type: edgetpu
-            device: usb
+          arc:
+            type: openvino
+            device: GPU
 
         model:
           model_type: yolo-generic
           width: 320
           height: 320
-          path: /models/yolov9s-ft/yolov9-s-relu6-ft_320_int8_edgetpu.tflite
-          labelmap_path: /models/yolov9s-ft/labels-coco17.txt
+          input_tensor: nchw
+          input_dtype: float
+          path: /models/yolov9s-ov/yolov9-s-320.onnx
+          labelmap_path: /models/yolov9s-ov/labels-coco17.txt
 
         birdseye:
           enabled: true
@@ -575,12 +578,12 @@ persistence:
   model:
     enabled: true
     type: image
-    image: jacob.pub/ghcr.io/usa-reddragon/frigate-coral-yolov9s-ft:v1@sha256:f49e2f56a3067d77e6caca2183726f34353ba27a587130c44c1c84b308ae4994
+    image: jacob.pub/ghcr.io/usa-reddragon/frigate-openvino-yolov9s-ft:v1@sha256:6fd27e9046ba72768a4c389ff360afffbbaa30105b954744aea948f538708003
     pullPolicy: IfNotPresent
     advancedMounts:
       frigate:
         frigate:
-          - path: /models/yolov9s-ft
+          - path: /models/yolov9s-ov
             readOnly: true
   configmap:
     enabled: true
@@ -613,20 +616,6 @@ persistence:
     existingClaim: frigate-nvr
     globalMounts:
       - path: /media/frigate
-  usb:
-    enabled: true
-    type: hostPath
-    hostPath: /dev/bus/usb
-    hostPathType: Directory
-    globalMounts:
-      - path: /dev/bus/usb
-  usb-sys:
-    enabled: true
-    type: hostPath
-    hostPath: /sys/bus/usb
-    hostPathType: Directory
-    globalMounts:
-      - path: /sys/bus/usb
 
 route:
   frigate:
