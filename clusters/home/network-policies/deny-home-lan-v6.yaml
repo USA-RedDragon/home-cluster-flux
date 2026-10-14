@@ -4,7 +4,7 @@ metadata:
   name: home-lan-v6
 spec:
   externalCIDRs:
-    - 2600:8803:a30a:2a00::/56
+    - 2600:8803:8000::/33
 ---
 apiVersion: cilium.io/v2
 kind: CiliumClusterwideNetworkPolicy
