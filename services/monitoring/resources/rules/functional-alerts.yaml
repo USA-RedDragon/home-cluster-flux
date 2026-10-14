@@ -53,7 +53,7 @@ spec:
             severity: warning
           annotations:
             summary: "Frigate detector {{ $labels.name }} inference is {{ $value | humanizeDuration }}"
-            description: "Average inference time for detector {{ $labels.name }} has been over 50ms for 15m (normal is about 8ms on the Coral). The Coral may have dropped off USB and Frigate fell back to CPU."
+            description: "Average inference time for detector {{ $labels.name }} has been over 50ms for 15m (normal is about 5ms with OpenVINO on the Arc A380). Check GPU contention from Jellyfin or a lost /dev/dri device on beta."
         - alert: FrigateStorageLow
           expr: min by (namespace, storage) (frigate_storage_free_bytes / frigate_storage_total_bytes) < 0.10
           for: 15m
