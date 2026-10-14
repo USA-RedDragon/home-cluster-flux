@@ -320,6 +320,11 @@ alertmanager:
         continue: false
       - receiver: 'telegram'
         matchers:
+          - alertname=~"ObservatoryWindowDustChanged|ObservatoryLightsDustMismatch"
+        repeat_interval: 24h
+        continue: false
+      - receiver: 'telegram'
+        matchers:
           # pass all alerts
           - alertname != ""
     receivers:
