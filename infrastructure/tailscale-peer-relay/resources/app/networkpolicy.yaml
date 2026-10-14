@@ -36,3 +36,9 @@ spec:
               family: IPv4
             - type: 11
               family: IPv4
+            - type: 1
+              family: IPv6
+            - type: 2
+              family: IPv6
+            - type: 3
+              family: IPv6
