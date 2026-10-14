@@ -127,6 +127,8 @@ controllers:
           # cluster. Not on any gateway route.
           PUBLIC_FRAMES_ENABLED:
             value: "true"
+          DISCOVERIES_ENABLED:
+            value: "true"
           SCHEDULER_URL:
             value: "http://observatory:8189"
           SCHEDULER_NINA_URL:
