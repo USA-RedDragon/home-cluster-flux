@@ -197,6 +197,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: gpu-operator}
     - {kind: Kustomization, name: '*', namespace: gpu-operator}
     - {kind: OCIRepository, name: '*', namespace: gpu-operator}
+    - {kind: GitRepository, name: '*', namespace: home-ipv6}
+    - {kind: HelmChart, name: '*', namespace: home-ipv6}
+    - {kind: HelmRelease, name: '*', namespace: home-ipv6}
+    - {kind: HelmRepository, name: '*', namespace: home-ipv6}
+    - {kind: Kustomization, name: '*', namespace: home-ipv6}
+    - {kind: OCIRepository, name: '*', namespace: home-ipv6}
     - {kind: GitRepository, name: '*', namespace: http-logger}
     - {kind: HelmChart, name: '*', namespace: http-logger}
     - {kind: HelmRelease, name: '*', namespace: http-logger}

@@ -1,0 +1,35 @@
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: home-ipv6-prefix
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["configmaps"]
+  matchConditions:
+    - name: home-ipv6-only
+      expression: object.metadata.name == 'home-ipv6'
+  validations:
+    - expression: "has(object.data) && 'HOME_V6_LAN64' in object.data && object.data.HOME_V6_LAN64.matches('^2600:88[0-9a-f]{2}:[0-9a-f]{1,4}:[0-9a-f]{1,4}$')"
+      message: HOME_V6_LAN64 must be four hextets inside Cox 2600:8800::/28
+    - expression: "has(object.data) && 'HOME_V6_LAN60' in object.data && object.data.HOME_V6_LAN60.matches('^2600:88[0-9a-f]{2}:[0-9a-f]{1,4}:[0-9a-f]{1,4}::/(56|60|64)$') && object.data.HOME_V6_LAN60.startsWith(object.data.HOME_V6_LAN64.split(':').slice(0, 3).join(':') + ':')"
+      message: HOME_V6_LAN60 must be a /56-/64 inside Cox 2600:8800::/28 covering HOME_V6_LAN64
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: home-ipv6-prefix
+spec:
+  policyName: home-ipv6-prefix
+  validationActions: ["Deny"]
+  matchResources:
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values: ["metallb-system", "crowdsec", "tailscale-peer-relay"]

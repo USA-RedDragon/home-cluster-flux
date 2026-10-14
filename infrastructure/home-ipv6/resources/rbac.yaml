@@ -1,0 +1,67 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: router-writer
+  namespace: home-ipv6
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: router-writer-token
+  namespace: home-ipv6
+  annotations:
+    kubernetes.io/service-account.name: router-writer
+type: kubernetes.io/service-account-token
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: home-ipv6-writer
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["home-ipv6"]
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: home-ipv6-writer
+  namespace: metallb-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: home-ipv6-writer
+subjects:
+  - kind: ServiceAccount
+    name: router-writer
+    namespace: home-ipv6
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: home-ipv6-writer
+  namespace: crowdsec
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: home-ipv6-writer
+subjects:
+  - kind: ServiceAccount
+    name: router-writer
+    namespace: home-ipv6
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: home-ipv6-writer
+  namespace: tailscale-peer-relay
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: home-ipv6-writer
+subjects:
+  - kind: ServiceAccount
+    name: router-writer
+    namespace: home-ipv6
