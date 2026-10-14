@@ -28,7 +28,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: nvidia
-      version: 'v26.7.1'
+      version: 'v26.7.2'
       interval: 1h0m0s
   valuesFrom:
     - kind: ConfigMap
