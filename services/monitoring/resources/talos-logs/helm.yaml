@@ -74,12 +74,14 @@ spec:
                 type: socket
                 mode: udp
                 address: 127.0.0.1:6050
+                receive_buffer_bytes: 8388608
                 decoding:
                   codec: json
               talos_kernel:
                 type: socket
                 mode: udp
                 address: 127.0.0.1:6051
+                receive_buffer_bytes: 8388608
                 decoding:
                   codec: json
             transforms:
