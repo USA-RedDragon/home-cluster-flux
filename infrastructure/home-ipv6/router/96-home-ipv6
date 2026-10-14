@@ -1,0 +1,3 @@
+case "$ACTION" in ifup|ifupdate) ;; *) exit 0 ;; esac
+case "$INTERFACE" in wan6|lan) ;; *) exit 0 ;; esac
+( sleep 20; /root/home-ipv6-push.sh ) >/dev/null 2>&1 &
