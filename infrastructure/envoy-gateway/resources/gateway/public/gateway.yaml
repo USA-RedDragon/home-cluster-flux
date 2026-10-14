@@ -153,3 +153,21 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: dmrhub
+    - name: email-smtps
+      protocol: TCP
+      port: 465
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: ses-email-service
+    - name: home-assistant-wireguard
+      protocol: UDP
+      port: 51821
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: static-services

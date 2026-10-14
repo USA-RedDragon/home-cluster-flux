@@ -8,3 +8,4 @@ resources:
   - allsky-mcswain-dev.yaml
   - home-mcswain-dev.yaml
   - vacuum-mcswain-dev.yaml
+  - home-assistant-wireguard.yaml
