@@ -4,6 +4,7 @@ metadata:
   name: public-proxy
   namespace: envoy-gateway-system
 spec:
+  ipFamily: DualStack
   concurrency: 4
   backendTLS:
     alpnProtocols:
@@ -17,7 +18,7 @@ spec:
         type: LoadBalancer
         loadBalancerClass: metallb
         annotations:
-          metallb.io/loadBalancerIPs: "192.168.254.254"
+          metallb.io/loadBalancerIPs: "192.168.254.254,2600:8800:0:0::e:1"
       envoyPDB:
         minAvailable: 1
       envoyDeployment:
