@@ -12,10 +12,11 @@ data:
         s02-enrich:
           mcswain-whitelists-home-v6.yaml: |
             name: mcswain/whitelists-home-v6
-            description: "Trusted source: home LAN IPv6 (follows the Cox prefix)"
+            description: "Trusted sources: home WAN IPv4 and home LAN IPv6 (follow the router)"
             whitelist:
               reason: "trusted source"
               cidr:
+                - ${HOME_V4_WAN}/32
                 - ${HOME_V6_LAN60}
 ---
 apiVersion: v1
