@@ -165,6 +165,9 @@ configMaps:
           path: /models/yolov9s-ov/yolov9-s-320.onnx
           labelmap_path: /models/yolov9s-ov/labels-coco17.txt
 
+        ffmpeg:
+          hwaccel_args: preset-vaapi
+
         birdseye:
           enabled: true
           mode: continuous
