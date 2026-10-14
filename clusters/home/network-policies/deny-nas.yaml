@@ -11,6 +11,10 @@ spec:
     - toCIDRSet:
         - cidr: 192.168.1.135/32
         - cidr: 100.117.76.5/32
+        - cidr: fdeb:abba:237c::135/128
+        - cidr: fdeb:abba:237c:0:f652:14ff:fe68:e1a0/128
+        - cidr: fd08:a883:d441:e323:f652:14ff:fe68:e1a0/128
+        - cidr: fd7a:115c:a1e0::1c01:4c06/128
       toPorts:
         - ports:
             - port: "2049"
@@ -28,6 +32,12 @@ spec:
             - port: "22"
               protocol: TCP
             - port: "80"
+              protocol: TCP
+            - port: "139"
+              protocol: TCP
+            - port: "445"
+              protocol: TCP
+            - port: "3493"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
@@ -48,6 +58,10 @@ spec:
     - toCIDRSet:
         - cidr: 192.168.1.135/32
         - cidr: 100.117.76.5/32
+        - cidr: fdeb:abba:237c::135/128
+        - cidr: fdeb:abba:237c:0:f652:14ff:fe68:e1a0/128
+        - cidr: fd08:a883:d441:e323:f652:14ff:fe68:e1a0/128
+        - cidr: fd7a:115c:a1e0::1c01:4c06/128
       toPorts:
         - ports:
             - port: "443"
