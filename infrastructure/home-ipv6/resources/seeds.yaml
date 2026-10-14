@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: home-ipv6
+  namespace: metallb-system
+  labels:
+    reconcile.fluxcd.io/watch: Enabled
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
+    kustomize.toolkit.fluxcd.io/prune: disabled
+data:
+  HOME_V6_LAN64: "2600:8803:a30a:2a00"
+  HOME_V6_LAN60: "2600:8803:a30a:2a00::/60"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: home-ipv6
+  namespace: crowdsec
+  labels:
+    reconcile.fluxcd.io/watch: Enabled
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
+    kustomize.toolkit.fluxcd.io/prune: disabled
+data:
+  HOME_V6_LAN64: "2600:8803:a30a:2a00"
+  HOME_V6_LAN60: "2600:8803:a30a:2a00::/60"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: home-ipv6
+  namespace: tailscale-peer-relay
+  labels:
+    reconcile.fluxcd.io/watch: Enabled
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
+    kustomize.toolkit.fluxcd.io/prune: disabled
+data:
+  HOME_V6_LAN64: "2600:8803:a30a:2a00"
+  HOME_V6_LAN60: "2600:8803:a30a:2a00::/60"

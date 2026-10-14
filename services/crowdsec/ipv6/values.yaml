@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-values-ipv6
+  labels:
+    reconcile.fluxcd.io/watch: Enabled
+data:
+  values.yaml: |
+    config:
+      parsers:
+        s02-enrich:
+          mcswain-whitelists-home-v6.yaml: |
+            name: mcswain/whitelists-home-v6
+            description: "Trusted source: home LAN IPv6 (follows the Cox prefix)"
+            whitelist:
+              reason: "trusted source"
+              cidr:
+                - ${HOME_V6_LAN60}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: envoy-bouncer-values-ipv6
+  labels:
+    reconcile.fluxcd.io/watch: Enabled
+data:
+  values.yaml: |
+    config:
+      exemptIPs:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+        - 100.64.0.0/10
+        - fd00::/8
+        - ${HOME_V6_LAN60}
