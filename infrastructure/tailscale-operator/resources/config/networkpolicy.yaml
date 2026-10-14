@@ -77,3 +77,23 @@ spec:
         - ports:
             - port: "1888"
               protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: prometheus-metrics-ingress
+  namespace: tailscale-operator
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: tailscale.com/parent-resource-type
+        operator: Exists
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9002"
+              protocol: TCP
