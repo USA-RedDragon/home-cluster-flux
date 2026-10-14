@@ -23,6 +23,18 @@ spec:
       envoyDeployment:
         replicas: 2
         pod:
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: In
+                        values:
+                          - alpha
+                          - beta
+                          - gamma
+                          - delta
           topologySpreadConstraints:
             - maxSkew: 1
               topologyKey: kubernetes.io/hostname
