@@ -208,8 +208,8 @@ configMaps:
             - car
           filters:
             person:
-              min_score: 0.5
-              threshold: 0.6
+              min_score: 0.4
+              threshold: 0.65
 
         auth:
           enabled: false
