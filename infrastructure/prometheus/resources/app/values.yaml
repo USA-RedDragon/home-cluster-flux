@@ -2344,6 +2344,7 @@ prometheus-node-exporter:
   extraArgs:
     - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
     - --collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$
+    - --collector.netdev.address-info
   service:
     portName: http-metrics
   prometheus:
@@ -2387,7 +2388,10 @@ prometheus-node-exporter:
       ## MetricRelabelConfigs to apply to samples after scraping, but before ingestion.
       ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
       ##
-      metricRelabelings: []
+      metricRelabelings:
+        - sourceLabels: [__name__, scope]
+          regex: node_network_address_info;(link.*|interface.*|host|site|unknown)
+          action: drop
       # - sourceLabels: [__name__]
       #   separator: ;
       #   regex: ^node_mountstats_nfs_(event|operations|transport)_.+
