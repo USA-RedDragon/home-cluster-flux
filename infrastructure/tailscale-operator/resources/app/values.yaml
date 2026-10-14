@@ -10,6 +10,7 @@ proxyConfig:
   image:
     repository: jacob.pub/ghcr.io/tailscale/tailscale
     tag: v1.104.1@sha256:87c55d6be56ad85b3d8bceca5f87f73de288c609131460dd1be1874c250cc41d
+  defaultProxyClass: metrics
 
 apiServerProxyConfig:
   mode: "noauth"
