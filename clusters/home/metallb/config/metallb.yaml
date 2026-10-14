@@ -5,9 +5,19 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-  - 192.168.254.0/24
+  - 192.168.254.0-192.168.254.253
   - fdeb:abba:237c::254:0/112
-  - 2600:8803:a30a:2a00::e:1/128
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: public
+  namespace: metallb-system
+spec:
+  autoAssign: false
+  addresses:
+  - 192.168.254.254/32
+  - ${HOME_V6_LAN64}::e:1/128
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
