@@ -41,6 +41,7 @@ spec:
         - 192.168.0.0/16
         - 100.64.0.0/10
         - fd00::/8
+        - 2600:8803:a30a:2a00::/56
       bouncer:
         enabled: false
         lapiURL: http://crowdsec-service:8080
