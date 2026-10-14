@@ -9,7 +9,7 @@ initImage:
   hub: jacob.pub/docker.io/intel
   tag: ""
 
-sharedDevNum: 1
+sharedDevNum: 2
 logLevel: 2
 resourceManager: false
 enableMonitoring: true
