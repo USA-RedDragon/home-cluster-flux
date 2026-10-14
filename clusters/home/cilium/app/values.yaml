@@ -10,7 +10,7 @@ ipam:
 
 extraConfig:
   enable-ipv6-ndp: "true"
-  ipv6-service-range: "fdeb:abba:237c:fefe:1::/112"
+  ipv6-service-range: "fdeb:ffff:237c::/108"
 
 operator:
   replicas: 3
@@ -64,7 +64,7 @@ ipv4:
 ipv6:
   enabled: true
 
-enableIPv6Masquerade: false
+enableIPv6Masquerade: true
 
 policyEnforcementMode: default
 
