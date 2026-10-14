@@ -26,6 +26,7 @@ metadata:
 data:
   HOME_V6_LAN64: "2600:8803:a30a:2a00"
   HOME_V6_LAN60: "2600:8803:a30a:2a00::/60"
+  HOME_V4_WAN: "68.12.95.206"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -40,3 +41,4 @@ metadata:
 data:
   HOME_V6_LAN64: "2600:8803:a30a:2a00"
   HOME_V6_LAN60: "2600:8803:a30a:2a00::/60"
+  HOME_V4_WAN: "68.12.95.206"

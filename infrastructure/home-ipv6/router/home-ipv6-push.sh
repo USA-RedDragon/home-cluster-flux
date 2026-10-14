@@ -14,7 +14,11 @@ n=$(echo "$head" | awk -F: '{print NF}')
 while [ "$n" -lt 4 ]; do head="$head:0"; n=$((n + 1)); done
 lan64=$(echo "$head" | cut -d: -f1-4)
 lan60="$lan64::/$3"
+wan4=$(ifstatus wan | jsonfilter -e '@["ipv4-address"][0].address')
+case "$wan4" in 10.*|127.*|192.168.*|172.1[6-9].*|172.2[0-9].*|172.3[01].*|100.6[4-9].*|100.[7-9][0-9].*|100.1[01][0-9].*|100.12[0-7].*|169.254.*|"") wan4= ;; esac
 for ns in metallb-system crowdsec tailscale-peer-relay; do
+	want4=
+	[ "$ns" != metallb-system ] && want4=$wan4
 	ok=
 	for ep in api.k8s.jacob.network 192.168.1.249 192.168.1.250 192.168.1.251; do
 		url="https://$ep:6443/api/v1/namespaces/$ns/configmaps/home-ipv6"
@@ -22,12 +26,16 @@ for ns in metallb-system crowdsec tailscale-peer-relay; do
 		ok=1
 		c64=$(echo "$cur" | jsonfilter -e '@.data.HOME_V6_LAN64')
 		c60=$(echo "$cur" | jsonfilter -e '@.data.HOME_V6_LAN60')
-		[ "$c64" = "$lan64" ] && [ "$c60" = "$lan60" ] && break
+		c4=$(echo "$cur" | jsonfilter -e '@.data.HOME_V4_WAN')
+		[ -z "$want4" ] && c4=
+		[ "$c64" = "$lan64" ] && [ "$c60" = "$lan60" ] && [ "$c4" = "$want4" ] && break
+		body="\"HOME_V6_LAN64\":\"$lan64\",\"HOME_V6_LAN60\":\"$lan60\""
+		[ -n "$want4" ] && body="$body,\"HOME_V4_WAN\":\"$want4\""
 		if curl -sf -m 10 --cacert "$D/ca.crt" -H "Authorization: Bearer $T" -H 'Content-Type: application/merge-patch+json' -X PATCH "$url" \
-			-d "{\"data\":{\"HOME_V6_LAN64\":\"$lan64\",\"HOME_V6_LAN60\":\"$lan60\"}}" >/dev/null; then
-			logger -t home-ipv6 "$ns: $c64 $c60 -> $lan64 $lan60"
+			-d "{\"data\":{$body}}" >/dev/null; then
+			logger -t home-ipv6 "$ns: $c64 $c60 $c4 -> $lan64 $lan60 $want4"
 		else
-			logger -t home-ipv6 "$ns: patch to $lan64 $lan60 failed"
+			logger -t home-ipv6 "$ns: patch to $lan64 $lan60 $want4 failed"
 		fi
 		break
 	done

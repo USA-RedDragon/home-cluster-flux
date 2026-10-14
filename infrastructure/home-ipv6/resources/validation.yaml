@@ -19,6 +19,8 @@ spec:
       message: HOME_V6_LAN64 must be four hextets inside Cox 2600:8800::/28
     - expression: "has(object.data) && 'HOME_V6_LAN60' in object.data && object.data.HOME_V6_LAN60.matches('^2600:88[0-9a-f]{2}:[0-9a-f]{1,4}:[0-9a-f]{1,4}::/(56|60|64)$') && object.data.HOME_V6_LAN60.startsWith(object.data.HOME_V6_LAN64.split(':').slice(0, 3).join(':') + ':')"
       message: HOME_V6_LAN60 must be a /56-/64 inside Cox 2600:8800::/28 covering HOME_V6_LAN64
+    - expression: "!has(object.data) || !('HOME_V4_WAN' in object.data) || (object.data.HOME_V4_WAN.matches('^([0-9]{1,3})\\\\.([0-9]{1,3})\\\\.([0-9]{1,3})\\\\.([0-9]{1,3})$') && !object.data.HOME_V4_WAN.matches('^(10|127|0)\\\\.|^192\\\\.168\\\\.|^172\\\\.(1[6-9]|2[0-9]|3[01])\\\\.|^100\\\\.(6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7])\\\\.|^169\\\\.254\\\\.'))"
+      message: HOME_V4_WAN must be a public IPv4 address
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingAdmissionPolicyBinding
