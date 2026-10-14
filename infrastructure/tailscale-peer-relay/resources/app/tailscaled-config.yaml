@@ -11,5 +11,5 @@ data:
       "acceptDNS": false,
       "acceptRoutes": false,
       "RelayServerPort": 40000,
-      "RelayServerStaticEndpoints": ["192.0.2.1:40000"]
+      "RelayServerStaticEndpoints": ["192.0.2.1:40000", "[${HOME_V6_LAN64}::e:1]:40000"]
     }

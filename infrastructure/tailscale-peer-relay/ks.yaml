@@ -8,6 +8,10 @@ spec:
   targetNamespace: tailscale-peer-relay
   path: ./infrastructure/tailscale-peer-relay/resources
   prune: true
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: home-ipv6
   sourceRef:
     kind: GitRepository
     namespace: flux-system
