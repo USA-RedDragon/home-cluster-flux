@@ -20,6 +20,9 @@ spec:
         name: kdwils
         namespace: crowdsec
       interval: 1h
+  valuesFrom:
+    - kind: ConfigMap
+      name: envoy-bouncer-values-ipv6
   values:
     fullnameOverride: envoy-bouncer
     image:
@@ -35,13 +38,6 @@ spec:
       server:
         logLevel: info
       trustedIPHeader: X-Envoy-External-Address
-      exemptIPs:
-        - 10.0.0.0/8
-        - 172.16.0.0/12
-        - 192.168.0.0/16
-        - 100.64.0.0/10
-        - fd00::/8
-        - 2600:8800:0:0::/56
       bouncer:
         enabled: false
         lapiURL: http://crowdsec-service:8080
