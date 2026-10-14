@@ -5,6 +5,8 @@ metadata:
 spec:
   metrics:
     enable: true
+    serviceMonitor:
+      enable: true
   statefulSet:
     pod:
       nodeSelector:
