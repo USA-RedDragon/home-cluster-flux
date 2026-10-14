@@ -9,7 +9,7 @@ spec:
       k8s-app: kube-dns
   egress:
     - toEntities:
-        - world
+        - world-ipv4
       toPorts:
         - ports:
             - port: "53"
