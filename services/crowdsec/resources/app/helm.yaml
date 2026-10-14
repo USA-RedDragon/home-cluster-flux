@@ -24,6 +24,8 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
+    - kind: ConfigMap
+      name: crowdsec-values-ipv6
   postRenderers:
     - kustomize:
         patches:
