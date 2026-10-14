@@ -293,6 +293,13 @@ data:
             annotations:
               summary: "{{ $value }} plate solves failed in the last hour"
               description: "Clouds, focus, or a mount far off target. Query: {job=\"observatory\", app=\"nina\"} |= \"Plate solve failed\""
+          - alert: NINASwitchNotApplied
+            expr: sum(count_over_time({job="observatory", app="nina"} |~ "Timeout to set switch value|No switch found for index|Set Switch Value failed" [15m])) > 0
+            labels:
+              severity: warning
+            annotations:
+              summary: "NINA set a switch and the value did not follow ({{ $value }} in 15m)"
+              description: "A Set Switch Value in the sequence timed out, failed or named a position the hub does not have: the device kept its old value. For the dew heaters this means UPB AutoDew still owns the output. Query: {job=\"observatory\", app=\"nina\"} |~ \"Timeout to set switch value|No switch found|Set Switch Value failed\""
           - alert: K8sWarningEventStorm
             expr: |
               sum by (namespace, reason) (count_over_time({job="kubernetes-events", type="Warning"} | json | __error__="" [15m])) > 20
