@@ -134,6 +134,10 @@ controllers:
             value: "true"
           DISCOVERIES_ENABLED:
             value: "true"
+          DISCOVERIES_SMALL_BODIES_URL:
+            value: "http://astro-small-bodies:8080"
+          DISCOVERIES_TOPOCENTRIC:
+            value: "true"
           SCHEDULER_URL:
             value: "http://observatory:8189"
           SCHEDULER_NINA_URL:
