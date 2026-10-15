@@ -13,6 +13,7 @@ configMapGenerator:
       - iam.sh
       - sky-survey-rw.json=../../policies/sky-survey-rw.json
       - sky-survey-read.json=../../policies/sky-survey-read.json
+      - sky-survey-tns-rw.json=../../policies/sky-survey-tns-rw.json
   - name: sky-survey-copy
     files:
       - copy.sh

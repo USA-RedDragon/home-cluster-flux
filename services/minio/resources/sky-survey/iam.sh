@@ -12,8 +12,10 @@ attach() {
 mc mb --ignore-existing local/sky-survey
 mc admin policy create local sky-survey-rw /policies/sky-survey-rw.json
 mc admin policy create local sky-survey-read /policies/sky-survey-read.json
+mc admin policy create local sky-survey-tns-rw /policies/sky-survey-tns-rw.json
 mc admin user add local "$WRITER_ACCESS_KEY" "$WRITER_SECRET_KEY"
 attach sky-survey-rw "$WRITER_ACCESS_KEY"
 attach sky-survey-read astro-stacker
+attach sky-survey-tns-rw astro-stacker
 mc admin user info local "$WRITER_ACCESS_KEY"
 mc admin user info local astro-stacker
