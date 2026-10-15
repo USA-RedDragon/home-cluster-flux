@@ -1,0 +1,68 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: small-bodies-iam
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: Enabled
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: small-bodies-iam
+    spec:
+      restartPolicy: OnFailure
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: iam
+          image: ghcr.io/usa-reddragon/minio:RELEASE.2025-08-29T21-27-49Z@sha256:208f3028b036349ba612219722a83be960185ce31a83cd48287e1a4d3a2fedf8
+          command:
+            - /bin/sh
+            - /scripts/iam.sh
+          env:
+            - name: MC_CONFIG_DIR
+              value: /work/mc
+            - name: WRITER_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: small-bodies-writer
+                  key: accesskey
+            - name: WRITER_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: small-bodies-writer
+                  key: secretkey
+          envFrom:
+            - secretRef:
+                name: minio-user
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: scripts
+              mountPath: /policies
+            - name: work
+              mountPath: /work
+      volumes:
+        - name: scripts
+          configMap:
+            name: small-bodies-iam
+        - name: work
+          emptyDir: {}
