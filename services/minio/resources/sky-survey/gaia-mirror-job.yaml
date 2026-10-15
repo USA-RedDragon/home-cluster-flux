@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gaia-dr3-mirror
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: Enabled
+spec:
+  backoffLimit: 30
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: catalog-mirror-gaia
+    spec:
+      restartPolicy: OnFailure
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mirror
+          image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:ef55f2975ab11781e261e4609e3d1707544039114084ffe2231086ab27b96329
+          command:
+            - /astro-stacker
+            - catalog-mirror
+            - gaia
+            - --workers=4
+            - --rate-mb=50
+          env:
+            - name: GOMEMLIMIT
+              value: 5GiB
+            - name: CATALOG_S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sky-survey-writer
+                  key: accesskey
+            - name: CATALOG_S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sky-survey-writer
+                  key: secretkey
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2Gi
+            limits:
+              cpu: "4"
+              memory: 6Gi
