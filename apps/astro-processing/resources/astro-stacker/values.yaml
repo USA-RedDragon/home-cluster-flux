@@ -141,17 +141,11 @@ controllers:
           SCHEDULER_METRICS_URL:
             value: "http://thanos-querier-app.monitoring:9090"
           MORNING_REPORT_ENABLED:
-            value: "true"
+            value: "false"
           MORNING_REPORT_FIRST_NIGHT:
             value: "2026-10-14"
           MORNING_REPORT_LOKI_URL:
             value: "http://loki.monitoring:3100"
-          MORNING_REPORT_TELEGRAM_CHAT_ID:
-            value: "-5365451857"
-          MORNING_REPORT_TELEGRAM_TOKEN:
-            secretKeyRef:
-              name: astro-stacker-telegram
-              key: MORNING_REPORT_TELEGRAM_TOKEN
           GOALS_ENABLED:
             value: "true"
           GOALS_PUBLISH:
