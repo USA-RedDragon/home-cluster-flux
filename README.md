@@ -956,10 +956,18 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="5">minio</td>
+    <td rowspan="9">minio</td>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">asassn-var-mirror</a></td>
+    <td rowspan="9"></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">atlas-var-mirror</a></td>
+  </tr>
+  <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/minio/resources/backup-astro/helmrelease.yaml">backup-astro</a></td>
-    <td rowspan="5"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
@@ -970,12 +978,20 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><a href="services/minio/resources/backup-tandoor/helmrelease.yaml">backup-tandoor</a></td>
   </tr>
   <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">gaia-vari-mirror</a></td>
+  </tr>
+  <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/minio/resources/app/helm.yaml">minio</a></td>
   </tr>
   <tr>
     <td><code>CronJob</code></td>
     <td><a href="services/minio/resources/sky-survey/vsx-mirror-cronjob.yaml">vsx-mirror</a></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">ztf-var-mirror</a></td>
   </tr>
 </table>
 
