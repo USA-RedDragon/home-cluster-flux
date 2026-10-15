@@ -5,6 +5,8 @@ resources:
   - networkpolicy.yaml
   - iam-job.yaml
   - copy-job.yaml
+  - gaia-mirror-job.yaml
+  - vsx-mirror-cronjob.yaml
 configMapGenerator:
   - name: sky-survey-iam
     files:

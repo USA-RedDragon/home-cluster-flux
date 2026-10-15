@@ -952,10 +952,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="4">minio</td>
+    <td rowspan="5">minio</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/minio/resources/backup-astro/helmrelease.yaml">backup-astro</a></td>
-    <td rowspan="4"></td>
+    <td rowspan="5"></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
@@ -968,6 +968,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/minio/resources/app/helm.yaml">minio</a></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/vsx-mirror-cronjob.yaml">vsx-mirror</a></td>
   </tr>
 </table>
 
