@@ -37,7 +37,7 @@ controllers:
             enabled: true
         envFrom:
           - secretRef:
-              name: astro-stacker-tns
+              name: tns
               optional: true
             prefix: DISCOVERIES_
         env:
