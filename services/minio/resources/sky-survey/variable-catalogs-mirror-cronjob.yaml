@@ -26,7 +26,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: mirror
-              image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:9dc75b772d8c0423c144e77e3fd6fb2b5453c72a823d11d563b851d0910cea4b
+              image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:793304bad12822bb48d2921f6f198b78943fc51c7109c9e7dc009de15f5e094c
               command:
                 - /astro-stacker
                 - catalog-mirror
@@ -87,7 +87,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: mirror
-              image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:9dc75b772d8c0423c144e77e3fd6fb2b5453c72a823d11d563b851d0910cea4b
+              image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:793304bad12822bb48d2921f6f198b78943fc51c7109c9e7dc009de15f5e094c
               command:
                 - /astro-stacker
                 - catalog-mirror
@@ -148,7 +148,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: mirror
-              image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:9dc75b772d8c0423c144e77e3fd6fb2b5453c72a823d11d563b851d0910cea4b
+              image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:793304bad12822bb48d2921f6f198b78943fc51c7109c9e7dc009de15f5e094c
               command:
                 - /astro-stacker
                 - catalog-mirror
@@ -209,7 +209,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: mirror
-              image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:9dc75b772d8c0423c144e77e3fd6fb2b5453c72a823d11d563b851d0910cea4b
+              image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:793304bad12822bb48d2921f6f198b78943fc51c7109c9e7dc009de15f5e094c
               command:
                 - /astro-stacker
                 - catalog-mirror
