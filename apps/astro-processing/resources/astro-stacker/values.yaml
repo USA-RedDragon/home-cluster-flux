@@ -35,6 +35,11 @@ controllers:
             enabled: true
           startup:
             enabled: true
+        envFrom:
+          - secretRef:
+              name: astro-stacker-tns
+              optional: true
+            prefix: DISCOVERIES_
         env:
           DB_USER:
             secretKeyRef:
@@ -152,24 +157,6 @@ controllers:
             secretKeyRef:
               name: telegram
               key: TELEGRAM_BOT_TOKEN
-          DISCOVERIES_TNS_KEY:
-            valueFrom:
-              secretKeyRef:
-                name: astro-stacker-tns
-                key: TNS_API_KEY
-                optional: true
-          DISCOVERIES_TNS_BOT_ID:
-            valueFrom:
-              secretKeyRef:
-                name: astro-stacker-tns
-                key: TNS_BOT_ID
-                optional: true
-          DISCOVERIES_TNS_BOT_NAME:
-            valueFrom:
-              secretKeyRef:
-                name: astro-stacker-tns
-                key: TNS_BOT_NAME
-                optional: true
           DISCOVERY_ALERTS_ENABLED:
             value: "true"
           DISCOVERY_ALERTS_FOLLOWUP:
