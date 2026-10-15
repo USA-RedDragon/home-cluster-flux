@@ -23,7 +23,7 @@ controllers:
       ledger:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/ledger
-          tag: v0.10.0@sha256:df9da7261cb5ce1e773143114dc73bfd06dcc223ba6af6b0429c4c366de03309
+          tag: v0.10.1@sha256:fef0fc05d59c87c977241cf936084e0840536472e7fe8093a0565c5bc0ecbc3e
           pullPolicy: IfNotPresent
         resources:
           requests:
