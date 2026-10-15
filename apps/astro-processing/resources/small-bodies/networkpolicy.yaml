@@ -13,6 +13,9 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: astro-processing
             app.kubernetes.io/name: astro-stacker
+        - matchLabels:
+            io.kubernetes.pod.namespace: astro-processing
+            app.kubernetes.io/name: discoveries-backfill
       toPorts:
         - ports:
             - port: "8080"
