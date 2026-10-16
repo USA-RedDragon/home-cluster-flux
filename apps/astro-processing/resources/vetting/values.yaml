@@ -1,0 +1,185 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+  imagePullSecrets:
+    - name: registry-zot
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+    fsGroup: 65534
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values: [alpha, beta, gamma, delta]
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: discoveries-vetting
+
+controllers:
+  vet:
+    type: cronjob
+    cronjob:
+      schedule: "17 * * * *"
+      timeZone: Etc/UTC
+      concurrencyPolicy: Forbid
+      startingDeadlineSeconds: 3600
+      successfulJobsHistory: 1
+      failedJobsHistory: 2
+      backoffLimit: 1
+      activeDeadlineSeconds: 14400
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
+          tag: "beta@sha256:VET_DIGEST"
+        command: ["/astro-stacker"]
+        args: ["vet", "--budget", "3h"]
+        envFrom:
+          - secretRef:
+              name: tns
+              optional: true
+            prefix: DISCOVERIES_
+          - secretRef:
+              name: atlas
+            prefix: VETTING_
+        env:
+          DB_USER:
+            secretKeyRef:
+              name: postgresql-app
+              key: user
+          DB_PASS:
+            secretKeyRef:
+              name: postgresql-app
+              key: password
+          DB_HOST:
+            secretKeyRef:
+              name: postgresql-app
+              key: host
+          DB_PORT:
+            secretKeyRef:
+              name: postgresql-app
+              key: port
+          APP_DB_NAME:
+            secretKeyRef:
+              name: postgresql-app
+              key: dbname
+          SCHEDULER_DB_NAME: schedulerdb
+          STORAGE_TYPE: postgres
+          STORAGE_DSN_APP:
+            value: host=$(DB_HOST) user=$(DB_USER) password=$(DB_PASS) dbname=$(APP_DB_NAME) port=$(DB_PORT) sslmode=disable
+            dependsOn: [DB_USER, DB_PASS, DB_HOST, DB_PORT, APP_DB_NAME]
+          STORAGE_DSN_SCHEDULERDB:
+            value: host=$(DB_HOST) user=$(DB_USER) password=$(DB_PASS) dbname=$(SCHEDULER_DB_NAME) port=$(DB_PORT) sslmode=disable
+            dependsOn: [DB_USER, DB_PASS, DB_HOST, DB_PORT, SCHEDULER_DB_NAME]
+          S3_ENDPOINT: minio.minio.svc:9000
+          S3_USE_SSL: "false"
+          S3_ACCESS_KEY:
+            secretKeyRef:
+              name: astro-stacker-s3
+              key: S3_ACCESS_KEY
+          S3_SECRET_KEY:
+            secretKeyRef:
+              name: astro-stacker-s3
+              key: S3_SECRET_KEY
+          LOG_LEVEL: info
+          DISCOVERIES_SMALL_BODIES_URL: http://astro-small-bodies:8080
+          DISCOVERIES_TOPOCENTRIC: "true"
+          VETTING_THREADS: "6"
+          VETTING_WORK_DIR: /work
+        securityContext: &securityContext
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          requests:
+            cpu: 2
+            memory: 4Gi
+          limits:
+            cpu: 6
+            memory: 4Gi
+
+  tess:
+    type: cronjob
+    cronjob:
+      schedule: "47 * * * *"
+      timeZone: Etc/UTC
+      concurrencyPolicy: Forbid
+      startingDeadlineSeconds: 3600
+      successfulJobsHistory: 1
+      failedJobsHistory: 2
+      backoffLimit: 1
+      activeDeadlineSeconds: 14400
+    containers:
+      app:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/astro-tess
+          tag: "beta@sha256:TESS_DIGEST"
+        args: ["--work", "/work", "--max-minutes", "60"]
+        env:
+          S3_ENDPOINT: minio.minio.svc:9000
+          S3_USE_SSL: "false"
+          S3_BUCKET: astro-processed
+          S3_ACCESS_KEY:
+            secretKeyRef:
+              name: astro-stacker-s3
+              key: S3_ACCESS_KEY
+          S3_SECRET_KEY:
+            secretKeyRef:
+              name: astro-stacker-s3
+              key: S3_SECRET_KEY
+        securityContext: *securityContext
+        resources:
+          requests:
+            cpu: 2
+            memory: 3Gi
+          limits:
+            cpu: 4
+            memory: 3Gi
+
+persistence:
+  vet-work:
+    type: custom
+    advancedMounts:
+      vet:
+        app:
+          - path: /work
+          - path: /tmp
+            subPath: tmp
+    volumeSpec:
+      ephemeral:
+        volumeClaimTemplate:
+          spec:
+            accessModes: [ReadWriteOnce]
+            storageClassName: longhorn-fast-r1
+            resources:
+              requests:
+                storage: 10Gi
+  tess-work:
+    type: custom
+    advancedMounts:
+      tess:
+        app:
+          - path: /work
+    volumeSpec:
+      ephemeral:
+        volumeClaimTemplate:
+          spec:
+            accessModes: [ReadWriteOnce]
+            storageClassName: longhorn-fast-r1
+            resources:
+              requests:
+                storage: 40Gi
