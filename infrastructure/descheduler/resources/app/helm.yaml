@@ -33,6 +33,14 @@ spec:
   values:
     image:
       repository: jacob.pub/registry.k8s.io/descheduler/descheduler
+    priorityClassName: descheduler
+    resources:
+      requests:
+        cpu: 100m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 64Mi
     serviceMonitor:
       enabled: true
     podLabels:
