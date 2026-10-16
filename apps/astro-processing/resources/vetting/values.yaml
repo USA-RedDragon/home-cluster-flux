@@ -37,7 +37,8 @@ controllers:
       concurrencyPolicy: Forbid
       startingDeadlineSeconds: 3600
       successfulJobsHistory: 1
-      failedJobsHistory: 2
+      failedJobsHistory: 1
+      ttlSecondsAfterFinished: 86400
       backoffLimit: 1
       activeDeadlineSeconds: 14400
     containers:
@@ -120,7 +121,8 @@ controllers:
       concurrencyPolicy: Forbid
       startingDeadlineSeconds: 3600
       successfulJobsHistory: 1
-      failedJobsHistory: 2
+      failedJobsHistory: 1
+      ttlSecondsAfterFinished: 86400
       backoffLimit: 1
       activeDeadlineSeconds: 14400
     containers:

@@ -6,11 +6,12 @@ spec:
   schedule: "27 6 4 * *"
   timeZone: America/Chicago
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 2
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       backoffLimit: 6
+      ttlSecondsAfterFinished: 86400
       template:
         metadata:
           labels:
@@ -82,11 +83,12 @@ spec:
   schedule: "37 6 5 * *"
   timeZone: America/Chicago
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 2
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       backoffLimit: 6
+      ttlSecondsAfterFinished: 86400
       template:
         metadata:
           labels:
@@ -158,11 +160,12 @@ spec:
   schedule: "47 6 6 * *"
   timeZone: America/Chicago
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 2
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       backoffLimit: 6
+      ttlSecondsAfterFinished: 86400
       template:
         metadata:
           labels:
@@ -234,11 +237,12 @@ spec:
   schedule: "57 6 7 * *"
   timeZone: America/Chicago
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 2
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       backoffLimit: 6
+      ttlSecondsAfterFinished: 86400
       template:
         metadata:
           labels:
