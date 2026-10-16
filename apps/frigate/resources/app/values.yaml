@@ -616,7 +616,7 @@ persistence:
   model:
     enabled: true
     type: image
-    image: jacob.pub/ghcr.io/usa-reddragon/frigate-openvino-yolov9s-ft:v1@sha256:6fd27e9046ba72768a4c389ff360afffbbaa30105b954744aea948f538708003
+    image: jacob.pub/ghcr.io/usa-reddragon/frigate-openvino-yolov9s-ft:v2@sha256:377d1d7de5a45c82f17bbe84b84a34969b31539ffb9dc7d1c8e30157d6dba56c
     pullPolicy: IfNotPresent
     advancedMounts:
       frigate:
