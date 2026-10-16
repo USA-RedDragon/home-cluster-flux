@@ -107,10 +107,10 @@ controllers:
         resources:
           requests:
             cpu: 2
-            memory: 6Gi
+            memory: 5Gi
           limits:
             cpu: 6
-            memory: 6Gi
+            memory: 5Gi
 
   tess:
     type: cronjob
