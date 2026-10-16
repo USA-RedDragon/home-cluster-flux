@@ -16,6 +16,10 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: astro-processing
             app.kubernetes.io/name: discoveries-backfill
+        - matchLabels:
+            io.kubernetes.pod.namespace: astro-processing
+            app.kubernetes.io/instance: discoveries-vetting
+            app.kubernetes.io/controller: vet
       toPorts:
         - ports:
             - port: "8080"
