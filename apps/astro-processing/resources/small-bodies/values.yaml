@@ -19,7 +19,7 @@ controllers:
       app:
         image: &image
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-small-bodies
-          tag: "beta@sha256:89bb5fd38ebc068de684be1af4da7e5cc65d7464c058c1c8b4bc890d0546b014"
+          tag: "beta@sha256:4b2de72012ae91f7fb3ccb12cd47fa3419e6c2f7e050d3e0e068f2a089e146df"
         args: ["serve"]
         env: &env
           S3_ENDPOINT: minio.minio.svc:9000
