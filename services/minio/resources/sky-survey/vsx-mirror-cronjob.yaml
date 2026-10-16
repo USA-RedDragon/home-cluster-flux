@@ -18,6 +18,21 @@ spec:
         spec:
           restartPolicy: OnFailure
           automountServiceAccountToken: false
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: In
+                        values: [alpha, beta, gamma, delta]
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: catalog-mirror-vsx
           securityContext:
             runAsNonRoot: true
             runAsUser: 65534
@@ -54,7 +69,7 @@ spec:
               resources:
                 requests:
                   cpu: 500m
-                  memory: 1Gi
+                  memory: 6Gi
                 limits:
                   cpu: "2"
                   memory: 6Gi

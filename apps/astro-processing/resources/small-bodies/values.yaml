@@ -85,6 +85,23 @@ controllers:
       failedJobsHistory: 2
       backoffLimit: 1
       activeDeadlineSeconds: 21600
+    pod:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values: [alpha, beta, gamma, delta]
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/instance: astro-small-bodies
+              app.kubernetes.io/controller: update
     containers:
       app:
         image: *image
@@ -96,7 +113,7 @@ controllers:
         resources:
           requests:
             cpu: 2
-            memory: 4Gi
+            memory: 8Gi
           limits:
             cpu: 4
             memory: 8Gi
