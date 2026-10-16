@@ -189,7 +189,7 @@ renovateServer:
   mendRnvAutoDiscoverFilter: 'kubewg-net/*,AstroGardenLLC/*,USA-RedDragon/*,SRS-Hosting/*,Squallar/*'
 
   # Optional. Accepted values: 'enabled', 'discovered', and 'disabled'. Defaults to 'discovered'.
-  mendRnvEnqueueJobsOnStartup: disabled
+  mendRnvEnqueueJobsOnStartup: discovered
 
   # Optional. Specify a directory path to save Renovate job log files.
   # It is recommended to use an external volume to preserve history.
@@ -248,7 +248,7 @@ renovateServer:
 ##
 dataPersistence:
   ## Enable persistence using Persistent Volume Claims
-  enabled: false
+  enabled: true
   ## Persistent Volume storage class
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
@@ -266,7 +266,7 @@ dataPersistence:
 ##
 dataInMemory:
   ## Place the cache/data in memory (tmpfs)
-  enabled: true
+  enabled: false
 
 service:
   type: ClusterIP
