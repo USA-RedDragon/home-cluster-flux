@@ -44,7 +44,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:VET_DIGEST"
+          tag: "beta@sha256:9b494438027c6129305cee6dc28c77eb613183160ec680371ada0560ea083dba"
         command: ["/astro-stacker"]
         args: ["vet", "--budget", "3h"]
         envFrom:
@@ -127,7 +127,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-tess
-          tag: "beta@sha256:TESS_DIGEST"
+          tag: "beta@sha256:b9ae0332811a53d340999d0edd2efd48b66f8fdfd9edab196658a9570463e1e9"
         args: ["--work", "/work", "--max-minutes", "60"]
         env:
           S3_ENDPOINT: minio.minio.svc:9000
