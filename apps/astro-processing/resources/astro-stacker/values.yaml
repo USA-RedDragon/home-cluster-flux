@@ -7,8 +7,11 @@ controllers:
   astro-stacker:
     replicas: 1
     strategy: Recreate
+    serviceAccount:
+      identifier: astro-stacker
 
     pod:
+      automountServiceAccountToken: true
       # The stacker drains on SIGTERM (--stacking.drain-seconds, 1200).
       terminationGracePeriodSeconds: 1260
       securityContext:
@@ -204,6 +207,28 @@ controllers:
             # cores on 30s averages) and froze it for seconds: probes and
             # fork() stalled node-wide. Its hourly average is ~1.2 cores.
             cpu: 8
+
+serviceAccount:
+  astro-stacker: {}
+
+rbac:
+  roles:
+    astro-stacker-jobs:
+      type: Role
+      rules:
+        - apiGroups: ["batch"]
+          resources: ["jobs", "cronjobs"]
+          verbs: ["get", "list"]
+        - apiGroups: [""]
+          resources: ["pods"]
+          verbs: ["list"]
+  bindings:
+    astro-stacker-jobs:
+      type: RoleBinding
+      roleRef:
+        identifier: astro-stacker-jobs
+      subjects:
+        - identifier: astro-stacker
 
 persistence:
   astrometry:

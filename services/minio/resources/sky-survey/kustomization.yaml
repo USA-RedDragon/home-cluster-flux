@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: minio
 resources:
   - networkpolicy.yaml
+  - astro-stacker-rbac.yaml
   - iam-job.yaml
   - copy-job.yaml
   - vsx-mirror-cronjob.yaml
