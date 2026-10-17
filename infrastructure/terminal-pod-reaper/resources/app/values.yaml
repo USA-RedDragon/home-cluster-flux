@@ -19,7 +19,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/docker.io/alpine/kubectl
-          tag: 1.37.1@sha256:b57b3bd3cd9f4f02dd444281857126aa78efa4b7b7e6ec57579dd927bf146fc3
+          tag: 1.37.1@sha256:8c72f6f732ce7ef11cdb1bea25faa4f4a521872a12c89e3f40ba9edb52a4d4f2
         command:
           - /bin/sh
           - -c
