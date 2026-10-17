@@ -129,7 +129,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-tess
-          tag: "beta@sha256:e32556c4edf2574b92ca909a553505fd0d1d43932b4351212fe9423489485126"
+          tag: "beta@sha256:3c23e55e93b83db5a7a8e1c98cb2354cde20a197bae1cee87ae865ee0f4d5bdc"
         args: ["--work", "/work", "--max-minutes", "50", "--stop-minutes", "80", "--field-mag", "-1"]
         env:
           S3_ENDPOINT: minio.minio.svc:9000
