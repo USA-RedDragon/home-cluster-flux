@@ -129,8 +129,8 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-tess
-          tag: "beta@sha256:b9ae0332811a53d340999d0edd2efd48b66f8fdfd9edab196658a9570463e1e9"
-        args: ["--work", "/work", "--max-minutes", "60"]
+          tag: "beta@sha256:e32556c4edf2574b92ca909a553505fd0d1d43932b4351212fe9423489485126"
+        args: ["--work", "/work", "--max-minutes", "50", "--stop-minutes", "80"]
         env:
           S3_ENDPOINT: minio.minio.svc:9000
           S3_USE_SSL: "false"
@@ -147,10 +147,10 @@ controllers:
         resources:
           requests:
             cpu: 2
-            memory: 3Gi
+            memory: 3584Mi
           limits:
             cpu: 4
-            memory: 3Gi
+            memory: 3584Mi
 
 persistence:
   vet-work:
