@@ -123,8 +123,40 @@ controllers:
       successfulJobsHistory: 1
       failedJobsHistory: 1
       ttlSecondsAfterFinished: 86400
-      backoffLimit: 1
+      backoffLimit: 4
       activeDeadlineSeconds: 14400
+      parallelism: 4
+    pod:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values: [alpha, beta, gamma, delta]
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: discoveries-vetting
+                    app.kubernetes.io/controller: tess
+                matchLabelKeys:
+                  - batch.kubernetes.io/job-name
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          nodeTaintsPolicy: Honor
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/instance: discoveries-vetting
+              app.kubernetes.io/controller: tess
+          matchLabelKeys:
+            - batch.kubernetes.io/job-name
     containers:
       app:
         image:
