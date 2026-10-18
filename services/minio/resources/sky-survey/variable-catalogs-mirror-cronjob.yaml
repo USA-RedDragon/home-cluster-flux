@@ -812,7 +812,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: mirror
-              image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:b1ad73f9779556920ba8362b20b42bac0971c9594c5872dc96fdaee3c1cd3856
+              image: jacob.pub/ghcr.io/usa-reddragon/astro-stacker:beta@sha256:37338fd94301a432427ef046be1696ffcaf85be068681a92146dc396956ce756
               command:
                 - /astro-stacker
                 - catalog-mirror
