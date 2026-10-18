@@ -128,20 +128,12 @@ service:
 
 persistence:
   work:
-    type: custom
+    type: emptyDir
+    sizeLimit: 4Gi
     advancedMounts:
       astro-small-bodies:
         app:
           - path: /work
-    volumeSpec:
-      ephemeral:
-        volumeClaimTemplate:
-          spec:
-            accessModes: [ReadWriteOnce]
-            storageClassName: longhorn-fast-r1
-            resources:
-              requests:
-                storage: 12Gi
   update-work:
     type: custom
     advancedMounts:
