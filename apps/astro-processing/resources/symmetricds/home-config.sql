@@ -401,6 +401,8 @@ alter table ts_goal_progress add column if not exists reason text;
 alter table ts_goal_progress add column if not exists stack_subs integer;
 alter table ts_goal_progress add column if not exists min_subs integer;
 alter table ts_goal_progress add column if not exists sub_limit integer;
+alter table ts_goal_progress add column if not exists score_cut double precision;
+alter table ts_goal_progress add column if not exists expected_score double precision;
 
 create table if not exists ts_target_season (
     target_guid text NOT NULL,
