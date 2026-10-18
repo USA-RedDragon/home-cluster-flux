@@ -960,10 +960,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="15">minio</td>
+    <td rowspan="16">minio</td>
     <td><code>CronJob</code></td>
     <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">asassn-var-mirror</a></td>
-    <td rowspan="15"></td>
+    <td rowspan="16"></td>
   </tr>
   <tr>
     <td><code>CronJob</code></td>
@@ -988,6 +988,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>CronJob</code></td>
     <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">gcvs-evs-mirror</a></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">maiz-var-mirror</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
