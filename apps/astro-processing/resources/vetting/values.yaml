@@ -125,7 +125,7 @@ controllers:
       ttlSecondsAfterFinished: 86400
       backoffLimit: 4
       activeDeadlineSeconds: 14400
-      parallelism: 4
+      parallelism: 3
     pod:
       affinity:
         nodeAffinity:
@@ -134,7 +134,7 @@ controllers:
               - matchExpressions:
                   - key: kubernetes.io/hostname
                     operator: In
-                    values: [alpha, beta, gamma, delta]
+                    values: [alpha, gamma, delta]
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 100
