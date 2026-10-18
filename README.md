@@ -960,10 +960,10 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="9">minio</td>
+    <td rowspan="15">minio</td>
     <td><code>CronJob</code></td>
     <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">asassn-var-mirror</a></td>
-    <td rowspan="9"></td>
+    <td rowspan="15"></td>
   </tr>
   <tr>
     <td><code>CronJob</code></td>
@@ -986,12 +986,36 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">gaia-vari-mirror</a></td>
   </tr>
   <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">gcvs-evs-mirror</a></td>
+  </tr>
+  <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="services/minio/resources/app/helm.yaml">minio</a></td>
   </tr>
   <tr>
     <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">tess-eb-known-mirror</a></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">tess-eb-new-mirror</a></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">tess-eb-prsa-mirror</a></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">tess-rot-mirror</a></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
     <td><a href="services/minio/resources/sky-survey/vsx-mirror-cronjob.yaml">vsx-mirror</a></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="services/minio/resources/sky-survey/variable-catalogs-mirror-cronjob.yaml">ztf-sus-mirror</a></td>
   </tr>
   <tr>
     <td><code>CronJob</code></td>
