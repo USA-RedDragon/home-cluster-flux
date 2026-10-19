@@ -154,6 +154,7 @@ defaultRules:
     # Fires ~7h after every defrag; replaced by EtcdDatabaseLarge
     # (services/monitoring/etcd-alerts.yaml).
     etcdDatabaseHighFragmentationRatio: true
+    KubeJobFailed: true
   # KubeAPIDown: true
   # NodeRAIDDegraded: true
 
