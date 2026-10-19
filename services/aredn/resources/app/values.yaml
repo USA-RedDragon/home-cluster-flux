@@ -65,7 +65,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/mesh-base
-          tag: main@sha256:9b7be2285caaaa0771d56c2301c413df043a572f5e1dd96b4089b44db7fdee46
+          tag: main@sha256:aaff0422d25872388f5a9099ccf0c50faeaf0e705269bf239c26311b52b6431b
           pullPolicy: IfNotPresent
         command:
         - /bin/sh
