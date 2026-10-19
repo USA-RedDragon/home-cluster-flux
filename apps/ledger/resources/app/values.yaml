@@ -23,7 +23,7 @@ controllers:
       ledger:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/ledger
-          tag: v0.10.3@sha256:808993c6740482abcc017d9a58df81d5e6524bec0dd65ef5045fb3a47760940f
+          tag: v0.10.4@sha256:76c70bc1b1f23080827930ff9932cf8b21ec05f755e6ae99fe83a41ae5167ea5
           pullPolicy: IfNotPresent
         resources:
           requests:
@@ -72,7 +72,7 @@ controllers:
             value: "[::]"
           LOG_LEVEL:
             value: "info"
-          TZ:
+          TIMEZONE:
             value: America/Chicago
           ALERTS_ENABLED:
             value: "true"
