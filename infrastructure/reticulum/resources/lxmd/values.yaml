@@ -30,7 +30,7 @@ controllers:
             drop: ["ALL"]
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/reticulum
-          tag: "1.5.5@sha256:7429689ee349c83a8ee7b78e3c304fc8854ec5a2caa4f241eda705b8215fe86f"
+          tag: "1.5.5@sha256:a706224bbf49931ffbc25ddaf08a1e42740f05f19df231046e601f57069490c4"
         command:
           - lxmd
           - -p
