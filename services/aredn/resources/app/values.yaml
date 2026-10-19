@@ -20,7 +20,7 @@ controllers:
       wireguard-init:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/wireguard
-          tag: main@sha256:548372c47d0abf50e1a7e6d452798f91e252e4ce3f3dd203342f198eb25b151f
+          tag: main@sha256:143447a074e8367688897f1a194d8fcdedf89eb778315da31878ea99b5a0c7ca
           pullPolicy: IfNotPresent
         command:
         - /bin/sh
