@@ -9,7 +9,7 @@ spec:
       recurring-job.longhorn.io/source: enabled
       recurring-job.longhorn.io/trim: enabled
   instances: 2
-  imageName: jacob.pub/ghcr.io/cloudnative-pg/postgresql:17.11-system-bookworm@sha256:d2a149bc3de0161d37ca21e7e0869ee6e8c9050a8825b8ba9e6d185ee940a2c9
+  imageName: jacob.pub/ghcr.io/cloudnative-pg/postgresql:17.11-system-bookworm@sha256:fbcdae3402edf6b3869642e9c9119f07b540a3dff7683497abd9b4a9422aaf07
   enableSuperuserAccess: false
   bootstrap:
     initdb:
