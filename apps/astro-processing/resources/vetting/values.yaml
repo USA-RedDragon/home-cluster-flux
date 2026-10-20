@@ -45,7 +45,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:17382e96a654df304abbe233068c2baae2c21049ca42d0897d63f424fac83b7f"
+          tag: "beta@sha256:02467b95dc494ed7f0228482e4a16aec56abd2870238e4080b71476c2c4e618c"
         command: ["/astro-stacker"]
         args: ["vet", "--budget", "3h"]
         envFrom:
