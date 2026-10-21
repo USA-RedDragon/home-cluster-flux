@@ -32,7 +32,7 @@ jobs:
       - name: Install lokitool
         run: |
           mkdir -p "$RUNNER_TEMP/bin"
-          curl -fsSL -o "$RUNNER_TEMP/lokitool.zip" https://github.com/grafana/loki/releases/download/v3.7.8/lokitool-linux-amd64.zip
+          curl -fsSL -o "$RUNNER_TEMP/lokitool.zip" https://github.com/grafana/loki/releases/download/v3.7.9/lokitool-linux-amd64.zip
           unzip -q -o "$RUNNER_TEMP/lokitool.zip" -d "$RUNNER_TEMP/bin"
           mv "$RUNNER_TEMP/bin/lokitool-linux-amd64" "$RUNNER_TEMP/bin/lokitool"
           echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
