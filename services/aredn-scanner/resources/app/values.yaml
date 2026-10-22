@@ -151,7 +151,7 @@ controllers:
             memory: 32Mi
         image:
           repository: jacob.pub/docker.io/nginx
-          tag: mainline-alpine@sha256:8b1e78743a03dbb2c95171cc58639fef29abc8816598e27fb910ed2e621e589a
+          tag: mainline-alpine@sha256:a3554c0d0b48177b1413c26e01f695334428020d9df01243fbae3e11cfd17417
           pullPolicy: IfNotPresent
         ports:
         - containerPort: 80
