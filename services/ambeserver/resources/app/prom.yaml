@@ -1,0 +1,116 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ambeserver
+spec:
+  groups:
+    - name: ambeserver
+      rules:
+        - alert: AmbeserverDown
+          expr: |
+            sum by (namespace, job) (up{namespace="ambeserver", job="ambeserver"}) == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "No ambeserver replica is up"
+            description: "Prometheus cannot scrape any ambeserver pod, so DMRHub has no AMBE vocoder and cannot transcode calls. Check the pods in the ambeserver namespace and their logs: {namespace=\"ambeserver\", container=\"ambeserver\"}"
+
+        - alert: AmbeserverMetricsMissing
+          expr: absent(up{namespace="ambeserver", job="ambeserver"})
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver is not being scraped"
+            description: "No ambeserver scrape target exists, so no other ambeserver alert can fire. Check the serviceMonitor in services/ambeserver/resources/app/values.yaml and that METRICS_ENABLED is still true."
+
+        - alert: AmbeserverRestarted
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="ambeserver", container="ambeserver"}[10m]) > 0
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver container restarted"
+            description: "{{ $labels.pod }} restarted {{ $value | humanize }} times in 10m and dropped the codec state of its calls. Check the last termination reason (OOMKilled, probe failure) and the logs before the restart: {namespace=\"ambeserver\", pod=\"{{ $labels.pod }}\"}"
+
+        - alert: AmbeserverMemoryHigh
+          expr: |
+            max by (namespace, pod) (container_memory_working_set_bytes{namespace="ambeserver", container="ambeserver"})
+              / on (namespace, pod) max by (namespace, pod) (kube_pod_container_resource_limits{namespace="ambeserver", container="ambeserver", resource="memory"}) > 0.8
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver memory is near its limit"
+            description: "{{ $labels.pod }} uses {{ $value | humanizePercentage }} of its memory limit. Each client holds a simulated chip, so this grows with ambeserver_clients. Raise the limit in values.yaml before it is OOM killed."
+
+        - alert: AmbeserverDroppingRequests
+          expr: |
+            sum by (namespace, pod) (rate(ambeserver_requests_late_total[10m]) + rate(ambeserver_requests_dropped_total[10m]))
+              / sum by (namespace, pod) (rate(ambeserver_requests_answered_total[10m]) + rate(ambeserver_requests_refused_total[10m]) + rate(ambeserver_requests_late_total[10m]) + rate(ambeserver_requests_dropped_total[10m])) > 0.01
+            and sum by (namespace, pod) (increase(ambeserver_requests_late_total[10m]) + increase(ambeserver_requests_dropped_total[10m])) > 50
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver drops {{ $value | humanizePercentage }} of requests"
+            description: "{{ $labels.pod }} dropped more than 1% of its requests for 10m, late (waited over clients.max-delay) or busy (the client already had four waiting). Callers hear gaps. Compare ambeserver_worker_queue_depth and CPU throttling; raise CLIENTS_WORKERS, the CPU, or the replicas."
+
+        - alert: AmbeserverOverloaded
+          expr: |
+            sum by (namespace, pod) (rate(ambeserver_requests_late_total[5m]) + rate(ambeserver_requests_dropped_total[5m]))
+              / sum by (namespace, pod) (rate(ambeserver_requests_answered_total[5m]) + rate(ambeserver_requests_refused_total[5m]) + rate(ambeserver_requests_late_total[5m]) + rate(ambeserver_requests_dropped_total[5m])) > 0.1
+            and sum by (namespace, pod) (increase(ambeserver_requests_late_total[5m]) + increase(ambeserver_requests_dropped_total[5m])) > 100
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "ambeserver drops {{ $value | humanizePercentage }} of requests"
+            description: "{{ $labels.pod }} dropped more than 10% of its requests for 5m. Calls through it are broken up. Check CPU throttling and ambeserver_worker_queue_depth, then add CPU or replicas."
+
+        - alert: AmbeserverWorkersSaturated
+          expr: min_over_time(ambeserver_worker_queue_depth{namespace="ambeserver"}[10m]) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver workers are always busy"
+            description: "{{ $labels.pod }} had clients waiting for a worker at every scrape for 15m (now {{ $value }}). Requests start to drop as late once they wait 20ms. Check CPU throttling, then raise CLIENTS_WORKERS or the CPU."
+
+        - alert: AmbeserverLatencyHigh
+          expr: |
+            histogram_quantile(0.99, sum by (namespace, pod, le) (rate(ambeserver_request_seconds_bucket{namespace="ambeserver"}[5m]))) > 0.01
+            and sum by (namespace, pod) (rate(ambeserver_request_seconds_count{namespace="ambeserver"}[5m])) > 1
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver p99 reply time is {{ $value | humanizeDuration }}"
+            description: "{{ $labels.pod }} takes over 10ms to answer 1% of its requests, half of clients.max-delay (20ms). Usually CPU throttling or a busy node. Check the CPU panel on the ambeserver dashboard."
+
+        - alert: AmbeserverMalformedRequests
+          expr: increase(ambeserver_requests_malformed_total{namespace="ambeserver"}[15m]) > 10
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver refused {{ $value | humanize }} malformed requests in 15m"
+            description: "A client on {{ $labels.pod }} sends packets that are not usable DVSI packets. Find it with LOG_LEVEL=debug (\"Dropped a packet\") and fix the client."
+
+        - alert: AmbeserverRateRefused
+          expr: |
+            increase(ambeserver_requests_refused_total{namespace="ambeserver"}[15m])
+              - increase(ambeserver_requests_malformed_total{namespace="ambeserver"}[15m]) > 0.5
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver refused requests at a rate it does not serve"
+            description: "A client on {{ $labels.pod }} asked for a vocoder rate other than 33 (DMR) or 34 and gets no audio. The log names the client: {namespace=\"ambeserver\"} |= \"Refused a rate\""
+
+        - alert: AmbeserverDatagramsRejected
+          expr: increase(ambeserver_datagrams_rejected_total{namespace="ambeserver"}[15m]) > 10
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver rejected {{ $value | humanize }} datagrams in 15m"
+            description: "{{ $labels.pod }} got datagrams that do not start with the DVSI start byte from clients that have no chip. Only DMRHub can reach port 2460, so check its AMBE settings."
