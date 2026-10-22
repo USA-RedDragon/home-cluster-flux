@@ -12,7 +12,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/docker.io/redis
-          tag: 8.10.2-alpine@sha256:72cedd9603038893af961e90ac5e1a1a0d8377d5e338dbdad8fe284ea25de18f
+          tag: 8.10.2-alpine@sha256:0bf6577d7774e592b29d093e3ac9390eb91e13d72c21e506afce736de5e0eeb0
           pullPolicy: IfNotPresent
         resources:
           limits:
