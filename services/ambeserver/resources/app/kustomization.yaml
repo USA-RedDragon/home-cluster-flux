@@ -4,6 +4,7 @@ namespace: ambeserver
 resources:
   - helm.yaml
   - networkpolicy.yaml
+  - prom.yaml
 configMapGenerator:
   - name: chart-values
     files:
