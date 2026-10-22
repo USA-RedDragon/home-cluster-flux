@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  ambeserver:
+    annotations:
+      reloader.stakater.com/auto: "true"
+    replicas: 2
+    strategy: RollingUpdate
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+    containers:
+      ambeserver:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/dmrgo-ambeserver
+          tag: beta@sha256:e7dcca37e4faa666ab58e31a8e08d3d53acd3c78a9436322fd7ab28215c7b993
+        env:
+          METRICS_ENABLED: "true"
+          METRICS_BIND: "[::]"
+          CLIENTS_WORKERS: "100"
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+          startup:
+            enabled: true
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        resources:
+          limits:
+            memory: 120Mi
+          requests:
+            cpu: 10m
+            memory: 80Mi
+
+service:
+  ambeserver:
+    controller: ambeserver
+    ports:
+      ambe:
+        port: 2460
+        protocol: UDP
+        primary: true
+  metrics:
+    controller: ambeserver
+    ports:
+      metrics:
+        port: 9000
+
+serviceMonitor:
+  ambeserver:
+    enabled: true
+    serviceName: ambeserver-metrics
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 30s
+        scrapeTimeout: 10s

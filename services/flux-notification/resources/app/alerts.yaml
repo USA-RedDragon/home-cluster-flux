@@ -29,6 +29,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: actions-runners}
     - {kind: Kustomization, name: '*', namespace: actions-runners}
     - {kind: OCIRepository, name: '*', namespace: actions-runners}
+    - {kind: GitRepository, name: '*', namespace: ambeserver}
+    - {kind: HelmChart, name: '*', namespace: ambeserver}
+    - {kind: HelmRelease, name: '*', namespace: ambeserver}
+    - {kind: HelmRepository, name: '*', namespace: ambeserver}
+    - {kind: Kustomization, name: '*', namespace: ambeserver}
+    - {kind: OCIRepository, name: '*', namespace: ambeserver}
     - {kind: GitRepository, name: '*', namespace: anubis}
     - {kind: HelmChart, name: '*', namespace: anubis}
     - {kind: HelmRelease, name: '*', namespace: anubis}

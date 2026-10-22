@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ambeserver
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: ambeserver
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9000"
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dmrhub
+            app.kubernetes.io/name: dmrhub
+      toPorts:
+        - ports:
+            - port: "2460"
