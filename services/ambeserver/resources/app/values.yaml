@@ -53,6 +53,7 @@ service:
         protocol: UDP
       metrics:
         port: 9000
+        primary: true
 
 serviceMonitor:
   ambeserver:
