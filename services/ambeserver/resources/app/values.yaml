@@ -51,12 +51,12 @@ service:
       ambe:
         port: 2460
         protocol: UDP
-        primary: true
   metrics:
     controller: ambeserver
     ports:
       metrics:
         port: 9000
+        primary: true
 
 serviceMonitor:
   ambeserver:
