@@ -333,3 +333,19 @@ data:
             annotations:
               summary: "paperless-ngx failed to consume a document"
               description: "{{ $value }} paperless consumer errors in the last hour. Query: {namespace=\"paperless-ngx\", container=\"app\"} |= \"[ERROR]\""
+          - alert: AmbeserverPanicked
+            expr: |
+              sum by (namespace, pod) (count_over_time({namespace="ambeserver", container="ambeserver"} |~ `^(panic: |fatal error: )` [15m])) > 0
+            labels:
+              severity: critical
+            annotations:
+              summary: "ambeserver crashed on {{ $labels.pod }}"
+              description: "ambeserver panicked or hit a Go fatal error and dropped the calls on that pod. It must return errors and never panic, so this is a bug in ambeserver or dmrgo-ambe. The stack trace follows the first line. Query: {namespace=\"ambeserver\", container=\"ambeserver\"} |~ \"^(panic: |fatal error: )\""
+          - alert: AmbeserverReplySendFailing
+            expr: |
+              sum by (namespace, pod) (count_over_time({namespace="ambeserver", container="ambeserver"} |= "Failed to send a reply" [15m])) > 5
+            labels:
+              severity: warning
+            annotations:
+              summary: "ambeserver failed to send {{ $value }} replies in 15m"
+              description: "{{ $labels.pod }} answered requests but the UDP send failed, so DMRHub lost those frames. The error= field names the cause. Query: {namespace=\"ambeserver\", container=\"ambeserver\"} |= \"Failed to send a reply\""
