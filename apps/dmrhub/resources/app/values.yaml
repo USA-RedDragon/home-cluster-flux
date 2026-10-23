@@ -89,6 +89,14 @@ controllers:
           #   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
           - name: DMR_OPENBRIDGE_PORT
             value: "62035"
+          - name: DMR_MMDVM_WEBTRANSPORT_ENABLED
+            value: "true"
+          - name: DMR_MMDVM_WEBTRANSPORT_PORT
+            value: "62032"
+          - name: DMR_MMDVM_WEBTRANSPORT_CERT_FILE
+            value: /tls/tls.crt
+          - name: DMR_MMDVM_WEBTRANSPORT_KEY_FILE
+            value: /tls/tls.key
           - name: DMR_IPSC_ENABLED
             value: "true"
           - name: DMR_IPSC_NETWORK_ID
@@ -124,6 +132,14 @@ controllers:
           - name: HTTP_CANONICAL_HOST
             value: https://dmrhub.net
 
+persistence:
+  webtransport-tls:
+    type: secret
+    name: dmrhub-webtransport-tls
+    globalMounts:
+      - path: /tls
+        readOnly: true
+
 service:
   dmrhub:
     controller: dmrhub
@@ -141,6 +157,9 @@ service:
         protocol: UDP
       openbridge:
         port: 62035
+        protocol: UDP
+      webtransport:
+        port: 62032
         protocol: UDP
 
 route:
@@ -223,6 +242,17 @@ route:
       - backendRefs:
           - name: dmrhub
             port: 62035
+  webtransport:
+    enabled: true
+    kind: UDPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: dmrhub-webtransport
+    rules:
+      - backendRefs:
+          - name: dmrhub
+            port: 62032
 
 serviceMonitor:
   dmrhub:

@@ -50,6 +50,8 @@ spec:
               protocol: UDP
             - port: "62035"
               protocol: UDP
+            - port: "62032"
+              protocol: UDP
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: monitoring

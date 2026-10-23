@@ -153,6 +153,15 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: dmrhub
+    - name: dmrhub-webtransport
+      protocol: UDP
+      port: 62032
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: dmrhub
     - name: email-smtps
       protocol: TCP
       port: 465
