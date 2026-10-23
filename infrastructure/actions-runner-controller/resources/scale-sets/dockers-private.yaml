@@ -48,7 +48,7 @@ spec:
                       values: [alpha, beta]
         containers:
         - name: runner
-          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.338.0@sha256:bc551d81c05c15cb1c26bfb77823435a99ac1ffabc4b7719661afdcfb2773b76
+          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner:2.338.0@sha256:fcbaa196f047f4fae615ed4c4894979ab8b0baf9a8059df209c9824d482e3a55
           command: ["/home/runner/run.sh"]
           env:
             - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
