@@ -16,7 +16,7 @@ controllers:
       gitea-mirror:
         image:
           repository: jacob.pub/ghcr.io/raylabshq/gitea-mirror
-          tag: v3.44.0@sha256:8803c03829450733324e98d243f86a87f6695cb6d1912ed7ac25986c1aeafe1d
+          tag: v3.45.0@sha256:b303d3b0a2f9d0e8e96fa264998529a814787e94012d0f6f01e13096ae67b182
           pullPolicy: IfNotPresent
         envFrom:
           - secretRef:
