@@ -25,7 +25,7 @@ controllers:
         resources:
           requests: {}
           limits:
-            memory: 32Mi
+            memory: 512Mi
         probes:
           liveness:
             enabled: true
@@ -35,7 +35,7 @@ controllers:
             enabled: true
         env:
           - name: GOMEMLIMIT
-            value: 1GiB
+            value: 400MiB
           - name: LINX_SITE_URL
             value: https://files.mcswain.dev
           - name: LINX_MAX_EXPIRY
