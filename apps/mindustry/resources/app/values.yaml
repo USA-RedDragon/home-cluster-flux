@@ -16,7 +16,7 @@ controllers:
       mindustry:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/mindustry
-          tag: v146@sha256:9a7166a7a479cfa13f1a211d28a1ca73fce75ffc3c3bef2e93aab638fc4c8d32
+          tag: v146@sha256:8b55101d7871df8e369b0e627b47b0691221e3b41b37a43c70f5f8d169273664
           pullPolicy: IfNotPresent
         command:
           - /bin/ash
