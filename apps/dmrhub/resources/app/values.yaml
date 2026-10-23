@@ -50,7 +50,7 @@ controllers:
           - name: HTTP_CORS_ENABLED
             value: "true"
           - name: HTTP_CORS_EXTRA_HOSTS
-            value: "http://10.54.25.5,http://ki5vmf-dmrhub.local.mesh,https://dmr.mcswain.dev,https://dmrhub.app,https://dmrhub.cloud,https://dmrhub.net,https://dmrhub.org,https://dmrhub.network,https://www.dmrhub.app,https://www.dmrhub.cloud,https://www.dmrhub.net,https://www.dmrhub.org,https://www.dmrhub.network,http://localhost:5173"
+            value: "http://10.54.25.5,http://ki5vmf-dmrhub.local.mesh,https://dmr.mcswain.dev,https://radio.dmrhub.net,https://dmrhub.app,https://dmrhub.cloud,https://dmrhub.net,https://dmrhub.org,https://dmrhub.network,https://www.dmrhub.app,https://www.dmrhub.cloud,https://www.dmrhub.net,https://www.dmrhub.org,https://www.dmrhub.network,http://localhost:5173"
           - name: DATABASE_DRIVER
             value: "postgres"
           - name: DATABASE_DATABASE
