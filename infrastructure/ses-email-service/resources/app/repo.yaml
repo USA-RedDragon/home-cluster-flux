@@ -8,4 +8,4 @@ spec:
   interval: 60m0s
   url: https://github.com/USA-RedDragon/ses-email-service
   ref:
-    commit: 2b30e64f66c9d484b3da9313d3661ea63fccdd63
+    commit: 5b3e2f32b610e709774e31a2ee00ce8abdef65a5
