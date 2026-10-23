@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.4.0/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  radio:
+    replicas: 2
+    strategy: RollingUpdate
+    rollingUpdate:
+      unavailable: 1
+    pod:
+      securityContext:
+        runAsUser: 101
+        runAsGroup: 101
+        runAsNonRoot: true
+    containers:
+      radio:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/dmr-web
+          tag: main@sha256:41571b49d5a41007c50320a22b268032dab8c2beaf6d815cd0d5d115c11dc6e9
+          pullPolicy: IfNotPresent
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          limits:
+            memory: 64Mi
+          requests:
+            cpu: 10m
+            memory: 16Mi
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              periodSeconds: 10
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              periodSeconds: 10
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              periodSeconds: 2
+              failureThreshold: 30
+
+persistence:
+  tmp:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 16Mi
+
+service:
+  radio:
+    controller: radio
+    ports:
+      http:
+        port: 8080
+
+route:
+  radio:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - radio.dmrhub.net
+    rules:
+      - backendRefs:
+          - name: radio
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
