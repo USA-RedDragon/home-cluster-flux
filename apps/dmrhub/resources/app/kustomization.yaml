@@ -6,6 +6,7 @@ resources:
   - postgres.yaml
   - securitypolicy.yaml
   - networkpolicy.yaml
+  - webtransport.cert.yaml
 configMapGenerator:
   - name: chart-values
     files:
