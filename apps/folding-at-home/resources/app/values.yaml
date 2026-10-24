@@ -7,12 +7,33 @@ defaultPodOptions:
 
 controllers:
   cpu:
-    type: daemonset
+    type: statefulset
+    replicas: 8
+    statefulset:
+      podManagementPolicy: Parallel
+      volumeClaimTemplates:
+        - name: config
+          accessMode: ReadWriteOnce
+          size: 5Gi
+          storageClass: longhorn-r1
+          labels: &vctLabels
+            recurring-job.longhorn.io/source: enabled
+            recurring-job.longhorn.io/trim: enabled
+          globalMounts:
+            - path: /config
     pod:
       tolerations:
         - key: node-role.kubernetes.io/control-plane
           operator: Exists
           effect: NoSchedule
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/controller: cpu
+                  app.kubernetes.io/name: folding-at-home
     containers:
       fah:
         image: &image
@@ -22,15 +43,11 @@ controllers:
         command:
           - sh
           - -c
-          - export MACHINE_NAME="k8s-${NODE_NAME}-cpu" CLI_ARGS="--cpus $(( $(nproc) * 3 / 4 ))"; exec chrt --idle 0 /init
+          - export MACHINE_NAME="k8s-${HOSTNAME#folding-at-home-}" CLI_ARGS="--cpus $(( $(nproc) * 3 / 4 ))"; exec chrt --idle 0 /init
         env:
           TZ: America/Chicago
           PUID: "911"
           PGID: "1001"
-          NODE_NAME:
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
           ACCOUNT_TOKEN:
             valueFrom:
               secretKeyRef:
@@ -43,7 +60,18 @@ controllers:
           limits:
             memory: 3Gi
   gpu:
-    type: daemonset
+    type: statefulset
+    replicas: 2
+    statefulset:
+      podManagementPolicy: Parallel
+      volumeClaimTemplates:
+        - name: config
+          accessMode: ReadWriteOnce
+          size: 5Gi
+          storageClass: longhorn-r1
+          labels: *vctLabels
+          globalMounts:
+            - path: /config
     pod:
       runtimeClassName: nvidia
       nodeSelector:
@@ -54,15 +82,11 @@ controllers:
         command:
           - sh
           - -c
-          - export MACHINE_NAME="k8s-${NODE_NAME}-gpu" CLI_ARGS="--cpus 0"; exec /init
+          - export MACHINE_NAME="k8s-${HOSTNAME#folding-at-home-}" CLI_ARGS="--cpus 0"; exec /init
         env:
           TZ: America/Chicago
           PUID: "911"
           PGID: "1001"
-          NODE_NAME:
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
           ACCOUNT_TOKEN:
             valueFrom:
               secretKeyRef:
@@ -89,21 +113,3 @@ service:
     ports:
       http:
         port: 7396
-
-persistence:
-  cpu-config:
-    type: hostPath
-    hostPath: /var/lib/folding-at-home/cpu
-    hostPathType: DirectoryOrCreate
-    advancedMounts:
-      cpu:
-        fah:
-          - path: /config
-  gpu-config:
-    type: hostPath
-    hostPath: /var/lib/folding-at-home/gpu
-    hostPathType: DirectoryOrCreate
-    advancedMounts:
-      gpu:
-        fah:
-          - path: /config
