@@ -1,0 +1,109 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+  priorityClassName: folding-at-home
+  terminationGracePeriodSeconds: 60
+
+controllers:
+  cpu:
+    type: daemonset
+    pod:
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+    containers:
+      fah:
+        image: &image
+          repository: jacob.pub/lscr.io/linuxserver/foldingathome
+          tag: 8.5.6-ls219@sha256:6d16e2e1460e43e84d3e48ba956aee4aa826435233ad3e8c6c3526f3e6f20bd8
+          pullPolicy: IfNotPresent
+        command:
+          - sh
+          - -c
+          - export MACHINE_NAME="k8s-${NODE_NAME}-cpu" CLI_ARGS="--cpus $(( $(nproc) * 3 / 4 ))"; exec chrt --idle 0 /init
+        env:
+          TZ: America/Chicago
+          PUID: "911"
+          PGID: "1001"
+          NODE_NAME:
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          ACCOUNT_TOKEN:
+            valueFrom:
+              secretKeyRef:
+                name: fah-account
+                key: ACCOUNT_TOKEN
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            memory: 3Gi
+  gpu:
+    type: daemonset
+    pod:
+      runtimeClassName: nvidia
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
+    containers:
+      fah:
+        image: *image
+        command:
+          - sh
+          - -c
+          - export MACHINE_NAME="k8s-${NODE_NAME}-gpu" CLI_ARGS="--cpus 0"; exec /init
+        env:
+          TZ: America/Chicago
+          PUID: "911"
+          PGID: "1001"
+          NODE_NAME:
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          ACCOUNT_TOKEN:
+            valueFrom:
+              secretKeyRef:
+                name: fah-account
+                key: ACCOUNT_TOKEN
+          NVIDIA_VISIBLE_DEVICES: all
+          NVIDIA_DRIVER_CAPABILITIES: compute,utility
+        resources:
+          requests:
+            cpu: "1"
+            memory: 1Gi
+          limits:
+            memory: 3Gi
+            nvidia.com/gpu: 1
+
+service:
+  cpu:
+    controller: cpu
+    ports:
+      http:
+        port: 7396
+  gpu:
+    controller: gpu
+    ports:
+      http:
+        port: 7396
+
+persistence:
+  cpu-config:
+    type: hostPath
+    hostPath: /var/lib/folding-at-home/cpu
+    hostPathType: DirectoryOrCreate
+    advancedMounts:
+      cpu:
+        fah:
+          - path: /config
+  gpu-config:
+    type: hostPath
+    hostPath: /var/lib/folding-at-home/gpu
+    hostPathType: DirectoryOrCreate
+    advancedMounts:
+      gpu:
+        fah:
+          - path: /config
