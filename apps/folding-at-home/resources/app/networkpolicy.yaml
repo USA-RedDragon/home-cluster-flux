@@ -9,3 +9,24 @@ spec:
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: folding-at-home
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: exporter-ingress
+  namespace: folding-at-home
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: folding-at-home-exporter
+      app.kubernetes.io/instance: folding-at-home-exporter
+      app.kubernetes.io/name: folding-at-home-exporter
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP

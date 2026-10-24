@@ -1,0 +1,109 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  folding-at-home-exporter:
+    replicas: 1
+    strategy: RollingUpdate
+    annotations:
+      reloader.stakater.com/auto: "true"
+    containers:
+      folding-at-home-exporter:
+        image:
+          repository: jacob.pub/docker.io/library/python
+          tag: 3.13.17-alpine@sha256:fa0bb0d0cd7c7d6cef30a69094d32ac2b71c7304c87c6107fec100e1ee4eda02
+          pullPolicy: IfNotPresent
+        command:
+          - python3
+          - -I
+          - /app/fah_exporter.py
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+          PYTHONUNBUFFERED: "1"
+          FAH_LISTEN_PORT: "8080"
+          FAH_SCRAPE_INTERVAL: "60"
+          FAH_TIMEOUT: "10"
+          FAH_STATS_USER: USA-RedDragon
+          FAH_STATS_TEAM: "223518"
+          FAH_STATS_INTERVAL: "600"
+          FAH_TARGETS: >-
+            cpu-0=folding-at-home-cpu-0.folding-at-home.folding-at-home.svc.cluster.local:7396
+            cpu-1=folding-at-home-cpu-1.folding-at-home.folding-at-home.svc.cluster.local:7396
+            cpu-2=folding-at-home-cpu-2.folding-at-home.folding-at-home.svc.cluster.local:7396
+            cpu-3=folding-at-home-cpu-3.folding-at-home.folding-at-home.svc.cluster.local:7396
+            cpu-4=folding-at-home-cpu-4.folding-at-home.folding-at-home.svc.cluster.local:7396
+            cpu-5=folding-at-home-cpu-5.folding-at-home.folding-at-home.svc.cluster.local:7396
+            cpu-6=folding-at-home-cpu-6.folding-at-home.folding-at-home.svc.cluster.local:7396
+            cpu-7=folding-at-home-cpu-7.folding-at-home.folding-at-home.svc.cluster.local:7396
+            gpu-0=folding-at-home-gpu-0.folding-at-home.folding-at-home.svc.cluster.local:7396
+            gpu-1=folding-at-home-gpu-1.folding-at-home.folding-at-home.svc.cluster.local:7396
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 96Mi
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              periodSeconds: 30
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              periodSeconds: 30
+              timeoutSeconds: 5
+          startup:
+            enabled: false
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+
+persistence:
+  script:
+    type: configMap
+    name: folding-at-home-exporter-script
+    globalMounts:
+      - path: /app
+        readOnly: true
+
+service:
+  folding-at-home-exporter:
+    controller: folding-at-home-exporter
+    ports:
+      metrics:
+        port: 8080
+        primary: true
+        protocol: TCP
+
+serviceMonitor:
+  folding-at-home-exporter:
+    enabled: true
+    service:
+      identifier: folding-at-home-exporter
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 60s
+        scrapeTimeout: 15s

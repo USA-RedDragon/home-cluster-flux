@@ -598,10 +598,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>folding-at-home</td>
+    <td rowspan="2">folding-at-home</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/folding-at-home/resources/app/helm.yaml">folding-at-home</a></td>
-    <td></td>
+    <td rowspan="2"></td>
+  </tr>
+  <tr>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/folding-at-home/resources/exporter/helm.yaml">folding-at-home-exporter</a></td>
   </tr>
 </table>
 
