@@ -10,7 +10,7 @@ spec:
       name: dmrhub
   extAuth:
     failOpen: true
-    headersToExtAuth: [cookie, user-agent, accept, accept-language, accept-encoding, authorization, x-envoy-external-address]
+    headersToExtAuth: [cookie, user-agent, accept, accept-language, accept-encoding, authorization, origin, x-envoy-external-address]
     http:
       backendRefs:
         - name: anubis-dmrhub-net
