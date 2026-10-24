@@ -179,6 +179,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: flux-system}
     - {kind: Kustomization, name: '*', namespace: flux-system}
     - {kind: OCIRepository, name: '*', namespace: flux-system}
+    - {kind: GitRepository, name: '*', namespace: folding-at-home}
+    - {kind: HelmChart, name: '*', namespace: folding-at-home}
+    - {kind: HelmRelease, name: '*', namespace: folding-at-home}
+    - {kind: HelmRepository, name: '*', namespace: folding-at-home}
+    - {kind: Kustomization, name: '*', namespace: folding-at-home}
+    - {kind: OCIRepository, name: '*', namespace: folding-at-home}
     - {kind: GitRepository, name: '*', namespace: frigate}
     - {kind: HelmChart, name: '*', namespace: frigate}
     - {kind: HelmRelease, name: '*', namespace: frigate}

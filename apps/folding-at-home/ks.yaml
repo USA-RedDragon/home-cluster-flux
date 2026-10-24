@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: folding-at-home
+  namespace: folding-at-home
+spec:
+  interval: 1h
+  targetNamespace: folding-at-home
+  path: ./apps/folding-at-home/resources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system
