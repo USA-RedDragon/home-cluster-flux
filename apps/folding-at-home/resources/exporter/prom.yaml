@@ -1,0 +1,72 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: folding-at-home-exporter
+spec:
+  groups:
+    - name: folding-at-home-clients
+      rules:
+        - alert: FoldingAtHomeClientDown
+          expr: |
+            fah_up == 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Folding@home client {{ $labels.machine }} is unreachable"
+            description: "The exporter has not been able to read the client state for 10 minutes."
+
+        - alert: FoldingAtHomeSlotIdle
+          expr: |
+            fah_group_paused == 0
+              and on(machine, group) (fah_group_cpus > 0 or on(machine, group) fah_group_gpus_enabled > 0)
+              and on(machine, group) fah_units_running == 0
+          for: 20m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Folding@home client {{ $labels.machine }} is not folding"
+            description: "The group is not paused and has resources, but no work unit has been running for 20 minutes."
+
+        - alert: FoldingAtHomeGPUZeroPPD
+          expr: |
+            fah_unit_ppd{resource="gpu"} == 0
+              and on(machine, group, resource, project) fah_unit_state{state="RUN"} == 1
+          for: 20m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Folding@home GPU unit on {{ $labels.machine }} reports 0 PPD"
+            description: "Project {{ $labels.project }} is running but has made no measurable progress for 20 minutes."
+
+    - name: folding-at-home-exporter
+      rules:
+        - alert: FoldingAtHomeExporterStale
+          expr: |
+            time() - fah_exporter_last_cycle_timestamp_seconds > 300
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Folding@home exporter data is stale"
+            description: "The last poll cycle finished {{ $value | humanizeDuration }} ago."
+
+        - alert: FoldingAtHomeExporterAbsent
+          expr: |
+            absent(fah_exporter_last_cycle_timestamp_seconds)
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Folding@home exporter is not being scraped"
+            description: "Prometheus has no Folding@home exporter metrics for 15 minutes."
+
+        - alert: FoldingAtHomeStatsStale
+          expr: |
+            fah_stats_up == 0
+          for: 3h
+          labels:
+            severity: info
+          annotations:
+            summary: "Folding@home stats API has not answered for 3 hours"
+            description: "Account score metrics for {{ $labels.user }} are out of date."
