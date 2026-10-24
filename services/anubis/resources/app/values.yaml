@@ -155,6 +155,14 @@ configMaps:
                 - host == "git.mcswain.dev"
                 - path.matches("^/[^/]+/[^/]+/(commits?|blame|compare|archive|graph|activity|src/commit|raw/commit)(/|$)")
 
+          - name: dmrhub-radio-app
+            action: ALLOW
+            expression:
+              all:
+                - host == "dmrhub.net"
+                - '"Origin" in headers'
+                - headers["Origin"] == "https://radio.dmrhub.net"
+
           - name: generic-browser
             user_agent_regex: Mozilla|Opera
             action: CHALLENGE
