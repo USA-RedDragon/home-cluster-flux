@@ -10,7 +10,7 @@ controllers:
       dump978:
         image:
           repository: jacob.pub/ghcr.io/sdr-enthusiasts/docker-dump978
-          tag: telegraf-build-805@sha256:0e29f96fb26f61a22b04773870187bb2913d5c11d9fdcb9a43eaf8ac9f67c49e
+          tag: telegraf-build-806@sha256:1af94d0ec7b225b8dcf2e3dda48e783c117551d794d1571bef2af8f3680ccfae
         probes:
           liveness:
             enabled: true
