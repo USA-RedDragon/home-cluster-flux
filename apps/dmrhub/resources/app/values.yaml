@@ -138,6 +138,8 @@ controllers:
   # hub's plugin certificate, from the Plugins page under Admin, from the
   # dmrhub-plugins secret.
   parrot:
+    annotations:
+      reloader.stakater.com/auto: "true"
     replicas: 1
     strategy: Recreate
     pod:
@@ -184,6 +186,8 @@ controllers:
                 name: dmrhub-plugins
                 key: parrot-token
   locator:
+    annotations:
+      reloader.stakater.com/auto: "true"
     replicas: 1
     strategy: Recreate
     pod:
