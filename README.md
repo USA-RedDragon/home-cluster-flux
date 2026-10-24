@@ -49,6 +49,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#dump978">dump978</a></li>
   <li><a href="#envoy-gateway">envoy-gateway</a></li>
   <li><a href="#external-dns-internal">external-dns-internal</a></li>
+  <li><a href="#folding-at-home">folding-at-home</a></li>
   <li><a href="#frigate">frigate</a></li>
   <li><a href="#gitea">gitea</a></li>
   <li><a href="#golink">golink</a></li>
@@ -584,6 +585,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>external-dns-internal</td>
     <td><code>HelmRelease</code></td>
     <td><a href="services/external-dns-internal/resources/app/helm.yaml">external-dns-internal</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>folding-at-home</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>folding-at-home</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/folding-at-home/resources/app/helm.yaml">folding-at-home</a></td>
     <td></td>
   </tr>
 </table>
