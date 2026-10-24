@@ -1,0 +1,29 @@
+# A larger UDP receive buffer on the DMRHub WebTransport listener.
+#
+# Why: Firefox could not open a WebTransport session to dmrhub.net:62032,
+# while Chrome and curl could. Envoy's UDP listeners read into a 1500-byte
+# buffer by default, and the datagrams Firefox's QUIC handshake arrives as
+# exceed it, so Envoy saw each one as truncated and dropped it
+# (downstream_rx_datagram_dropped). Reproduced with Firefox 157 through Envoy
+# 1.39.1 in front of DMRHub's WebTransport server (2026-10-24); with a 64 KiB
+# buffer the session opens.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyPatchPolicy
+metadata:
+  name: public-udp-datagram-size
+  namespace: envoy-gateway-system
+spec:
+  type: JSONPatch
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: public
+  jsonPatches:
+    - type: "type.googleapis.com/envoy.config.listener.v3.Listener"
+      name: envoy-gateway-system/public/dmrhub-webtransport
+      operation:
+        op: add
+        path: /udp_listener_config
+        value:
+          downstream_socket_config:
+            max_rx_datagram_size: 65535
