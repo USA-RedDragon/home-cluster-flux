@@ -48,11 +48,6 @@ controllers:
           TZ: America/Chicago
           PUID: "911"
           PGID: "1001"
-          ACCOUNT_TOKEN:
-            valueFrom:
-              secretKeyRef:
-                name: fah-account
-                key: ACCOUNT_TOKEN
         resources:
           requests:
             cpu: 100m
@@ -87,11 +82,6 @@ controllers:
           TZ: America/Chicago
           PUID: "911"
           PGID: "1001"
-          ACCOUNT_TOKEN:
-            valueFrom:
-              secretKeyRef:
-                name: fah-account
-                key: ACCOUNT_TOKEN
           NVIDIA_VISIBLE_DEVICES: all
           NVIDIA_DRIVER_CAPABILITIES: compute,utility
         resources:
