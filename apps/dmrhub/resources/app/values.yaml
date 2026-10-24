@@ -21,7 +21,7 @@ controllers:
       dmrhub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.2@sha256:5fc37e6501a45a157a60d91796be1b4781878f5965ee2378a216e0cddd967874
+          tag: v1.3.3
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
@@ -101,6 +101,8 @@ controllers:
             value: "true"
           - name: DMR_IPSC_NETWORK_ID
             value: "1"
+          - name: DMR_PLUGINS_ENABLED
+            value: "true"
           - name: METRICS_ENABLED
             value: "true"
           - name: METRICS_PORT
@@ -132,6 +134,106 @@ controllers:
           - name: HTTP_CANONICAL_HOST
             value: https://dmrhub.net
 
+  # The plugins of DMRHub. Each takes its token and the fingerprint of the
+  # hub's plugin certificate, from the Plugins page under Admin, from the
+  # dmrhub-plugins secret.
+  parrot:
+    annotations:
+      reloader.stakater.com/auto: "true"
+    replicas: 1
+    strategy: Recreate
+    pod:
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+    containers:
+      parrot:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
+          tag: v1.3.3
+          pullPolicy: IfNotPresent
+        command: ["/app/dmrhub-parrot"]
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          limits:
+            memory: 64Mi
+          requests:
+            cpu: 10m
+            memory: 16Mi
+        probes:
+          liveness:
+            enabled: false
+          readiness:
+            enabled: false
+          startup:
+            enabled: false
+        env:
+          - name: DMRHUB_PLUGIN_ADDRESS
+            value: dmrhub:3006
+          - name: DMRHUB_PLUGIN_FINGERPRINT
+            valueFrom:
+              secretKeyRef:
+                name: dmrhub-plugins
+                key: fingerprint
+          - name: DMRHUB_PLUGIN_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: dmrhub-plugins
+                key: parrot-token
+  locator:
+    annotations:
+      reloader.stakater.com/auto: "true"
+    replicas: 1
+    strategy: Recreate
+    pod:
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+    containers:
+      locator:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
+          tag: v1.3.3
+          pullPolicy: IfNotPresent
+        command: ["/app/dmrhub-locator"]
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          limits:
+            memory: 64Mi
+          requests:
+            cpu: 10m
+            memory: 16Mi
+        probes:
+          liveness:
+            enabled: false
+          readiness:
+            enabled: false
+          startup:
+            enabled: false
+        env:
+          - name: DMRHUB_PLUGIN_ADDRESS
+            value: dmrhub:3006
+          - name: DMRHUB_PLUGIN_FINGERPRINT
+            valueFrom:
+              secretKeyRef:
+                name: dmrhub-plugins
+                key: fingerprint
+          - name: DMRHUB_PLUGIN_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: dmrhub-plugins
+                key: locator-token
+
 persistence:
   webtransport-tls:
     type: secret
@@ -161,6 +263,8 @@ service:
       webtransport:
         port: 62032
         protocol: UDP
+      plugins:
+        port: 3006
 
 route:
   dmrhub:
