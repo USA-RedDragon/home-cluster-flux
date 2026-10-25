@@ -18,7 +18,7 @@ controllers:
       radio:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmr-web
-          tag: main@sha256:416d9eabec4e8a62c0dfdc4d9b4bf1600ae40250d129ca9c044a13b25fa86842
+          tag: main@sha256:57d7cad5bd0be58b8dccd8d6f096d01c6b29ece9ba092dda03227bfdec9e8549
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
