@@ -37,7 +37,6 @@ controllers:
             cpu-6=folding-at-home-cpu-6.folding-at-home.folding-at-home.svc.cluster.local:7396
             cpu-7=folding-at-home-cpu-7.folding-at-home.folding-at-home.svc.cluster.local:7396
             gpu-0=folding-at-home-gpu-0.folding-at-home.folding-at-home.svc.cluster.local:7396
-            gpu-1=folding-at-home-gpu-1.folding-at-home.folding-at-home.svc.cluster.local:7396
         resources:
           requests:
             cpu: 10m

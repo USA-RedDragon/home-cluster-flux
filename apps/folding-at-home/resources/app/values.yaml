@@ -56,7 +56,7 @@ controllers:
             memory: 3Gi
   gpu:
     type: statefulset
-    replicas: 2
+    replicas: 1
     statefulset:
       podManagementPolicy: Parallel
       volumeClaimTemplates:
