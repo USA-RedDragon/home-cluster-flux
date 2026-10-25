@@ -265,7 +265,7 @@ renovateWeb:
 
   existingSecret: renovate-secrets
   mendRnvBackendAddr: http://mend-renovate
-  mendRnvGithubClientId:
+  mendRnvGithubClientId: Iv1.d3993afeb648120b
   mendRnvGithubRedirectURI: https://renovate.jackal-stargazer.ts.net/oauth/github/callback
 
   resources:
