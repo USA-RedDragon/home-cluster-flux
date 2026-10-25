@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: minio
+resources:
+  - networkpolicy.yaml
+  - iam-job.yaml
+configMapGenerator:
+  - name: models-iam
+    files:
+      - iam.sh
+      - models-read.json=../../policies/models-read.json
