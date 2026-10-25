@@ -206,6 +206,7 @@ spec:
               - matchName: "dl.google.com"
               - matchName: "maven.google.com"
               - matchName: "api.adoptium.net"
+              - matchName: "alderongames.com"
     - toFQDNs:
         - matchName: "github.com"
         - matchName: "api.github.com"
@@ -298,6 +299,7 @@ spec:
         - matchName: "dl.google.com"
         - matchName: "maven.google.com"
         - matchName: "api.adoptium.net"
+        - matchName: "alderongames.com"
       toPorts:
         - ports:
             - port: "443"
