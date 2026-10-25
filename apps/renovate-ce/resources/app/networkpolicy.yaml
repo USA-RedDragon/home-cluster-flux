@@ -1,47 +1,257 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: default-ingress
+  name: default-deny
   namespace: renovate-ce
 spec:
   endpointSelector: {}
   ingress:
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: renovate-ce
+    - {}
+  egress:
+    - {}
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: mend-renovate-server-ingress
+  name: mend-renovate-server
   namespace: renovate-ce
 spec:
   endpointSelector:
     matchLabels:
-      app: mend-renovate-server
       app.kubernetes.io/instance: renovate-ce
       app.kubernetes.io/name: mend-renovate
+      app: mend-renovate-server
   ingress:
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: envoy-gateway-system
             gateway.envoyproxy.io/owning-gateway-name: public
+        - matchLabels:
+            io.kubernetes.pod.namespace: renovate-ce
+            app.kubernetes.io/instance: renovate-ce
+            app.kubernetes.io/name: mend-renovate
+            app: mend-renovate-worker
+        - matchLabels:
+            io.kubernetes.pod.namespace: renovate-ce
+            app.kubernetes.io/instance: renovate-ce
+            app.kubernetes.io/name: mend-renovate
+            app: mend-renovate-web
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
       toPorts:
         - ports:
             - port: "8080"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "**.cluster.local"
+              - matchName: "github.com"
+              - matchName: "api.github.com"
+    - toFQDNs:
+        - matchName: "github.com"
+        - matchName: "api.github.com"
+      toPorts:
+        - ports:
+            - port: "443"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: mend-renovate-web-ingress
+  name: mend-renovate-worker
   namespace: renovate-ce
 spec:
   endpointSelector:
     matchLabels:
-      app: mend-renovate-web
       app.kubernetes.io/instance: renovate-ce
       app.kubernetes.io/name: mend-renovate
+      app: mend-renovate-worker
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: renovate-ce
+            app.kubernetes.io/instance: renovate-ce
+            app.kubernetes.io/name: mend-renovate
+            app: mend-renovate-server
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "10443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "**.cluster.local"
+              - matchName: "github.com"
+              - matchName: "api.github.com"
+              - matchName: "codeload.github.com"
+              - matchName: "uploads.github.com"
+              - matchPattern: "**.githubusercontent.com"
+              - matchPattern: "*.github.io"
+              - matchName: "ghcr.io"
+              - matchName: "docker.io"
+              - matchPattern: "**.docker.io"
+              - matchPattern: "**.docker.com"
+              - matchPattern: "**.r2.cloudflarestorage.com"
+              - matchName: "quay.io"
+              - matchPattern: "**.quay.io"
+              - matchName: "registry.k8s.io"
+              - matchPattern: "**.registry.k8s.io"
+              - matchPattern: "**.pkg.dev"
+              - matchName: "storage.googleapis.com"
+              - matchPattern: "prod-registry-k8s-io-*.s3.dualstack.*.amazonaws.com"
+              - matchName: "gcr.io"
+              - matchPattern: "**.gcr.io"
+              - matchName: "lscr.io"
+              - matchName: "nvcr.io"
+              - matchPattern: "**.ngc.nvidia.com"
+              - matchName: "docker.gitea.com"
+              - matchName: "git.scottlabs.io"
+              - matchName: "reg.kyverno.io"
+              - matchName: "mcr.microsoft.com"
+              - matchName: "public.ecr.aws"
+              - matchName: "charts.jetstack.io"
+              - matchName: "charts.longhorn.io"
+              - matchName: "charts.gabe565.com"
+              - matchName: "charts.mcswain.dev"
+              - matchName: "cloudnative-pg.io"
+              - matchName: "helm.cilium.io"
+              - matchName: "helm.releases.hashicorp.com"
+              - matchName: "pkgs.tailscale.com"
+              - matchName: "proxy.golang.org"
+              - matchName: "sum.golang.org"
+              - matchName: "golang.org"
+              - matchName: "go.dev"
+              - matchName: "registry.npmjs.org"
+              - matchName: "nodejs.org"
+              - matchName: "pypi.org"
+              - matchName: "files.pythonhosted.org"
+              - matchName: "rubygems.org"
+              - matchName: "index.crates.io"
+              - matchName: "crates.io"
+              - matchName: "static.crates.io"
+              - matchName: "repo.maven.apache.org"
+              - matchName: "repo1.maven.org"
+              - matchName: "plugins.gradle.org"
+              - matchName: "services.gradle.org"
+              - matchName: "downloads.gradle.org"
+              - matchName: "api.nuget.org"
+              - matchName: "registry.terraform.io"
+              - matchName: "releases.hashicorp.com"
+              - matchName: "repology.org"
+              - matchName: "endoflife.date"
+              - matchName: "jacob.pub"
+              - matchName: "s3.mcswain.dev"
+    - toFQDNs:
+        - matchName: "github.com"
+        - matchName: "api.github.com"
+        - matchName: "codeload.github.com"
+        - matchName: "uploads.github.com"
+        - matchPattern: "**.githubusercontent.com"
+        - matchPattern: "*.github.io"
+        - matchName: "ghcr.io"
+        - matchName: "docker.io"
+        - matchPattern: "**.docker.io"
+        - matchPattern: "**.docker.com"
+        - matchPattern: "**.r2.cloudflarestorage.com"
+        - matchName: "quay.io"
+        - matchPattern: "**.quay.io"
+        - matchName: "registry.k8s.io"
+        - matchPattern: "**.registry.k8s.io"
+        - matchPattern: "**.pkg.dev"
+        - matchName: "storage.googleapis.com"
+        - matchPattern: "prod-registry-k8s-io-*.s3.dualstack.*.amazonaws.com"
+        - matchName: "gcr.io"
+        - matchPattern: "**.gcr.io"
+        - matchName: "lscr.io"
+        - matchName: "nvcr.io"
+        - matchPattern: "**.ngc.nvidia.com"
+        - matchName: "docker.gitea.com"
+        - matchName: "git.scottlabs.io"
+        - matchName: "reg.kyverno.io"
+        - matchName: "mcr.microsoft.com"
+        - matchName: "public.ecr.aws"
+        - matchName: "charts.jetstack.io"
+        - matchName: "charts.longhorn.io"
+        - matchName: "charts.gabe565.com"
+        - matchName: "charts.mcswain.dev"
+        - matchName: "cloudnative-pg.io"
+        - matchName: "helm.cilium.io"
+        - matchName: "helm.releases.hashicorp.com"
+        - matchName: "pkgs.tailscale.com"
+        - matchName: "proxy.golang.org"
+        - matchName: "sum.golang.org"
+        - matchName: "golang.org"
+        - matchName: "go.dev"
+        - matchName: "registry.npmjs.org"
+        - matchName: "nodejs.org"
+        - matchName: "pypi.org"
+        - matchName: "files.pythonhosted.org"
+        - matchName: "rubygems.org"
+        - matchName: "index.crates.io"
+        - matchName: "crates.io"
+        - matchName: "static.crates.io"
+        - matchName: "repo.maven.apache.org"
+        - matchName: "repo1.maven.org"
+        - matchName: "plugins.gradle.org"
+        - matchName: "services.gradle.org"
+        - matchName: "downloads.gradle.org"
+        - matchName: "api.nuget.org"
+        - matchName: "registry.terraform.io"
+        - matchName: "releases.hashicorp.com"
+        - matchName: "repology.org"
+        - matchName: "endoflife.date"
+        - matchName: "jacob.pub"
+        - matchName: "s3.mcswain.dev"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: mend-renovate-web
+  namespace: renovate-ce
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: renovate-ce
+      app.kubernetes.io/name: mend-renovate
+      app: mend-renovate-web
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -52,46 +262,12 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: prometheus-ingress
-  namespace: renovate-ce
-spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/instance: renovate-ce
-      app.kubernetes.io/name: mend-renovate
-    matchExpressions:
-      - key: app
-        operator: In
-        values:
-          - mend-renovate-server
-          - mend-renovate-worker
-  ingress:
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: monitoring
-            app.kubernetes.io/name: prometheus
-      toPorts:
-        - ports:
-            - port: "8080"
-              protocol: TCP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: default-egress
-  namespace: renovate-ce
-spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/instance: renovate-ce
   egress:
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: renovate-ce
+            app.kubernetes.io/instance: renovate-ce
+            app.kubernetes.io/name: mend-renovate
             app: mend-renovate-server
       toPorts:
         - ports:
@@ -107,26 +283,13 @@ spec:
               protocol: ANY
           rules:
             dns:
-              - matchPattern: "*"
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: envoy-gateway-system
-            gateway.envoyproxy.io/owning-gateway-name: public
+              - matchPattern: "**.cluster.local"
+              - matchName: "github.com"
+              - matchName: "api.github.com"
+    - toFQDNs:
+        - matchName: "github.com"
+        - matchName: "api.github.com"
       toPorts:
         - ports:
-            - port: "10080"
+            - port: "443"
               protocol: TCP
-            - port: "10443"
-              protocol: TCP
-    - toCIDRSet:
-        - cidr: 0.0.0.0/0
-          except:
-            - 10.0.0.0/8
-            - 172.16.0.0/12
-            - 192.168.0.0/16
-            - 100.64.0.0/10
-        - cidr: ::/0
-          except:
-            - fc00::/7
-            - fe80::/10
-            - ff00::/8
