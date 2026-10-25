@@ -8,9 +8,10 @@ controllers:
     replicas: 2
     strategy: RollingUpdate
     rollingUpdate:
-      unavailable: 1
-      surge: 25%
+      unavailable: 0
+      surge: 1
     pod:
+      terminationGracePeriodSeconds: 60
       securityContext:
         runAsUser: 65534
         runAsGroup: 65534
@@ -39,6 +40,13 @@ controllers:
             enabled: true
           readiness:
             enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /api/v1/healthcheck
+                port: 3005
+              periodSeconds: 5
+              failureThreshold: 2
           startup:
             enabled: true
         envFrom:
@@ -47,6 +55,8 @@ controllers:
         env:
           - name: LOG_LEVEL
             value: "info"
+          - name: DMR_DRAIN_TIMEOUT
+            value: "25"
           - name: HTTP_CORS_ENABLED
             value: "true"
           - name: HTTP_CORS_EXTRA_HOSTS
