@@ -299,6 +299,38 @@ renovateWeb:
     limits:
       memory: 256Mi
 
+  automountServiceAccountToken: false
+
+  podSecurityContext:
+    fsGroup: 12021
+    runAsNonRoot: true
+    runAsUser: 12021
+    runAsGroup: 12021
+    seccompProfile:
+      type: RuntimeDefault
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+    runAsNonRoot: true
+    runAsUser: 12021
+    runAsGroup: 12021
+    readOnlyRootFilesystem: true
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop:
+        - ALL
+
+  extraVolumes:
+    - name: tmp
+      emptyDir:
+        sizeLimit: 256Mi
+
+  extraVolumeMounts:
+    - name: tmp
+      mountPath: /tmp
+
 ## data Persistence Parameters
 ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 ##
