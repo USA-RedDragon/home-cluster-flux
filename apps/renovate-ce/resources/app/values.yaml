@@ -171,6 +171,7 @@ renovateServer:
   mendRnvEndpoint: https://api.github.com/
   mendRnvAdminApiEnabled: 'true'
   mendRnvPrometheusMetricsEnabled: 'true'
+  mendRnvServerRbacEnabled: 'true'
 
   # Existing secret with secret values with the following keys:
   #   mendRnvGitlabPat:
@@ -254,6 +255,24 @@ renovateServer:
     # - name: secrets-store-inline
     #   mountPath: "/mnt/secrets-store"
     #   readOnly: true
+
+renovateWeb:
+  enabled: false
+
+  image:
+    repository: jacob.pub/ghcr.io/mend/renovate-web-server
+
+  existingSecret: renovate-secrets
+  mendRnvBackendAddr: http://mend-renovate
+  mendRnvGithubClientId:
+  mendRnvGithubRedirectURI: https://renovate.jackal-stargazer.ts.net/oauth/github/callback
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
 
 ## data Persistence Parameters
 ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/

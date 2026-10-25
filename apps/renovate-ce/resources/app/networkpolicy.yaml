@@ -34,6 +34,28 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  name: mend-renovate-web-ingress
+  namespace: renovate-ce
+spec:
+  endpointSelector:
+    matchLabels:
+      app: mend-renovate-web
+      app.kubernetes.io/instance: renovate-ce
+      app.kubernetes.io/name: mend-renovate
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: renovate-web
+            tailscale.com/parent-resource-ns: renovate-ce
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
   name: prometheus-ingress
   namespace: renovate-ce
 spec:
