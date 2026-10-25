@@ -139,6 +139,8 @@ renovateWorker:
   livenessProbe:
     failureThreshold: 6
 
+  automountServiceAccountToken: false
+
   podSecurityContext:
     fsGroup: 1000
     runAsNonRoot: true
@@ -220,6 +222,8 @@ renovateServer:
 
   livenessProbe:
     failureThreshold: 18
+
+  automountServiceAccountToken: false
 
   podSecurityContext:
     fsGroup: 1000
