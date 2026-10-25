@@ -164,9 +164,8 @@ renovateServer:
 
   replicas: 1
 
-  extraEnvVars:
-  - name: MEND_RNV_REPORTING_ENABLED
-    value: 'false'
+  mendRnvReportingApiEnabled: 'false'
+  mendRnvMergeConfidenceToken: 'off'
 
   mendRnvPlatform: github
   mendRnvEndpoint: https://api.github.com/
