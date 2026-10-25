@@ -204,6 +204,8 @@ renovateServer:
   # It deletes any log file that exceeds the `mendRnvLogHistoryTTLDays` value.
   mendRnvLogHistoryCleanupCron:
 
+  mendRnvDatabaseHistoryTTLDays: 30
+
   # Set log level, defaults to 'info'. Allowed values: fatal, error, warn, info, debug, trace
   logLevel: info
 
