@@ -90,6 +90,7 @@ renovateWorker:
       cacheHardTtlMinutes: 5,
       onboardingConfigFileName: ".github/renovate.json",
       onboardingRebaseCheckbox: true,
+      allowedUnsafeExecutions: ['gradleWrapper'],
       hostRules: [
         {
           hostType: 'docker',
