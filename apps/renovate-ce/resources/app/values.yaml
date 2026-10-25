@@ -258,10 +258,11 @@ renovateServer:
     #   readOnly: true
 
 renovateWeb:
-  enabled: false
+  enabled: true
 
   image:
-    repository: jacob.pub/ghcr.io/mend/renovate-web-server
+    repository: jacob.pub/ghcr.io/usa-reddragon/renovate-web-server
+    version: v15.10.0@sha256:6f658bdb609cf5bb6f2d56c12142b25bf67313a73b8f98e5f40d9cedfb9b51cd
 
   existingSecret: renovate-secrets
   mendRnvBackendAddr: http://mend-renovate
