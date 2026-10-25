@@ -140,6 +140,8 @@ controllers:
     replicas: 1
     strategy: Recreate
     pod:
+      labels:
+        policy.mcswain.dev/egress-coredns: "true"
       securityContext:
         runAsUser: 65534
         runAsGroup: 65534
@@ -188,6 +190,8 @@ controllers:
     replicas: 1
     strategy: Recreate
     pod:
+      labels:
+        policy.mcswain.dev/egress-coredns: "true"
       securityContext:
         runAsUser: 65534
         runAsGroup: 65534

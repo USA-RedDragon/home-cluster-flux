@@ -60,3 +60,35 @@ spec:
         - ports:
             - port: "9001"
               protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: dmrhub-plugins
+  namespace: dmrhub
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/controller
+        operator: In
+        values:
+          - parrot
+          - locator
+      - key: app.kubernetes.io/instance
+        operator: In
+        values:
+          - dmrhub
+  ingressDeny:
+    - fromEntities:
+        - all
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dmrhub
+            app.kubernetes.io/controller: dmrhub
+            app.kubernetes.io/instance: dmrhub
+            app.kubernetes.io/name: dmrhub
+      toPorts:
+        - ports:
+            - port: "3006"
+              protocol: TCP
