@@ -46,12 +46,13 @@ spec:
       ttlController:
         reconciliationInterval: 1h
     global:
+      priorityClassName: system-cluster-critical
       image:
         registry: jacob.pub/reg.kyverno.io
       imagePullSecrets:
         - name: registry-zot
     admissionController:
-      replicas: 2
+      replicas: 3
       podDisruptionBudget:
         enabled: true
         minAvailable: 1
@@ -69,7 +70,7 @@ spec:
       container:
         resources:
           requests:
-            memory: 200Mi
+            memory: 256Mi
     backgroundController:
       resources:
         requests:
