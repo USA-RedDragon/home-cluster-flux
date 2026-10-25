@@ -264,7 +264,7 @@ renovateServer:
       mountPath: /tmp
 
 renovateWeb:
-  enabled: false
+  enabled: true
 
   image:
     repository: jacob.pub/ghcr.io/usa-reddragon/renovate-web-server
