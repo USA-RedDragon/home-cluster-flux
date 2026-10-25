@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: mend-renovate
+  labels:
+    app.kubernetes.io/instance: renovate-ce
+    app.kubernetes.io/name: mend-renovate
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: renovate-ce
+      app.kubernetes.io/name: mend-renovate
+  podMetricsEndpoints:
+    - port: ee-server
+      interval: 30s
+      scrapeTimeout: 10s
+    - port: ee-worker
+      interval: 30s
+      scrapeTimeout: 10s
