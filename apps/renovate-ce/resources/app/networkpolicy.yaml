@@ -203,6 +203,9 @@ spec:
               - matchName: "apiland.deno.dev"
               - matchName: "hackage.haskell.org"
               - matchName: "updates.jenkins.io"
+              - matchName: "dl.google.com"
+              - matchName: "maven.google.com"
+              - matchName: "api.adoptium.net"
     - toFQDNs:
         - matchName: "github.com"
         - matchName: "api.github.com"
@@ -292,6 +295,9 @@ spec:
         - matchName: "apiland.deno.dev"
         - matchName: "hackage.haskell.org"
         - matchName: "updates.jenkins.io"
+        - matchName: "dl.google.com"
+        - matchName: "maven.google.com"
+        - matchName: "api.adoptium.net"
       toPorts:
         - ports:
             - port: "443"
