@@ -1,0 +1,5 @@
+dmr:
+  transcoding:
+    ambe-servers:
+      - address: ambeserver.ambeserver.svc.cluster.local:2460
+        calls: 0
