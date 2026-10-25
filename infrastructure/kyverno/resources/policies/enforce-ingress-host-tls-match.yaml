@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: ingress-host-tls-match
 spec:
+  failurePolicy: Ignore
   background: false
   rules:
   - name: host-match-tls

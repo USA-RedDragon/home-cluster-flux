@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: dropped-capabilities
 spec:
+  failurePolicy: Ignore
   rules:
     - name: require-drop-all
       match:

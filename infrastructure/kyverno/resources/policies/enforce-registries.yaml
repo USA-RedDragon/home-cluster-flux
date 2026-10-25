@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: registries
 spec:
+  failurePolicy: Ignore
   rules:
   - name: registries
     match:

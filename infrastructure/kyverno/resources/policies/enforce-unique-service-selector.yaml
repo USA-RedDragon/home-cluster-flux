@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: require-unique-service-selector
 spec:
+  failurePolicy: Ignore
   background: false
   rules:
     - name: check-service-selector

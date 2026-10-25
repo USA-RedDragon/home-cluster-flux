@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: readonly-rootfs
 spec:
+  failurePolicy: Ignore
   rules:
   - name: check-readOnlyRootFilesystem
     match:
