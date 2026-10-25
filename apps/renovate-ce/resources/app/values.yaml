@@ -267,6 +267,9 @@ renovateWeb:
   mendRnvBackendAddr: http://mend-renovate
   mendRnvGithubClientId: Iv1.d3993afeb648120b
   mendRnvGithubRedirectURI: https://renovate.jackal-stargazer.ts.net/oauth/github/callback
+  mendRnvCSPConnectSrc: "'self'"
+  mendRnvCSPFormAction: "'self'"
+  mendRnvCSPImgSrc: "'self' data: https://avatars.githubusercontent.com"
 
   resources:
     requests:
