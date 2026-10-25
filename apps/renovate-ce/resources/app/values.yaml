@@ -258,7 +258,7 @@ renovateServer:
     #   readOnly: true
 
 renovateWeb:
-  enabled: true
+  enabled: false
 
   image:
     repository: jacob.pub/ghcr.io/usa-reddragon/renovate-web-server
