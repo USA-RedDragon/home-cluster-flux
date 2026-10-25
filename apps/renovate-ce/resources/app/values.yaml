@@ -169,10 +169,14 @@ renovateWorker:
   extraVolumes:
     - name: tmp
       emptyDir: {}
+    - name: home-cache
+      emptyDir: {}
 
   extraVolumeMounts:
     - name: tmp
       mountPath: /tmp
+    - name: home-cache
+      mountPath: /home/ubuntu/.cache
 
 renovateServer:
   image:
