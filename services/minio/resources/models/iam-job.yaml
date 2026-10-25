@@ -25,6 +25,9 @@ spec:
           command:
             - /bin/sh
             - /scripts/iam.sh
+          env:
+            - name: MC_CONFIG_DIR
+              value: /work/mc
           envFrom:
             - secretRef:
                 name: minio-user
