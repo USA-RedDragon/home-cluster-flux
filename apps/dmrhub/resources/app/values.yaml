@@ -21,7 +21,7 @@ controllers:
       dmrhub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.3
+          tag: v1.3.5
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
@@ -93,6 +93,8 @@ controllers:
             value: "62035"
           - name: DMR_POSITIONS_APRS_IS_CALLSIGN
             value: KI5VMF-10
+          - name: AUTO_APPROVE_USERS
+            value: "true"
           - name: DMR_MMDVM_WEBTRANSPORT_ENABLED
             value: "true"
           - name: DMR_MMDVM_WEBTRANSPORT_PORT
@@ -154,7 +156,7 @@ controllers:
       parrot:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.3
+          tag: v1.3.5
           pullPolicy: IfNotPresent
         command: ["/app/dmrhub-parrot"]
         securityContext:
@@ -204,7 +206,7 @@ controllers:
       locator:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.3
+          tag: v1.3.5
           pullPolicy: IfNotPresent
         command: ["/app/dmrhub-locator"]
         securityContext:
