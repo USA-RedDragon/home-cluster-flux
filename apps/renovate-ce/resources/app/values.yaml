@@ -157,24 +157,12 @@ renovateWorker:
     privileged: false
     runAsNonRoot: true
     runAsUser: 1000
-    readOnlyRootFilesystem: true
+    readOnlyRootFilesystem: false
     seccompProfile:
       type: RuntimeDefault
     capabilities:
       drop:
         - ALL
-
-  extraVolumes:
-    - name: tmp
-      emptyDir: {}
-    - name: home-cache
-      emptyDir: {}
-
-  extraVolumeMounts:
-    - name: tmp
-      mountPath: /tmp
-    - name: home-cache
-      mountPath: /home/ubuntu/.cache
 
 renovateServer:
   image:
