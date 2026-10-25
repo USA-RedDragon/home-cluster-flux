@@ -232,6 +232,15 @@ configMaps:
           rootDirectory: /zot
           remoteCache: true
           fastRestart: true
+          retention:
+            policies:
+              - repositories: ["**"]
+                deleteReferrers: false
+                deleteUntagged: true
+                keepUntagged:
+                  mostRecentlyPulledCount: 10
+                  mostRecentlyPushedCount: 10
+                  pulledWithin: 2160h
           cacheDriver:
             name: redis
             addr: [valkey:6379]
