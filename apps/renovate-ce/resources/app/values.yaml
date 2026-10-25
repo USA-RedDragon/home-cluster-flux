@@ -169,14 +169,10 @@ renovateWorker:
   extraVolumes:
     - name: tmp
       emptyDir: {}
-    - name: containerbase
-      emptyDir: {}
 
   extraVolumeMounts:
     - name: tmp
       mountPath: /tmp
-    - name: containerbase
-      mountPath: /opt/containerbase
 
 renovateServer:
   image:
