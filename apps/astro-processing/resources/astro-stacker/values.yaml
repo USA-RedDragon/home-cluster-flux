@@ -21,11 +21,59 @@ controllers:
         fsGroup: 65534
         fsGroupChangePolicy: OnRootMismatch
 
+    initContainers:
+      bge-model:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/minio
+          tag: "RELEASE.2025-08-29T21-27-49Z@sha256:208f3028b036349ba612219722a83be960185ce31a83cd48287e1a4d3a2fedf8"
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            set -eu
+            f=/models/graxpert-bge-1.0.1.onnx
+            want=4ed3ef68c9f44e821ea4e47572770bb9d4d5df447feae3e758d4c0480fca1f03
+            if [ -f "$f" ] && echo "$want  $f" | sha256sum -c --status -; then
+              echo "background model present: sha256 OK"
+              exit 0
+            fi
+            echo "downloading background model"
+            mc alias set m http://minio.minio.svc:9000 "$S3_ACCESS_KEY" "$S3_SECRET_KEY" >/dev/null
+            rm -f "$f.part"
+            mc cp -q m/models/graxpert-bge/1.0.1/model.onnx "$f.part"
+            if ! echo "$want  $f.part" | sha256sum -c -; then
+              rm -f "$f.part"
+              echo "background model sha256 mismatch: want $want" >&2
+              exit 1
+            fi
+            mv "$f.part" "$f"
+            echo "background model downloaded: sha256 OK"
+        env:
+          MC_CONFIG_DIR: /tmp/.mc
+          S3_ACCESS_KEY:
+            secretKeyRef:
+              name: astro-stacker-s3
+              key: S3_ACCESS_KEY
+          S3_SECRET_KEY:
+            secretKeyRef:
+              name: astro-stacker-s3
+              key: S3_SECRET_KEY
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+
     containers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/astro-stacker
-          tag: "beta@sha256:08ab194609ed9e63ff6185669695e3583bbd4c125953d96940f4d7c88ab33f49"
+          tag: "beta@sha256:6e6a5c86652004232f1f760c15abcadd4cc1083fb647824a48e8e263a3087eee"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -231,6 +279,20 @@ rbac:
         - identifier: astro-stacker
 
 persistence:
+  bge-model:
+    type: persistentVolumeClaim
+    forceRename: astro-stacker-bge-model
+    retain: true
+    storageClass: longhorn-r1
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    advancedMounts:
+      astro-stacker:
+        bge-model:
+          - path: /models
+        app:
+          - path: /usr/share/astro-stacker
+            readOnly: true
   astrometry:
     type: persistentVolumeClaim
     forceRename: astro-stacker-astrometry
