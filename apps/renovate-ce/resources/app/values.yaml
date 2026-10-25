@@ -55,6 +55,12 @@ renovateWorker:
         key: aws-secret-access-key
   - name: RENOVATE_S3_PATH_STYLE
     value: 'true'
+  - name: AWS_ENDPOINT_URL_S3
+    value: 'http://minio.minio.svc.cluster.local:9000'
+  - name: MEND_RNV_LOG_HISTORY_S3
+    value: 's3://renovate/job-logs'
+  - name: MEND_RNV_S3_FORCE_PATH_STYLE
+    value: 'true'
   - name: RENOVATE_ONBOARDING_CONFIG
     value: "{\n  \"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\",\n  \"extends\": [\n    \"local>USA-RedDragon/renovate-configs\"\n  ]\n}"
   - name: GHCR_USERNAME
@@ -206,6 +212,8 @@ renovateServer:
   # It is recommended to use an external volume to preserve history.
   mendRnvLogHistoryDir:
 
+  mendRnvLogHistoryS3: 's3://renovate/job-logs'
+
   # Optional: The number of days to save log files. Defaults to 30.
   mendRnvLogHistoryTTLDays:
 
@@ -253,6 +261,24 @@ renovateServer:
     capabilities:
       drop:
         - ALL
+
+  extraEnvVars:
+  - name: MEND_RNV_S3_FORCE_PATH_STYLE
+    value: 'true'
+  - name: AWS_ENDPOINT_URL_S3
+    value: 'http://minio.minio.svc.cluster.local:9000'
+  - name: AWS_REGION
+    value: 'us-east-1'
+  - name: AWS_ACCESS_KEY_ID
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: aws-access-key-id
+  - name: AWS_SECRET_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: renovate-secrets
+        key: aws-secret-access-key
 
   extraVolumes:
     - name: tmp
