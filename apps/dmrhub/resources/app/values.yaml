@@ -87,6 +87,8 @@ controllers:
             value: "allow"
           # - name: METRICS_OTLP_ENDPOINT
           #   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
+          - name: DMR_OPENBRIDGE_ENABLED
+            value: "true"
           - name: DMR_OPENBRIDGE_PORT
             value: "62035"
           - name: DMR_MMDVM_WEBTRANSPORT_ENABLED
