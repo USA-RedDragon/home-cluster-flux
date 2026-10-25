@@ -18,6 +18,8 @@ renovateWorker:
   # go away when the worker restarts.
   mendRnvWorkerCleanup: "0 4 * * *"
 
+  mendRnvPrometheusMetricsEnabled: 'true'
+
   disableCacheVolume: true
 
   extraEnvVars:
@@ -166,6 +168,7 @@ renovateServer:
   mendRnvPlatform: github
   mendRnvEndpoint: https://api.github.com/
   mendRnvAdminApiEnabled: 'true'
+  mendRnvPrometheusMetricsEnabled: 'true'
 
   # Existing secret with secret values with the following keys:
   #   mendRnvGitlabPat:

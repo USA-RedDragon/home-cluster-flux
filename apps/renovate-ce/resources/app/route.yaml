@@ -13,6 +13,16 @@ spec:
     namespace: envoy-gateway-system
     sectionName: https
   rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /metrics
+    filters:
+    - type: ExtensionRef
+      extensionRef:
+        group: gateway.envoyproxy.io
+        kind: HTTPRouteFilter
+        name: not-found
   - backendRefs:
     - group: ""
       kind: Service
