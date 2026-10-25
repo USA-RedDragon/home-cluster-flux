@@ -206,12 +206,17 @@ renovateServer:
   # Set log level, defaults to 'info'. Allowed values: fatal, error, warn, info, debug, trace
   logLevel: info
 
+  # The 15.x server needs about 15 s of CPU to start. At 10m on a busy
+  # node it took over 2 minutes and the liveness probe killed it.
   resources:
     requests:
-      cpu: 10m
+      cpu: 500m
       memory: 384Mi
     limits:
       memory: 500Mi
+
+  livenessProbe:
+    failureThreshold: 18
 
   podSecurityContext:
     fsGroup: 1000
