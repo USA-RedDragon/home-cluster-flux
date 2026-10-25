@@ -175,8 +175,6 @@ renovateServer:
   #   mendRnvServerApiSecret:
   existingSecret: renovate-secrets
 
-  mendRnvDiskUsageWarnThreshold: 0
-
   # Optional. valid values: 'disabled', 'enabled', 'managed' and default to unset (see documentation)
   mendRnvForksProcessing: enabled
 
@@ -275,7 +273,6 @@ dataInMemory:
 
 service:
   type: ClusterIP
-  port: 80
   annotations: {}
 
 ingress:
