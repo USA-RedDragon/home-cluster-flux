@@ -91,6 +91,9 @@ renovateWorker:
       onboardingConfigFileName: ".github/renovate.json",
       onboardingRebaseCheckbox: true,
       allowedUnsafeExecutions: ['gradleWrapper'],
+      force: {
+        prBodyColumns: ['Package', 'Type', 'Update', 'Change', 'Pending'],
+      },
       hostRules: [
         {
           hostType: 'docker',
