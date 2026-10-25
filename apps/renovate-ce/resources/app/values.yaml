@@ -155,7 +155,7 @@ renovateWorker:
 renovateServer:
   image:
     repository: jacob.pub/ghcr.io/usa-reddragon/renovate-ee
-    version: 11.5.0@sha256:91b006978db1413251a121492bf6b400c12db22269d53241dc9be09ec51e99d9
+    version: v15.10.0@sha256:955ed7c17b82952afdcab0d36a926ced5d660269afbb2921753777eaa4a65e9e
 
   replicas: 1
 
