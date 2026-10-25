@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: nonroot
 spec:
+  failurePolicy: Ignore
   rules:
   - name: check-runAsNonRoot
     match:

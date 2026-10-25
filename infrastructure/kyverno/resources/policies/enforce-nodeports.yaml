@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: nodeports
 spec:
+  failurePolicy: Ignore
   background: false
   rules:
   - name: validate-nodeport

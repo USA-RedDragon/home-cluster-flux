@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: flux-gitrepo
 spec:
+  failurePolicy: Ignore
   rules:
     - name: github-repositories-only
       match:

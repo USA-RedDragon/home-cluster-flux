@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: privilege-escalation
 spec:
+  failurePolicy: Ignore
   rules:
   - name: check-privilegeEscalation
     match:

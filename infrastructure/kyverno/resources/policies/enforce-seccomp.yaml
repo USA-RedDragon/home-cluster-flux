@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: seccomp
 spec:
+  failurePolicy: Ignore
   rules:
   - name: check-seccomp
     match:
