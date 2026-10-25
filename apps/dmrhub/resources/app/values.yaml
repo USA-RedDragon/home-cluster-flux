@@ -21,7 +21,7 @@ controllers:
       dmrhub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.10
+          tag: v1.3.11
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
@@ -158,7 +158,7 @@ controllers:
       parrot:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.10
+          tag: v1.3.11
           pullPolicy: IfNotPresent
         command: ["/app/dmrhub-parrot"]
         securityContext:
@@ -208,7 +208,7 @@ controllers:
       locator:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.10
+          tag: v1.3.11
           pullPolicy: IfNotPresent
         command: ["/app/dmrhub-locator"]
         securityContext:
