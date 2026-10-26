@@ -78,6 +78,31 @@ spec:
             summary: "ambeserver workers are always busy"
             description: "{{ $labels.pod }} had clients waiting for a worker at every scrape for 15m (now {{ $value }}). Requests start to drop as late once they wait 20ms. Check CPU throttling, then raise CLIENTS_WORKERS or the CPU."
 
+        - alert: AmbeserverNotReplying
+          expr: |
+            sum by (namespace, pod) (rate(ambeserver_requests_answered_total{namespace="ambeserver"}[90s])) == 0
+            and (
+              sum by (namespace, pod) (rate(ambeserver_requests_late_total{namespace="ambeserver"}[90s]) + rate(ambeserver_requests_dropped_total{namespace="ambeserver"}[90s])) > 0
+              or sum by (namespace, pod) (ambeserver_worker_queue_depth{namespace="ambeserver"}) > 0
+            )
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "ambeserver answers no requests"
+            description: "{{ $labels.pod }} got requests for 2m and answered none of them: they were dropped (late or busy) or wait for a worker. Calls through it are silent. Check the logs, CPU throttling and ambeserver_worker_queue_depth, then restart the pod: {namespace=\"ambeserver\", pod=\"{{ $labels.pod }}\"}"
+
+        - alert: AmbeserverQueueFull
+          expr: |
+            sum by (namespace, pod) (ambeserver_worker_queue_depth{namespace="ambeserver"})
+              / sum by (namespace, pod) (ambeserver_clients{namespace="ambeserver"}) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver worker queue is {{ $value | humanizePercentage }} full"
+            description: "On {{ $labels.pod }}, more than 80% of the clients waited for a worker at every check for 5m. The queue holds each client at most once, so it is full when every client waits. Requests start to drop as late once they wait 20ms. Check CPU throttling, then raise CLIENTS_WORKERS, the CPU, or the replicas."
+
         - alert: AmbeserverLatencyHigh
           expr: |
             histogram_quantile(0.99, sum by (namespace, pod, le) (rate(ambeserver_request_seconds_bucket{namespace="ambeserver"}[5m]))) > 0.01
