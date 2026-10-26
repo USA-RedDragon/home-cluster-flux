@@ -223,6 +223,10 @@ spec:
               - matchName: "maven.google.com"
               - matchName: "api.adoptium.net"
               - matchName: "alderongames.com"
+              - matchName: "files.minecraftforge.net"
+              - matchName: "fill.papermc.io"
+              - matchName: "maven.neoforged.net"
+              - matchName: "maven.fabricmc.net"
     - toFQDNs:
         - matchName: "github.com"
         - matchName: "api.github.com"
@@ -316,6 +320,10 @@ spec:
         - matchName: "maven.google.com"
         - matchName: "api.adoptium.net"
         - matchName: "alderongames.com"
+        - matchName: "files.minecraftforge.net"
+        - matchName: "fill.papermc.io"
+        - matchName: "maven.neoforged.net"
+        - matchName: "maven.fabricmc.net"
       toPorts:
         - ports:
             - port: "443"
