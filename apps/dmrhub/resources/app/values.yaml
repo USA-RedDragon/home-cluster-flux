@@ -22,7 +22,7 @@ controllers:
       dmrhub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.12
+          tag: v1.3.13
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
@@ -121,6 +121,8 @@ controllers:
             value: "1"
           - name: DMR_PLUGINS_ENABLED
             value: "true"
+          - name: DMR_PLUGINS_IN_PROCESS
+            value: "false"
           - name: METRICS_ENABLED
             value: "true"
           - name: METRICS_PORT
@@ -168,7 +170,7 @@ controllers:
       parrot:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.12
+          tag: v1.3.13
           pullPolicy: IfNotPresent
         command: ["/app/dmrhub-parrot"]
         securityContext:
@@ -218,7 +220,7 @@ controllers:
       locator:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.12
+          tag: v1.3.13
           pullPolicy: IfNotPresent
         command: ["/app/dmrhub-locator"]
         securityContext:
