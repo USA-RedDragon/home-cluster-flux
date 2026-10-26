@@ -108,3 +108,30 @@ agents:
     labels:
       pod-security.kubernetes.io/enforce: restricted
       pod-security.kubernetes.io/enforce-version: latest
+
+agentWorkerPodTemplate:
+  spec:
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 999
+      runAsGroup: 999
+      fsGroup: 999
+      seccompProfile:
+        type: RuntimeDefault
+    containers:
+      - securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        volumeMounts:
+          - name: agent-data
+            mountPath: /home/tfc-agent/.tfc-agent
+          - name: tmp
+            mountPath: /tmp
+    volumes:
+      - name: agent-data
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
