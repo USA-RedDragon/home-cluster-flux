@@ -9,4 +9,4 @@ configMapGenerator:
       labels:
         grafana_dashboard: "1"
       annotations:
-        grafana_folder: ambeserver
+        grafana_folder: DMR
