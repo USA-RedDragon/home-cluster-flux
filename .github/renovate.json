@@ -375,6 +375,15 @@
             ]
         },
         {
+            "description": "Jellyfin uses the Recreate strategy, so an update stops every playback. Update only overnight.",
+            "schedule": [
+                "after 4:00am, before 7:00am"
+            ],
+            "matchPackageNames": [
+                "/(^|/)ghcr\\.io\\/jellyfin\\/jellyfin$/"
+            ]
+        },
+        {
             "automerge": false,
             "allowedVersions": "<=500",
             "matchPackageNames": [
