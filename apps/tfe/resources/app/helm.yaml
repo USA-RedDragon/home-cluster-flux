@@ -19,6 +19,7 @@ spec:
       retries: -1
   interval: 1h0m0s
   maxHistory: 2
+  timeout: 15m0s
   releaseName: tfe
   chart:
     spec:
