@@ -19,7 +19,7 @@ controllers:
       ambeserver:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrgo-ambeserver
-          tag: beta@sha256:8f2765f034769b53b0e0e213dd36a0aa963e380a0d7bc309589eb1672c756b9d
+          tag: beta@sha256:7767b1b56dd085b9e7b8f51db6e904731cf15ebc0a00a65c3d4dc77871e147fd
         env:
           METRICS_ENABLED: "true"
           METRICS_BIND: "[::]"
