@@ -1,5 +1,12 @@
-dmr:
-  transcoding:
-    ambe-servers:
-      - address: ambeserver.ambeserver.svc.cluster.local:2460
-        calls: 0
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dmrhub-config
+  namespace: dmrhub
+data:
+  config.yaml: |
+    dmr:
+      transcoding:
+        ambe-servers:
+          - address: ambeserver.ambeserver.svc.cluster.local:2460
+            calls: 0

@@ -7,14 +7,10 @@ resources:
   - securitypolicy.yaml
   - networkpolicy.yaml
   - webtransport.cert.yaml
+  - dmrhub-config.yaml
 configMapGenerator:
   - name: chart-values
     files:
       - values.yaml=values.yaml
-  - name: dmrhub-config
-    files:
-      - config.yaml=dmrhub-config.yaml
-    options:
-      disableNameSuffixHash: true
 configurations:
   - kustomizeconfig.yaml
