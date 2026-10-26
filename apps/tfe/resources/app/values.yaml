@@ -102,3 +102,9 @@ extraVolumeMounts:
     name: logs
   - mountPath: /var/cache/tfe-task-worker
     name: tfe-task-worker-cache
+
+agents:
+  namespace:
+    labels:
+      pod-security.kubernetes.io/enforce: restricted
+      pod-security.kubernetes.io/enforce-version: latest
