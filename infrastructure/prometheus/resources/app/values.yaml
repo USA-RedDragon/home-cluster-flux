@@ -1133,6 +1133,7 @@ grafana:
       skipReload: true
       # Allow discovery in all namespaces for dashboards
       searchNamespace: ALL
+      folderAnnotation: grafana_folder
 
       ## Annotations for Grafana dashboard configmaps
       ##
@@ -1144,6 +1145,7 @@ grafana:
           enabled: false
       provider:
         allowUiUpdates: false
+        foldersFromFilesStructure: true
     datasources:
       enabled: true
       skipReload: true
