@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  vlmcsd:
+    replicas: 1
+    strategy: Recreate
+    pod:
+      labels:
+        policy.mcswain.dev/egress-coredns: "true"
+        policy.mcswain.dev/public-gateway: "true"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+    containers:
+      vlmcsd:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/docker-vlmcsd
+          tag: main@sha256:4d064bcab622ff41ca345ae935de73afa7b7dc1a55b72c959053ea5534af760e
+          pullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 64Mi
+          requests:
+            cpu: 5m
+            memory: 32Mi
+        probes:
+          liveness: &probe
+            enabled: true
+          readiness: *probe
+          startup: *probe
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+
+service:
+  vlmcsd:
+    controller: vlmcsd
+    ports:
+      kms:
+        port: 1688
+
+route:
+  vlmcsd:
+    enabled: true
+    kind: TCPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: vlmcsd
+    rules:
+      - backendRefs:
+          - name: vlmcsd
+            port: 1688

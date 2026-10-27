@@ -104,6 +104,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#trunk-recorder">trunk-recorder</a></li>
   <li><a href="#ultrafeeder">ultrafeeder</a></li>
   <li><a href="#vaultwarden">vaultwarden</a></li>
+  <li><a href="#vlmcsd">vlmcsd</a></li>
   <li><a href="#wheresmyscope">wheresmyscope</a></li>
   <li><a href="#wx">wx</a></li>
   <li><a href="#zot">zot</a></li>
@@ -1674,6 +1675,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/vaultwarden/resources/app/helm.yaml">vaultwarden</a></td>
     <td><a href="apps/vaultwarden/resources/app/postgres.yaml">postgresql</a></td>
+  </tr>
+</table>
+
+<h4>vlmcsd</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>vlmcsd</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/vlmcsd/resources/app/helm.yaml">vlmcsd</a></td>
+    <td></td>
   </tr>
 </table>
 

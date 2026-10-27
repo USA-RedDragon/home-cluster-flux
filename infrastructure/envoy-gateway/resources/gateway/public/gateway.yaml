@@ -67,6 +67,15 @@ spec:
           selector:
               matchLabels:
                   kubernetes.io/metadata.name: minecraft
+    - name: vlmcsd
+      protocol: TCP
+      port: 1688
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+              matchLabels:
+                  kubernetes.io/metadata.name: vlmcsd
     - name: http
       protocol: HTTP
       port: 80
