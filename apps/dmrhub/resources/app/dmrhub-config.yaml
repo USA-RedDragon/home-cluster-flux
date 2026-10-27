@@ -3,6 +3,12 @@ kind: ConfigMap
 metadata:
   name: dmrhub-config
   namespace: dmrhub
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    meta.helm.sh/release-name: dmrhub
+    meta.helm.sh/release-namespace: dmrhub
+    kustomize.toolkit.fluxcd.io/prune: disabled
 data:
   config.yaml: |
     dmr:
