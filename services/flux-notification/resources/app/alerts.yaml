@@ -521,6 +521,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: vaultwarden}
     - {kind: Kustomization, name: '*', namespace: vaultwarden}
     - {kind: OCIRepository, name: '*', namespace: vaultwarden}
+    - {kind: Kustomization, name: '*', namespace: vlmcsd}
+    - {kind: OCIRepository, name: '*', namespace: vlmcsd}
+    - {kind: GitRepository, name: '*', namespace: vlmcsd}
+    - {kind: HelmChart, name: '*', namespace: vlmcsd}
+    - {kind: HelmRelease, name: '*', namespace: vlmcsd}
+    - {kind: HelmRepository, name: '*', namespace: vlmcsd}
     - {kind: GitRepository, name: '*', namespace: wheresmyscope}
     - {kind: HelmChart, name: '*', namespace: wheresmyscope}
     - {kind: HelmRelease, name: '*', namespace: wheresmyscope}
