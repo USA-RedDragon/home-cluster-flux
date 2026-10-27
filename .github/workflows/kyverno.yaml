@@ -13,7 +13,7 @@ concurrency:
 jobs:
   kyverno:
     name: Kyverno
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       pull-requests: write
@@ -82,7 +82,7 @@ jobs:
 
   kyverno-success:
     name: Kyverno Successful
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [kyverno]
     if: ${{ always() }}
     steps:
