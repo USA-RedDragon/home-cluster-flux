@@ -5,8 +5,11 @@ defaultPodOptions:
 
 controllers:
   vlmcsd:
-    replicas: 1
-    strategy: Recreate
+    replicas: 3
+    strategy: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
     pod:
       labels:
         policy.mcswain.dev/egress-coredns: "true"
@@ -17,6 +20,17 @@ controllers:
         runAsGroup: 65534
         fsGroup: 65534
         fsGroupChangePolicy: OnRootMismatch
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          nodeTaintsPolicy: Honor
+          matchLabelKeys:
+            - pod-template-hash
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/instance: vlmcsd
+              app.kubernetes.io/controller: vlmcsd
     containers:
       vlmcsd:
         image:
