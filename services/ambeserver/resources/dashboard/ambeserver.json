@@ -1,7 +1,7 @@
 {
   "uid": "ambeserver",
   "title": "ambeserver",
-  "description": "ambeserver AMBE+2 vocoder: requests, reply time, drops, clients, resources and logs.",
+  "description": "ambeserver AMBE+2 vocoder: requests, reply time, drops, workers, conversion errors, clients, resources and logs.",
   "tags": [
     "ambeserver",
     "dmr"
@@ -1217,6 +1217,308 @@
     },
     {
       "type": "row",
+      "title": "Workers and conversions",
+      "collapsed": false,
+      "id": 31,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Workers",
+      "id": 32,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 33
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (pod) (ambeserver_workers_configured{namespace=\"ambeserver\", pod=~\"$pod\"})",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "{{pod}} configured"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (pod) (ambeserver_workers_available{namespace=\"ambeserver\", pod=~\"$pod\"})",
+          "refId": "B",
+          "range": true,
+          "instant": false,
+          "legendFormat": "{{pod}} available"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (pod) (ambeserver_workers_busy{namespace=\"ambeserver\", pod=~\"$pod\"})",
+          "refId": "C",
+          "range": true,
+          "instant": false,
+          "legendFormat": "{{pod}} busy"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0,
+          "unit": "short",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "description": "Worker goroutines that the configuration asks for, that run and take requests, and that answer requests at the scrape. Available below configured means the server is up but does not convert, and fires AmbeserverNoWorkers."
+    },
+    {
+      "type": "timeseries",
+      "title": "Worker utilization",
+      "id": 33,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 33
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (pod) (rate(ambeserver_worker_busy_seconds_total{namespace=\"ambeserver\", pod=~\"$pod\"}[$__rate_interval])) / sum by (pod) (ambeserver_workers_available{namespace=\"ambeserver\", pod=~\"$pod\"})",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "{{pod}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0,
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "description": "Share of the available worker time spent answering requests. Near 100% means the server is overloaded: add CPU, CLIENTS_WORKERS or replicas. Above 90% for 15m fires AmbeserverWorkersAllBusy."
+    },
+    {
+      "type": "timeseries",
+      "title": "Conversion errors",
+      "id": 34,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 33
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (direction, reason) (rate(ambeserver_conversion_errors_total{namespace=\"ambeserver\", pod=~\"$pod\"}[$__rate_interval]))",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "{{direction}} {{reason}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0,
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "description": "Channel (decode) and speech (encode) packets that the simulated chip refused, per second. bad_frame: fields, bits or samples it cannot use. bad_parameters: a channel it does not have, a rate it does not serve, or unsupported decoder flags. codec: a failed conversion, which is a server bug."
+    },
+    {
+      "type": "timeseries",
+      "title": "Timeouts and all-busy drops",
+      "id": 35,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 33
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (direction) (rate(ambeserver_conversion_timeouts_total{namespace=\"ambeserver\", pod=~\"$pod\"}[$__rate_interval]))",
+          "refId": "A",
+          "range": true,
+          "instant": false,
+          "legendFormat": "timeout {{direction}}"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum(rate(ambeserver_requests_late_total{namespace=\"ambeserver\", pod=~\"$pod\"}[$__rate_interval]))",
+          "refId": "B",
+          "range": true,
+          "instant": false,
+          "legendFormat": "late"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum(rate(ambeserver_requests_all_busy_total{namespace=\"ambeserver\", pod=~\"$pod\"}[$__rate_interval]))",
+          "refId": "C",
+          "range": true,
+          "instant": false,
+          "legendFormat": "dropped while all workers busy"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0,
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "description": "timeout: a conversion that started in time but whose reply was ready after clients.max-delay; the reply is still sent. late: a request dropped before its conversion started. dropped while all workers busy: late or full-queue drops while every worker was busy, a sign of overload."
+    },
+    {
+      "type": "row",
       "title": "Clients",
       "collapsed": false,
       "id": 19,
@@ -1224,7 +1526,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 41
       },
       "panels": []
     },
@@ -1240,7 +1542,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 33
+        "y": 42
       },
       "targets": [
         {
@@ -1313,7 +1615,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 33
+        "y": 42
       },
       "targets": [
         {
@@ -1385,7 +1687,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 33
+        "y": 42
       },
       "targets": [
         {
@@ -1446,7 +1748,7 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 33
+        "y": 42
       },
       "targets": [
         {
@@ -1505,7 +1807,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 50
       },
       "panels": []
     },
@@ -1521,7 +1823,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 42
+        "y": 51
       },
       "targets": [
         {
@@ -1624,7 +1926,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 42
+        "y": 51
       },
       "targets": [
         {
@@ -1726,7 +2028,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 42
+        "y": 51
       },
       "targets": [
         {
@@ -1813,7 +2115,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 50
+        "y": 59
       },
       "panels": []
     },
@@ -1829,7 +2131,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 51
+        "y": 60
       },
       "targets": [
         {
@@ -1867,7 +2169,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 51
+        "y": 60
       },
       "targets": [
         {
