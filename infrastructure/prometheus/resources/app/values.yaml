@@ -2308,6 +2308,13 @@ kube-state-metrics:
                       reason: [status, conditions, "[type=Ready]", reason]
                       suspended: [spec, suspend]
                       repository: [spec, repositoryRef, name]
+              - name: b2backup_scheduledbackup_consecutive_failures
+                help: Backup runs in a row that failed since the last success
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, consecutiveFailures]
+                    nilIsZero: true
           - groupVersionKind:
               group: b2backup.mcswain.dev
               version: v1
