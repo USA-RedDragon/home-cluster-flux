@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: vlmcsd
 resources:
   - helm.yaml
-  - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values
     files:
