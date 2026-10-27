@@ -7,7 +7,6 @@ resources:
   - securitypolicy.yaml
   - networkpolicy.yaml
   - webtransport.cert.yaml
-  - dmrhub-config.yaml
 configMapGenerator:
   - name: chart-values
     files:

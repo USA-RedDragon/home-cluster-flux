@@ -255,6 +255,19 @@ controllers:
                 name: dmrhub-plugins
                 key: locator-token
 
+configMaps:
+  config:
+    forceRename: dmrhub-config
+    includeChecksumInControllers:
+      - dmrhub
+    data:
+      config.yaml: |
+        dmr:
+          transcoding:
+            ambe-servers:
+              - address: ambeserver.ambeserver.svc.cluster.local:2460
+                calls: 0
+
 persistence:
   webtransport-tls:
     type: secret
@@ -264,7 +277,7 @@ persistence:
         readOnly: true
   config:
     type: configMap
-    name: dmrhub-config
+    identifier: config
     advancedMounts:
       dmrhub:
         dmrhub:
