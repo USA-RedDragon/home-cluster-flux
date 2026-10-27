@@ -7,8 +7,8 @@ spec:
   interval: 1h
   url: oci://ghcr.io/usa-reddragon/b2-backup-operator-manifests
   ref:
-    tag: v0.1.10
-    digest: sha256:3b3f27cf0c82953b0ed649f316f3fdb6093bd078300bb751e5912599413066e8
+    tag: v0.1.11
+    digest: sha256:c5f11fd85fecf15a5ebc5d9c8d6e7769148135a01b6b7d5fb205b745a21dbcb2
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization

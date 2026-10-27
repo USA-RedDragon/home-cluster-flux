@@ -56,8 +56,17 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: "ScheduledBackup {{ $labels.namespace }}/{{ $labels.name }} is not Ready ({{ $labels.reason }})"
+            summary: "ScheduledBackup {{ $labels.namespace }}/{{ $labels.name }} is misconfigured ({{ $labels.reason }})"
             description: "b2-backup-operator reports ScheduledBackup {{ $labels.namespace }}/{{ $labels.name }} Ready={{ $labels.ready }} with reason {{ $labels.reason }} for over 1h, so its CronJob may not be current or may not fire. Run: b2bk doctor -n {{ $labels.namespace }} sb/{{ $labels.name }}"
+        - alert: B2BackupFailing
+          expr: |
+            kube_customresource_b2backup_scheduledbackup_consecutive_failures >= 2
+              unless on (namespace, name) kube_customresource_b2backup_scheduledbackup_info{suspended="true"}
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup {{ $labels.namespace }}/{{ $labels.name }} failed {{ $value }} times in a row"
+            description: "The last {{ $value }} runs of ScheduledBackup {{ $labels.namespace }}/{{ $labels.name }} failed. Run: b2bk status -n {{ $labels.namespace }} sb/{{ $labels.name }}, then check the failed run's logs in Loki: {namespace=\"{{ $labels.namespace }}\", container=\"restic\"}"
         - alert: B2RepositoryNotReady
           expr: |
             kube_customresource_b2backup_repository_info{ready!="True", reason!="Suspended"}
