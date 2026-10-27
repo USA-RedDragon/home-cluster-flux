@@ -51,7 +51,7 @@ spec:
       patch: |
         - op: add
           path: /spec/template/spec/containers/0/args/-
-          value: --backup-image=jacob.pub/ghcr.io/usa-reddragon/restic:0.19.1@sha256:60d06496924c0d4decae15056c466f22532bf483e64c1978f65da9fe10033d02
+          value: --backup-image=jacob.pub/ghcr.io/usa-reddragon/restic:0.19.1@sha256:601d9480dbf8dd57c10289ea4891e55c24fede021c2ed9ae3284798451d1d40c
         - op: add
           path: /spec/template/metadata/labels/policy.mcswain.dev~1egress-kubeapi
           value: "true"
