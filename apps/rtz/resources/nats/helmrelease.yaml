@@ -54,7 +54,7 @@ spec:
             drop: [ALL]
       image:
         repository: jacob.pub/docker.io/nats
-        tag: 2.15.0-alpine@sha256:004796a89b7ad925027a01d69d175734403f5b3b98d49f4ed2c861e6f9aafec4
+        tag: 2.15.2-alpine@sha256:40861340fe033e5ade564f7449bae1e805021b2f2038e6a324de80f39c786bc1
       env:
         TOKEN:
           valueFrom:
