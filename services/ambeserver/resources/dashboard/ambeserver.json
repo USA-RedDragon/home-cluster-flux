@@ -754,7 +754,7 @@
           "sort": "desc"
         }
       },
-      "description": "Every request ends in one of these. late: waited over clients.max-delay. busy: the client already had four waiting. rate refused: asked for a rate other than 33 or 34. malformed: not a usable DVSI packet. rejected: no chip and no DVSI start byte."
+      "description": "Every request ends in one of these. late: waited over clients.max-delay. busy: the client already had four waiting. rate refused: asked for a rate other than 33 or 34. malformed: not a usable packet. rejected: no chip and no packet start byte."
     },
     {
       "type": "timeseries",
