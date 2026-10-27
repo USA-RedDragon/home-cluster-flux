@@ -30,4 +30,6 @@ spec:
       retries: -1
   upgrade:
     crds: CreateReplace
+    remediation:
+      retries: 3
 ---
