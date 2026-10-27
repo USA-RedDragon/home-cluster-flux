@@ -120,7 +120,7 @@ spec:
             severity: warning
           annotations:
             summary: "ambeserver refused {{ $value | humanize }} malformed requests in 15m"
-            description: "A client on {{ $labels.pod }} sends packets that are not usable DVSI packets. Find it with LOG_LEVEL=debug (\"Dropped a packet\") and fix the client."
+            description: "A client on {{ $labels.pod }} sends packets that are not usable packets. Find it with LOG_LEVEL=debug (\"Dropped a packet\") and fix the client."
 
         - alert: AmbeserverRateRefused
           expr: |
@@ -138,4 +138,35 @@ spec:
             severity: warning
           annotations:
             summary: "ambeserver rejected {{ $value | humanize }} datagrams in 15m"
-            description: "{{ $labels.pod }} got datagrams that do not start with the DVSI start byte from clients that have no chip. Only DMRHub can reach port 2460, so check its AMBE settings."
+            description: "{{ $labels.pod }} got datagrams that do not start with the packet start byte from clients that have no chip. Only DMRHub can reach port 2460, so check its AMBE settings."
+
+    - name: ambeserver-dmrhub
+      rules:
+        - alert: AmbeserverUnreachableFromDMRHub
+          expr: |
+            sum by (namespace) (increase(dmr_transcode_missed_seconds_total{namespace="dmrhub", reason="unreachable"}[5m])) > 10
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "DMRHub cannot reach the AMBE server"
+            description: "DMRHub lost {{ $value | humanize }}s of call audio in 5m because the AMBE server refused its requests or could not be reached. Calls between the two codecs are silent. Check the ambeserver pods, the service and the network policies."
+
+        - alert: AmbeserverConversionFailing
+          expr: |
+            sum by (namespace, reason) (increase(dmr_transcode_missed_seconds_total{namespace="dmrhub", reason=~"timeout|error|late"}[10m])) > 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "DMRHub lost {{ $value | humanize }}s of audio to {{ $labels.reason }} in 10m"
+            description: "AMBE server conversions fail with reason {{ $labels.reason }}. timeout: no answer in time. error: an error answer. late: the burst budget was over before the conversion. The missed audio goes out as silence. Check the ambeserver dashboard for drops, reply time and CPU throttling."
+
+        - alert: AmbeserverAllBusy
+          expr: |
+            sum by (namespace) (increase(dmr_transcode_missed_seconds_total{namespace="dmrhub", reason="busy"}[10m])) > 1
+          labels:
+            severity: warning
+          annotations:
+            summary: "Every AMBE server was busy for a DMRHub call"
+            description: "DMRHub found every AMBE server busy and did not convert {{ $value | humanize }}s of call audio in 10m. Raise the calls limit in the DMRHub transcoding settings or add AMBE server capacity."
