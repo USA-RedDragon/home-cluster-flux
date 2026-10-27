@@ -6,6 +6,7 @@ configMapGenerator:
     files:
       - ambeserver.json
     options:
+      disableNameSuffixHash: true
       labels:
         grafana_dashboard: "1"
       annotations:
