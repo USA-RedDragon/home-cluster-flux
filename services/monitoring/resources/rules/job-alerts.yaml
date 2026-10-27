@@ -10,10 +10,10 @@ spec:
         - alert: CronJobFailing
           expr: |
             (
-              (time() - kube_cronjob_status_last_successful_time{namespace!~"tfe"})
+              (time() - kube_cronjob_status_last_successful_time{namespace!~"tfe", cronjob!~".*(restic|backup).*"})
                 > clamp_min(2 * (kube_cronjob_next_schedule_time - kube_cronjob_status_last_schedule_time), 7200)
               or
-              (time() - kube_cronjob_created{namespace!~"tfe"})
+              (time() - kube_cronjob_created{namespace!~"tfe", cronjob!~".*(restic|backup).*"})
                 > clamp_min(2 * (kube_cronjob_next_schedule_time - kube_cronjob_status_last_schedule_time), 7200)
                 unless on (namespace, cronjob) kube_cronjob_status_last_successful_time
             )
