@@ -70,6 +70,43 @@ data:
         if not cont:
             break
     print(json.dumps({"msg": "cnpg backup prune", "deleted": deleted, "kept": kept, "max_age_days": MAX_AGE.days}))
+  unstick.py: |
+    import datetime, json, os, ssl, urllib.error, urllib.request
+
+    MIN_AGE = datetime.timedelta(minutes=int(os.environ.get("MIN_AGE_MINUTES", "60")))
+    STUCK = {"walArchivingFailing"}
+    SA = "/var/run/secrets/kubernetes.io/serviceaccount"
+    API = "https://kubernetes.default.svc/apis/postgresql.cnpg.io/v1"
+    TOKEN = open(f"{SA}/token").read()
+    CTX = ssl.create_default_context(cafile=f"{SA}/ca.crt")
+
+    def call(method, url):
+        req = urllib.request.Request(url, method=method, headers={"Authorization": f"Bearer {TOKEN}"})
+        with urllib.request.urlopen(req, context=CTX, timeout=60) as r:
+            return json.load(r)
+
+    now = datetime.datetime.now(datetime.timezone.utc)
+    deleted = []
+    cont = ""
+    while True:
+        page = call("GET", f"{API}/backups?limit=500" + (f"&continue={cont}" if cont else ""))
+        for b in page["items"]:
+            m = b["metadata"]
+            if b.get("status", {}).get("phase") not in STUCK:
+                continue
+            created = datetime.datetime.fromisoformat(m["creationTimestamp"].replace("Z", "+00:00"))
+            if now - created < MIN_AGE:
+                continue
+            try:
+                call("DELETE", f"{API}/namespaces/{m['namespace']}/backups/{m['name']}")
+            except urllib.error.HTTPError as e:
+                if e.code != 404:
+                    raise
+            deleted.append(f"{m['namespace']}/{m['name']}")
+        cont = page["metadata"].get("continue")
+        if not cont:
+            break
+    print(json.dumps({"msg": "cnpg backup unstick", "deleted": deleted}))
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -100,6 +137,54 @@ spec:
             - name: prune
               image: jacob.pub/docker.io/python:3.14-alpine@sha256:f6a589d43c42b9e7f7dc67a12d37132491f362859a5d750607710cc56da3bc72
               command: [python3, -u, /app/prune.py]
+              securityContext:
+                readOnlyRootFilesystem: true
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: [ALL]
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 128Mi
+              volumeMounts:
+                - name: app
+                  mountPath: /app
+          volumes:
+            - name: app
+              configMap:
+                name: backup-prune
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-unstick
+spec:
+  schedule: "*/30 * * * *"
+  timeZone: America/Chicago
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            policy.mcswain.dev/egress-kubeapi: "true"
+            policy.mcswain.dev/egress-coredns: "true"
+        spec:
+          serviceAccountName: backup-prune
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+          containers:
+            - name: unstick
+              image: jacob.pub/docker.io/python:3.14-alpine@sha256:f6a589d43c42b9e7f7dc67a12d37132491f362859a5d750607710cc56da3bc72
+              command: [python3, -u, /app/unstick.py]
               securityContext:
                 readOnlyRootFilesystem: true
                 allowPrivilegeEscalation: false

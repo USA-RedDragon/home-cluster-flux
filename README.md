@@ -427,10 +427,14 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td rowspan="2">cnpg-system</td>
+    <td rowspan="3">cnpg-system</td>
     <td><code>CronJob</code></td>
     <td><a href="infrastructure/cnpg/resources/backup-prune/backup-prune.yaml">backup-prune</a></td>
-    <td rowspan="2"></td>
+    <td rowspan="3"></td>
+  </tr>
+  <tr>
+    <td><code>CronJob</code></td>
+    <td><a href="infrastructure/cnpg/resources/backup-prune/backup-prune.yaml">backup-unstick</a></td>
   </tr>
   <tr>
     <td><code>HelmRelease</code></td>
