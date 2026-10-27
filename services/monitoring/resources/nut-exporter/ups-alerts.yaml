@@ -61,6 +61,25 @@ spec:
   scrapeInterval: 15s
   scrapeTimeout: 14s
 ---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: nut-worker
+  namespace: monitoring
+spec:
+  staticConfigs:
+    - targets: ["nut-exporter.monitoring.svc.cluster.local:9199"]
+      labels:
+        instance: rack-worker
+        job: nut-worker
+        ups: rack-worker
+  metricsPath: /ups_metrics
+  params:
+    server: ["192.168.1.135"]
+    ups: ["ups"]
+  scrapeInterval: 15s
+  scrapeTimeout: 14s
+---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -238,3 +257,70 @@ spec:
           annotations:
             summary: "Control-plane UPS not readable"
             description: "No data from the Home Assistant NUT add-on for 10m: the add-on is stopped or the AP9827 USB cable is out. Check: upsc ups@192.168.1.19."
+        - alert: WorkerUPSOnBattery
+          expr: network_ups_tools_ups_status{job="nut-worker", flag="OB"} == 1
+          for: 15s
+          labels:
+            severity: critical
+          annotations:
+            summary: "Mains is out: worker UPS on battery"
+            description: "The PR1500 carrying the NAS, alpha, beta and gamma is on battery. The NAS shuts everything down after 60 s on battery: {{ with query \"network_ups_tools_battery_runtime{job='nut-worker'}\" }}{{ . | first | value | humanizeDuration }}{{ end }} of runtime left."
+        - alert: WorkerUPSLowBattery
+          expr: |
+            network_ups_tools_ups_status{job="nut-worker", flag="LB"} == 1
+              and on(instance) network_ups_tools_ups_status{job="nut-worker", flag="OB"} == 1
+          labels:
+            severity: critical
+          annotations:
+            summary: "Worker UPS battery low on battery"
+            description: "The PR1500 is on battery with LB set. The NAS, alpha, beta and gamma lose power when it runs out."
+        - alert: WorkerUPSRuntimeShort
+          expr: |
+            avg_over_time(network_ups_tools_battery_runtime{job="nut-worker"}[30m]) < 480
+              and on(instance) network_ups_tools_ups_status{job="nut-worker", flag="OL"} == 1
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Worker UPS runtime only {{ $value | humanizeDuration }} on mains"
+            description: "The PR1500 estimates under 8 minutes of runtime at {{ with query \"network_ups_tools_ups_load{job='nut-worker'}\" }}{{ . | first | value }}{{ end }}% load while on mains. A clean shutdown needs 60 s of ride-through plus about 7 minutes for the Talos nodes, so the battery is worn or the load is too high."
+        - alert: WorkerUPSReplaceBattery
+          expr: network_ups_tools_ups_status{job="nut-worker", flag="RB"} == 1
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Worker UPS battery needs replacing"
+            description: "The PR1500 sets RB (replace battery)."
+        - alert: WorkerUPSLoadHigh
+          expr: network_ups_tools_ups_load{job="nut-worker"} > 80
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Worker UPS load at {{ $value }}%"
+            description: "The PR1500 (1500 W) has been above 80% load for 10m, which leaves too little runtime for a clean shutdown."
+        - alert: WorkerUPSBatteryNotCharging
+          expr: |
+            network_ups_tools_battery_charge{job="nut-worker"} < 90
+              and on(instance) network_ups_tools_ups_status{job="nut-worker", flag="OL"} == 1
+          for: 12h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Worker UPS battery stuck at {{ $value }}% on mains"
+            description: "The PR1500 has been on mains for 12h without recharging past 90%. The battery is probably worn out."
+        - alert: WorkerUPSUnreachable
+          expr: |
+            up{job="nut-worker"} == 0
+              or
+            absent(
+              network_ups_tools_ups_status{job="nut-worker", flag="OL"} == 1
+              or network_ups_tools_ups_status{job="nut-worker", flag="OB"} == 1
+            )
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Worker UPS not readable"
+            description: "No data from the TrueNAS NUT server for 10m: the UPS service is stopped, the USB cable is out, or the deny-nas-nut exemption broke. Check: upsc ups@192.168.1.135."

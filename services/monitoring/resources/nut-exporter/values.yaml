@@ -7,6 +7,8 @@ controllers:
   nut-exporter:
     replicas: 1
     pod:
+      labels:
+        policy.mcswain.dev/nas-nut: "true"
       securityContext:
         runAsUser: 65534
         runAsGroup: 65534
