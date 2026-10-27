@@ -114,6 +114,82 @@ spec:
             summary: "ambeserver p99 reply time is {{ $value | humanizeDuration }}"
             description: "{{ $labels.pod }} takes over 10ms to answer 1% of its requests, half of clients.max-delay (20ms). Usually CPU throttling or a busy node. Check the CPU panel on the ambeserver dashboard."
 
+        - alert: AmbeserverNoWorkers
+          expr: |
+            sum by (namespace, pod) (ambeserver_workers_available{namespace="ambeserver"})
+              < sum by (namespace, pod) (ambeserver_workers_configured{namespace="ambeserver"})
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "ambeserver has {{ $value }} workers available"
+            description: "{{ $labels.pod }} answers scrapes but fewer worker goroutines run than CLIENTS_WORKERS asks for, so it converts no queued requests. The UDP server stopped or is starting. Check the logs and restart the pod: {namespace=\"ambeserver\", pod=\"{{ $labels.pod }}\"}"
+
+        - alert: AmbeserverNotConverting
+          expr: |
+            sum by (namespace, pod) (rate(ambeserver_conversion_errors_total{namespace="ambeserver"}[5m])) > 0
+            and sum by (namespace, pod) (rate(ambeserver_frames_decoded_total{namespace="ambeserver"}[5m]) + rate(ambeserver_frames_encoded_total{namespace="ambeserver"}[5m])) == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "ambeserver refuses every conversion"
+            description: "{{ $labels.pod }} is up and gets channel and speech packets but refuses all of them, so calls through it are silent. The reason label of ambeserver_conversion_errors_total says why: bad_parameters is usually a client that set a rate other than 33 or 34, bad_frame a client that sends the wrong bit or sample count. Find the client with LOG_LEVEL=debug (\"Dropped a packet\")."
+
+        - alert: AmbeserverConversionErrors
+          expr: |
+            sum by (namespace, pod) (rate(ambeserver_conversion_errors_total{namespace="ambeserver"}[15m]))
+              / sum by (namespace, pod) (rate(ambeserver_conversion_errors_total{namespace="ambeserver"}[15m]) + rate(ambeserver_frames_decoded_total{namespace="ambeserver"}[15m]) + rate(ambeserver_frames_encoded_total{namespace="ambeserver"}[15m])) > 0.01
+            and sum by (namespace, pod) (increase(ambeserver_conversion_errors_total{namespace="ambeserver"}[15m])) > 20
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver refuses {{ $value | humanizePercentage }} of conversions"
+            description: "{{ $labels.pod }} refused more than 1% of its channel and speech packets for 10m. Split ambeserver_conversion_errors_total by direction and reason on the ambeserver dashboard, then find the client with LOG_LEVEL=debug (\"Dropped a packet\")."
+
+        - alert: AmbeserverCodecErrors
+          expr: |
+            sum by (namespace, pod, direction) (increase(ambeserver_conversion_errors_total{namespace="ambeserver", reason="codec"}[15m])) > 0
+          labels:
+            severity: critical
+          annotations:
+            summary: "ambeserver failed {{ $value | humanize }} {{ $labels.direction }} conversions"
+            description: "{{ $labels.pod }} parsed a packet but its conversion or reply failed. Valid input never does this, so it is an ambeserver bug. Save the logs with LOG_LEVEL=debug and report it: {namespace=\"ambeserver\", pod=\"{{ $labels.pod }}\"}"
+
+        - alert: AmbeserverConversionTimeouts
+          expr: |
+            sum by (namespace, pod) (rate(ambeserver_conversion_timeouts_total{namespace="ambeserver"}[10m]))
+              / sum by (namespace, pod) (rate(ambeserver_frames_decoded_total{namespace="ambeserver"}[10m]) + rate(ambeserver_frames_encoded_total{namespace="ambeserver"}[10m])) > 0.01
+            and sum by (namespace, pod) (increase(ambeserver_conversion_timeouts_total{namespace="ambeserver"}[10m])) > 20
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver finishes {{ $value | humanizePercentage }} of conversions after the deadline"
+            description: "{{ $labels.pod }} started more than 1% of its conversions in time but had the reply ready after clients.max-delay (20ms) for 10m. It still sends the reply, but the client may have given up on the frame. The conversion itself was slow: usually CPU throttling or a busy node. Check the CPU panel on the ambeserver dashboard."
+
+        - alert: AmbeserverWorkersAllBusy
+          expr: |
+            sum by (namespace, pod) (rate(ambeserver_worker_busy_seconds_total{namespace="ambeserver"}[5m]))
+              / sum by (namespace, pod) (ambeserver_workers_available{namespace="ambeserver"}) > 0.9
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver workers are {{ $value | humanizePercentage }} busy"
+            description: "The workers of {{ $labels.pod }} spent more than 90% of their time answering requests for 15m, so new requests wait and start to drop as late. The server is overloaded, not broken. Check CPU throttling, then raise CLIENTS_WORKERS, the CPU, or the replicas."
+
+        - alert: AmbeserverDroppedAllBusy
+          expr: |
+            sum by (namespace, pod) (increase(ambeserver_requests_all_busy_total{namespace="ambeserver"}[10m])) > 20
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ambeserver dropped {{ $value | humanize }} requests while every worker was busy"
+            description: "{{ $labels.pod }} dropped requests as late or with a full client queue while every worker was busy, in 10m. The server is overloaded. Check CPU throttling and the worker utilization panel, then raise CLIENTS_WORKERS, the CPU, or the replicas."
+
         - alert: AmbeserverMalformedRequests
           expr: increase(ambeserver_requests_malformed_total{namespace="ambeserver"}[15m]) > 10
           labels:
