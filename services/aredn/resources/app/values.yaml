@@ -195,25 +195,13 @@ configMaps:
         events {
           worker_connections 64;
         }
-        http {
-          client_body_temp_path /tmp/client_body;
-          proxy_temp_path /tmp/proxy;
-          fastcgi_temp_path /tmp/fastcgi;
-          uwsgi_temp_path /tmp/uwsgi;
-          scgi_temp_path /tmp/scgi;
+        stream {
+          # AREDN reads sysinfo.json over IPv6 link-local and sends the zone in the Host header,
+          # which nginx http rejects (400), so answer it here without parsing the request.
           server {
             listen 8080;
             listen [::]:8080;
-            server_name _;
-            access_log off;
-            error_log /dev/stderr;
-            location = /cgi-bin/sysinfo.json {
-              default_type application/json;
-              return 200 '{"api_version":"2.0","node":"KI5VMF-KUBERNETES","node_details":{"model":"Kubernetes pod","firmware_version":"n/a"}}';
-            }
-            location / {
-              return 404;
-            }
+            return 'HTTP/1.0 200 OK\r\nContent-Type: application/json\r\nContent-Length: 115\r\nConnection: close\r\n\r\n{"api_version":"2.0","node":"KI5VMF-KUBERNETES","node_details":{"model":"Kubernetes pod","firmware_version":"n/a"}}';
           }
         }
   server-babel-config:
