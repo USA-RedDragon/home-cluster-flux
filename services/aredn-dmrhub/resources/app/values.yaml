@@ -207,10 +207,12 @@ configMaps:
             proxy_pass ipsc;
           }
 
-          # AREDN reads sysinfo.json over IPv6 link-local and sends the zone in the Host header,
+          # AREDN reads node info over IPv6 link-local (4.26.7: :8080/cgi-bin/sysinfo.json, 4.26.10: :80/a/sysinfo)
+          # and sends the zone in the Host header,
           # which nginx http rejects (400), so answer it here without parsing the request.
           server {
             listen [::]:8080;
+            listen [::]:80;
             return 'HTTP/1.0 200 OK\r\nContent-Type: application/json\r\nContent-Length: 111\r\nConnection: close\r\n\r\n{"api_version":"2.0","node":"KI5VMF-DMRHUB","node_details":{"model":"Kubernetes pod","firmware_version":"n/a"}}';
           }
         }
