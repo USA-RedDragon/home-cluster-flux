@@ -186,6 +186,12 @@ service:
       wg:
         port: 51820
         protocol: UDP
+      metrics-tunnel:
+        port: 9101
+        protocol: TCP
+      metrics-supernode:
+        port: 9102
+        protocol: TCP
 configMaps:
   nginx-config:
     forceRename: nginx-config
@@ -196,6 +202,15 @@ configMaps:
           worker_connections 64;
         }
         stream {
+          # Prometheus reaches the AREDN nodes' /cgi-bin/metrics over the mesh through these relays.
+          server {
+            listen 9101;
+            proxy_pass 10.54.25.2:8080;
+          }
+          server {
+            listen 9102;
+            proxy_pass 10.54.25.3:8080;
+          }
           # AREDN reads sysinfo.json over IPv6 link-local and sends the zone in the Host header,
           # which nginx http rejects (400), so answer it here without parsing the request.
           server {

@@ -33,3 +33,24 @@ spec:
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: aredn
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: prometheus-aredn-metrics
+  namespace: aredn
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: wireguard-tunnel
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9101"
+              protocol: TCP
+            - port: "9102"
+              protocol: TCP
