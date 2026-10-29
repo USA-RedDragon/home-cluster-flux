@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: minio
+resources:
+  - networkpolicy.yaml
+  - iam-job.yaml
+  - mirror-job.yaml
+configMapGenerator:
+  - name: squallar-basemap-iam
+    files:
+      - iam.sh
+      - squallar-basemap-rw.json=../../policies/squallar-basemap-rw.json
+      - squallar-basemap-read.json=../../policies/squallar-basemap-read.json
+  - name: squallar-basemap-mirror
+    files:
+      - mirror.sh

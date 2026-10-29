@@ -1,0 +1,81 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: squallar-basemap-mirror
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: Enabled
+spec:
+  backoffLimit: 6
+  activeDeadlineSeconds: 43200
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: squallar-basemap-mirror
+    spec:
+      restartPolicy: OnFailure
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mirror
+          image: jacob.pub/docker.io/rclone/rclone:1.75.2@sha256:2687085f718d3c628f7fdfb77c52a1d344332aed543110bb88088f2c70d43eb5
+          command:
+            - /bin/sh
+            - /scripts/mirror.sh
+          env:
+            - name: HOME
+              value: /tmp
+            - name: XDG_CONFIG_HOME
+              value: /tmp
+            - name: XDG_CACHE_HOME
+              value: /tmp
+            - name: RCLONE_CONFIG
+              value: /dev/null
+            - name: RCLONE_CONFIG_MINIO_TYPE
+              value: s3
+            - name: RCLONE_CONFIG_MINIO_PROVIDER
+              value: Minio
+            - name: RCLONE_CONFIG_MINIO_ENDPOINT
+              value: http://minio.minio.svc:9000
+            - name: RCLONE_CONFIG_MINIO_NO_CHECK_BUCKET
+              value: "true"
+            - name: RCLONE_CONFIG_MINIO_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: squallar-basemap-writer
+                  key: accesskey
+            - name: RCLONE_CONFIG_MINIO_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: squallar-basemap-writer
+                  key: secretkey
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              cpu: 250m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: scripts
+          configMap:
+            name: squallar-basemap-mirror
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
