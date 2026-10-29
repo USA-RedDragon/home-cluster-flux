@@ -101,7 +101,19 @@ controllers:
           limits:
             memory: 2Gi
         probes:
-          liveness: &serverProbe
+          # aim server handles one message at a time: a big write (a new run's first metrics, an import) blocks it for up to a
+          #   minute, and a 10 s x 3 liveness probe killed it mid-training on 2026-10-29 (exit 137, trainers lost their run locks)
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /client/get-version/
+                port: 53800
+              periodSeconds: 60
+              timeoutSeconds: 60
+              failureThreshold: 10
+          readiness:
             enabled: true
             custom: true
             spec:
@@ -109,9 +121,8 @@ controllers:
                 path: /client/get-version/
                 port: 53800
               periodSeconds: 30
-              timeoutSeconds: 10
-              failureThreshold: 3
-          readiness: *serverProbe
+              timeoutSeconds: 30
+              failureThreshold: 6
           startup:
             enabled: true
             custom: true
