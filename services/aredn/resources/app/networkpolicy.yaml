@@ -21,6 +21,15 @@ spec:
       - ports:
           - port: "5588"
             protocol: UDP
+  - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: minio
+          app.kubernetes.io/instance: minio
+          app.kubernetes.io/name: minio
+    toPorts:
+      - ports:
+          - port: "9000"
+            protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy

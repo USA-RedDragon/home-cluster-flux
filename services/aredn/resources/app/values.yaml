@@ -174,6 +174,9 @@ controllers:
             drop: ["ALL"]
           seccompProfile:
             type: RuntimeDefault
+        envFrom:
+        - secretRef:
+            name: tiles-s3-reader
         resources:
           limits:
             memory: 16Mi
@@ -199,7 +202,10 @@ configMaps:
     forceRename: nginx-config
     data:
       nginx-config: |-
+        load_module /etc/nginx/modules/ngx_http_js_module.so;
         pid /tmp/nginx.pid;
+        env TILES_S3_ACCESS_KEY;
+        env TILES_S3_SECRET_KEY;
         events {
           worker_connections 64;
         }
@@ -223,6 +229,114 @@ configMaps:
             return 'HTTP/1.0 200 OK\r\nContent-Type: application/json\r\nContent-Length: 115\r\nConnection: close\r\n\r\n{"api_version":"2.0","node":"KI5VMF-KUBERNETES","node_details":{"model":"Kubernetes pod","firmware_version":"n/a"}}';
           }
         }
+        # The Squallar basemap mirror in MinIO, for mesh clients only: IPv4 port 80 on the node IP.
+        # br-wan drops port 80 in the pod firewall and no Service exposes it.
+        http {
+          access_log /dev/stdout;
+          server_tokens off;
+          js_import tiles from /etc/nginx/tiles-s3.js;
+          js_set $tiles_amz_date tiles.amzDate;
+          js_set $tiles_s3_auth tiles.authorization;
+          resolver 127.0.0.1 valid=60s ipv6=off;
+          resolver_timeout 5s;
+          map $request_uri $tiles_cache_control {
+            ~^/tiles/status/ "public, max-age=60";
+            default "public, max-age=604800, immutable";
+          }
+          server {
+            listen 80;
+            if ($server_addr != 10.54.25.4) {
+              return 444;
+            }
+            location ~ ^/tiles/((?:basemap|status)/[A-Za-z0-9._-]+)$ {
+              set $tiles_s3_host minio.minio.svc.cluster.local:9000;
+              set $tiles_s3_path /squallar-basemap/$1;
+              if ($request_method = OPTIONS) {
+                add_header Access-Control-Allow-Origin * always;
+                add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
+                add_header Access-Control-Allow-Headers $http_access_control_request_headers always;
+                add_header Access-Control-Max-Age 86400 always;
+                return 204;
+              }
+              if ($request_method !~ ^(GET|HEAD)$) {
+                return 405;
+              }
+              add_header Access-Control-Allow-Origin * always;
+              add_header Access-Control-Expose-Headers "Content-Range, Content-Length, Accept-Ranges, ETag" always;
+              add_header Cache-Control $tiles_cache_control;
+              proxy_pass_request_headers off;
+              proxy_pass_request_body off;
+              proxy_set_header Host $tiles_s3_host;
+              proxy_set_header Authorization $tiles_s3_auth;
+              proxy_set_header X-Amz-Date $tiles_amz_date;
+              proxy_set_header X-Amz-Content-Sha256 UNSIGNED-PAYLOAD;
+              proxy_set_header Range $http_range;
+              proxy_set_header If-Range $http_if_range;
+              proxy_set_header If-Match $http_if_match;
+              proxy_set_header If-None-Match $http_if_none_match;
+              proxy_set_header If-Modified-Since $http_if_modified_since;
+              proxy_set_header Connection "";
+              proxy_http_version 1.1;
+              proxy_buffering off;
+              proxy_connect_timeout 5s;
+              proxy_hide_header Cache-Control;
+              proxy_hide_header Strict-Transport-Security;
+              proxy_hide_header Vary;
+              proxy_hide_header X-Amz-Bucket-Region;
+              proxy_hide_header X-Amz-Id-2;
+              proxy_hide_header X-Amz-Request-Id;
+              proxy_hide_header X-Ratelimit-Limit;
+              proxy_hide_header X-Ratelimit-Remaining;
+              proxy_pass http://minio.minio.svc.cluster.local:9000$tiles_s3_path;
+            }
+            location / {
+              return 404;
+            }
+          }
+        }
+      tiles-s3.js: |-
+        const crypto = require('crypto');
+
+        function hmac(key, data) {
+          return crypto.createHmac('sha256', key).update(data).digest();
+        }
+
+        function amzDate(r) {
+          return new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+        }
+
+        function authorization(r) {
+          const v = r.variables;
+          const date = v.tiles_amz_date;
+          const day = date.slice(0, 8);
+          const scope = day + '/us-east-1/s3/aws4_request';
+          const canonical = [
+            r.method,
+            v.tiles_s3_path,
+            '',
+            'host:' + v.tiles_s3_host,
+            'x-amz-content-sha256:UNSIGNED-PAYLOAD',
+            'x-amz-date:' + date,
+            '',
+            'host;x-amz-content-sha256;x-amz-date',
+            'UNSIGNED-PAYLOAD',
+          ].join('\n');
+          const toSign = [
+            'AWS4-HMAC-SHA256',
+            date,
+            scope,
+            crypto.createHash('sha256').update(canonical).digest('hex'),
+          ].join('\n');
+          let key = hmac('AWS4' + process.env.TILES_S3_SECRET_KEY, day);
+          key = hmac(key, 'us-east-1');
+          key = hmac(key, 's3');
+          key = hmac(key, 'aws4_request');
+          const signature = crypto.createHmac('sha256', key).update(toSign).digest('hex');
+          return 'AWS4-HMAC-SHA256 Credential=' + process.env.TILES_S3_ACCESS_KEY + '/' + scope +
+            ', SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=' + signature;
+        }
+
+        export default { amzDate, authorization };
   server-babel-config:
     forceRename: server-babel-config
     data:
@@ -263,6 +377,9 @@ persistence:
         nginx:
         - path: /etc/nginx/nginx.conf
           subPath: nginx-config
+          readOnly: true
+        - path: /etc/nginx/tiles-s3.js
+          subPath: tiles-s3.js
           readOnly: true
   nginx-tmp:
     type: emptyDir
