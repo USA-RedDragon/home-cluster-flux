@@ -157,6 +157,27 @@ controllers:
         - name: wg
           containerPort: 51820
           protocol: UDP
+      nginx:
+        image:
+          repository: jacob.pub/docker.io/nginx
+          tag: mainline-alpine@sha256:8b1e78743a03dbb2c95171cc58639fef29abc8816598e27fb910ed2e621e589a
+          pullPolicy: IfNotPresent
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 101
+          runAsGroup: 101
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+        resources:
+          limits:
+            memory: 16Mi
+          requests:
+            cpu: 5m
+            memory: 4Mi
 service:
   app:
     forceRename: wireguard-tunnel-app
@@ -166,6 +187,35 @@ service:
         port: 51820
         protocol: UDP
 configMaps:
+  nginx-config:
+    forceRename: nginx-config
+    data:
+      nginx-config: |-
+        pid /tmp/nginx.pid;
+        events {
+          worker_connections 64;
+        }
+        http {
+          client_body_temp_path /tmp/client_body;
+          proxy_temp_path /tmp/proxy;
+          fastcgi_temp_path /tmp/fastcgi;
+          uwsgi_temp_path /tmp/uwsgi;
+          scgi_temp_path /tmp/scgi;
+          server {
+            listen 8080;
+            listen [::]:8080;
+            server_name _;
+            access_log off;
+            error_log /dev/stderr;
+            location = /cgi-bin/sysinfo.json {
+              default_type application/json;
+              return 200 '{"api_version":"2.0","node":"KI5VMF-KUBERNETES","node_details":{"model":"Kubernetes pod","firmware_version":"n/a"}}';
+            }
+            location / {
+              return 404;
+            }
+          }
+        }
   server-babel-config:
     forceRename: server-babel-config
     data:
@@ -198,6 +248,23 @@ configMaps:
         install ip 44.0.0.0/8 ge 24 allow table 20
         install ip 0.0.0.0/0 ge 0 deny
 persistence:
+  nginx-config:
+    type: configMap
+    name: nginx-config
+    advancedMounts:
+      wireguard-tunnel:
+        nginx:
+        - path: /etc/nginx/nginx.conf
+          subPath: nginx-config
+          readOnly: true
+  nginx-tmp:
+    type: emptyDir
+    advancedMounts:
+      wireguard-tunnel:
+        nginx:
+        - path: /tmp
+        - path: /var/cache/nginx
+          subPath: cache
   server-wireguard-config:
     type: secret
     name: server-wireguard-config

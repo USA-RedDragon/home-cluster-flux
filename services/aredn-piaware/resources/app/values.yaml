@@ -207,9 +207,15 @@ configMaps:
           }
           server {
             listen 8080;
+            listen [::]:8080;
             server_name _;
             access_log /dev/stdout;
             error_log /dev/stderr;
+
+            location = /cgi-bin/sysinfo.json {
+              default_type application/json;
+              return 200 '{"api_version":"2.0","node":"KI5VMF-ADSB-SKYAWARE","node_details":{"model":"Kubernetes pod","firmware_version":"n/a"}}';
+            }
 
             location / {
               return 301 http://$host$request_uri;
