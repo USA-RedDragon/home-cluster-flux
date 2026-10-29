@@ -123,7 +123,7 @@ controllers:
           ip rule add pref 140 lookup 27 && \
           ip rule add pref 150 lookup 28 && \
           ip rule add pref 160 lookup 22 && \
-          ip -6 addr add fe80::200:aff:fe36:1904/64 dev wgc1 && \
+          ip -6 addr add $(ip -4 -o addr show dev wgc1 | awk '{split($4,a,"/"); split(a[1],o,"."); printf "fe80::200:%xff:fe%02x:%02x%02x/64", o[1], o[2], o[3], o[4]}') dev wgc1 && \
           iptables -A INPUT -i br-wan -p udp --dport 51820 -j ACCEPT && \
           ip6tables -A INPUT -i br-wan -p udp --dport 51820 -j ACCEPT && \
           iptables -A FORWARD -i lan -o br-wan -j DROP && \
