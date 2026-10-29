@@ -1,0 +1,199 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  aim:
+    replicas: 1
+    strategy: Recreate
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    initContainers:
+      init:
+        image: &image
+          repository: jacob.pub/docker.io/aimstack/aim
+          tag: 3.29.1@sha256:e74587a7e49610644a65830de3b14877dc899bf75196a16a0b25c359c5480635
+          pullPolicy: IfNotPresent
+        args:
+          - init
+          - --repo
+          - /aim
+          - --skip-if-exists
+        env: &env
+          HOME: /tmp
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 512Mi
+        securityContext: &securityContext
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    containers:
+      ui:
+        image: *image
+        args:
+          - up
+          - --host
+          - 0.0.0.0
+          - --port
+          - "43800"
+          - --repo
+          - /aim
+        env: *env
+        resources:
+          requests:
+            cpu: 50m
+            memory: 512Mi
+          limits:
+            memory: 4Gi
+        probes:
+          liveness: &uiProbe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /api/projects/
+                port: 43800
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 3
+          readiness: *uiProbe
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /api/projects/
+                port: 43800
+              periodSeconds: 5
+              timeoutSeconds: 10
+              failureThreshold: 60
+        securityContext: *securityContext
+      server:
+        image: *image
+        args:
+          - server
+          - --host
+          - 0.0.0.0
+          - --port
+          - "53800"
+          - --repo
+          - /aim
+        env: *env
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits:
+            memory: 2Gi
+        probes:
+          liveness: &serverProbe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /client/get-version/
+                port: 53800
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 3
+          readiness: *serverProbe
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /client/get-version/
+                port: 53800
+              periodSeconds: 5
+              timeoutSeconds: 10
+              failureThreshold: 60
+        securityContext: *securityContext
+
+service:
+  aim:
+    controller: aim
+    ports:
+      http:
+        port: 43800
+      tracking:
+        port: 53800
+
+# The web UI is on the tailnet only. The tracking server is LAN-only on the internal gateway.
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: aim
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: aim
+              port: http
+    tls:
+      - hosts:
+          - aim
+
+route:
+  tracking:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - aim.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: aim
+            port: 53800
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+        timeouts:
+          request: 24h
+          backendRequest: 23h
+
+persistence:
+  data:
+    type: persistentVolumeClaim
+    retain: true
+    storageClass: longhorn-nvme
+    accessMode: ReadWriteOnce
+    size: 20Gi
+    advancedMounts:
+      aim:
+        init:
+          - path: /aim
+        ui:
+          - path: /aim
+        server:
+          - path: /aim
+  tmp:
+    type: emptyDir
+    advancedMounts:
+      aim:
+        init:
+          - path: /tmp
+        ui:
+          - path: /tmp
+        server:
+          - path: /tmp

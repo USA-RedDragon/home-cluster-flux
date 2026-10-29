@@ -1,0 +1,50 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: aim
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: aim-ingress
+  namespace: aim
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: aim
+      app.kubernetes.io/instance: aim
+      app.kubernetes.io/name: aim
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: aim
+            tailscale.com/parent-resource-ns: aim
+      toPorts:
+        - ports:
+            - port: "43800"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: internal
+      toPorts:
+        - ports:
+            - port: "53800"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: gigalearn
+        - matchLabels:
+            io.kubernetes.pod.namespace: rl-farm
+      toPorts:
+        - ports:
+            - port: "53800"
+              protocol: TCP
