@@ -20,7 +20,7 @@ controllers:
       init:
         image: &image
           repository: jacob.pub/docker.io/aimstack/aim
-          tag: 3.29.1@sha256:e74587a7e49610644a65830de3b14877dc899bf75196a16a0b25c359c5480635
+          tag: 4.0.3@sha256:f5d25eb0db8bf5d3d8bcab71ec38820041ca498d93cb56b2598937fdbe0c9a32
           pullPolicy: IfNotPresent
         args:
           - init
