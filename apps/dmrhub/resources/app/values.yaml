@@ -94,7 +94,9 @@ controllers:
           - name: NETWORK_NAME
             value: "Official DMRHub"
           - name: HTTP_ROBOTS_TXT_MODE
-            value: "allow"
+            value: "custom"
+          - name: HTTP_ROBOTS_TXT_CONTENT
+            value: "User-agent: *\nAllow: /\nSitemap: https://dmrhub.net/docs/sitemap.xml"
           # - name: METRICS_OTLP_ENDPOINT
           #   value: signoz-k8s-infra-otel-agent.signoz.svc.cluster.local:4317
           - name: DMR_OPENBRIDGE_ENABLED
@@ -204,6 +206,48 @@ controllers:
               secretKeyRef:
                 name: dmrhub-plugins
                 key: parrot-token
+  docs:
+    replicas: 2
+    strategy: RollingUpdate
+    pod:
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+    containers:
+      docs:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub-docs
+          tag: v1.3.27@sha256:f8b6ddb229eff132224a01562c7b5228146a5a10896cba761cafc672ef75351a
+          pullPolicy: IfNotPresent
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          limits:
+            memory: 64Mi
+          requests:
+            cpu: 10m
+            memory: 16Mi
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 8080
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 8080
   locator:
     annotations:
       reloader.stakater.com/auto: "true"
@@ -286,6 +330,11 @@ persistence:
             readOnly: true
 
 service:
+  docs:
+    controller: docs
+    ports:
+      http:
+        port: 8080
   dmrhub:
     controller: dmrhub
     ports:
@@ -327,6 +376,26 @@ route:
           - path:
               type: PathPrefix
               value: /
+  dmrhub-docs:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - dmrhub.net
+    rules:
+      - backendRefs:
+          - identifier: docs
+            port: 8080
+        matches:
+          - path:
+              type: Exact
+              value: /
+          - path:
+              type: PathPrefix
+              value: /docs
   dmrhub-redirects:
     enabled: true
     kind: HTTPRoute
