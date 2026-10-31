@@ -8,7 +8,11 @@ controllers:
     strategy: Recreate
     pod:
       enableServiceLinks: true
+      labels:
+        policy.mcswain.dev/egress-internet: "true"
       securityContext:
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
         sysctls:
         - name: net.ipv4.conf.all.src_valid_mark
           value: '1'
@@ -159,6 +163,45 @@ controllers:
         - name: wg
           containerPort: 51820
           protocol: UDP
+      # Userspace subnet router: tailnet clients reach the mesh through this pod's wgc1 tunnel.
+      tailscale:
+        image:
+          repository: jacob.pub/ghcr.io/tailscale/tailscale
+          tag: v1.104.4@sha256:ed6480b33c6eb67c9cbd203ed42b9fb57e361986725b6856def71b7a3d9e276c
+          pullPolicy: IfNotPresent
+        env:
+        - name: TS_HOSTNAME
+          value: aredn-mesh
+        - name: TS_ROUTES
+          value: 10.0.0.0/8
+        - name: TS_USERSPACE
+          value: "true"
+        - name: TS_ACCEPT_DNS
+          value: "false"
+        - name: TS_KUBE_SECRET
+          value: ""
+        - name: TS_STATE_DIR
+          value: /var/lib/tailscale/state
+        - name: TS_SOCKET
+          value: /tmp/tailscaled.sock
+        - name: HOME
+          value: /tmp
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 568
+          runAsGroup: 568
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 48Mi
       nginx:
         image:
           repository: jacob.pub/docker.io/nginx
@@ -369,6 +412,23 @@ configMaps:
         install ip 44.0.0.0/8 ge 24 allow table 20
         install ip 0.0.0.0/0 ge 0 deny
 persistence:
+  tailscale-state:
+    type: persistentVolumeClaim
+    forceRename: tailscale-state
+    retain: true
+    storageClass: longhorn-ssd
+    accessMode: ReadWriteOnce
+    size: 128Mi
+    advancedMounts:
+      wireguard-tunnel:
+        tailscale:
+        - path: /var/lib/tailscale
+  tailscale-tmp:
+    type: emptyDir
+    advancedMounts:
+      wireguard-tunnel:
+        tailscale:
+        - path: /tmp
   nginx-config:
     type: configMap
     name: nginx-config
