@@ -34,3 +34,14 @@ spec:
           annotations:
             summary: "Job {{ $labels.namespace }}/{{ $labels.job_name }} failed"
             description: "A Job not created by a CronJob failed. Delete it after checking its logs to clear this alert."
+        - alert: KubeJobNotCompleted
+          expr: |
+            time() - max by (namespace, job_name) (
+              kube_job_status_start_time{namespace!~"tfe|rl-farm|folding-at-home"}
+                and kube_job_status_active{namespace!~"tfe|rl-farm|folding-at-home"} > 0
+            ) > 43200
+          labels:
+            severity: warning
+          annotations:
+            summary: "Job {{ $labels.namespace }}/{{ $labels.job_name }} has run for over 12 hours"
+            description: "Job {{ $labels.namespace }}/{{ $labels.job_name }} started {{ $value | humanizeDuration }} ago and is still active. rl-farm and folding-at-home are excluded because their Jobs run long by design."

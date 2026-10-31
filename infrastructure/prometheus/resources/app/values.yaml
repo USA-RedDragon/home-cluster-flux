@@ -155,6 +155,9 @@ defaultRules:
     # (services/monitoring/etcd-alerts.yaml).
     etcdDatabaseHighFragmentationRatio: true
     KubeJobFailed: true
+    KubeJobNotCompleted: true
+    NodeCPUHighUsage: true
+    NodeSystemSaturation: true
   # KubeAPIDown: true
   # NodeRAIDDegraded: true
 
@@ -2351,6 +2354,18 @@ prometheus-node-exporter:
     ##
     jobLabel: node-exporter
   releaseLabel: true
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+  livenessProbe:
+    periodSeconds: 20
+    timeoutSeconds: 5
+    failureThreshold: 6
+  readinessProbe:
+    timeoutSeconds: 5
   extraArgs:
     - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
     - --collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$
