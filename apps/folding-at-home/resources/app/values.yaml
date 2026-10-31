@@ -2,7 +2,7 @@
 
 defaultPodOptions:
   automountServiceAccountToken: false
-  priorityClassName: folding-at-home
+  priorityClassName: folding-at-home-event
   terminationGracePeriodSeconds: 60
 
 controllers:
@@ -56,7 +56,7 @@ controllers:
             memory: 3Gi
   gpu:
     type: statefulset
-    replicas: 1
+    replicas: 2
     statefulset:
       podManagementPolicy: Parallel
       volumeClaimTemplates:

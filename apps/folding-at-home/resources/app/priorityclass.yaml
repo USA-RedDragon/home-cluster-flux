@@ -5,3 +5,11 @@ metadata:
 value: -1000
 preemptionPolicy: Never
 globalDefault: false
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: folding-at-home-event
+value: 0
+preemptionPolicy: Never
+globalDefault: false
