@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+# The ballchasing.com replay downloader of the Rocket League bot (rlrl tools/replays/download.py, image built from
+#   tools/replays/Dockerfile): downloads GC+ 1v1, 2v2 and 3v3 replays round-robin into the MinIO bucket rl-replays
+#   (raw/<folder>/<id>.replay.zst + .json) for as long as it runs. One replica: the API keys' hourly budgets are per key.
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  rl-replay-downloader:
+    replicas: 1
+    strategy: Recreate
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    containers:
+      app:
+        image:
+          repository: jacob.pub/pub/rl-replay-downloader
+          tag: b065c00e@sha256:cc59992b84dc64cbb80c25b371a3fc52621f03c27ba9479541f88d5e3ff3d0d7
+          pullPolicy: IfNotPresent
+        env:
+          # download.py reads the API keys from $HOME/.config/ballchasing.key and ballchasing-2.key
+          HOME: /home/app
+          RL_REPLAYS_S3_ENDPOINT: http://minio.minio.svc.cluster.local:9000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            memory: 2Gi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+
+persistence:
+  # Rate logs (the keys' hourly budgets across restarts), the day-listing cache and the bucket index cache
+  data:
+    type: persistentVolumeClaim
+    retain: true
+    storageClass: longhorn-nvme
+    accessMode: ReadWriteOnce
+    size: 20Gi
+    advancedMounts:
+      rl-replay-downloader:
+        app:
+          - path: /app/data/replays
+  secrets:
+    type: secret
+    name: rl-replay-downloader
+    advancedMounts:
+      rl-replay-downloader:
+        app:
+          - path: /secrets/writer.json
+            subPath: writer.json
+            readOnly: true
+          - path: /home/app/.config/ballchasing.key
+            subPath: ballchasing.key
+            readOnly: true
+          - path: /home/app/.config/ballchasing-2.key
+            subPath: ballchasing-2.key
+            readOnly: true
+  tmp:
+    type: emptyDir
+    advancedMounts:
+      rl-replay-downloader:
+        app:
+          - path: /tmp

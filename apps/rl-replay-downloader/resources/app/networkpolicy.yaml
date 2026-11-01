@@ -1,0 +1,51 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: rl-replay-downloader
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+# No ingress. Egress: DNS, ballchasing.com's API (its file downloads come from the same host, no redirect) and MinIO's S3 port
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: rl-replay-downloader-egress
+  namespace: rl-replay-downloader
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: rl-replay-downloader
+      app.kubernetes.io/instance: rl-replay-downloader
+      app.kubernetes.io/name: rl-replay-downloader
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "**.cluster.local"
+              - matchName: "ballchasing.com"
+    - toFQDNs:
+        - matchName: "ballchasing.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: minio
+            app.kubernetes.io/instance: minio
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP

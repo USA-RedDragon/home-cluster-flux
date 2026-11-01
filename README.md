@@ -91,6 +91,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#reloader">reloader</a></li>
   <li><a href="#renovate-ce">renovate-ce</a></li>
   <li><a href="#reticulum">reticulum</a></li>
+  <li><a href="#rl-replay-downloader">rl-replay-downloader</a></li>
   <li><a href="#rmfakecloud">rmfakecloud</a></li>
   <li><a href="#rtl-433">rtl-433</a></li>
   <li><a href="#rtz">rtz</a></li>
@@ -1460,6 +1461,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/reticulum/resources/app/helm.yaml">reticulum</a></td>
+  </tr>
+</table>
+
+<h4>rl-replay-downloader</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>rl-replay-downloader</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/rl-replay-downloader/resources/app/helm.yaml">rl-replay-downloader</a></td>
+    <td></td>
   </tr>
 </table>
 

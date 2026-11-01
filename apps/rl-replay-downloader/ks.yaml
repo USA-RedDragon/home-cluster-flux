@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: rl-replay-downloader
+  namespace: rl-replay-downloader
+spec:
+  interval: 1h
+  targetNamespace: rl-replay-downloader
+  path: ./apps/rl-replay-downloader/resources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    namespace: flux-system
+    name: flux-system

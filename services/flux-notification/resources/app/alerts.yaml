@@ -437,6 +437,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: reticulum}
     - {kind: Kustomization, name: '*', namespace: reticulum}
     - {kind: OCIRepository, name: '*', namespace: reticulum}
+    - {kind: GitRepository, name: '*', namespace: rl-replay-downloader}
+    - {kind: HelmChart, name: '*', namespace: rl-replay-downloader}
+    - {kind: HelmRelease, name: '*', namespace: rl-replay-downloader}
+    - {kind: HelmRepository, name: '*', namespace: rl-replay-downloader}
+    - {kind: Kustomization, name: '*', namespace: rl-replay-downloader}
+    - {kind: OCIRepository, name: '*', namespace: rl-replay-downloader}
     - {kind: GitRepository, name: '*', namespace: rmfakecloud}
     - {kind: HelmChart, name: '*', namespace: rmfakecloud}
     - {kind: HelmRelease, name: '*', namespace: rmfakecloud}
