@@ -179,6 +179,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: external-dns-internal}
     - {kind: Kustomization, name: '*', namespace: external-dns-internal}
     - {kind: OCIRepository, name: '*', namespace: external-dns-internal}
+    - {kind: GitRepository, name: '*', namespace: fah}
+    - {kind: HelmChart, name: '*', namespace: fah}
+    - {kind: HelmRelease, name: '*', namespace: fah}
+    - {kind: HelmRepository, name: '*', namespace: fah}
+    - {kind: Kustomization, name: '*', namespace: fah}
+    - {kind: OCIRepository, name: '*', namespace: fah}
     - {kind: GitRepository, name: '*', namespace: flux-system}
     - {kind: HelmChart, name: '*', namespace: flux-system}
     - {kind: HelmRelease, name: '*', namespace: flux-system}
