@@ -56,7 +56,7 @@ spec:
                 actions.github.com/scale-set-name: squallar-runner-set-heavy
         containers:
         - name: runner
-          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner-squallar:2.338.1@sha256:626bf4a7ccafe52e8b6209c3911de206c713217ca7c39647153574b35994d106
+          image: jacob.pub/ghcr.io/usa-reddragon/arc-runner-squallar:2.338.2@sha256:b170af03d819afe257975eef8b663d276675e762afc371a74e33c8fcd6823333
           command: ["/home/runner/run.sh"]
           env:
             - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
