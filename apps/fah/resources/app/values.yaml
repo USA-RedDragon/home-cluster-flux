@@ -20,7 +20,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/fah-dashboard
-          tag: beta@sha256:ef1b875b14e5ff9b25fb65014c927accc979b5591d0a2b4f6ea9b9caf6137fc4
+          tag: beta@sha256:0c66d3658dd4eb6c6ed04f43fafc42c6907aea8b47262154b884fc93885b1499
           pullPolicy: IfNotPresent
         env:
           DATABASE: /data/fah.db
