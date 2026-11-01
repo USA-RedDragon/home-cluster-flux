@@ -24,7 +24,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/pub/rl-replay-downloader
-          tag: b065c00e@sha256:cc59992b84dc64cbb80c25b371a3fc52621f03c27ba9479541f88d5e3ff3d0d7
+          tag: a677a950@sha256:f46835bd00aa5a54dd04e6ec813b9b6897ba4b692877cac2a2c69499a93c9615
           pullPolicy: IfNotPresent
         env:
           # download.py reads the API keys from $HOME/.config/ballchasing.key and ballchasing-2.key
