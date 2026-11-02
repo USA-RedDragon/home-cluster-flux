@@ -12,7 +12,7 @@ controllers:
       apprise:
         image:
           repository: jacob.pub/lscr.io/linuxserver/apprise-api
-          tag: 2.0.2@sha256:43bd5d9912aae31341b33cec9a08f137241ef2468f67f04dac2e41870ddfbeed
+          tag: 2.0.2@sha256:9aa26811ca489c4b450575bdc6dda6c4033f83d6383629854c5486a79b164ed8
         env:
           APPRISE_STATEFUL_MODE: simple
           APPRISE_CONFIG_LOCK: "yes"
