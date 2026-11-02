@@ -20,9 +20,10 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/fah-dashboard
-          tag: beta@sha256:d08025d94d6a889f01c69ba4f86a5ab308f7a7a3e4dadf87e1820fd437139e70
+          tag: beta@sha256:d96385692fb29b0b744f888e39ba83b94a6d3d135837fc36a90ffa3ed21abbc0
           pullPolicy: IfNotPresent
         env:
+          COLLECT_ALIASES: "Alex Atkin UK=Alex_Atkin,AlexTheLion2001=AlexTheLion,AndrewZScorpion=Andrew_Scorpion,Dr. Will0hlep=will0hlep,KadsykadsII=Kadsykads,Roflwaffle17=roflwaffle,nomeansno2=NoMeansNo,jontsku1=Jontsku,mynamejeff45=MyNameJeff,Darth Wilhelm=Darthwilhelm"
           DATABASE: /data/fah.db
           HOME: /tmp
         resources:
