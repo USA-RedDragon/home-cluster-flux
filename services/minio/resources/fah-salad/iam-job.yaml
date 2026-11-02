@@ -38,6 +38,7 @@ spec:
                 secretKeyRef:
                   name: fah-salad-writer
                   key: secretkey
+          envFrom:
             - secretRef:
                 name: minio-user
           securityContext:
