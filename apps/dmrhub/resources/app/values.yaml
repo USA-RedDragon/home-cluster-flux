@@ -220,7 +220,7 @@ controllers:
       docs:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub-docs
-          tag: main@sha256:09bb349fc777ad6deae7327a99b2bd9cebb0b4a841ba7b70576fe74cfaaca015
+          tag: main@sha256:b57f4902a24f72c7244c1c78978b6c5a4890e4b91d5b4458ad886199856af9f9
           pullPolicy: IfNotPresent
         securityContext:
           readOnlyRootFilesystem: true
