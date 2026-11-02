@@ -23,7 +23,7 @@ controllers:
           tag: beta@sha256:9ccc9c6af03b8b6a8a39d2571f8d648eacf8d42b40c351cc8991f309c332a0f3
           pullPolicy: IfNotPresent
         env:
-          COLLECT_ALIASES: "Alex Atkin UK=Alex_Atkin,AlexTheLion2001=AlexTheLion,AndrewZScorpion=Andrew_Scorpion,Dr. Will0hlep=will0hlep,KadsykadsII=Kadsykads,Roflwaffle17=roflwaffle,nomeansno2=NoMeansNo,jontsku1=Jontsku,mynamejeff45=MyNameJeff,Darth Wilhelm=Darthwilhelm"
+          COLLECT_ALIASES: "Alex Atkin UK=Alex_Atkin,AlexTheLion2001=AlexTheLion,AndrewZScorpion=Andrew_Scorpion,Dr. Will0hlep=will0hlep,KadsykadsII=Kadsykads,Roflwaffle17=roflwaffle,nomeansno2=NoMeansNo,jontsku1=Jontsku,mynamejeff45=MyNameJeff,Darth Wilhelm=Darthwilhelm,Mihali=MihaliT,tyler0178=tyler178,gunther29=GUNTHER,Renegades77=Renegade77"
           DATABASE: /data/fah.db
           HOME: /tmp
         resources:
