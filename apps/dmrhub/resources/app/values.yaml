@@ -8,10 +8,12 @@ controllers:
     replicas: 2
     strategy: RollingUpdate
     rollingUpdate:
-      unavailable: 0
+      unavailable: "0%"
       surge: 1
+    podDisruptionBudget:
+      minAvailable: 1
     pod:
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 70
       securityContext:
         runAsUser: 65534
         runAsGroup: 65534
@@ -24,6 +26,10 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
           tag: v1.3.27@sha256:386779da26ebfe9b7021cabb4e456c16e1e4672d5c2880abbbbc0bd1890631ef
           pullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
+            sleep:
+              seconds: 10
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
@@ -209,7 +215,13 @@ controllers:
   docs:
     replicas: 2
     strategy: RollingUpdate
+    rollingUpdate:
+      unavailable: "0%"
+      surge: 1
+    podDisruptionBudget:
+      minAvailable: 1
     pod:
+      terminationGracePeriodSeconds: 30
       securityContext:
         runAsUser: 65534
         runAsGroup: 65534
@@ -222,6 +234,10 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub-docs
           tag: main@sha256:fcde8b3d18889ce59755eef2a1d2064e2f5538c59928d4d5485ca85ac351bfd4
           pullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
+            sleep:
+              seconds: 10
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false

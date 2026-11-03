@@ -18,3 +18,24 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: chart-values
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: apps
+              version: v1
+              kind: Deployment
+              name: dmrhub
+            patch: |
+              - op: add
+                path: /spec/minReadySeconds
+                value: 5
+          - target:
+              group: apps
+              version: v1
+              kind: Deployment
+              name: dmrhub-docs
+            patch: |
+              - op: add
+                path: /spec/minReadySeconds
+                value: 5

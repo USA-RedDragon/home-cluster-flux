@@ -8,8 +8,12 @@ controllers:
     replicas: 2
     strategy: RollingUpdate
     rollingUpdate:
-      unavailable: 1
+      unavailable: "0%"
+      surge: 1
+    podDisruptionBudget:
+      minAvailable: 1
     pod:
+      terminationGracePeriodSeconds: 30
       securityContext:
         runAsUser: 101
         runAsGroup: 101
@@ -20,6 +24,10 @@ controllers:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmr-web
           tag: main@sha256:e2a79c56bb62d8332f1a484785a94799cfb73b227305ac6c682da1b51fc4185e
           pullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
+            sleep:
+              seconds: 10
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
