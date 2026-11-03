@@ -72,13 +72,13 @@ controllers:
           limits:
             memory: 8Gi
         probes:
-          # The dashboard rejects any Host that is not loopback, so probe the socket, not HTTP
+          # The dashboard listens on loopback only, so the kubelet can't reach it; probe from inside the container
           liveness: &hermesProbe
             enabled: true
             custom: true
             spec:
-              tcpSocket:
-                port: 9119
+              exec:
+                command: ["curl", "-sf", "-o", "/dev/null", "http://127.0.0.1:9119/"]
               periodSeconds: 30
               timeoutSeconds: 10
               failureThreshold: 5
@@ -87,8 +87,8 @@ controllers:
             enabled: true
             custom: true
             spec:
-              tcpSocket:
-                port: 9119
+              exec:
+                command: ["curl", "-sf", "-o", "/dev/null", "http://127.0.0.1:9119/"]
               periodSeconds: 5
               timeoutSeconds: 5
               failureThreshold: 120
