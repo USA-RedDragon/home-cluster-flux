@@ -20,10 +20,10 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/fah-dashboard
-          tag: beta@sha256:749e8d969359f69cfc90807b633d2013dead45c2bdff4480f16fb0498cfa8d0c
+          tag: beta@sha256:f82cce9f10a991a7c91e258a4e41f1ac447e35c4a4c8d764f1a5990872d7bb08
           pullPolicy: IfNotPresent
         env:
-          COLLECT_ALIASES: "Alex Atkin UK=Alex_Atkin,AlexTheLion2001=AlexTheLion,AndrewZScorpion=Andrew_Scorpion,Dr. Will0hlep=will0hlep,KadsykadsII=Kadsykads,Roflwaffle17=roflwaffle,nomeansno2=NoMeansNo,jontsku1=Jontsku,mynamejeff45=MyNameJeff,Darth Wilhelm=Darthwilhelm,Mihali=MihaliT,tyler0178=tyler178,gunther29=GUNTHER,Renegades77=Renegade77"
+          COLLECT_ALIASES: "Alex Atkin UK=Alex_Atkin,AlexTheLion2001=AlexTheLion,AndrewZScorpion=Andrew_Scorpion,Dr. Will0hlep=will0hlep,KadsykadsII=Kadsykads,Roflwaffle17=roflwaffle,nomeansno2=NoMeansNo,jontsku1=Jontsku,mynamejeff45=MyNameJeff,Darth Wilhelm=Darthwilhelm,Mihali=MihaliT,tyler0178=tyler178,gunther29=GUNTHER,Renegades77=Renegade77,HayesK=HayesK_ALL_18SjyNbF8VdXaNAFCVfG4rAHUyvtdmoFvX,Thehetland=Hetland,Average Nerd=Avg_Nerd,Your_Neko_Waifu=YourNekoWaifu,YourNekoWaifu=YourNekoWaifu,K1N5L4Y3R=K1N5L4Y3R_NZ,Dissitesuxba11s=Disdoesntsukba11s,Simon_Harvey2000=Simon,spacepickle=spickle,NeoToby=neotoby"
           DATABASE: /data/fah.db
           HOME: /tmp
         resources:
