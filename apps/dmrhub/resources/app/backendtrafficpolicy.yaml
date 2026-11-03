@@ -1,0 +1,46 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: rollout-retries
+  namespace: dmrhub
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: dmrhub
+  mergeType: StrategicMerge
+  retry:
+    numRetries: 2
+    retryOn:
+      triggers:
+        - connect-failure
+        - refused-stream
+        - reset-before-request
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: rollout-static-retries
+  namespace: dmrhub
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: dmrhub-dmrhub-assets
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: dmrhub-dmrhub-docs
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: radio
+  mergeType: StrategicMerge
+  retry:
+    numRetries: 2
+    retryOn:
+      triggers:
+        - connect-failure
+        - refused-stream
+        - reset-before-request
+        - retriable-status-codes
+      httpStatusCodes:
+        - 404

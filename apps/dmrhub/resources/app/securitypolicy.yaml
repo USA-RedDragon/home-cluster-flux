@@ -8,6 +8,9 @@ spec:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       name: dmrhub
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: dmrhub-dmrhub-assets
   extAuth:
     failOpen: true
     headersToExtAuth: [cookie, user-agent, accept, accept-language, accept-encoding, authorization, origin, x-envoy-external-address]

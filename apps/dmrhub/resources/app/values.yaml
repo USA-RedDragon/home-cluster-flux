@@ -392,6 +392,23 @@ route:
           - path:
               type: PathPrefix
               value: /
+  dmrhub-assets:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: public
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - dmrhub.net
+    rules:
+      - backendRefs:
+          - name: dmrhub
+            port: 3005
+        matches:
+          - path:
+              type: PathPrefix
+              value: /assets
   dmrhub-docs:
     enabled: true
     kind: HTTPRoute
