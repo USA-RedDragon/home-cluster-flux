@@ -54,6 +54,56 @@ controllers:
             type: RuntimeDefault
           capabilities:
             drop: ["ALL"]
+      # One gateway per home. As a native sidecar it takes the lock before the dashboard starts, so the dashboard
+      #   attaches to it instead of spawning its own, and it serves the API that hermes-workspace talks to
+      gateway:
+        dependsOn: init
+        restartPolicy: Always
+        image: *image
+        command:
+          - /opt/hermes/.venv/bin/hermes
+          - gateway
+          - run
+          - --no-supervise
+          - --external-supervisor
+        workingDir: /opt/data/hermes
+        env:
+          <<: *env
+          API_SERVER_HOST: 0.0.0.0
+          API_SERVER_PORT: "8642"
+          API_SERVER_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: hermes-api
+                key: API_SERVER_KEY
+        resources:
+          requests:
+            cpu: 50m
+            memory: 512Mi
+          limits:
+            memory: 8Gi
+        probes:
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8642
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 120
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8642
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 5
+        securityContext: *securityContext
     containers:
       hermes:
         image: *image
@@ -118,6 +168,68 @@ controllers:
                 port: 8080
           readiness: *proxyProbe
         securityContext: *securityContext
+  # A separate pod: everything it needs from Hermes goes over the gateway API and the dashboard API.
+  #   Its memory and config editors read local files, so they don't work here; use the dashboard for those
+  workspace:
+    replicas: 1
+    strategy: Recreate
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    containers:
+      workspace:
+        image:
+          repository: jacob.pub/ghcr.io/outsourc-e/hermes-workspace
+          tag: main-c631425@sha256:1ec05339750da7caaf1cd0183c8c3b188856918b377407b4ac1dafca67e42d88
+          pullPolicy: IfNotPresent
+        env:
+          HOST: 0.0.0.0
+          PORT: "3000"
+          # No login on purpose: the tailnet and the network policy are the access control
+          HERMES_ALLOW_INSECURE_REMOTE: "1"
+          HERMES_API_URL: http://hermes.hermes.svc.cluster.local:8642
+          HERMES_DASHBOARD_URL: http://hermes.hermes.svc.cluster.local:8080
+          HERMES_API_TOKEN:
+            valueFrom:
+              secretKeyRef:
+                name: hermes-api
+                key: API_SERVER_KEY
+          HOME: /app/.runtime/home
+          HERMES_HOME: /app/.runtime/hermes
+          HERMES_WORKSPACE_DIR: /app/.runtime/workspace
+        resources:
+          requests:
+            cpu: 20m
+            memory: 256Mi
+          limits:
+            memory: 3Gi
+        probes:
+          liveness: &workspaceProbe
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 3000
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 3
+          readiness: *workspaceProbe
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 3000
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 60
+        securityContext: *securityContext
 
 service:
   hermes:
@@ -125,11 +237,19 @@ service:
     ports:
       http:
         port: 8080
+      api:
+        port: 8642
+  workspace:
+    controller: workspace
+    ports:
+      http:
+        port: 3000
 
-# The web UI is on the tailnet only
+# The web UIs are on the tailnet only
 ingress:
   tailscale:
     enabled: true
+    forceRename: hermes
     className: tailscale
     hosts:
       - host: hermes
@@ -142,6 +262,21 @@ ingress:
     tls:
       - hosts:
           - hermes
+  workspace:
+    enabled: true
+    forceRename: hermes-workspace
+    className: tailscale
+    hosts:
+      - host: hermes-workspace
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: workspace
+              port: http
+    tls:
+      - hosts:
+          - hermes-workspace
 
 configMaps:
   managed:
@@ -233,6 +368,7 @@ configMaps:
 persistence:
   data:
     type: persistentVolumeClaim
+    forceRename: hermes
     retain: true
     storageClass: longhorn-nvme
     accessMode: ReadWriteOnce
@@ -241,8 +377,20 @@ persistence:
       hermes:
         init:
           - path: /opt/data
+        gateway:
+          - path: /opt/data
         hermes:
           - path: /opt/data
+  workspace:
+    type: persistentVolumeClaim
+    retain: true
+    storageClass: longhorn-nvme
+    accessMode: ReadWriteOnce
+    size: 2Gi
+    advancedMounts:
+      workspace:
+        workspace:
+          - path: /app/.runtime
   ssh:
     type: secret
     name: hermes-ssh
@@ -257,11 +405,13 @@ persistence:
     advancedMounts:
       hermes:
         hermes:
-          - path: /etc/hermes-managed
+          - &managed
+            path: /etc/hermes-managed
             readOnly: true
         init:
-          - path: /etc/hermes-managed
-            readOnly: true
+          - *managed
+        gateway:
+          - *managed
   config:
     type: configMap
     identifier: config
@@ -278,6 +428,9 @@ persistence:
             path: /etc/group
             subPath: group
             readOnly: true
+        gateway:
+          - *passwd
+          - *group
         hermes:
           - *passwd
           - *group
@@ -291,7 +444,12 @@ persistence:
       hermes:
         init:
           - path: /tmp
+        gateway:
+          - path: /tmp
         hermes:
           - path: /tmp
         proxy:
+          - path: /tmp
+      workspace:
+        workspace:
           - path: /tmp
