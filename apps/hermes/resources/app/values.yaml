@@ -1,0 +1,295 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  hermes:
+    replicas: 1
+    strategy: Recreate
+    pod:
+      # The image's s6 entrypoint needs root, so hermes runs as PID 1's child here; the pause container reaps zombies
+      shareProcessNamespace: true
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    initContainers:
+      init:
+        image: &image
+          repository: jacob.pub/docker.io/nousresearch/hermes-agent
+          tag: v0.22.7@sha256:e6d81ae52ebf6a43efa529701405509f20054ba818f179ddd748bed4f8af584c
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -ec
+          - |
+            install -d -m 700 /opt/data/.ssh /opt/data/home
+            install -m 600 /ssh/id_ed25519 /opt/data/.ssh/id_ed25519
+            install -m 644 /ssh/known_hosts /opt/data/.ssh/known_hosts
+            install -m 600 /config/ssh_config /opt/data/.ssh/config
+            /opt/hermes/.venv/bin/python /opt/hermes/tools/skills_sync.py || echo "skills_sync failed; continuing"
+        env: &env
+          HOME: /opt/data
+          USER: hermes
+          HERMES_HOME: /opt/data
+          HERMES_MANAGED_DIR: /etc/hermes-managed
+          HERMES_API_TIMEOUT: "1800"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 128Mi
+          limits:
+            memory: 1Gi
+        securityContext: &securityContext
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+    containers:
+      hermes:
+        image: *image
+        command:
+          - /opt/hermes/.venv/bin/hermes
+          - dashboard
+          - --host
+          - 127.0.0.1
+          - --port
+          - "9119"
+          - --no-open
+        workingDir: /opt/data
+        env: *env
+        resources:
+          requests:
+            cpu: 100m
+            memory: 1Gi
+          limits:
+            memory: 8Gi
+        probes:
+          # The dashboard rejects any Host that is not loopback, so probe the socket, not HTTP
+          liveness: &hermesProbe
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 9119
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 5
+          readiness: *hermesProbe
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 9119
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 120
+        securityContext: *securityContext
+      # The dashboard demands a login on any non-loopback bind. It stays on loopback, and this proxy presents
+      #   tailnet requests as loopback ones; the tailnet and the network policy are the only access control
+      proxy:
+        image:
+          repository: jacob.pub/docker.io/nginxinc/nginx-unprivileged
+          tag: 1.31-alpine@sha256:b9241c6e7b8e9a862f129d8d4199ab64b10390949a78bdd5603379b32c844083
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 128Mi
+        probes:
+          liveness: &proxyProbe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+          readiness: *proxyProbe
+        securityContext: *securityContext
+
+service:
+  hermes:
+    controller: hermes
+    ports:
+      http:
+        port: 8080
+
+# The web UI is on the tailnet only
+ingress:
+  tailscale:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: hermes
+        paths:
+        - path: /
+          pathType: Prefix
+          service:
+              identifier: hermes
+              port: http
+    tls:
+      - hosts:
+          - hermes
+
+configMaps:
+  managed:
+    data:
+      # Pinned on top of /opt/data/config.yaml; settings changed in the dashboard persist on the PVC
+      config.yaml: |
+        model:
+          default: qwen3.8:27b
+          provider: custom
+          base_url: http://192.168.0.184:11434/v1
+          context_length: 131072
+        terminal:
+          backend: ssh
+          cwd: /home/hermes
+          ssh_host: sim-linux
+          ssh_user: hermes
+          ssh_key: /opt/data/.ssh/id_ed25519
+        browser:
+          chromium_args:
+            - --no-sandbox
+            - --disable-dev-shm-usage
+        mcp_servers:
+          rea:
+            command: ssh
+            args:
+              - sim-linux
+              - env
+              - HOPPER_LAUNCHER_PATH=/opt/hopper/bin/Hopper
+              - npx
+              - -y
+              - rea-agents@6.8.0
+              - mcp
+            enabled: true
+        auth:
+          adopt_external_logins: false
+        updates:
+          check: false
+  config:
+    data:
+      # OpenSSH needs a passwd entry for the running uid
+      passwd: |
+        root:x:0:0:root:/root:/bin/sh
+        hermes:x:568:568:hermes:/opt/data:/bin/bash
+        nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+      group: |
+        root:x:0:
+        hermes:x:568:
+        nogroup:x:65534:
+      ssh_config: |
+        Host sim-linux
+          HostName 192.168.0.184
+          User hermes
+          IdentityFile /opt/data/.ssh/id_ed25519
+          IdentitiesOnly yes
+          UserKnownHostsFile /opt/data/.ssh/known_hosts
+          StrictHostKeyChecking yes
+          BatchMode yes
+          ServerAliveInterval 30
+      nginx.conf: |
+        pid /tmp/nginx.pid;
+        events {}
+        http {
+          access_log off;
+          client_body_temp_path /tmp/cb; proxy_temp_path /tmp/p; fastcgi_temp_path /tmp/f;
+          uwsgi_temp_path /tmp/u; scgi_temp_path /tmp/s;
+          map $http_upgrade $connection_upgrade {
+            default upgrade;
+            '' close;
+          }
+          server {
+            listen 8080;
+            client_max_body_size 512m;
+            location = /healthz { return 200 "ok\n"; }
+            location / {
+              proxy_pass http://127.0.0.1:9119;
+              proxy_http_version 1.1;
+              proxy_set_header Host 127.0.0.1:9119;
+              proxy_set_header Origin http://127.0.0.1:9119;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection $connection_upgrade;
+              proxy_set_header X-Forwarded-For "";
+              proxy_buffering off;
+              proxy_read_timeout 24h;
+              proxy_send_timeout 24h;
+            }
+          }
+        }
+
+persistence:
+  data:
+    type: persistentVolumeClaim
+    retain: true
+    storageClass: longhorn-nvme
+    accessMode: ReadWriteOnce
+    size: 40Gi
+    advancedMounts:
+      hermes:
+        init:
+          - path: /opt/data
+        hermes:
+          - path: /opt/data
+  ssh:
+    type: secret
+    name: hermes-ssh
+    advancedMounts:
+      hermes:
+        init:
+          - path: /ssh
+            readOnly: true
+  managed:
+    type: configMap
+    identifier: managed
+    advancedMounts:
+      hermes:
+        hermes:
+          - path: /etc/hermes-managed
+            readOnly: true
+        init:
+          - path: /etc/hermes-managed
+            readOnly: true
+  config:
+    type: configMap
+    identifier: config
+    advancedMounts:
+      hermes:
+        init:
+          - path: /config
+            readOnly: true
+          - &passwd
+            path: /etc/passwd
+            subPath: passwd
+            readOnly: true
+          - &group
+            path: /etc/group
+            subPath: group
+            readOnly: true
+        hermes:
+          - *passwd
+          - *group
+        proxy:
+          - path: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+            readOnly: true
+  tmp:
+    type: emptyDir
+    advancedMounts:
+      hermes:
+        init:
+          - path: /tmp
+        hermes:
+          - path: /tmp
+        proxy:
+          - path: /tmp

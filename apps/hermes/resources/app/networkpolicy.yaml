@@ -1,0 +1,97 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: hermes
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: hermes
+  namespace: hermes
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: hermes
+      app.kubernetes.io/instance: hermes
+      app.kubernetes.io/name: hermes
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: hermes
+            tailscale.com/parent-resource-ns: hermes
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+    # sim-linux: Ollama, and SSH for the shell and MCP servers
+    - toCIDR:
+        - 192.168.0.184/32
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
+            - port: "22"
+              protocol: TCP
+    # The browser and web tools
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
+        - cidr: ::/0
+          except:
+            - fc00::/7
+            - fe80::/10
+            - ff00::/8
+---
+# The b2-backup-operator's restic-init Job can't carry the policy.mcswain.dev egress labels (a Repository has no podLabels),
+# so under default-deny it gets the same DNS and internet egress here
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: restic-init-egress
+  namespace: hermes
+spec:
+  endpointSelector:
+    matchLabels:
+      batch.kubernetes.io/job-name: restic-init
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
+        - cidr: ::/0
+          except:
+            - fc00::/7
+            - fe80::/10
+            - ff00::/8

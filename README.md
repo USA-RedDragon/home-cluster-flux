@@ -56,6 +56,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#gitea">gitea</a></li>
   <li><a href="#golink">golink</a></li>
   <li><a href="#gpu-operator">gpu-operator</a></li>
+  <li><a href="#hermes">hermes</a></li>
   <li><a href="#http-logger">http-logger</a></li>
   <li><a href="#imagescraper-mesonet">imagescraper-mesonet</a></li>
   <li><a href="#imagescraper-sfro-allsky">imagescraper-sfro-allsky</a></li>
@@ -718,6 +719,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>DaemonSet</code></td>
     <td><a href="infrastructure/gpu-operator/resources/power-limit/daemonset.yaml">gpu-power-limit</a></td>
+  </tr>
+</table>
+
+<h4>hermes</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>hermes</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/hermes/resources/app/helm.yaml">hermes</a></td>
+    <td></td>
   </tr>
 </table>
 

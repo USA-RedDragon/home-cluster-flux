@@ -221,6 +221,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: gpu-operator}
     - {kind: Kustomization, name: '*', namespace: gpu-operator}
     - {kind: OCIRepository, name: '*', namespace: gpu-operator}
+    - {kind: GitRepository, name: '*', namespace: hermes}
+    - {kind: HelmChart, name: '*', namespace: hermes}
+    - {kind: HelmRelease, name: '*', namespace: hermes}
+    - {kind: HelmRepository, name: '*', namespace: hermes}
+    - {kind: Kustomization, name: '*', namespace: hermes}
+    - {kind: OCIRepository, name: '*', namespace: hermes}
     - {kind: GitRepository, name: '*', namespace: home-ipv6}
     - {kind: HelmChart, name: '*', namespace: home-ipv6}
     - {kind: HelmRelease, name: '*', namespace: home-ipv6}
