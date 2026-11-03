@@ -141,6 +141,13 @@ config:
             - 9.234.106.48/28
             - 2a0a:a440::/29
             - 2606:50c0::/32
+      mcswain-whitelists-fah-salad.yaml: |
+        name: mcswain/whitelists-fah-salad
+        description: "Salad folding nodes saving state: rclone checks for not-yet-saved files answer 404 and looked like probing"
+        whitelist:
+          reason: "fah-salad state sync"
+          expression:
+            - evt.Meta.target_fqdn == 's3.mcswain.dev' && evt.Meta.http_user_agent startsWith 'rclone/' && evt.Meta.http_path startsWith '/fah-salad/'
 
   scenarios:
     mcswain-envoy-l4-flood.yaml: |
