@@ -168,8 +168,9 @@ controllers:
                 port: 8080
           readiness: *proxyProbe
         securityContext: *securityContext
-  # A separate pod: everything it needs from Hermes goes over the gateway API and the dashboard API.
-  #   Its memory and config editors read local files, so they don't work here; use the dashboard for those
+  # A separate pod that talks only to the gateway API. Given the dashboard URL, it creates new chats through the
+  #   dashboard, and those sessions belong to the dashboard's TUI, so every API turn into them is refused
+  #   (permission_denied) and the UI spins. Skills, MCP, memory and config are edited in the dashboard instead
   workspace:
     replicas: 1
     strategy: Recreate
@@ -194,7 +195,6 @@ controllers:
           # No login on purpose: the tailnet and the network policy are the access control
           HERMES_ALLOW_INSECURE_REMOTE: "1"
           HERMES_API_URL: http://hermes.hermes.svc.cluster.local:8642
-          HERMES_DASHBOARD_URL: http://hermes.hermes.svc.cluster.local:8080
           HERMES_API_TOKEN:
             valueFrom:
               secretKeyRef:

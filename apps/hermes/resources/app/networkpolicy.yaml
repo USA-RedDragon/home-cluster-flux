@@ -32,14 +32,12 @@ spec:
             - port: "8080"
               protocol: TCP
     - fromEndpoints:
-        - matchLabels: &workspace
+        - matchLabels:
             app.kubernetes.io/controller: workspace
             app.kubernetes.io/instance: hermes
             app.kubernetes.io/name: hermes
       toPorts:
         - ports:
-            - port: "8080"
-              protocol: TCP
             - port: "8642"
               protocol: TCP
   egress:
@@ -111,8 +109,6 @@ spec:
             app.kubernetes.io/name: hermes
       toPorts:
         - ports:
-            - port: "8080"
-              protocol: TCP
             - port: "8642"
               protocol: TCP
 ---
