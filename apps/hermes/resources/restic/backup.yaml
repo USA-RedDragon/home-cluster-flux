@@ -52,3 +52,4 @@ spec:
   timeZone: America/Chicago
   volumes:
   - existingClaim: hermes
+    mountPath: /opt/data
