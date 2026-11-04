@@ -38,6 +38,8 @@ spec:
             app.kubernetes.io/name: hermes
       toPorts:
         - ports:
+            - port: "8081"
+              protocol: TCP
             - port: "8642"
               protocol: TCP
   egress:
@@ -109,6 +111,8 @@ spec:
             app.kubernetes.io/name: hermes
       toPorts:
         - ports:
+            - port: "8081"
+              protocol: TCP
             - port: "8642"
               protocol: TCP
 ---

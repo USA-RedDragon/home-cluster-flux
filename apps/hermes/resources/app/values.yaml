@@ -152,6 +152,14 @@ controllers:
           repository: jacob.pub/docker.io/nginxinc/nginx-unprivileged
           tag: 1.31-alpine@sha256:b9241c6e7b8e9a862f129d8d4199ab64b10390949a78bdd5603379b32c844083
           pullPolicy: IfNotPresent
+        env:
+          NGINX_ENVSUBST_OUTPUT_DIR: /tmp
+          NGINX_ENVSUBST_FILTER: ^API_SERVER_KEY$
+          API_SERVER_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: hermes-api
+                key: API_SERVER_KEY
         resources:
           requests:
             cpu: 10m
@@ -168,9 +176,9 @@ controllers:
                 port: 8080
           readiness: *proxyProbe
         securityContext: *securityContext
-  # A separate pod that talks only to the gateway API. Given the dashboard URL, it creates new chats through the
-  #   dashboard, and those sessions belong to the dashboard's TUI, so every API turn into them is refused
-  #   (permission_denied) and the UI spins. Skills, MCP, memory and config are edited in the dashboard instead
+  # A separate pod. Chat turns go to the gateway API, so they must land in sessions the API created: Hermes refuses
+  #   API turns into sessions the dashboard's TUI owns (permission_denied, and the UI spins). It reaches the
+  #   dashboard through proxy port 8081, which sends session creation to the gateway instead
   workspace:
     replicas: 1
     strategy: Recreate
@@ -195,6 +203,7 @@ controllers:
           # No login on purpose: the tailnet and the network policy are the access control
           HERMES_ALLOW_INSECURE_REMOTE: "1"
           HERMES_API_URL: http://hermes.hermes.svc.cluster.local:8642
+          HERMES_DASHBOARD_URL: http://hermes.hermes.svc.cluster.local:8081
           HERMES_API_TOKEN:
             valueFrom:
               secretKeyRef:
@@ -239,6 +248,8 @@ service:
         port: 8080
       api:
         port: 8642
+      workspace-dashboard:
+        port: 8081
   workspace:
     controller: workspace
     ports:
@@ -350,19 +361,47 @@ configMaps:
             listen 8080;
             client_max_body_size 512m;
             location = /healthz { return 200 "ok\n"; }
-            location / {
-              proxy_pass http://127.0.0.1:9119;
-              proxy_http_version 1.1;
-              proxy_set_header Host 127.0.0.1:9119;
-              proxy_set_header Origin http://127.0.0.1:9119;
-              proxy_set_header Upgrade $http_upgrade;
-              proxy_set_header Connection $connection_upgrade;
-              proxy_set_header X-Forwarded-For "";
-              proxy_buffering off;
-              proxy_read_timeout 24h;
-              proxy_send_timeout 24h;
-            }
+            include /etc/nginx/dashboard.conf;
           }
+          # hermes-workspace's view of the dashboard (server block in /tmp/workspace.conf, rendered from a template)
+          include /tmp/*.conf;
+        }
+      # The Chat tab starts a TUI that opens a session hermes-workspace would list and then fail to write to
+      dashboard.conf: |
+        location /api/pty { return 403; }
+        location / {
+          proxy_pass http://127.0.0.1:9119;
+          proxy_http_version 1.1;
+          proxy_set_header Host 127.0.0.1:9119;
+          proxy_set_header Origin http://127.0.0.1:9119;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection $connection_upgrade;
+          proxy_set_header X-Forwarded-For "";
+          proxy_buffering off;
+          proxy_read_timeout 24h;
+          proxy_send_timeout 24h;
+        }
+      # The dashboard has no route to create a session, so hermes-workspace's new chats go to the gateway
+      workspace.conf.template: |
+        server {
+          listen 8081;
+          client_max_body_size 512m;
+          location = /api/sessions {
+            if ($request_method = POST) { rewrite ^ /__gateway_create_session last; }
+            proxy_pass http://127.0.0.1:9119;
+            proxy_set_header Host 127.0.0.1:9119;
+            proxy_set_header Origin http://127.0.0.1:9119;
+            proxy_set_header X-Forwarded-For "";
+          }
+          location = /__gateway_create_session {
+            internal;
+            proxy_pass http://127.0.0.1:8642/api/sessions;
+            proxy_set_header Host 127.0.0.1:8642;
+            proxy_set_header Origin "";
+            proxy_set_header Authorization "Bearer ${API_SERVER_KEY}";
+            proxy_set_header X-Forwarded-For "";
+          }
+          include /etc/nginx/dashboard.conf;
         }
 
 persistence:
@@ -437,6 +476,12 @@ persistence:
         proxy:
           - path: /etc/nginx/nginx.conf
             subPath: nginx.conf
+            readOnly: true
+          - path: /etc/nginx/dashboard.conf
+            subPath: dashboard.conf
+            readOnly: true
+          - path: /etc/nginx/templates/workspace.conf.template
+            subPath: workspace.conf.template
             readOnly: true
   tmp:
     type: emptyDir
