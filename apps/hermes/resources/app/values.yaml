@@ -38,7 +38,9 @@ controllers:
           HOME: /opt/data/hermes
           USER: hermes
           HERMES_HOME: /opt/data/hermes
-          HERMES_WRITE_SAFE_ROOT: /opt/data/hermes
+          # File tools run on sim-linux over SSH, where only the hermes user's own permissions apply; the image's
+          #   /opt/data default would deny every write there
+          HERMES_WRITE_SAFE_ROOT: ""
           HERMES_MANAGED_DIR: /etc/hermes-managed
           HERMES_API_TIMEOUT: "1800"
         resources:
@@ -211,7 +213,9 @@ controllers:
                 key: API_SERVER_KEY
           HOME: /app/.runtime/home
           HERMES_HOME: /app/.runtime/hermes
-          HERMES_WORKSPACE_DIR: /app/.runtime/workspace
+          # Sent to the agent as its working directory, so it must be the agent's home on sim-linux. Workspace only
+          #   accepts a directory that exists in its own pod, hence the empty stand-in mount
+          HERMES_WORKSPACE_DIR: /home/hermes
         resources:
           requests:
             cpu: 20m
@@ -498,3 +502,5 @@ persistence:
       workspace:
         workspace:
           - path: /tmp
+          - path: /home/hermes
+            subPath: home-hermes
