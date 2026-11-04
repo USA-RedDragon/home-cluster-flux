@@ -320,6 +320,7 @@ configMaps:
               - sim-linux
               - env
               - HOPPER_LAUNCHER_PATH=/opt/hopper/bin/Hopper
+              - GHIDRA_INSTALL_DIR=/opt/ghidra
               - npx
               - -y
               - rea-agents@6.8.0
