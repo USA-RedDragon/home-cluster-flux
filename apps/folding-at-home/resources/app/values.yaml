@@ -83,9 +83,9 @@ controllers:
         resources:
           requests:
             cpu: "1"
-            memory: 1Gi
+            memory: 2Gi
           limits:
-            memory: 3Gi
+            memory: 8Gi
             nvidia.com/gpu: 1
 
 service:
