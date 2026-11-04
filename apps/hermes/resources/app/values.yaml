@@ -34,6 +34,8 @@ controllers:
             install -m 644 /ssh/known_hosts /opt/data/hermes/.ssh/known_hosts
             install -m 600 /config/ssh_config /opt/data/hermes/.ssh/config
             /opt/hermes/.venv/bin/python /opt/hermes/tools/skills_sync.py || echo "skills_sync failed; continuing"
+            # hermes-webui reads config.yaml itself and ignores the managed overlay, so mirror the overlay into it
+            /opt/hermes/.venv/bin/python /config/merge-managed.py
         env: &env
           HOME: /opt/data/hermes
           USER: hermes
@@ -56,8 +58,24 @@ controllers:
             type: RuntimeDefault
           capabilities:
             drop: ["ALL"]
+      webui-code:
+        image:
+          repository: jacob.pub/ghcr.io/nesquena/hermes-webui
+          tag: 0.52.627@sha256:ec4f8731936e8c7d52cd56bcd6414cbd64c81f298dd641eb4f561a733d103b37
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -ec
+          - cp -r /apptoo/. /webui/
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 256Mi
+        securityContext: *securityContext
       # One gateway per home. As a native sidecar it takes the lock before the dashboard starts, so the dashboard
-      #   attaches to it instead of spawning its own, and it serves the API that hermes-workspace talks to
+      #   attaches to it instead of spawning its own
       gateway:
         dependsOn: init
         restartPolicy: Always
@@ -147,6 +165,53 @@ controllers:
               timeoutSeconds: 5
               failureThreshold: 120
         securityContext: *securityContext
+      # hermes-webui runs the agent in-process with Hermes' own Python, sharing this home; only that mode streams
+      #   every tool's arguments and result. Its image's own startup needs root and installs from PyPI, so only
+      #   its code is used
+      webui:
+        image: *image
+        command:
+          - /opt/hermes/.venv/bin/python
+          - /webui/server.py
+        workingDir: /webui
+        env:
+          <<: *env
+          TMPDIR: /tmp
+          HERMES_WEBUI_AGENT_DIR: /opt/hermes
+          HERMES_WEBUI_HOST: 0.0.0.0
+          HERMES_WEBUI_PORT: "8787"
+          HERMES_WEBUI_STATE_DIR: /opt/data/hermes/webui
+          HERMES_WEBUI_SKIP_ONBOARDING: "1"
+          HERMES_WEBUI_ALLOWED_ORIGINS: https://hermes-webui.jackal-stargazer.ts.net
+          # The agent's home on sim-linux; the webui hands it to the SSH terminal as the working directory
+          HERMES_WEBUI_DEFAULT_WORKSPACE: /home/hermes
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            memory: 8Gi
+        probes:
+          liveness: &webuiProbe
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 8787
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 5
+          readiness: *webuiProbe
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 8787
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 120
+        securityContext: *securityContext
       # The dashboard demands a login on any non-loopback bind. It stays on loopback, and this proxy presents
       #   tailnet requests as loopback ones; the tailnet and the network policy are the only access control
       proxy:
@@ -154,14 +219,6 @@ controllers:
           repository: jacob.pub/docker.io/nginxinc/nginx-unprivileged
           tag: 1.31-alpine@sha256:b9241c6e7b8e9a862f129d8d4199ab64b10390949a78bdd5603379b32c844083
           pullPolicy: IfNotPresent
-        env:
-          NGINX_ENVSUBST_OUTPUT_DIR: /tmp
-          NGINX_ENVSUBST_FILTER: ^API_SERVER_KEY$
-          API_SERVER_KEY:
-            valueFrom:
-              secretKeyRef:
-                name: hermes-api
-                key: API_SERVER_KEY
         resources:
           requests:
             cpu: 10m
@@ -178,71 +235,6 @@ controllers:
                 port: 8080
           readiness: *proxyProbe
         securityContext: *securityContext
-  # A separate pod. Chat turns go to the gateway API, so they must land in sessions the API created: Hermes refuses
-  #   API turns into sessions the dashboard's TUI owns (permission_denied, and the UI spins). It reaches the
-  #   dashboard through proxy port 8081, which sends session creation to the gateway instead
-  workspace:
-    replicas: 1
-    strategy: Recreate
-    pod:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 568
-        runAsGroup: 568
-        fsGroup: 568
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile:
-          type: RuntimeDefault
-    containers:
-      workspace:
-        image:
-          repository: jacob.pub/ghcr.io/outsourc-e/hermes-workspace
-          tag: main-c631425@sha256:1ec05339750da7caaf1cd0183c8c3b188856918b377407b4ac1dafca67e42d88
-          pullPolicy: IfNotPresent
-        env:
-          HOST: 0.0.0.0
-          PORT: "3000"
-          # No login on purpose: the tailnet and the network policy are the access control
-          HERMES_ALLOW_INSECURE_REMOTE: "1"
-          HERMES_API_URL: http://hermes.hermes.svc.cluster.local:8642
-          HERMES_DASHBOARD_URL: http://hermes.hermes.svc.cluster.local:8081
-          HERMES_API_TOKEN:
-            valueFrom:
-              secretKeyRef:
-                name: hermes-api
-                key: API_SERVER_KEY
-          HOME: /app/.runtime/home
-          HERMES_HOME: /app/.runtime/hermes
-          # Sent to the agent as its working directory, so it must be the agent's home on sim-linux. Workspace only
-          #   accepts a directory that exists in its own pod, hence the empty stand-in mount
-          HERMES_WORKSPACE_DIR: /home/hermes
-        resources:
-          requests:
-            cpu: 20m
-            memory: 256Mi
-          limits:
-            memory: 3Gi
-        probes:
-          liveness: &workspaceProbe
-            enabled: true
-            custom: true
-            spec:
-              tcpSocket:
-                port: 3000
-              periodSeconds: 30
-              timeoutSeconds: 10
-              failureThreshold: 3
-          readiness: *workspaceProbe
-          startup:
-            enabled: true
-            custom: true
-            spec:
-              tcpSocket:
-                port: 3000
-              periodSeconds: 5
-              timeoutSeconds: 5
-              failureThreshold: 60
-        securityContext: *securityContext
 
 service:
   hermes:
@@ -252,13 +244,8 @@ service:
         port: 8080
       api:
         port: 8642
-      workspace-dashboard:
-        port: 8081
-  workspace:
-    controller: workspace
-    ports:
-      http:
-        port: 3000
+      webui:
+        port: 8787
 
 # The web UIs are on the tailnet only
 ingress:
@@ -277,26 +264,27 @@ ingress:
     tls:
       - hosts:
           - hermes
-  workspace:
+  webui:
     enabled: true
-    forceRename: hermes-workspace
+    forceRename: hermes-webui
     className: tailscale
     hosts:
-      - host: hermes-workspace
+      - host: hermes-webui
         paths:
         - path: /
           pathType: Prefix
           service:
-              identifier: workspace
-              port: http
+              identifier: hermes
+              port: webui
     tls:
       - hosts:
-          - hermes-workspace
+          - hermes-webui
 
 configMaps:
   managed:
     data:
-      # Pinned on top of /opt/data/hermes/config.yaml; settings changed in the dashboard persist on the PVC
+      # Pinned on top of /opt/data/hermes/config.yaml, and merged into it at start for hermes-webui; other settings
+      #   changed in the dashboard or webui persist on the PVC
       config.yaml: |
         model:
           default: qwen3.8:27b
@@ -332,6 +320,29 @@ configMaps:
           check: false
   config:
     data:
+      merge-managed.py: |
+        import os
+        from hermes_yaml import safe_dump, safe_load
+
+        path = "/opt/data/hermes/config.yaml"
+        with open("/etc/hermes-managed/config.yaml") as f:
+            managed = safe_load(f) or {}
+        config = {}
+        if os.path.exists(path):
+            with open(path) as f:
+                config = safe_load(f) or {}
+
+        def merge(base, top):
+            for key, value in top.items():
+                if isinstance(value, dict) and isinstance(base.get(key), dict):
+                    merge(base[key], value)
+                else:
+                    base[key] = value
+
+        merge(config, managed)
+        with open(path + ".tmp", "w") as f:
+            safe_dump(config, f, sort_keys=False)
+        os.replace(path + ".tmp", path)
       # OpenSSH needs a passwd entry for the running uid
       passwd: |
         root:x:0:0:root:/root:/bin/sh
@@ -368,10 +379,8 @@ configMaps:
             location = /healthz { return 200 "ok\n"; }
             include /etc/nginx/dashboard.conf;
           }
-          # hermes-workspace's view of the dashboard (server block in /tmp/workspace.conf, rendered from a template)
-          include /tmp/*.conf;
         }
-      # The Chat tab starts a TUI that opens a session hermes-workspace would list and then fail to write to
+      # The Chat tab's TUI is unused; hermes-webui is the chat UI
       dashboard.conf: |
         location /api/pty { return 403; }
         location / {
@@ -385,28 +394,6 @@ configMaps:
           proxy_buffering off;
           proxy_read_timeout 24h;
           proxy_send_timeout 24h;
-        }
-      # The dashboard has no route to create a session, so hermes-workspace's new chats go to the gateway
-      workspace.conf.template: |
-        server {
-          listen 8081;
-          client_max_body_size 512m;
-          location = /api/sessions {
-            if ($request_method = POST) { rewrite ^ /__gateway_create_session last; }
-            proxy_pass http://127.0.0.1:9119;
-            proxy_set_header Host 127.0.0.1:9119;
-            proxy_set_header Origin http://127.0.0.1:9119;
-            proxy_set_header X-Forwarded-For "";
-          }
-          location = /__gateway_create_session {
-            internal;
-            proxy_pass http://127.0.0.1:8642/api/sessions;
-            proxy_set_header Host 127.0.0.1:8642;
-            proxy_set_header Origin "";
-            proxy_set_header Authorization "Bearer ${API_SERVER_KEY}";
-            proxy_set_header X-Forwarded-For "";
-          }
-          include /etc/nginx/dashboard.conf;
         }
 
 persistence:
@@ -425,16 +412,8 @@ persistence:
           - path: /opt/data
         hermes:
           - path: /opt/data
-  workspace:
-    type: persistentVolumeClaim
-    retain: true
-    storageClass: longhorn-nvme
-    accessMode: ReadWriteOnce
-    size: 2Gi
-    advancedMounts:
-      workspace:
-        workspace:
-          - path: /app/.runtime
+        webui:
+          - path: /opt/data
   ssh:
     type: secret
     name: hermes-ssh
@@ -456,6 +435,8 @@ persistence:
           - *managed
         gateway:
           - *managed
+        webui:
+          - *managed
   config:
     type: configMap
     identifier: config
@@ -475,6 +456,9 @@ persistence:
         gateway:
           - *passwd
           - *group
+        webui:
+          - *passwd
+          - *group
         hermes:
           - *passwd
           - *group
@@ -484,9 +468,6 @@ persistence:
             readOnly: true
           - path: /etc/nginx/dashboard.conf
             subPath: dashboard.conf
-            readOnly: true
-          - path: /etc/nginx/templates/workspace.conf.template
-            subPath: workspace.conf.template
             readOnly: true
   tmp:
     type: emptyDir
@@ -500,8 +481,13 @@ persistence:
           - path: /tmp
         proxy:
           - path: /tmp
-      workspace:
-        workspace:
+        webui:
           - path: /tmp
-          - path: /home/hermes
-            subPath: home-hermes
+  webui-code:
+    type: emptyDir
+    advancedMounts:
+      hermes:
+        webui-code:
+          - path: /webui
+        webui:
+          - path: /webui

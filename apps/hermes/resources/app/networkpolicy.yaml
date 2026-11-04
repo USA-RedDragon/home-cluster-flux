@@ -33,14 +33,12 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            app.kubernetes.io/controller: workspace
-            app.kubernetes.io/instance: hermes
-            app.kubernetes.io/name: hermes
+            io.kubernetes.pod.namespace: tailscale-operator
+            tailscale.com/parent-resource: hermes-webui
+            tailscale.com/parent-resource-ns: hermes
       toPorts:
         - ports:
-            - port: "8081"
-              protocol: TCP
-            - port: "8642"
+            - port: "8787"
               protocol: TCP
   egress:
     - toEndpoints:
@@ -73,48 +71,6 @@ spec:
             - fc00::/7
             - fe80::/10
             - ff00::/8
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: workspace
-  namespace: hermes
-spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/controller: workspace
-      app.kubernetes.io/instance: hermes
-      app.kubernetes.io/name: hermes
-  ingress:
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: tailscale-operator
-            tailscale.com/parent-resource: hermes-workspace
-            tailscale.com/parent-resource-ns: hermes
-      toPorts:
-        - ports:
-            - port: "3000"
-              protocol: TCP
-  egress:
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
-            k8s-app: kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
-              protocol: ANY
-    - toEndpoints:
-        - matchLabels:
-            app.kubernetes.io/controller: hermes
-            app.kubernetes.io/instance: hermes
-            app.kubernetes.io/name: hermes
-      toPorts:
-        - ports:
-            - port: "8081"
-              protocol: TCP
-            - port: "8642"
-              protocol: TCP
 ---
 # The b2-backup-operator's restic-init Job can't carry the policy.mcswain.dev egress labels (a Repository has no podLabels),
 # so under default-deny it gets the same DNS and internet egress here
