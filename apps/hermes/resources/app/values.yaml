@@ -61,7 +61,7 @@ controllers:
       webui-code:
         image:
           repository: jacob.pub/ghcr.io/nesquena/hermes-webui
-          tag: 0.52.641@sha256:ac2adf9bbcee7c19fc57c75e69364cec8bd4e8de2721d02d9f29b9e925a29f34
+          tag: 0.52.642@sha256:de69efe22b45a1c49fec8f780eb49143fbea093cfa8a73b8beeee30c48c5d1fe
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
