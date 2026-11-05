@@ -14,7 +14,7 @@ controllers:
       piaware:
         image:
           repository: jacob.pub/ghcr.io/sdr-enthusiasts/docker-piaware
-          tag: latest-build-676@sha256:1d7f45f8cdf9834eb9f86d644f2cebb3df0494615dd76e71a61778decfe26909
+          tag: latest-build-678@sha256:414d4fe9b27f060003763d50c57ede1c887a7bc81c2c5b726ddb7149687b7f56
         probes:
           liveness:
             enabled: true
