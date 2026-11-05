@@ -232,7 +232,7 @@ controllers:
       docs:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub-docs
-          tag: main@sha256:fcde8b3d18889ce59755eef2a1d2064e2f5538c59928d4d5485ca85ac351bfd4
+          tag: main@sha256:03aa901d884f90ea9c29bb9c1c4a99f6f841296d11aaecc4a764bce3b590b1d7
           pullPolicy: IfNotPresent
         lifecycle:
           preStop:
