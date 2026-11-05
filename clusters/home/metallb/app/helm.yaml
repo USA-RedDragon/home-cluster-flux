@@ -31,7 +31,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: metallb
-      version: '0.16.1'
+      version: '0.16.2'
       interval: 60m0s
   valuesFrom:
     - kind: ConfigMap
