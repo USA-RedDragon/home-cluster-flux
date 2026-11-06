@@ -20,7 +20,7 @@ controllers:
       app:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/fah-dashboard
-          tag: beta@sha256:845630a939371da0c38ec37ba727bf09f060e41cace4adf7f073d51b5f2a2eba
+          tag: beta@sha256:6e3b44b6efd06963743ef7337593b647138939d672edeae55b1557274180b531
           pullPolicy: IfNotPresent
         env:
           COLLECT_ALIASES: "Alex Atkin UK=Alex_Atkin,AlexTheLion2001=AlexTheLion,AndrewZScorpion=Andrew_Scorpion,Dr. Will0hlep=will0hlep,KadsykadsII=Kadsykads,Roflwaffle17=roflwaffle,nomeansno2=NoMeansNo,jontsku1=Jontsku,mynamejeff45=MyNameJeff,Darth Wilhelm=Darthwilhelm,Mihali=MihaliT,tyler0178=tyler178,gunther29=GUNTHER,Renegades77=Renegade77,HayesK=HayesK_ALL_18SjyNbF8VdXaNAFCVfG4rAHUyvtdmoFvX,Thehetland=Hetland,Average Nerd=Avg_Nerd,Your_Neko_Waifu=YourNekoWaifu,YourNekoWaifu=YourNekoWaifu,K1N5L4Y3R=K1N5L4Y3R_NZ,Dissitesuxba11s=Disdoesntsukba11s,Simon_Harvey2000=Simon,spacepickle=spickle,NeoToby=neotoby"
