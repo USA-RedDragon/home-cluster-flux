@@ -31,7 +31,7 @@ controllers:
         restartPolicy: Always
         image:
           repository: jacob.pub/ghcr.io/falcondev-oss/github-actions-cache-server
-          tag: "9.10.0@sha256:efa60df9a15f05402220400072f2f43813d6171deb28a70d7935b0126a2301c9"
+          tag: "10.0.0@sha256:05c4d9e7169f525f2b74d412c4a081aeec5446a017ec88bae668e63ebfb16aa9"
         command:
           - node
           - /exchange/exchange.mjs
@@ -64,7 +64,7 @@ controllers:
             memory: 1088Mi
         image:
           repository: jacob.pub/ghcr.io/falcondev-oss/github-actions-cache-server
-          tag: "9.10.0@sha256:efa60df9a15f05402220400072f2f43813d6171deb28a70d7935b0126a2301c9"
+          tag: "10.0.0@sha256:05c4d9e7169f525f2b74d412c4a081aeec5446a017ec88bae668e63ebfb16aa9"
         env:
           API_BASE_URL: http://actions-cache.actions-cache.svc.cluster.local:3000
           ENABLE_DIRECT_DOWNLOADS: "false"
