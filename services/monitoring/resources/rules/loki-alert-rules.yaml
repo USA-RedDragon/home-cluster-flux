@@ -188,7 +188,8 @@ data:
             expr: |
               sum by (app) (count_over_time({job="syslog", host="truenas", app=~"zed|smartd|zfs.*|kernel"}
                 |~ "(?i)(FAILING_NOW|Currently unreadable|Offline uncorrectable|self-test.*fail|SMART Failure|DEGRADED|FAULTED|UNAVAIL|checksum error|io error|data error|vdev.*(removed|fault))"
-                != "Raw_Read_Error_Rate" [10m])) > 0
+                != "Raw_Read_Error_Rate"
+                != "pages in unavailable ranges" [10m])) > 0
             labels:
               severity: critical
             annotations:
