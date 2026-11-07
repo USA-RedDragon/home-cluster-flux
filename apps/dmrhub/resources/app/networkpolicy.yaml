@@ -107,6 +107,14 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: aredn-dmrhub
+            app.kubernetes.io/name: aredn-dmrhub
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: envoy-gateway-system
             gateway.envoyproxy.io/owning-gateway-name: public
       toPorts:
