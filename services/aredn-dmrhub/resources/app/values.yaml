@@ -63,7 +63,7 @@ controllers:
         - -c
         - |
           set -x && \
-          NODE_NAME=KI5VMF-DMRHUB && \
+          NODE_NAME=DMRHub && \
           ip link add dev br-wan type bridge && \
           ip link add dev br-dtdlink type bridge && \
           ip link set dev eth0 master br-wan && \
@@ -118,10 +118,10 @@ controllers:
           mkdir -p /etc/meshlink && \
           echo "${NODE_IP} ${NODE_NAME}" >> /etc/meshlink/hosts && \
           echo "${NODE_IP} dtdlink.${NODE_NAME}.local.mesh" >> /etc/meshlink/hosts && \
-          echo "http://KI5VMF-DMRHUB:80/|tcp|DMRHub WebUI" >> /etc/meshlink/services && \
-          echo "udp://KI5VMF-DMRHUB:0/|tcp|DMR MMDVM Port 62031" >> /etc/meshlink/services && \
-          echo "udp://KI5VMF-DMRHUB:0/|tcp|DMR IPSC Port 50000" >> /etc/meshlink/services && \
-          echo "udp://KI5VMF-DMRHUB:0/|tcp|DMR OpenBridge Port 62035" >> /etc/meshlink/services && \
+          echo "http://DMRHub:80/|tcp|DMRHub WebUI" >> /etc/meshlink/services && \
+          echo "udp://DMRHub:0/|tcp|DMR MMDVM Port 62031" >> /etc/meshlink/services && \
+          echo "udp://DMRHub:0/|tcp|DMR IPSC Port 50000" >> /etc/meshlink/services && \
+          echo "udp://DMRHub:0/|tcp|DMR OpenBridge Port 62035" >> /etc/meshlink/services && \
           rsyslogd -n & \
           cat /etc/resolv.conf > /tmp/resolv.conf.auto && \
           echo -e "search local.mesh\nnameserver 127.0.0.1" > /etc/resolv.conf && \
@@ -213,7 +213,7 @@ configMaps:
           server {
             listen [::]:8080;
             listen [::]:80;
-            return 'HTTP/1.0 200 OK\r\nContent-Type: application/json\r\nContent-Length: 111\r\nConnection: close\r\n\r\n{"api_version":"2.0","node":"KI5VMF-DMRHUB","node_details":{"model":"Kubernetes pod","firmware_version":"n/a"}}';
+            return 'HTTP/1.0 200 OK\r\nContent-Type: application/json\r\nContent-Length: 111\r\nConnection: close\r\n\r\n{"api_version":"2.0","node":"DMRHub","node_details":{"model":"Kubernetes pod","firmware_version":"n/a"}}';
           }
         }
         http {
