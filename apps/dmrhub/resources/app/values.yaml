@@ -24,7 +24,7 @@ controllers:
       dmrhub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.29@sha256:dc6559daf66eed1ecc91ee2e4fc7aef6088541a1033fa9e677b81f7226087052
+          tag: v1.3.30@sha256:cf356adb77e74371220ad541a694f64478fef4ddb0f13a7e51495872f988b581
           pullPolicy: IfNotPresent
         lifecycle:
           preStop:
@@ -178,7 +178,7 @@ controllers:
       parrot:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.29@sha256:dc6559daf66eed1ecc91ee2e4fc7aef6088541a1033fa9e677b81f7226087052
+          tag: v1.3.30@sha256:cf356adb77e74371220ad541a694f64478fef4ddb0f13a7e51495872f988b581
           pullPolicy: IfNotPresent
         command: ["/app/dmrhub-parrot"]
         securityContext:
@@ -232,7 +232,7 @@ controllers:
       docs:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub-docs
-          tag: main@sha256:03aa901d884f90ea9c29bb9c1c4a99f6f841296d11aaecc4a764bce3b590b1d7
+          tag: v1.3.30@sha256:a1612845fb1634bd5653b503226df50c2bd8c0a93a555c6f37f9f0703999bbc2
           pullPolicy: IfNotPresent
         lifecycle:
           preStop:
@@ -280,7 +280,7 @@ controllers:
       locator:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmrhub
-          tag: v1.3.29@sha256:dc6559daf66eed1ecc91ee2e4fc7aef6088541a1033fa9e677b81f7226087052
+          tag: v1.3.30@sha256:cf356adb77e74371220ad541a694f64478fef4ddb0f13a7e51495872f988b581
           pullPolicy: IfNotPresent
         command: ["/app/dmrhub-locator"]
         securityContext:
