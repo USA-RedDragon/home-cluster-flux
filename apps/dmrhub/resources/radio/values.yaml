@@ -22,7 +22,7 @@ controllers:
       radio:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/dmr-web
-          tag: v1.0.0@sha256:0178e280ed31f30577e523da5ce493ee1a273852fd7c15ae37dd0c55ec0b9188
+          tag: v1.0.1@sha256:4912c5839c5db419d18f33133ef371c044cabf5584cff15304fd0d9f9d3e955a
           pullPolicy: IfNotPresent
         lifecycle:
           preStop:
