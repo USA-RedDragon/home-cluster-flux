@@ -25,7 +25,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.1.0@sha256:4631173465ce52ab42fd13b9e1d4bcf3ca6355ed22f336fc0ba9592df4c03c39
+          tag: v0.2.0@sha256:e000bbb802d891756f7b85b51694e5a81ae9190baafd5d3e596a07313abad99e
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -67,6 +67,8 @@ controllers:
             /opt/hermes/.venv/bin/hermes plugins enable advanced-delegation || true
             # Device sessions run with this server cwd; their commands run in the device directory
             install -d -m 700 /opt/data/hermes/device-placeholder
+            # The server cwd of sessions that run in the sandbox; Hermes reads AGENTS.md and git state from it, so keep it empty
+            install -d -m 700 /opt/data/hermes/empty-cwd
             /opt/hermes/.venv/bin/hermes plugins enable device || true
         env: &env
           HOME: /opt/data/hermes
@@ -74,7 +76,7 @@ controllers:
           HERMES_HOME: /opt/data/hermes
           # Device paths too: file tools write through the device, and the device enforces its own roots. /home does
           #   not exist in the pod
-          HERMES_WRITE_SAFE_ROOT: /opt/data/hermes:/home
+          HERMES_WRITE_SAFE_ROOT: /opt/data/hermes:/home:/work
           HERMES_DEVICE_HUB_PUBLIC_KEY: |
             -----BEGIN PUBLIC KEY-----
             MCowBQYDK2VwAyEAiuaEZ3j30C2FUMJrm1r10rJZyt1EwAYGKor/3LZqjSA=
@@ -309,10 +311,10 @@ configMaps:
             reasoning_effort: none
             context_length: 131072
         # Code work happens in each device's own Hermes; this one's shell is a sandbox in its pod
-        # Device-bound sessions run commands on the device; every other session runs here as before
+        # Sessions bound to a PC run commands there; every other session runs in the person's sandbox pod, never here
         terminal:
           backend: device
-          cwd: /opt/data/hermes/workspace
+          cwd: /opt/data/hermes/empty-cwd
         browser:
           chromium_args:
             - --no-sandbox
@@ -336,7 +338,9 @@ configMaps:
               settings:
                 backend_id: jacob
                 placeholder: /opt/data/hermes/device-placeholder
-                fallback: local
+                fallback: device
+                fallback_device: sandbox-jacob
+                fallback_root: /work
         webapp:
           enabled: true
           host: 0.0.0.0
@@ -514,7 +518,7 @@ persistence:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.1.0@sha256:4631173465ce52ab42fd13b9e1d4bcf3ca6355ed22f336fc0ba9592df4c03c39
+        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.2.0@sha256:e000bbb802d891756f7b85b51694e5a81ae9190baafd5d3e596a07313abad99e
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:

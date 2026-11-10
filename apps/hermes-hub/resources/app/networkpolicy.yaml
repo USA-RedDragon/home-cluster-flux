@@ -30,6 +30,15 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    # Agent sandboxes, for their device connection
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-sandbox
+            app.kubernetes.io/controller: hermes-sandbox
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: monitoring

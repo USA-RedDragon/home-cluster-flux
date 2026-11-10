@@ -1,0 +1,32 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: hermes-sandbox
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+# Agent commands run here. Internet and DNS come from the egress-internet and egress-coredns labels (no LAN,
+#   tailnet or cluster ranges); the only cluster address it reaches is the hub, for its device connection
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: hermes-sandbox
+  namespace: hermes-sandbox
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: hermes-sandbox
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-hub
+            app.kubernetes.io/controller: hermes-hub
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
