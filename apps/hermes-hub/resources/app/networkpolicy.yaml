@@ -35,6 +35,9 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: hermes-sandbox
             app.kubernetes.io/controller: hermes-sandbox
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-kittykat-sandbox
+            app.kubernetes.io/controller: hermes-kittykat-sandbox
       toPorts:
         - ports:
             - port: "8080"

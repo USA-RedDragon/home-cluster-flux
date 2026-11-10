@@ -59,6 +59,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#hermes">hermes</a></li>
   <li><a href="#hermes-hub">hermes-hub</a></li>
   <li><a href="#hermes-kittykat">hermes-kittykat</a></li>
+  <li><a href="#hermes-kittykat-sandbox">hermes-kittykat-sandbox</a></li>
   <li><a href="#hermes-sandbox">hermes-sandbox</a></li>
   <li><a href="#honcho">honcho</a></li>
   <li><a href="#http-logger">http-logger</a></li>
@@ -771,6 +772,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>hermes-kittykat</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/hermes-kittykat/resources/app/helm.yaml">hermes-kittykat</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>hermes-kittykat-sandbox</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>hermes-kittykat-sandbox</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/hermes-kittykat-sandbox/resources/app/helm.yaml">hermes-kittykat-sandbox</a></td>
     <td></td>
   </tr>
 </table>

@@ -21,7 +21,28 @@ controllers:
         seccompProfile:
           type: RuntimeDefault
     initContainers:
+      # The device plugin, from the hermes-device image, so client, plugin and protocol share one release
+      device-plugin:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
+          tag: v0.2.0@sha256:e000bbb802d891756f7b85b51694e5a81ae9190baafd5d3e596a07313abad99e
+          pullPolicy: IfNotPresent
+        command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
       init:
+        dependsOn: device-plugin
         image: &image
           repository: jacob.pub/docker.io/nousresearch/hermes-agent
           tag: v0.22.7@sha256:e6d81ae52ebf6a43efa529701405509f20054ba818f179ddd748bed4f8af584c
@@ -43,12 +64,21 @@ controllers:
             # Model routes for subagents (delegation.backend: model_map)
             [ -d /opt/data/hermes/plugins/advanced-delegation ] || /opt/hermes/.venv/bin/hermes plugins install advanced-delegation --yes-deps || echo "advanced-delegation install failed; continuing"
             /opt/hermes/.venv/bin/hermes plugins enable advanced-delegation || true
+            # Device sessions run with this server cwd; their commands run in the device directory
+            install -d -m 700 /opt/data/hermes/device-placeholder
+            # The server cwd of sessions that run in the sandbox; Hermes reads AGENTS.md and git state from it, so keep it empty
+            install -d -m 700 /opt/data/hermes/empty-cwd
+            /opt/hermes/.venv/bin/hermes plugins enable device || true
         env: &env
           HOME: /opt/data/hermes
           USER: hermes
           HERMES_HOME: /opt/data/hermes
-          # The terminal runs in this pod; file tools may write only in her home
-          HERMES_WRITE_SAFE_ROOT: /opt/data/hermes
+          # Commands run on her paired computers or in her sandbox pod; the devices enforce their own roots
+          HERMES_WRITE_SAFE_ROOT: /opt/data/hermes:/home:/work
+          HERMES_DEVICE_HUB_PUBLIC_KEY: |
+            -----BEGIN PUBLIC KEY-----
+            MCowBQYDK2VwAyEAiuaEZ3j30C2FUMJrm1r10rJZyt1EwAYGKor/3LZqjSA=
+            -----END PUBLIC KEY-----
           HERMES_MANAGED_DIR: /etc/hermes-managed
           HERMES_API_TIMEOUT: "1800"
           HONCHO_API_KEY:
@@ -125,6 +155,42 @@ controllers:
               failureThreshold: 5
         securityContext: *securityContext
     containers:
+      # Hosts one hermes acp per editor connection that the hub forwards. Its own container, so editor sessions
+      #   outlive gateway restarts; the binary comes from the hermes-device image, mounted read-only
+      acp-host:
+        image: *image
+        command: ["/opt/hermes-device/hermes-device", "acp-host"]
+        workingDir: /opt/data/hermes
+        env:
+          <<: *env
+          TMPDIR: /tmp
+          HERMES_DEVICE_ACP_HOST_LISTEN: ":9130"
+          HERMES_DEVICE_ACP_HOST_BACKEND_ID: kittykat
+          HERMES_DEVICE_ACP_HOST_PLACEHOLDER: /opt/data/hermes/device-placeholder
+          HERMES_DEVICE_ACP_HOST_HERMES: /opt/hermes/.venv/bin/hermes
+          HERMES_DEVICE_ACP_HOST_HUB_PUBLIC_KEY: |
+            -----BEGIN PUBLIC KEY-----
+            MCowBQYDK2VwAyEAiuaEZ3j30C2FUMJrm1r10rJZyt1EwAYGKor/3LZqjSA=
+            -----END PUBLIC KEY-----
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 4Gi
+        probes:
+          liveness: &acpProbe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 9130
+              periodSeconds: 30
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness: *acpProbe
+        securityContext: *securityContext
       hermes:
         image: *image
         command:
@@ -200,6 +266,8 @@ service:
         port: 8642
       webapp:
         port: 9120
+      acp:
+        port: 9130
 
 configMaps:
   managed:
@@ -240,9 +308,10 @@ configMaps:
             model: qwen3.5:2b
             reasoning_effort: none
             context_length: 131072
+        # Sessions bound to one of her computers run commands there; every other session runs in her sandbox pod
         terminal:
-          backend: local
-          cwd: /opt/data/hermes/workspace
+          backend: device
+          cwd: /opt/data/hermes/empty-cwd
         browser:
           chromium_args:
             - --no-sandbox
@@ -260,6 +329,15 @@ configMaps:
         # On a pod stop, let running turns finish (up to 10 minutes) before Hermes exits
         agent:
           restart_drain_timeout: 600
+        plugins:
+          entries:
+            device:
+              settings:
+                backend_id: kittykat
+                placeholder: /opt/data/hermes/device-placeholder
+                fallback: device
+                fallback_device: sandbox-kittykat
+                fallback_root: /work
         webapp:
           enabled: true
           host: 0.0.0.0
@@ -362,6 +440,10 @@ persistence:
           - path: /opt/data
         hermes:
           - path: /opt/data
+        acp-host:
+          - path: /opt/data
+        device-plugin:
+          - path: /opt/data
   managed:
     type: configMap
     identifier: managed
@@ -374,6 +456,8 @@ persistence:
         init:
           - *managed
         gateway:
+          - *managed
+        acp-host:
           - *managed
   config:
     type: configMap
@@ -397,6 +481,9 @@ persistence:
         hermes:
           - *passwd
           - *group
+        acp-host:
+          - *passwd
+          - *group
         proxy:
           - path: /etc/nginx/nginx.conf
             subPath: nginx.conf
@@ -416,3 +503,17 @@ persistence:
           - path: /tmp
         proxy:
           - path: /tmp
+        acp-host:
+          - path: /tmp
+  # The hermes-device binary, for acp-host
+  device-bin:
+    type: custom
+    volumeSpec:
+      image:
+        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.2.0@sha256:e000bbb802d891756f7b85b51694e5a81ae9190baafd5d3e596a07313abad99e
+        pullPolicy: IfNotPresent
+    advancedMounts:
+      hermes:
+        acp-host:
+          - path: /opt/hermes-device
+            readOnly: true

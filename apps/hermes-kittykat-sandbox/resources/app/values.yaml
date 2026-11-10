@@ -1,0 +1,72 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  hermes-kittykat-sandbox:
+    # One connection per sandbox device: a second pod would replace the first one's (close 4409)
+    replicas: 1
+    strategy: Recreate
+    labels:
+      policy.mcswain.dev/egress-coredns: "true"
+      policy.mcswain.dev/egress-internet: "true"
+    pod:
+      labels:
+        policy.mcswain.dev/egress-coredns: "true"
+        policy.mcswain.dev/egress-internet: "true"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    containers:
+      sandbox:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device-sandbox
+          tag: v0.2.0@sha256:1d47161ce2e5e25b52b4072eda93079ee18628ee4be175de1c864742e67802c9
+          pullPolicy: IfNotPresent
+        env:
+          # The hub's Service, not its public route: the sandbox reaches nothing on the LAN
+          HERMES_DEVICE_HUB_URL: http://hermes-hub.hermes-hub.svc.cluster.local:8080
+          HERMES_DEVICE_HUB_TOKEN_FILE: /secrets/token
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            memory: 8Gi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+
+persistence:
+  work:
+    type: persistentVolumeClaim
+    forceRename: hermes-kittykat-sandbox
+    storageClass: longhorn-nvme
+    accessMode: ReadWriteOnce
+    size: 20Gi
+    globalMounts:
+      - path: /work
+  token:
+    type: secret
+    name: hermes-kittykat-sandbox
+    defaultMode: 0440
+    items:
+      - key: token
+        path: token
+    globalMounts:
+      - path: /secrets
+        readOnly: true
+  tmp:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
