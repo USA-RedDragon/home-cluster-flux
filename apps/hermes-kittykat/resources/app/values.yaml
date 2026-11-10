@@ -25,7 +25,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.4.1@sha256:c0cb1fa134ec2a0851c371bb023c906889afdb247f19a029742c8151c63d9552
+          tag: v0.4.2@sha256:b35639b1bd745cab8dec69a0de0bf2b37421b4764ef42267c8a86e1fb8dbe630
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -510,7 +510,7 @@ persistence:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.4.1@sha256:c0cb1fa134ec2a0851c371bb023c906889afdb247f19a029742c8151c63d9552
+        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.4.2@sha256:b35639b1bd745cab8dec69a0de0bf2b37421b4764ef42267c8a86e1fb8dbe630
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
