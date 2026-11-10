@@ -102,6 +102,11 @@ controllers:
               secretKeyRef:
                 name: hermes-api
                 key: API_SERVER_KEY
+        # The gateway serves the Webapp listener (webapp: in the managed config) that hermes-hub signs in to; the
+        #   dashboard container never gets this provider, so its loopback listener stays open behind the proxy
+        envFrom:
+          - secretRef:
+              name: hermes-hub-auth
         resources:
           requests:
             cpu: 50m
@@ -254,6 +259,8 @@ service:
         port: 8080
       api:
         port: 8642
+      webapp:
+        port: 9120
       webui:
         port: 8787
 
@@ -318,6 +325,11 @@ configMaps:
           adopt_external_logins: false
         updates:
           check: false
+        # For hermes-hub. A wildcard bind is behind dashboard sign-in: the gateway's basic provider, user hub
+        webapp:
+          enabled: true
+          host: 0.0.0.0
+          port: 9120
   config:
     data:
       merge-managed.py: |

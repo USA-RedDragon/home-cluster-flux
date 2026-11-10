@@ -40,6 +40,15 @@ spec:
         - ports:
             - port: "8787"
               protocol: TCP
+    # hermes-hub, to the gateway's Webapp listener
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-hub
+            app.kubernetes.io/controller: hermes-hub
+      toPorts:
+        - ports:
+            - port: "9120"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
