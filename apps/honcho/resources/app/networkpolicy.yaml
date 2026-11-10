@@ -29,6 +29,9 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: hermes
             app.kubernetes.io/controller: hermes
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-kittykat
+            app.kubernetes.io/controller: hermes
       toPorts:
         - ports:
             - port: "8000"
