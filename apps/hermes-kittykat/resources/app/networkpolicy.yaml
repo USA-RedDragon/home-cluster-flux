@@ -48,6 +48,18 @@ spec:
             - port: "11434"
               protocol: TCP
     # The browser and web tools, and the Honcho plugin's install from PyPI
+    # The public gateway's LAN address, so her agent can use Jacob's public sites from inside the LAN
+    - toCIDR:
+        - 192.168.254.254/32
+        - 2600:8803:a30a:2a00::e:1/128
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+            - port: "443"
+              protocol: UDP
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
