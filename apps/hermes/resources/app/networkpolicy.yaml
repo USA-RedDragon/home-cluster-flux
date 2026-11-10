@@ -49,6 +49,15 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+    # Honcho, the memory server
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: honcho
+            app.kubernetes.io/controller: honcho
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
     # sim-linux: Ollama, and SSH for the shell and MCP servers
     - toCIDR:
         - 192.168.0.184/32
