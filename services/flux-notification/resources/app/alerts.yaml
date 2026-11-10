@@ -389,6 +389,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: node-feature-discovery}
     - {kind: Kustomization, name: '*', namespace: node-feature-discovery}
     - {kind: OCIRepository, name: '*', namespace: node-feature-discovery}
+    - {kind: GitRepository, name: '*', namespace: ollama-priority-proxy}
+    - {kind: HelmChart, name: '*', namespace: ollama-priority-proxy}
+    - {kind: HelmRelease, name: '*', namespace: ollama-priority-proxy}
+    - {kind: HelmRepository, name: '*', namespace: ollama-priority-proxy}
+    - {kind: Kustomization, name: '*', namespace: ollama-priority-proxy}
+    - {kind: OCIRepository, name: '*', namespace: ollama-priority-proxy}
     - {kind: GitRepository, name: '*', namespace: openspeedtest}
     - {kind: HelmChart, name: '*', namespace: openspeedtest}
     - {kind: HelmRelease, name: '*', namespace: openspeedtest}

@@ -1,0 +1,118 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  ollama-priority-proxy:
+    # The priority queue lives in the process, so a second replica would schedule on its own
+    replicas: 1
+    strategy: Recreate
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    containers:
+      proxy:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/ollama-priority-proxy
+          tag: v0.1.0@sha256:61592ee6a29484f5411d42a85f8f755cadf4987bcd978c36501d2da69e4d5566
+          pullPolicy: IfNotPresent
+        env:
+          UPSTREAM_URL: http://192.168.0.184:11434
+          METRICS_ENABLED: "true"
+          LOG_LEVEL: info
+        resources:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            memory: 512Mi
+        probes:
+          liveness: &probe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 11434
+              periodSeconds: 15
+              timeoutSeconds: 5
+              failureThreshold: 4
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /ready
+                port: 11434
+              periodSeconds: 15
+              timeoutSeconds: 10
+              failureThreshold: 4
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 11434
+              periodSeconds: 2
+              timeoutSeconds: 5
+              failureThreshold: 30
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+
+service:
+  ollama-priority-proxy:
+    controller: ollama-priority-proxy
+    ports:
+      http:
+        port: 11434
+      metrics:
+        port: 9090
+
+serviceMonitor:
+  ollama-priority-proxy:
+    enabled: true
+    service:
+      identifier: ollama-priority-proxy
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 30s
+        scrapeTimeout: 10s
+
+# Devices on the LAN or tailnet (Hermes on each machine) use this; in-cluster clients use the Service.
+#   Background callers add /low to the base URL
+route:
+  ollama:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - ollama.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: ollama-priority-proxy
+            port: 11434
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+        timeouts:
+          request: 2h
+          backendRequest: 2h

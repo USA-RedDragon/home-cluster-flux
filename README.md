@@ -82,6 +82,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#mqtt-wx">mqtt-wx</a></li>
   <li><a href="#nexrad-aws-notifier">nexrad-aws-notifier</a></li>
   <li><a href="#node-feature-discovery">node-feature-discovery</a></li>
+  <li><a href="#ollama-priority-proxy">ollama-priority-proxy</a></li>
   <li><a href="#openspeedtest">openspeedtest</a></li>
   <li><a href="#paperless-ngx">paperless-ngx</a></li>
   <li><a href="#path-of-titans">path-of-titans</a></li>
@@ -1287,6 +1288,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>node-feature-discovery</td>
     <td><code>HelmRelease</code></td>
     <td><a href="infrastructure/node-feature-discovery/resources/app/helm.yaml">node-feature-discovery</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>ollama-priority-proxy</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>ollama-priority-proxy</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/ollama-priority-proxy/resources/app/helm.yaml">ollama-priority-proxy</a></td>
     <td></td>
   </tr>
 </table>

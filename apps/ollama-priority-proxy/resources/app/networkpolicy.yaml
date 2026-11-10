@@ -1,0 +1,54 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: ollama-priority-proxy
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ollama-priority-proxy
+  namespace: ollama-priority-proxy
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: ollama-priority-proxy
+      app.kubernetes.io/instance: ollama-priority-proxy
+      app.kubernetes.io/name: ollama-priority-proxy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-kittykat
+        - matchLabels:
+            io.kubernetes.pod.namespace: honcho
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: internal
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
+  egress:
+    # Ollama on sim-linux (RTX 5090)
+    - toCIDR:
+        - 192.168.0.184/32
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
