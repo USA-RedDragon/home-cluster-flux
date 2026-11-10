@@ -21,7 +21,7 @@ controllers:
       hermes-hub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-hub
-          tag: v0.1.8@sha256:b9fa4f709686c9a4f031a924b47a9b76ca7ee598f685c8ae4c483600437955bd
+          tag: v0.2.0@sha256:9a9b4032352538b944a3f3ecb3b4b6115da72317cb2cd8246adba89dbc3b1546
           pullPolicy: IfNotPresent
         # users and backends can only be set in the config file, so it comes from the hermes-hub Secret with the
         #   backend passwords; the other settings are here
@@ -38,7 +38,14 @@ controllers:
           HUB_OIDC_ISSUER_URL: https://authentik.mcswain.dev/application/o/hermes-hub/
           HUB_OIDC_CLIENT_ID: tREPLBoC0qfZVyZUL0yRHgeIGFhf8JMy6xNncyhM
           HUB_UI_DEFAULT_BACKENDS: reddragon=jacob,kittykat=kittykat
-          HUB_STORE_PATH: /data/hermes-hub.db
+          HUB_STORE_DRIVER: postgres
+          # One-time copy of the old SQLite store into PostgreSQL; a marker row stops later copies
+          HUB_STORE_IMPORT_PATH: /data/hermes-hub.db
+          HUB_STORE_DSN:
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: uri
           HUB_TELEGRAM_ENABLED: "true"
           HUB_TELEGRAM_DEFAULT_BACKENDS: reddragon=jacob,kittykat=kittykat
           HUB_OIDC_CLIENT_SECRET:
@@ -73,7 +80,17 @@ controllers:
               periodSeconds: 30
               timeoutSeconds: 5
               failureThreshold: 3
-          readiness: *probe
+          # Fails as soon as a stopping replica starts to drain, so traffic moves before it exits
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /readyz
+                port: 8080
+              periodSeconds: 2
+              timeoutSeconds: 2
+              failureThreshold: 1
           startup:
             enabled: true
             custom: true

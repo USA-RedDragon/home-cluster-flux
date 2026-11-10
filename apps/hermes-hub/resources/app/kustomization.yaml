@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: hermes-hub
 resources:
   - helm.yaml
+  - postgres.yaml
   - networkpolicy.yaml
 configMapGenerator:
   - name: chart-values

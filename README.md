@@ -754,7 +754,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>hermes-hub</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/hermes-hub/resources/app/helm.yaml">hermes-hub</a></td>
-    <td></td>
+    <td><a href="apps/hermes-hub/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 

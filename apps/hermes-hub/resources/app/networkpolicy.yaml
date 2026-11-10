@@ -52,6 +52,14 @@ spec:
               - matchPattern: "**.cluster.local"
               - matchName: "authentik.mcswain.dev"
               - matchName: "api.telegram.org"
+    # The hub's PostgreSQL cluster
+    - toEndpoints:
+        - matchLabels:
+            cnpg.io/cluster: postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
     # The Webapp listeners of the Hermes backends
     - toEndpoints:
         - matchLabels:
