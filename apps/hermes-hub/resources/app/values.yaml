@@ -1,0 +1,163 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  hermes-hub:
+    # One replica: the Telegram bot uses long polling and the live session state is in process
+    replicas: 1
+    strategy: Recreate
+    pod:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    containers:
+      hermes-hub:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/hermes-hub
+          tag: v0.1.1@sha256:8ae201aaf081dffe36a4ec51183e32e55badd9d03ff383c9fdea66957606bc63
+          pullPolicy: IfNotPresent
+        # users and backends can only be set in the config file, so it comes from the hermes-hub Secret with the
+        #   backend passwords; the other settings are here
+        env:
+          CONFIG: /config/config.yaml
+          TMPDIR: /tmp
+          HUB_LOG_LEVEL: info
+          HUB_HTTP_PORT: "8080"
+          HUB_HTTP_PUBLIC_URL: https://hub.mcswain.dev
+          HUB_HTTP_METRICS_ENABLED: "true"
+          HUB_HTTP_METRICS_IPV4_HOST: 0.0.0.0
+          HUB_HTTP_METRICS_IPV6_HOST: "::"
+          HUB_HTTP_METRICS_PORT: "8081"
+          HUB_OIDC_ISSUER_URL: https://authentik.mcswain.dev/application/o/hermes-hub/
+          HUB_OIDC_CLIENT_ID: tREPLBoC0qfZVyZUL0yRHgeIGFhf8JMy6xNncyhM
+          HUB_UI_DEFAULT_BACKENDS: reddragon=jacob,kittykat=kittykat
+          HUB_STORE_PATH: /data/hermes-hub.db
+          # To run the bot: add HUB_TELEGRAM_TOKEN to the hermes-hub Secret and set this to "true"
+          HUB_TELEGRAM_ENABLED: "false"
+          # HUB_TELEGRAM_DEFAULT_BACKENDS: reddragon=jacob,kittykat=kittykat
+          HUB_OIDC_CLIENT_SECRET:
+            valueFrom:
+              secretKeyRef:
+                name: hermes-hub
+                key: HUB_OIDC_CLIENT_SECRET
+          HUB_SESSION_SECRET:
+            valueFrom:
+              secretKeyRef:
+                name: hermes-hub
+                key: HUB_SESSION_SECRET
+          # HUB_TELEGRAM_TOKEN:
+          #   valueFrom:
+          #     secretKeyRef:
+          #       name: hermes-hub
+          #       key: HUB_TELEGRAM_TOKEN
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 512Mi
+        probes:
+          liveness: &probe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              periodSeconds: 30
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness: *probe
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              periodSeconds: 2
+              timeoutSeconds: 5
+              failureThreshold: 30
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+
+service:
+  hermes-hub:
+    controller: hermes-hub
+    ports:
+      http:
+        port: 8080
+        primary: true
+      metrics:
+        port: 8081
+
+# LAN only, on the internal gateway
+route:
+  hermes-hub:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - hub.mcswain.dev
+    rules:
+      - backendRefs:
+          - identifier: hermes-hub
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+        # Each session streams as server-sent events; the hub sends a comment every 15 s and the browser resumes from
+        #   its last event id
+        timeouts:
+          request: 24h
+
+serviceMonitor:
+  hermes-hub:
+    enabled: true
+    serviceName: hermes-hub
+    endpoints:
+      - port: metrics
+        scheme: http
+        path: /metrics
+        interval: 30s
+        scrapeTimeout: 10s
+
+persistence:
+  data:
+    type: persistentVolumeClaim
+    forceRename: hermes-hub
+    retain: true
+    storageClass: longhorn-nvme
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    globalMounts:
+      - path: /data
+  config:
+    type: secret
+    name: hermes-hub
+    items:
+      - key: config.yaml
+        path: config.yaml
+    globalMounts:
+      - path: /config
+        readOnly: true
+  tmp:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
