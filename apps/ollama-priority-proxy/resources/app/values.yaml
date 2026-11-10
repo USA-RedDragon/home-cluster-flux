@@ -7,8 +7,14 @@ controllers:
   ollama-priority-proxy:
     # The priority queue lives in the process, so a second replica would schedule on its own
     replicas: 1
-    strategy: Recreate
+    # The new pod takes new requests before the old one stops; the old one finishes its in-flight generations first
+    strategy: RollingUpdate
+    rollingUpdate:
+      surge: 1
+      unavailable: 0
     pod:
+      # http.shutdown-timeout (5m) plus the preStop sleep and some margin
+      terminationGracePeriodSeconds: 330
       securityContext:
         runAsNonRoot: true
         runAsUser: 568
@@ -21,8 +27,13 @@ controllers:
       proxy:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/ollama-priority-proxy
-          tag: v0.1.0@sha256:61592ee6a29484f5411d42a85f8f755cadf4987bcd978c36501d2da69e4d5566
+          tag: v0.2.0@sha256:d2d109bf140b6c08477c28bd19a132395078c499b1d0b563450d2354cb6f1be5
           pullPolicy: IfNotPresent
+        # Let the endpoint drop out of the Service before the proxy stops taking connections
+        lifecycle:
+          preStop:
+            sleep:
+              seconds: 10
         env:
           UPSTREAM_URL: http://192.168.0.184:11434
           METRICS_ENABLED: "true"
