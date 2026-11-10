@@ -10,7 +10,6 @@ spec:
   egress:
     - {}
 ---
-# No ingress yet; hermes-hub will get an allow to the ports it uses
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -22,6 +21,16 @@ spec:
       app.kubernetes.io/controller: hermes
       app.kubernetes.io/instance: hermes-kittykat
       app.kubernetes.io/name: hermes-kittykat
+  # hermes-hub, her front end, to the gateway's Webapp listener
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-hub
+            app.kubernetes.io/controller: hermes-hub
+      toPorts:
+        - ports:
+            - port: "9120"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
