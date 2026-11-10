@@ -161,7 +161,8 @@ controllers:
               failureThreshold: 120
         securityContext: *securityContext
       # The dashboard demands a login on any non-loopback bind. It stays on loopback, and this proxy presents
-      #   tailnet requests as loopback ones; the tailnet and the network policy are the only access control
+      #   requests as loopback ones, which hands out operator access, so nothing routes to it: reach it with
+      #   kubectl -n hermes port-forward deploy/hermes 8080
       proxy:
         image:
           repository: jacob.pub/docker.io/nginxinc/nginx-unprivileged
@@ -195,23 +196,6 @@ service:
       webapp:
         port: 9120
 
-# The web UIs are on the tailnet only
-ingress:
-  tailscale:
-    enabled: true
-    forceRename: hermes
-    className: tailscale
-    hosts:
-      - host: hermes
-        paths:
-        - path: /
-          pathType: Prefix
-          service:
-              identifier: hermes
-              port: http
-    tls:
-      - hosts:
-          - hermes
 configMaps:
   managed:
     data:
