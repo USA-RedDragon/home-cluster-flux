@@ -39,9 +39,8 @@ controllers:
           HUB_OIDC_CLIENT_ID: tREPLBoC0qfZVyZUL0yRHgeIGFhf8JMy6xNncyhM
           HUB_UI_DEFAULT_BACKENDS: reddragon=jacob,kittykat=kittykat
           HUB_STORE_PATH: /data/hermes-hub.db
-          # To run the bot: add HUB_TELEGRAM_TOKEN to the hermes-hub Secret and set this to "true"
-          HUB_TELEGRAM_ENABLED: "false"
-          # HUB_TELEGRAM_DEFAULT_BACKENDS: reddragon=jacob,kittykat=kittykat
+          HUB_TELEGRAM_ENABLED: "true"
+          HUB_TELEGRAM_DEFAULT_BACKENDS: reddragon=jacob,kittykat=kittykat
           HUB_OIDC_CLIENT_SECRET:
             valueFrom:
               secretKeyRef:
@@ -52,11 +51,11 @@ controllers:
               secretKeyRef:
                 name: hermes-hub
                 key: HUB_SESSION_SECRET
-          # HUB_TELEGRAM_TOKEN:
-          #   valueFrom:
-          #     secretKeyRef:
-          #       name: hermes-hub
-          #       key: HUB_TELEGRAM_TOKEN
+          HUB_TELEGRAM_TOKEN:
+            valueFrom:
+              secretKeyRef:
+                name: hermes-hub
+                key: HUB_TELEGRAM_TOKEN
         resources:
           requests:
             cpu: 10m
