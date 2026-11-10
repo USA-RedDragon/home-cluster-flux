@@ -22,7 +22,7 @@ spec:
       app.kubernetes.io/instance: hermes
       app.kubernetes.io/name: hermes
   ingress:
-    # hermes-hub, to the gateway's Webapp listener
+    # hermes-hub, to the gateway's Webapp listener and acp-host
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: hermes-hub
@@ -30,6 +30,8 @@ spec:
       toPorts:
         - ports:
             - port: "9120"
+              protocol: TCP
+            - port: "9130"
               protocol: TCP
   egress:
     - toEndpoints:

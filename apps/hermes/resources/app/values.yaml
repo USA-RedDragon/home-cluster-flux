@@ -21,7 +21,28 @@ controllers:
         seccompProfile:
           type: RuntimeDefault
     initContainers:
+      # The device plugin, from the hermes-device image, so client, plugin and protocol share one release
+      device-plugin:
+        image:
+          repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
+          tag: v0.1.0@sha256:4631173465ce52ab42fd13b9e1d4bcf3ca6355ed22f336fc0ba9592df4c03c39
+          pullPolicy: IfNotPresent
+        command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
       init:
+        dependsOn: device-plugin
         image: &image
           repository: jacob.pub/docker.io/nousresearch/hermes-agent
           tag: v0.22.7@sha256:e6d81ae52ebf6a43efa529701405509f20054ba818f179ddd748bed4f8af584c
@@ -41,11 +62,20 @@ controllers:
             install -m 600 /config/honcho.json /opt/data/hermes/honcho.json
             [ -d /opt/data/hermes/plugins/honcho ] || /opt/hermes/.venv/bin/hermes plugins install honcho --yes-deps
             /opt/hermes/.venv/bin/hermes plugins enable honcho || true
+            # Device sessions run with this server cwd; their commands run in the device directory
+            install -d -m 700 /opt/data/hermes/device-placeholder
+            /opt/hermes/.venv/bin/hermes plugins enable device || true
         env: &env
           HOME: /opt/data/hermes
           USER: hermes
           HERMES_HOME: /opt/data/hermes
-          HERMES_WRITE_SAFE_ROOT: /opt/data/hermes
+          # Device paths too: file tools write through the device, and the device enforces its own roots. /home does
+          #   not exist in the pod
+          HERMES_WRITE_SAFE_ROOT: /opt/data/hermes:/home
+          HERMES_DEVICE_HUB_PUBLIC_KEY: |
+            -----BEGIN PUBLIC KEY-----
+            MCowBQYDK2VwAyEAiuaEZ3j30C2FUMJrm1r10rJZyt1EwAYGKor/3LZqjSA=
+            -----END PUBLIC KEY-----
           HERMES_MANAGED_DIR: /etc/hermes-managed
           HERMES_API_TIMEOUT: "1800"
           HONCHO_API_KEY:
@@ -122,6 +152,42 @@ controllers:
               failureThreshold: 5
         securityContext: *securityContext
     containers:
+      # Hosts one hermes acp per editor connection that the hub forwards. Its own container, so editor sessions
+      #   outlive gateway restarts; the binary comes from the hermes-device image, mounted read-only
+      acp-host:
+        image: *image
+        command: ["/opt/hermes-device/hermes-device", "acp-host"]
+        workingDir: /opt/data/hermes
+        env:
+          <<: *env
+          TMPDIR: /tmp
+          HERMES_DEVICE_ACP_HOST_LISTEN: ":9130"
+          HERMES_DEVICE_ACP_HOST_BACKEND_ID: jacob
+          HERMES_DEVICE_ACP_HOST_PLACEHOLDER: /opt/data/hermes/device-placeholder
+          HERMES_DEVICE_ACP_HOST_HERMES: /opt/hermes/.venv/bin/hermes
+          HERMES_DEVICE_ACP_HOST_HUB_PUBLIC_KEY: |
+            -----BEGIN PUBLIC KEY-----
+            MCowBQYDK2VwAyEAiuaEZ3j30C2FUMJrm1r10rJZyt1EwAYGKor/3LZqjSA=
+            -----END PUBLIC KEY-----
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 4Gi
+        probes:
+          liveness: &acpProbe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 9130
+              periodSeconds: 30
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness: *acpProbe
+        securityContext: *securityContext
       hermes:
         image: *image
         command:
@@ -197,6 +263,8 @@ service:
         port: 8642
       webapp:
         port: 9120
+      acp:
+        port: 9130
 
 configMaps:
   managed:
@@ -210,8 +278,9 @@ configMaps:
           base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
           context_length: 131072
         # Code work happens in each device's own Hermes; this one's shell is a sandbox in its pod
+        # Device-bound sessions run commands on the device; every other session runs here as before
         terminal:
-          backend: local
+          backend: device
           cwd: /opt/data/hermes/workspace
         browser:
           chromium_args:
@@ -230,6 +299,13 @@ configMaps:
         # On a pod stop, let running turns finish (up to 10 minutes) before Hermes exits
         agent:
           restart_drain_timeout: 600
+        plugins:
+          entries:
+            device:
+              settings:
+                backend_id: jacob
+                placeholder: /opt/data/hermes/device-placeholder
+                fallback: local
         webapp:
           enabled: true
           host: 0.0.0.0
@@ -337,6 +413,10 @@ persistence:
           - path: /opt/data
         hermes:
           - path: /opt/data
+        acp-host:
+          - path: /opt/data
+        device-plugin:
+          - path: /opt/data
   managed:
     type: configMap
     identifier: managed
@@ -349,6 +429,8 @@ persistence:
         init:
           - *managed
         gateway:
+          - *managed
+        acp-host:
           - *managed
   config:
     type: configMap
@@ -372,6 +454,9 @@ persistence:
         hermes:
           - *passwd
           - *group
+        acp-host:
+          - *passwd
+          - *group
         proxy:
           - path: /etc/nginx/nginx.conf
             subPath: nginx.conf
@@ -391,3 +476,17 @@ persistence:
           - path: /tmp
         proxy:
           - path: /tmp
+        acp-host:
+          - path: /tmp
+  # The hermes-device binary, for acp-host
+  device-bin:
+    type: custom
+    volumeSpec:
+      image:
+        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.1.0@sha256:4631173465ce52ab42fd13b9e1d4bcf3ca6355ed22f336fc0ba9592df4c03c39
+        pullPolicy: IfNotPresent
+    advancedMounts:
+      hermes:
+        acp-host:
+          - path: /opt/hermes-device
+            readOnly: true

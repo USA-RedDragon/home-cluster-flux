@@ -74,6 +74,9 @@ spec:
         - ports:
             - port: "9120"
               protocol: TCP
+            # acp-host, for editors on paired devices
+            - port: "9130"
+              protocol: TCP
     # OIDC discovery, keys and token exchange: authentik.mcswain.dev resolves to the public gateway, and the policy
     #   sees the envoy pods behind its address
     - toEndpoints:
