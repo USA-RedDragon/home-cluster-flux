@@ -26,7 +26,7 @@ controllers:
       hermes-hub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-hub
-          tag: v0.4.1@sha256:d3d466e9f31b40a00cea51808b94938f13c3a835d59fa1bd5d30b4002b7a74da
+          tag: v0.5.0@sha256:8ed82969e1cf2638b3ca669ea178d408fc51f059d2983f8bc7c351697bfd8bdb
           pullPolicy: IfNotPresent
         # users and backends can only be set in the config file, so it comes from the hermes-hub Secret with the
         #   backend passwords; the other settings are here
