@@ -195,11 +195,10 @@ configMaps:
       # Pinned on top of /opt/data/hermes/config.yaml, and merged into it at start; other settings changed in the
       #   dashboard persist on the PVC
       config.yaml: |
-        # Shared with Jacob's instance for now; a priority proxy in front of Ollama will replace this endpoint
         model:
           default: qwen3.8:27b
           provider: custom
-          base_url: http://192.168.0.184:11434/v1
+          base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
           context_length: 131072
         terminal:
           backend: local

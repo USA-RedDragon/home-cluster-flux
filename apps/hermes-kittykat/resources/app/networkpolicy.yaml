@@ -40,14 +40,14 @@ spec:
         - ports:
             - port: "8000"
               protocol: TCP
-    # Ollama on sim-linux, and nothing else there
-    - toCIDR:
-        - 192.168.0.184/32
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: ollama-priority-proxy
+            app.kubernetes.io/controller: ollama-priority-proxy
       toPorts:
         - ports:
             - port: "11434"
               protocol: TCP
-    # The browser and web tools, and the Honcho plugin's install from PyPI
     # The public gateway's LAN address, so her agent can use Jacob's public sites from inside the LAN
     - toCIDR:
         - 192.168.254.254/32
@@ -60,6 +60,7 @@ spec:
               protocol: TCP
             - port: "443"
               protocol: UDP
+    # The browser and web tools, and the Honcho plugin's install from PyPI
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:
