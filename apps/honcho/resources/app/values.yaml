@@ -13,7 +13,14 @@ defaultPodOptions:
 
 controllers:
   honcho:
-    replicas: 1
+    # Stateless; two replicas roll one at a time so the API stays up
+    replicas: 2
+    strategy: RollingUpdate
+    rollingUpdate:
+      surge: 1
+      unavailable: 0
+    podDisruptionBudget:
+      minAvailable: 1
     initContainers:
       migrate:
         image: &image
@@ -151,6 +158,11 @@ controllers:
         securityContext: *securityContext
   deriver:
     replicas: 1
+    # Works from the queue in Postgres, so a short overlap of two is safe
+    strategy: RollingUpdate
+    rollingUpdate:
+      surge: 1
+      unavailable: 0
     containers:
       deriver:
         image: *image
@@ -172,6 +184,8 @@ controllers:
         securityContext: *securityContext
   tei:
     replicas: 1
+    # The model cache is a single-node ReadWriteOnce volume, so a second pod could not mount it; the deriver retries
+    #   embeddings during the restart
     strategy: Recreate
     containers:
       tei:
