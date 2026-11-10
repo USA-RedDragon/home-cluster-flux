@@ -1,0 +1,376 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  hermes:
+    replicas: 1
+    strategy: Recreate
+    pod:
+      # The image's s6 entrypoint needs root, so hermes runs as PID 1's child here; the pause container reaps zombies
+      shareProcessNamespace: true
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    initContainers:
+      init:
+        image: &image
+          repository: jacob.pub/docker.io/nousresearch/hermes-agent
+          tag: v0.22.7@sha256:e6d81ae52ebf6a43efa529701405509f20054ba818f179ddd748bed4f8af584c
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -ec
+          - |
+            # Hermes wants its home owned by its own uid, and the volume root is root's
+            install -d -m 700 /opt/data/hermes /opt/data/hermes/workspace
+            /opt/hermes/.venv/bin/python /opt/hermes/tools/skills_sync.py || echo "skills_sync failed; continuing"
+            # Keep config.yaml in step with the managed overlay for clients that read it directly
+            /opt/hermes/.venv/bin/python /config/merge-managed.py
+            # Memory: Honcho. The plugin and its honcho-ai dependency live on this volume (the image's venv is
+            #   sealed); hermes re-execs into the environment that has it
+            install -m 600 /config/honcho.json /opt/data/hermes/honcho.json
+            [ -d /opt/data/hermes/plugins/honcho ] || /opt/hermes/.venv/bin/hermes plugins install honcho --yes-deps
+            /opt/hermes/.venv/bin/hermes plugins enable honcho || true
+        env: &env
+          HOME: /opt/data/hermes
+          USER: hermes
+          HERMES_HOME: /opt/data/hermes
+          # The terminal runs in this pod; file tools may write only in her home
+          HERMES_WRITE_SAFE_ROOT: /opt/data/hermes
+          HERMES_MANAGED_DIR: /etc/hermes-managed
+          HERMES_API_TIMEOUT: "1800"
+          HONCHO_API_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: hermes-kittykat-honcho
+                key: HONCHO_API_KEY
+        resources:
+          requests:
+            cpu: 10m
+            memory: 128Mi
+          limits:
+            memory: 1Gi
+        securityContext: &securityContext
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+      # One gateway per home. As a native sidecar it takes the lock before the dashboard starts, so the dashboard
+      #   attaches to it instead of spawning its own
+      gateway:
+        dependsOn: init
+        restartPolicy: Always
+        image: *image
+        command:
+          - /opt/hermes/.venv/bin/hermes
+          - gateway
+          - run
+          - --no-supervise
+          - --external-supervisor
+        workingDir: /opt/data/hermes
+        env:
+          <<: *env
+          API_SERVER_HOST: 0.0.0.0
+          API_SERVER_PORT: "8642"
+          API_SERVER_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: hermes-kittykat-api
+                key: API_SERVER_KEY
+        resources:
+          requests:
+            cpu: 50m
+            memory: 512Mi
+          limits:
+            memory: 8Gi
+        probes:
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8642
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 120
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8642
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 5
+        securityContext: *securityContext
+    containers:
+      hermes:
+        image: *image
+        command:
+          - /opt/hermes/.venv/bin/hermes
+          - dashboard
+          - --host
+          - 127.0.0.1
+          - --port
+          - "9119"
+          - --no-open
+        workingDir: /opt/data/hermes
+        env: *env
+        resources:
+          requests:
+            cpu: 100m
+            memory: 1Gi
+          limits:
+            memory: 8Gi
+        probes:
+          # The dashboard listens on loopback only, so the kubelet can't reach it; probe from inside the container
+          liveness: &hermesProbe
+            enabled: true
+            custom: true
+            spec:
+              exec:
+                command: ["curl", "-sf", "-o", "/dev/null", "http://127.0.0.1:9119/"]
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 5
+          readiness: *hermesProbe
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              exec:
+                command: ["curl", "-sf", "-o", "/dev/null", "http://127.0.0.1:9119/"]
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 120
+        securityContext: *securityContext
+      # The dashboard demands a login on any non-loopback bind. It stays on loopback, and this proxy presents
+      #   requests as loopback ones; the network policy is the only access control, and it admits nothing yet
+      proxy:
+        image:
+          repository: jacob.pub/docker.io/nginxinc/nginx-unprivileged
+          tag: 1.31.6-alpine@sha256:b9241c6e7b8e9a862f129d8d4199ab64b10390949a78bdd5603379b32c844083
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 128Mi
+        probes:
+          liveness: &proxyProbe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+          readiness: *proxyProbe
+        securityContext: *securityContext
+
+# No ingress or route: hermes-hub, her front end, will reach this Service in-cluster
+service:
+  hermes:
+    controller: hermes
+    ports:
+      http:
+        port: 8080
+      api:
+        port: 8642
+
+configMaps:
+  managed:
+    data:
+      # Pinned on top of /opt/data/hermes/config.yaml, and merged into it at start; other settings changed in the
+      #   dashboard persist on the PVC
+      config.yaml: |
+        # Shared with Jacob's instance for now; a priority proxy in front of Ollama will replace this endpoint
+        model:
+          default: qwen3.8:27b
+          provider: custom
+          base_url: http://192.168.0.184:11434/v1
+          context_length: 131072
+        terminal:
+          backend: local
+          cwd: /opt/data/hermes/workspace
+        browser:
+          chromium_args:
+            - --no-sandbox
+            - --disable-dev-shm-usage
+        memory:
+          provider: honcho
+          memory_enabled: false
+          user_profile_enabled: false
+          nudge_interval: 0
+        # hermes-hub placeholder: it may need the Webapp listener on a pod address, for example
+        # webapp:
+        #   enabled: true
+        #   host: 0.0.0.0
+        #   port: 9120
+        auth:
+          adopt_external_logins: false
+        updates:
+          check: false
+  config:
+    data:
+      merge-managed.py: |
+        import os
+        from hermes_yaml import safe_dump, safe_load
+
+        path = "/opt/data/hermes/config.yaml"
+        with open("/etc/hermes-managed/config.yaml") as f:
+            managed = safe_load(f) or {}
+        config = {}
+        if os.path.exists(path):
+            with open(path) as f:
+                config = safe_load(f) or {}
+
+        def merge(base, top):
+            for key, value in top.items():
+                if isinstance(value, dict) and isinstance(base.get(key), dict):
+                    merge(base[key], value)
+                else:
+                    base[key] = value
+
+        merge(config, managed)
+        with open(path + ".tmp", "w") as f:
+            safe_dump(config, f, sort_keys=False)
+        os.replace(path + ".tmp", path)
+      # Tools that look up the running uid need a passwd entry
+      passwd: |
+        root:x:0:0:root:/root:/bin/sh
+        hermes:x:568:568:hermes:/opt/data/hermes:/bin/bash
+        nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+      group: |
+        root:x:0:
+        hermes:x:568:
+        nogroup:x:65534:
+      # Her own workspace, so her memory never mixes with Jacob's
+      honcho.json: |
+        {
+          "hosts": {
+            "hermes": {
+              "baseUrl": "http://honcho.honcho.svc.cluster.local:8000",
+              "workspace": "kittykat",
+              "peerName": "kittykat",
+              "aiPeer": "hermes",
+              "sessionStrategy": "per-session",
+              "pinUserPeer": true
+            }
+          }
+        }
+      nginx.conf: |
+        pid /tmp/nginx.pid;
+        events {}
+        http {
+          access_log off;
+          client_body_temp_path /tmp/cb; proxy_temp_path /tmp/p; fastcgi_temp_path /tmp/f;
+          uwsgi_temp_path /tmp/u; scgi_temp_path /tmp/s;
+          map $http_upgrade $connection_upgrade {
+            default upgrade;
+            '' close;
+          }
+          server {
+            listen 8080;
+            client_max_body_size 512m;
+            location = /healthz { return 200 "ok\n"; }
+            include /etc/nginx/dashboard.conf;
+          }
+        }
+      # The Chat tab's TUI would be a shell in this pod
+      dashboard.conf: |
+        location /api/pty { return 403; }
+        location / {
+          proxy_pass http://127.0.0.1:9119;
+          proxy_http_version 1.1;
+          proxy_set_header Host 127.0.0.1:9119;
+          proxy_set_header Origin http://127.0.0.1:9119;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection $connection_upgrade;
+          proxy_set_header X-Forwarded-For "";
+          proxy_buffering off;
+          proxy_read_timeout 24h;
+          proxy_send_timeout 24h;
+        }
+
+persistence:
+  data:
+    type: persistentVolumeClaim
+    forceRename: hermes-kittykat
+    retain: true
+    storageClass: longhorn-nvme
+    accessMode: ReadWriteOnce
+    size: 40Gi
+    advancedMounts:
+      hermes:
+        init:
+          - path: /opt/data
+        gateway:
+          - path: /opt/data
+        hermes:
+          - path: /opt/data
+  managed:
+    type: configMap
+    identifier: managed
+    advancedMounts:
+      hermes:
+        hermes:
+          - &managed
+            path: /etc/hermes-managed
+            readOnly: true
+        init:
+          - *managed
+        gateway:
+          - *managed
+  config:
+    type: configMap
+    identifier: config
+    advancedMounts:
+      hermes:
+        init:
+          - path: /config
+            readOnly: true
+          - &passwd
+            path: /etc/passwd
+            subPath: passwd
+            readOnly: true
+          - &group
+            path: /etc/group
+            subPath: group
+            readOnly: true
+        gateway:
+          - *passwd
+          - *group
+        hermes:
+          - *passwd
+          - *group
+        proxy:
+          - path: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+            readOnly: true
+          - path: /etc/nginx/dashboard.conf
+            subPath: dashboard.conf
+            readOnly: true
+  tmp:
+    type: emptyDir
+    advancedMounts:
+      hermes:
+        init:
+          - path: /tmp
+        gateway:
+          - path: /tmp
+        hermes:
+          - path: /tmp
+        proxy:
+          - path: /tmp

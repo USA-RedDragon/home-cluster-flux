@@ -1,0 +1,95 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: hermes-kittykat
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+# No ingress yet; hermes-hub will get an allow to the ports it uses
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: hermes
+  namespace: hermes-kittykat
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: hermes
+      app.kubernetes.io/instance: hermes-kittykat
+      app.kubernetes.io/name: hermes-kittykat
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+    # Honcho, the memory server
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: honcho
+            app.kubernetes.io/controller: honcho
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    # Ollama on sim-linux, and nothing else there
+    - toCIDR:
+        - 192.168.0.184/32
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
+    # The browser and web tools, and the Honcho plugin's install from PyPI
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
+        - cidr: ::/0
+          except:
+            - fc00::/7
+            - fe80::/10
+            - ff00::/8
+---
+# The b2-backup-operator's restic-init Job can't carry the policy.mcswain.dev egress labels (a Repository has no podLabels),
+# so under default-deny it gets the same DNS and internet egress here
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: restic-init-egress
+  namespace: hermes-kittykat
+spec:
+  endpointSelector:
+    matchLabels:
+      batch.kubernetes.io/job-name: restic-init
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
+        - cidr: ::/0
+          except:
+            - fc00::/7
+            - fe80::/10
+            - ff00::/8

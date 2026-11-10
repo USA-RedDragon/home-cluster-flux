@@ -227,6 +227,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: hermes}
     - {kind: Kustomization, name: '*', namespace: hermes}
     - {kind: OCIRepository, name: '*', namespace: hermes}
+    - {kind: GitRepository, name: '*', namespace: hermes-kittykat}
+    - {kind: HelmChart, name: '*', namespace: hermes-kittykat}
+    - {kind: HelmRelease, name: '*', namespace: hermes-kittykat}
+    - {kind: HelmRepository, name: '*', namespace: hermes-kittykat}
+    - {kind: Kustomization, name: '*', namespace: hermes-kittykat}
+    - {kind: OCIRepository, name: '*', namespace: hermes-kittykat}
     - {kind: GitRepository, name: '*', namespace: home-ipv6}
     - {kind: HelmChart, name: '*', namespace: home-ipv6}
     - {kind: HelmRelease, name: '*', namespace: home-ipv6}

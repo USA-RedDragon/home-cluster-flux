@@ -57,6 +57,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#golink">golink</a></li>
   <li><a href="#gpu-operator">gpu-operator</a></li>
   <li><a href="#hermes">hermes</a></li>
+  <li><a href="#hermes-kittykat">hermes-kittykat</a></li>
   <li><a href="#honcho">honcho</a></li>
   <li><a href="#http-logger">http-logger</a></li>
   <li><a href="#imagescraper-mesonet">imagescraper-mesonet</a></li>
@@ -736,6 +737,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td>hermes</td>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/hermes/resources/app/helm.yaml">hermes</a></td>
+    <td></td>
+  </tr>
+</table>
+
+<h4>hermes-kittykat</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>hermes-kittykat</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/hermes-kittykat/resources/app/helm.yaml">hermes-kittykat</a></td>
     <td></td>
   </tr>
 </table>
