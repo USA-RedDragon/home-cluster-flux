@@ -77,9 +77,9 @@ controllers:
             value: never
           - name: EMBEDDING_VECTOR_DIMENSIONS
             value: "768"
-          # Counted with tiktoken; kept under TEI's --max-batch-tokens so TEI never truncates an input
+          # Counted with tiktoken; kept under the model's 8192 tokens so TEI never truncates an input
           - name: EMBEDDING_MAX_INPUT_TOKENS
-            value: "3072"
+            value: "6000"
           - name: LOG_LEVEL
             value: INFO
           - name: SENTRY_ENABLED
@@ -186,23 +186,24 @@ controllers:
           # TEI binds to $HOSTNAME, which is the pod name
           - --hostname
           - 0.0.0.0
-          # Memory grows with the square of the input length, and warmup holds it: 8192 tokens (the model's maximum)
-          #   took 7.4 GiB, 4096 took 2.6 GiB, 2048 took 1.4 GiB
+          # One full-length input per batch. Memory grows with the square of the input length, and warmup holds it:
+          #   8192 tokens took 7.4 GiB
           - --max-batch-tokens
-          - "4096"
+          - "8192"
         env:
           PORT: "8080"
           HUGGINGFACE_HUB_CACHE: /data
           HOME: /tmp
-          RAYON_NUM_THREADS: "2"
+          # ONNX Runtime and the tokenizer workers size themselves from the CPU limit
+          RAYON_NUM_THREADS: "8"
           # The model is cached on the PVC after the first start; HF_HUB_OFFLINE: "1" then stops all Hugging Face requests
         resources:
           requests:
-            cpu: "1"
-            memory: 3Gi
+            cpu: "4"
+            memory: 8Gi
           limits:
-            cpu: "2"
-            memory: 4Gi
+            cpu: "8"
+            memory: 10Gi
         probes:
           liveness: &teiProbe
             enabled: true
