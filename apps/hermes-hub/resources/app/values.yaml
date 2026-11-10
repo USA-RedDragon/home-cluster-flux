@@ -5,9 +5,14 @@ defaultPodOptions:
 
 controllers:
   hermes-hub:
-    # One replica: the Telegram bot uses long polling and the live session state is in process
-    replicas: 1
-    strategy: Recreate
+    # Two replicas share PostgreSQL; one of them, elected through an advisory lock, polls Telegram
+    replicas: 2
+    strategy: RollingUpdate
+    rollingUpdate:
+      surge: 1
+      unavailable: 0
+    podDisruptionBudget:
+      minAvailable: 1
     pod:
       securityContext:
         runAsNonRoot: true
@@ -39,8 +44,6 @@ controllers:
           HUB_OIDC_CLIENT_ID: tREPLBoC0qfZVyZUL0yRHgeIGFhf8JMy6xNncyhM
           HUB_UI_DEFAULT_BACKENDS: reddragon=jacob,kittykat=kittykat
           HUB_STORE_DRIVER: postgres
-          # One-time copy of the old SQLite store into PostgreSQL; a marker row stops later copies
-          HUB_STORE_IMPORT_PATH: /data/hermes-hub.db
           HUB_STORE_DSN:
             valueFrom:
               secretKeyRef:
@@ -155,15 +158,6 @@ serviceMonitor:
         scrapeTimeout: 10s
 
 persistence:
-  data:
-    type: persistentVolumeClaim
-    forceRename: hermes-hub
-    retain: true
-    storageClass: longhorn-nvme
-    accessMode: ReadWriteOnce
-    size: 1Gi
-    globalMounts:
-      - path: /data
   config:
     type: secret
     name: hermes-hub
