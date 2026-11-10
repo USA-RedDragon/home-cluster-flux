@@ -36,6 +36,11 @@ controllers:
             /opt/hermes/.venv/bin/python /opt/hermes/tools/skills_sync.py || echo "skills_sync failed; continuing"
             # hermes-webui reads config.yaml itself and ignores the managed overlay, so mirror the overlay into it
             /opt/hermes/.venv/bin/python /config/merge-managed.py
+            # Shared memory: Honcho. The plugin and its honcho-ai dependency live on this volume (the image's
+            #   venv is sealed); hermes re-execs into the environment that has it
+            install -m 600 /config/honcho.json /opt/data/hermes/honcho.json
+            [ -d /opt/data/hermes/plugins/honcho ] || /opt/hermes/.venv/bin/hermes plugins install honcho --yes-deps
+            /opt/hermes/.venv/bin/hermes plugins enable honcho || true
         env: &env
           HOME: /opt/data/hermes
           USER: hermes
@@ -45,6 +50,11 @@ controllers:
           HERMES_WRITE_SAFE_ROOT: ""
           HERMES_MANAGED_DIR: /etc/hermes-managed
           HERMES_API_TIMEOUT: "1800"
+          HONCHO_API_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: hermes-honcho
+                key: HONCHO_API_KEY
         resources:
           requests:
             cpu: 10m
@@ -170,9 +180,14 @@ controllers:
       #   its code is used
       webui:
         image: *image
+        # Started as plain python, so it does not get hermes' re-exec into the environment that has the plugin
+        #   dependencies (honcho-ai); resolve that environment's python here instead
         command:
-          - /opt/hermes/.venv/bin/python
-          - /webui/server.py
+          - /bin/sh
+          - -ec
+          - |
+            venv=$(cd /opt/hermes && /opt/hermes/.venv/bin/python -c 'from pathlib import Path; from pm.environments import selected_venv; print(selected_venv(Path("/opt/hermes")))')
+            exec "$venv/bin/python" /webui/server.py
         workingDir: /webui
         env:
           <<: *env
@@ -314,6 +329,11 @@ configMaps:
               - rea-agents@6.8.0
               - mcp
             enabled: true
+        memory:
+          provider: honcho
+          memory_enabled: false
+          user_profile_enabled: false
+          nudge_interval: 0
         auth:
           adopt_external_logins: false
         updates:
@@ -352,6 +372,21 @@ configMaps:
         root:x:0:
         hermes:x:568:
         nogroup:x:65534:
+      # pinUserPeer: everything here is Jacob for now. When Telegram adds his wife, replace it with
+      #   userPeerAliases mapping each Telegram id to its own peer, so the two never merge
+      honcho.json: |
+        {
+          "hosts": {
+            "hermes": {
+              "baseUrl": "http://honcho.honcho.svc.cluster.local:8000",
+              "workspace": "jacob",
+              "peerName": "jacob",
+              "aiPeer": "hermes",
+              "sessionStrategy": "per-session",
+              "pinUserPeer": true
+            }
+          }
+        }
       ssh_config: |
         Host sim-linux
           HostName 192.168.0.184
