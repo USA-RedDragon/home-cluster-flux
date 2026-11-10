@@ -40,6 +40,9 @@ controllers:
             install -m 600 /config/honcho.json /opt/data/hermes/honcho.json
             [ -d /opt/data/hermes/plugins/honcho ] || /opt/hermes/.venv/bin/hermes plugins install honcho --yes-deps
             /opt/hermes/.venv/bin/hermes plugins enable honcho || true
+            # Model routes for subagents (delegation.backend: model_map)
+            [ -d /opt/data/hermes/plugins/advanced-delegation ] || /opt/hermes/.venv/bin/hermes plugins install advanced-delegation --yes-deps || echo "advanced-delegation install failed; continuing"
+            /opt/hermes/.venv/bin/hermes plugins enable advanced-delegation || true
         env: &env
           HOME: /opt/data/hermes
           USER: hermes
@@ -209,6 +212,34 @@ configMaps:
           provider: custom
           base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
           context_length: 131072
+          # Every agent, subagents too, asks Ollama for the window it loads models with; another num_ctx reloads them
+          ollama_num_ctx: 131072
+        # Small model: qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not). The agent picks a route
+        #   per subagent; a subagent with no route runs on the main model. To add Claude Haiku, add a route with
+        #   provider: anthropic and the key; "default: <route>" sends every unrouted subagent to one route
+        delegation:
+          backend: model_map
+          backends:
+            model_map:
+              options:
+                - name: quick
+                  description: "Small fast local model. Only for simple, single-step work: look up a fact, read or list a few files, summarize given text, a short mechanical edit. Not for debugging, planning, multi-step changes or anything that needs judgment."
+                  base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
+                  model: qwen3.5:2b
+                  reasoning_effort: none
+        # Title generation runs in the background, so it goes through /low; compression holds up the turn, so it does not
+        auxiliary:
+          title_generation:
+            provider: custom
+            base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/low/v1
+            model: qwen3.5:2b
+            reasoning_effort: none
+          compression:
+            provider: custom
+            base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
+            model: qwen3.5:2b
+            reasoning_effort: none
+            context_length: 131072
         terminal:
           backend: local
           cwd: /opt/data/hermes/workspace
