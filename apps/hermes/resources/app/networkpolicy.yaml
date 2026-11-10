@@ -31,15 +31,6 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: tailscale-operator
-            tailscale.com/parent-resource: hermes-webui
-            tailscale.com/parent-resource-ns: hermes
-      toPorts:
-        - ports:
-            - port: "8787"
-              protocol: TCP
     # hermes-hub, to the gateway's Webapp listener
     - fromEndpoints:
         - matchLabels:

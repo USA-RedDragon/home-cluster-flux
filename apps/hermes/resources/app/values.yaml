@@ -32,7 +32,7 @@ controllers:
             install -d -m 700 /opt/data/hermes /opt/data/hermes/workspace
             rm -rf /opt/data/hermes/.ssh
             /opt/hermes/.venv/bin/python /opt/hermes/tools/skills_sync.py || echo "skills_sync failed; continuing"
-            # hermes-webui reads config.yaml itself and ignores the managed overlay, so mirror the overlay into it
+            # Mirror the managed overlay into config.yaml, for anything that reads config.yaml directly
             /opt/hermes/.venv/bin/python /config/merge-managed.py
             # Shared memory: Honcho. The plugin and its honcho-ai dependency live on this volume (the image's
             #   venv is sealed); hermes re-execs into the environment that has it
@@ -64,22 +64,6 @@ controllers:
             type: RuntimeDefault
           capabilities:
             drop: ["ALL"]
-      webui-code:
-        image:
-          repository: jacob.pub/ghcr.io/nesquena/hermes-webui
-          tag: 0.52.646@sha256:7df116f97c3f3617639e169d58f79744fd80caaca1415e614582ddef5db71598
-          pullPolicy: IfNotPresent
-        command:
-          - /bin/sh
-          - -ec
-          - cp -r /apptoo/. /webui/
-        resources:
-          requests:
-            cpu: 10m
-            memory: 32Mi
-          limits:
-            memory: 256Mi
-        securityContext: *securityContext
       # One gateway per home. As a native sidecar it takes the lock before the dashboard starts, so the dashboard
       #   attaches to it instead of spawning its own
       gateway:
@@ -176,57 +160,6 @@ controllers:
               timeoutSeconds: 5
               failureThreshold: 120
         securityContext: *securityContext
-      # hermes-webui runs the agent in-process with Hermes' own Python, sharing this home; only that mode streams
-      #   every tool's arguments and result. Its image's own startup needs root and installs from PyPI, so only
-      #   its code is used
-      webui:
-        image: *image
-        # Started as plain python, so it does not get hermes' re-exec into the environment that has the plugin
-        #   dependencies (honcho-ai); resolve that environment's python here instead
-        command:
-          - /bin/sh
-          - -ec
-          - |
-            venv=$(cd /opt/hermes && /opt/hermes/.venv/bin/python -c 'from pathlib import Path; from pm.environments import selected_venv; print(selected_venv(Path("/opt/hermes")))')
-            exec "$venv/bin/python" /webui/server.py
-        workingDir: /webui
-        env:
-          <<: *env
-          TMPDIR: /tmp
-          HERMES_WEBUI_AGENT_DIR: /opt/hermes
-          HERMES_WEBUI_HOST: 0.0.0.0
-          HERMES_WEBUI_PORT: "8787"
-          HERMES_WEBUI_STATE_DIR: /opt/data/hermes/webui
-          HERMES_WEBUI_SKIP_ONBOARDING: "1"
-          HERMES_WEBUI_ALLOWED_ORIGINS: https://hermes-webui.jackal-stargazer.ts.net
-          HERMES_WEBUI_DEFAULT_WORKSPACE: /opt/data/hermes/workspace
-        resources:
-          requests:
-            cpu: 100m
-            memory: 512Mi
-          limits:
-            memory: 8Gi
-        probes:
-          liveness: &webuiProbe
-            enabled: true
-            custom: true
-            spec:
-              tcpSocket:
-                port: 8787
-              periodSeconds: 30
-              timeoutSeconds: 10
-              failureThreshold: 5
-          readiness: *webuiProbe
-          startup:
-            enabled: true
-            custom: true
-            spec:
-              tcpSocket:
-                port: 8787
-              periodSeconds: 5
-              timeoutSeconds: 5
-              failureThreshold: 120
-        securityContext: *securityContext
       # The dashboard demands a login on any non-loopback bind. It stays on loopback, and this proxy presents
       #   tailnet requests as loopback ones; the tailnet and the network policy are the only access control
       proxy:
@@ -261,8 +194,6 @@ service:
         port: 8642
       webapp:
         port: 9120
-      webui:
-        port: 8787
 
 # The web UIs are on the tailnet only
 ingress:
@@ -281,27 +212,11 @@ ingress:
     tls:
       - hosts:
           - hermes
-  webui:
-    enabled: true
-    forceRename: hermes-webui
-    className: tailscale
-    hosts:
-      - host: hermes-webui
-        paths:
-        - path: /
-          pathType: Prefix
-          service:
-              identifier: hermes
-              port: webui
-    tls:
-      - hosts:
-          - hermes-webui
-
 configMaps:
   managed:
     data:
-      # Pinned on top of /opt/data/hermes/config.yaml, and merged into it at start for hermes-webui; other settings
-      #   changed in the dashboard or webui persist on the PVC
+      # Pinned on top of /opt/data/hermes/config.yaml, and merged into it at start; other settings changed in the
+      #   dashboard persist on the PVC
       config.yaml: |
         model:
           default: qwen3.8:27b
@@ -401,7 +316,7 @@ configMaps:
             include /etc/nginx/dashboard.conf;
           }
         }
-      # The Chat tab's TUI is unused; hermes-webui is the chat UI
+      # The Chat tab's TUI is unused; hermes-hub is the chat UI
       dashboard.conf: |
         location /api/pty { return 403; }
         location / {
@@ -433,8 +348,6 @@ persistence:
           - path: /opt/data
         hermes:
           - path: /opt/data
-        webui:
-          - path: /opt/data
   managed:
     type: configMap
     identifier: managed
@@ -447,8 +360,6 @@ persistence:
         init:
           - *managed
         gateway:
-          - *managed
-        webui:
           - *managed
   config:
     type: configMap
@@ -467,9 +378,6 @@ persistence:
             subPath: group
             readOnly: true
         gateway:
-          - *passwd
-          - *group
-        webui:
           - *passwd
           - *group
         hermes:
@@ -494,13 +402,3 @@ persistence:
           - path: /tmp
         proxy:
           - path: /tmp
-        webui:
-          - path: /tmp
-  webui-code:
-    type: emptyDir
-    advancedMounts:
-      hermes:
-        webui-code:
-          - path: /webui
-        webui:
-          - path: /webui
