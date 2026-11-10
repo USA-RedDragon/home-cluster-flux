@@ -29,10 +29,8 @@ controllers:
           - -ec
           - |
             # Hermes wants its home owned by its own uid, and the volume root is root's
-            install -d -m 700 /opt/data/hermes /opt/data/hermes/.ssh
-            install -m 600 /ssh/id_ed25519 /opt/data/hermes/.ssh/id_ed25519
-            install -m 644 /ssh/known_hosts /opt/data/hermes/.ssh/known_hosts
-            install -m 600 /config/ssh_config /opt/data/hermes/.ssh/config
+            install -d -m 700 /opt/data/hermes /opt/data/hermes/workspace
+            rm -rf /opt/data/hermes/.ssh
             /opt/hermes/.venv/bin/python /opt/hermes/tools/skills_sync.py || echo "skills_sync failed; continuing"
             # hermes-webui reads config.yaml itself and ignores the managed overlay, so mirror the overlay into it
             /opt/hermes/.venv/bin/python /config/merge-managed.py
@@ -45,9 +43,7 @@ controllers:
           HOME: /opt/data/hermes
           USER: hermes
           HERMES_HOME: /opt/data/hermes
-          # File tools run on sim-linux over SSH, where only the hermes user's own permissions apply; the image's
-          #   /opt/data default would deny every write there
-          HERMES_WRITE_SAFE_ROOT: ""
+          HERMES_WRITE_SAFE_ROOT: /opt/data/hermes
           HERMES_MANAGED_DIR: /etc/hermes-managed
           HERMES_API_TIMEOUT: "1800"
           HONCHO_API_KEY:
@@ -198,8 +194,7 @@ controllers:
           HERMES_WEBUI_STATE_DIR: /opt/data/hermes/webui
           HERMES_WEBUI_SKIP_ONBOARDING: "1"
           HERMES_WEBUI_ALLOWED_ORIGINS: https://hermes-webui.jackal-stargazer.ts.net
-          # The agent's home on sim-linux; the webui hands it to the SSH terminal as the working directory
-          HERMES_WEBUI_DEFAULT_WORKSPACE: /home/hermes
+          HERMES_WEBUI_DEFAULT_WORKSPACE: /opt/data/hermes/workspace
         resources:
           requests:
             cpu: 100m
@@ -304,31 +299,16 @@ configMaps:
         model:
           default: qwen3.8:27b
           provider: custom
-          base_url: http://192.168.0.184:11434/v1
+          base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
           context_length: 131072
+        # Code work happens in each device's own Hermes; this one's shell is a sandbox in its pod
         terminal:
-          backend: ssh
-          cwd: /home/hermes
-          ssh_host: sim-linux
-          ssh_user: hermes
-          ssh_key: /opt/data/hermes/.ssh/id_ed25519
+          backend: local
+          cwd: /opt/data/hermes/workspace
         browser:
           chromium_args:
             - --no-sandbox
             - --disable-dev-shm-usage
-        mcp_servers:
-          rea:
-            command: ssh
-            args:
-              - sim-linux
-              - env
-              - HOPPER_LAUNCHER_PATH=/opt/hopper/bin/Hopper
-              - GHIDRA_INSTALL_DIR=/opt/ghidra
-              - npx
-              - -y
-              - rea-agents@6.8.0
-              - mcp
-            enabled: true
         memory:
           provider: honcho
           memory_enabled: false
@@ -359,11 +339,16 @@ configMaps:
                 else:
                     base[key] = value
 
+        # Settings an earlier version of this deployment managed; the merge alone would keep them
+        config.get("mcp_servers", {}).pop("rea", None)
+        for key in ("ssh_host", "ssh_user", "ssh_key", "ssh_port"):
+            config.get("terminal", {}).pop(key, None)
+
         merge(config, managed)
         with open(path + ".tmp", "w") as f:
             safe_dump(config, f, sort_keys=False)
         os.replace(path + ".tmp", path)
-      # OpenSSH needs a passwd entry for the running uid
+      # The image has no passwd entry for uid 568
       passwd: |
         root:x:0:0:root:/root:/bin/sh
         hermes:x:568:568:hermes:/opt/data/hermes:/bin/bash
@@ -372,8 +357,7 @@ configMaps:
         root:x:0:
         hermes:x:568:
         nogroup:x:65534:
-      # pinUserPeer: everything here is Jacob for now. When Telegram adds his wife, replace it with
-      #   userPeerAliases mapping each Telegram id to its own peer, so the two never merge
+      # Only Jacob uses this instance (his wife has hermes-kittykat), so every runtime identity pins to his peer
       honcho.json: |
         {
           "hosts": {
@@ -387,16 +371,6 @@ configMaps:
             }
           }
         }
-      ssh_config: |
-        Host sim-linux
-          HostName 192.168.0.184
-          User hermes
-          IdentityFile /opt/data/hermes/.ssh/id_ed25519
-          IdentitiesOnly yes
-          UserKnownHostsFile /opt/data/hermes/.ssh/known_hosts
-          StrictHostKeyChecking yes
-          BatchMode yes
-          ServerAliveInterval 30
       nginx.conf: |
         pid /tmp/nginx.pid;
         events {}
@@ -449,14 +423,6 @@ persistence:
           - path: /opt/data
         webui:
           - path: /opt/data
-  ssh:
-    type: secret
-    name: hermes-ssh
-    advancedMounts:
-      hermes:
-        init:
-          - path: /ssh
-            readOnly: true
   managed:
     type: configMap
     identifier: managed

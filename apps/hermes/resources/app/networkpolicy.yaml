@@ -58,14 +58,13 @@ spec:
         - ports:
             - port: "8000"
               protocol: TCP
-    # sim-linux: Ollama, and SSH for the shell and MCP servers
-    - toCIDR:
-        - 192.168.0.184/32
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: ollama-priority-proxy
+            app.kubernetes.io/controller: ollama-priority-proxy
       toPorts:
         - ports:
             - port: "11434"
-              protocol: TCP
-            - port: "22"
               protocol: TCP
     # The browser and web tools
     - toCIDRSet:
