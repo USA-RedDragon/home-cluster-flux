@@ -8,6 +8,8 @@ controllers:
     replicas: 1
     strategy: Recreate
     pod:
+      # Hermes' turn drain (agent.restart_drain_timeout) plus a minute for its own cleanup
+      terminationGracePeriodSeconds: 660
       # The image's s6 entrypoint needs root, so hermes runs as PID 1's child here; the pause container reaps zombies
       shareProcessNamespace: true
       securityContext:
@@ -225,6 +227,9 @@ configMaps:
         updates:
           check: false
         # For hermes-hub. A wildcard bind is behind dashboard sign-in: the gateway's basic provider, user hub
+        # On a pod stop, let running turns finish (up to 10 minutes) before Hermes exits
+        agent:
+          restart_drain_timeout: 600
         webapp:
           enabled: true
           host: 0.0.0.0
