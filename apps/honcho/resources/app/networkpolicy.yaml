@@ -1,0 +1,139 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: honcho
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: honcho-ingress
+  namespace: honcho
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: honcho
+      app.kubernetes.io/instance: honcho
+      app.kubernetes.io/name: honcho
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: internal
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes
+            app.kubernetes.io/controller: hermes
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+---
+# The API and the deriver: DNS, Postgres, TEI, Ollama on sim-linux, and tiktoken's encoding downloads
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: honcho-egress
+  namespace: honcho
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: honcho
+      app.kubernetes.io/name: honcho
+    matchExpressions:
+      - key: app.kubernetes.io/controller
+        operator: In
+        values: ["honcho", "deriver"]
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "**.cluster.local"
+              - matchName: "openaipublic.blob.core.windows.net"
+    - toFQDNs:
+        - matchName: "openaipublic.blob.core.windows.net"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            cnpg.io/cluster: postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/controller: tei
+            app.kubernetes.io/instance: honcho
+            app.kubernetes.io/name: honcho
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - toCIDR:
+        - 192.168.0.184/32
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
+---
+# The model download from Hugging Face; huggingface.co redirects the weights to *.cdn.hf.co
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: tei
+  namespace: honcho
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: tei
+      app.kubernetes.io/instance: honcho
+      app.kubernetes.io/name: honcho
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/instance: honcho
+            app.kubernetes.io/name: honcho
+          matchExpressions:
+            - key: app.kubernetes.io/controller
+              operator: In
+              values: ["honcho", "deriver"]
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "**.cluster.local"
+              - matchName: "huggingface.co"
+              - matchPattern: "**.hf.co"
+    - toFQDNs:
+        - matchName: "huggingface.co"
+        - matchPattern: "**.hf.co"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

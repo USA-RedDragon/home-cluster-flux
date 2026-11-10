@@ -1,0 +1,68 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgresql
+  namespace: honcho
+spec:
+  inheritedMetadata:
+    labels:
+      recurring-job.longhorn.io/source: enabled
+      recurring-job.longhorn.io/trim: enabled
+  instances: 3
+  imageName: jacob.pub/ghcr.io/cloudnative-pg/postgresql:17.11-system-bookworm@sha256:d2a149bc3de0161d37ca21e7e0869ee6e8c9050a8825b8ba9e6d185ee940a2c9
+  enableSuperuserAccess: false
+  bootstrap:
+    initdb:
+      database: honcho
+      owner: honcho
+      # The app role can't create these, and Honcho's migrations need them
+      postInitApplicationSQL:
+        - CREATE EXTENSION IF NOT EXISTS vector;
+        - CREATE EXTENSION IF NOT EXISTS pg_trgm;
+        - CREATE EXTENSION IF NOT EXISTS btree_gin;
+  backup:
+    barmanObjectStore:
+      destinationPath: "s3://cnpg/honcho"
+      endpointURL: "https://s3.mcswain.dev"
+      s3Credentials:
+        accessKeyId:
+          name: cnpg-minio
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: cnpg-minio
+          key: AWS_SECRET_ACCESS_KEY
+      data:
+        compression: lz4
+      wal:
+        compression: zstd
+    retentionPolicy: "4w"
+  storage:
+    storageClass: longhorn-nvme-r1
+    size: 10Gi
+  monitoring:
+    enablePodMonitor: true
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+  smartShutdownTimeout: 30
+  stopDelay: 300
+---
+apiVersion: v1
+kind: Secret
+metadata:
+ name: cnpg-minio
+ annotations:
+   reflector.v1.k8s.emberstack.com/reflects: reflector/cnpg-minio
+type: Opaque
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: backup
+spec:
+  immediate: true
+  schedule: "0 16 * * * *"
+  backupOwnerReference: self
+  cluster:
+    name: postgresql

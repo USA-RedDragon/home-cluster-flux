@@ -1,0 +1,292 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 568
+    runAsGroup: 568
+    fsGroup: 568
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+
+controllers:
+  honcho:
+    replicas: 1
+    initContainers:
+      migrate:
+        image: &image
+          repository: jacob.pub/ghcr.io/plastic-labs/honcho
+          tag: v3.6.0@sha256:eb906a2d251aa48b22347e4465b40785ea7a84e2bfd1105780416bf1f0121099
+          pullPolicy: IfNotPresent
+        command: ["python", "scripts/provision_db.py"]
+        env: &env
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: username
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-app
+                key: password
+          - name: DB_CONNECTION_URI
+            value: postgresql+psycopg://$(DB_USER):$(DB_PASS)@postgresql-rw.honcho.svc.cluster.local:5432/honcho
+          - name: AUTH_USE_AUTH
+            value: "true"
+          - name: AUTH_JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: honcho
+                key: AUTH_JWT_SECRET
+          - name: LLM_OPENAI_API_KEY
+            value: ollama
+          - name: LLM_OPENAI_BASE_URL
+            value: http://192.168.0.184:11434/v1
+          - name: DERIVER_MODEL_CONFIG__MODEL
+            value: &model qwen3.8:27b
+          # If peers never gain observations, Ollama is ignoring json_schema; then set
+          #   DERIVER_MODEL_CONFIG__STRUCTURED_OUTPUT_MODE=json_object
+          - name: SUMMARY_MODEL_CONFIG__MODEL
+            value: *model
+          - name: DREAM_DEDUCTION_MODEL_CONFIG__MODEL
+            value: *model
+          - name: DREAM_INDUCTION_MODEL_CONFIG__MODEL
+            value: *model
+          - name: DIALECTIC_LEVELS__minimal__MODEL_CONFIG__MODEL
+            value: *model
+          - name: DIALECTIC_LEVELS__low__MODEL_CONFIG__MODEL
+            value: *model
+          - name: DIALECTIC_LEVELS__medium__MODEL_CONFIG__MODEL
+            value: *model
+          - name: DIALECTIC_LEVELS__high__MODEL_CONFIG__MODEL
+            value: *model
+          - name: DIALECTIC_LEVELS__max__MODEL_CONFIG__MODEL
+            value: *model
+          - name: EMBEDDING_MODEL_CONFIG__TRANSPORT
+            value: openai
+          - name: EMBEDDING_MODEL_CONFIG__MODEL
+            value: Alibaba-NLP/gte-base-en-v1.5
+          - name: EMBEDDING_MODEL_CONFIG__OVERRIDES__BASE_URL
+            value: http://honcho-tei.honcho.svc.cluster.local:8080/v1
+          - name: EMBEDDING_MODEL_CONFIG__MAX_BATCH_SIZE
+            value: "32"
+          - name: EMBEDDING_MODEL_CONFIG__DIMENSIONS_MODE
+            value: never
+          - name: EMBEDDING_VECTOR_DIMENSIONS
+            value: "768"
+          # Counted with tiktoken; kept under TEI's --max-batch-tokens so TEI never truncates an input
+          - name: EMBEDDING_MAX_INPUT_TOKENS
+            value: "3072"
+          - name: LOG_LEVEL
+            value: INFO
+          - name: SENTRY_ENABLED
+            value: "false"
+          - name: METRICS_ENABLED
+            value: "false"
+          - name: TELEMETRY_ENABLED
+            value: "false"
+          - name: CACHE_ENABLED
+            value: "false"
+          # tiktoken downloads its encodings at runtime
+          - name: TIKTOKEN_CACHE_DIR
+            value: /tmp/tiktoken
+        resources: &initResources
+          requests:
+            cpu: 10m
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+        securityContext: &securityContext
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+      # Sets the vector columns to 768 dimensions while they are empty; the API and deriver refuse to start on a mismatch
+      embeddings:
+        dependsOn: migrate
+        image: *image
+        command: ["python", "scripts/configure_embeddings.py", "--yes"]
+        env: *env
+        resources: *initResources
+        securityContext: *securityContext
+    containers:
+      api:
+        image: *image
+        command: ["fastapi", "run", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "src/main.py"]
+        env: *env
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits:
+            memory: 1Gi
+        probes:
+          liveness: &apiProbe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8000
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 3
+          readiness: *apiProbe
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8000
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 60
+        securityContext: *securityContext
+  deriver:
+    replicas: 1
+    containers:
+      deriver:
+        image: *image
+        command: ["python", "-m", "src.deriver"]
+        env: *env
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits:
+            memory: 1Gi
+        probes:
+          liveness:
+            enabled: false
+          readiness:
+            enabled: false
+          startup:
+            enabled: false
+        securityContext: *securityContext
+  tei:
+    replicas: 1
+    strategy: Recreate
+    containers:
+      tei:
+        image:
+          repository: jacob.pub/ghcr.io/huggingface/text-embeddings-inference
+          tag: cpu-1.9.4@sha256:2538ea1c9640d3763b15af668039d24172d063b42337b0c27796fc2be180c78d
+          pullPolicy: IfNotPresent
+        args:
+          - --model-id
+          - Alibaba-NLP/gte-base-en-v1.5
+          - --revision
+          - a829fd0e060bb84554da0dfd354d0de0f7712b7f
+          # TEI binds to $HOSTNAME, which is the pod name
+          - --hostname
+          - 0.0.0.0
+          # Memory grows with the square of the input length, and warmup holds it: 8192 tokens (the model's maximum)
+          #   took 7.4 GiB, 4096 took 2.6 GiB, 2048 took 1.4 GiB
+          - --max-batch-tokens
+          - "4096"
+        env:
+          PORT: "8080"
+          HUGGINGFACE_HUB_CACHE: /data
+          HOME: /tmp
+          RAYON_NUM_THREADS: "2"
+          # The model is cached on the PVC after the first start; HF_HUB_OFFLINE: "1" then stops all Hugging Face requests
+        resources:
+          requests:
+            cpu: "1"
+            memory: 3Gi
+          limits:
+            cpu: "2"
+            memory: 4Gi
+        probes:
+          liveness: &teiProbe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8080
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 3
+          readiness: *teiProbe
+          # The first start downloads about 550 MB
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8080
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 180
+        securityContext: *securityContext
+
+service:
+  honcho:
+    controller: honcho
+    ports:
+      http:
+        port: 8000
+  tei:
+    controller: tei
+    ports:
+      http:
+        port: 8080
+
+# LAN-only on the internal gateway
+route:
+  honcho:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - honcho.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: honcho
+            port: 8000
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+        timeouts:
+          request: 24h
+          backendRequest: 23h
+
+persistence:
+  models:
+    type: persistentVolumeClaim
+    forceRename: tei-models
+    storageClass: longhorn-nvme-r1
+    accessMode: ReadWriteOnce
+    size: 4Gi
+    advancedMounts:
+      tei:
+        tei:
+          - path: /data
+  tmp:
+    type: emptyDir
+    advancedMounts:
+      honcho:
+        migrate:
+          - path: /tmp
+        embeddings:
+          - path: /tmp
+        api:
+          - path: /tmp
+      deriver:
+        deriver:
+          - path: /tmp
+      tei:
+        tei:
+          - path: /tmp

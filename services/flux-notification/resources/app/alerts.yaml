@@ -233,6 +233,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: home-ipv6}
     - {kind: Kustomization, name: '*', namespace: home-ipv6}
     - {kind: OCIRepository, name: '*', namespace: home-ipv6}
+    - {kind: GitRepository, name: '*', namespace: honcho}
+    - {kind: HelmChart, name: '*', namespace: honcho}
+    - {kind: HelmRelease, name: '*', namespace: honcho}
+    - {kind: HelmRepository, name: '*', namespace: honcho}
+    - {kind: Kustomization, name: '*', namespace: honcho}
+    - {kind: OCIRepository, name: '*', namespace: honcho}
     - {kind: GitRepository, name: '*', namespace: http-logger}
     - {kind: HelmChart, name: '*', namespace: http-logger}
     - {kind: HelmRelease, name: '*', namespace: http-logger}
