@@ -89,6 +89,16 @@ spec:
             # acp-host, for editors on paired devices
             - port: "9130"
               protocol: TCP
+    # Honcho's API, for the Memory page
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: honcho
+            app.kubernetes.io/controller: honcho
+            app.kubernetes.io/name: honcho
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
     # OIDC discovery, keys and token exchange: authentik.mcswain.dev resolves to the public gateway, and the policy
     #   sees the envoy pods behind its address
     - toEndpoints:

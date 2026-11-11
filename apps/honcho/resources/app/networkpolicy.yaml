@@ -32,6 +32,10 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: hermes-kittykat
             app.kubernetes.io/controller: hermes
+        # The hub's Memory page
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-hub
+            app.kubernetes.io/controller: hermes-hub
       toPorts:
         - ports:
             - port: "8000"
