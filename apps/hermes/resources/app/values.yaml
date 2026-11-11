@@ -664,6 +664,9 @@ configMaps:
                 return None
             name = __name__[: -len(own)] + BASE.replace("-", "_")
             import providers
+            disabled = getattr(providers, "_plugin_disabled", None)
+            if disabled is not None and disabled(base_dir):
+                return None
             providers._exec_plugin_module(base_dir, "user", name)
             return sys.modules.get(name)
 
