@@ -62,7 +62,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p4@sha256:aff813123c0cf4b51c320be6190b4cc39fdc7ee723d858741f2dc926a4a8f9ae
+          tag: &hermesTag v0.23.1-p5@sha256:5a975f419d8db54b15ea5c1a9b61084909071db196be1b2b78356095d3e600b5
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -446,6 +446,8 @@ configMaps:
         gateway:
           sigterm_restart_wait: true
           runtime_lock_wait_seconds: 720
+          # Her devices' connections (talaria) may come back during that wait, so turns still running there finish
+          restart_wait_plugin_sockets: [device]
         webapp:
           enabled: true
           host: 0.0.0.0
