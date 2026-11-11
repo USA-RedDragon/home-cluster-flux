@@ -6,10 +6,26 @@ defaultPodOptions:
 controllers:
   hermes:
     replicas: 1
-    strategy: Recreate
+    # The new pod boots next to the old one as a standby: its gateway waits for the old gateway's lock
+    #   (gateway.runtime_lock_wait_seconds) and takes over within a second of its exit. Both pods mount the RWO
+    #   volume on one node. maxUnavailable 0 would deadlock: the old pod only stops once the new one is ready
+    strategy: RollingUpdate
+    rollingUpdate:
+      surge: 1
+      unavailable: 1
     pod:
-      # Hermes' turn drain (agent.restart_drain_timeout) plus a minute for its own cleanup
-      terminationGracePeriodSeconds: 660
+      # Waiting for the new pod's standby (up to 120 s), the restart wait for running turns
+      #   (agent.restart_after_turn_timeout, 540 s), the drain (30 s), Hermes' shutdown watchdog (60 s) and a margin
+      terminationGracePeriodSeconds: 780
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/controller: hermes
+                  app.kubernetes.io/instance: hermes
+                  app.kubernetes.io/name: hermes
+              topologyKey: kubernetes.io/hostname
       # The image's s6 entrypoint needs root, so hermes runs as PID 1's child here; the pause container reaps zombies
       shareProcessNamespace: true
       securityContext:
@@ -112,17 +128,22 @@ controllers:
                 rm -rf "$D/staging-$V"
               fi
             fi
-            rm -f /opt/data/hermes/bin/claude
-            if [ -x "$D/versions/$V/claude" ]; then
-              if check "$D/versions/$V"; then
-                install -d -m 700 /opt/data/hermes/bin && ln -s "$D/versions/$V/claude" /opt/data/hermes/bin/claude &&
-                  echo "Claude Code $V verified"
-              else
+            # On a rollout the old pod's gateway still runs from this volume: swap the link in one rename, and keep the
+            #   version it links to until the next start
+            prev=$(readlink /opt/data/hermes/bin/claude 2>/dev/null || true)
+            if [ -x "$D/versions/$V/claude" ] && check "$D/versions/$V"; then
+              install -d -m 700 /opt/data/hermes/bin && ln -sfn "$D/versions/$V/claude" /opt/data/hermes/bin/.claude.new &&
+                mv -Tf /opt/data/hermes/bin/.claude.new /opt/data/hermes/bin/claude && echo "Claude Code $V verified"
+            else
+              if [ -x "$D/versions/$V/claude" ]; then
                 echo "Installed Claude Code $V failed verification; removed"
                 rm -rf "$D/versions/$V"
               fi
+              rm -f /opt/data/hermes/bin/claude
             fi
-            for old in "$D"/versions/*; do [ "$old" = "$D/versions/$V" ] || rm -rf "$old"; done
+            for old in "$D"/versions/*; do
+              case "$old" in "$D/versions/$V" | "${prev%/claude}") ;; *) rm -rf "$old" ;; esac
+            done
             exit 0
         env:
           CLAUDE_CODE_VERSION: *claudeCodeVersion
@@ -144,11 +165,12 @@ controllers:
             install -d -m 700 /opt/data/hermes /opt/data/hermes/workspace
             rm -rf /opt/data/hermes/.ssh
             /opt/hermes/.venv/bin/python /opt/hermes/tools/skills_sync.py || echo "skills_sync failed; continuing"
-            # Mirror the managed overlay into config.yaml, for anything that reads config.yaml directly
+            # Mirror the managed overlay into config.yaml, for anything that reads config.yaml directly. Every write
+            #   here replaces the file whole: on a rollout the old pod's gateway still runs on this volume
             /opt/hermes/.venv/bin/python /config/merge-managed.py
             # Shared memory: Honcho. The plugin and its honcho-ai dependency live on this volume (the image's
             #   venv is sealed); hermes re-execs into the environment that has it
-            install -m 600 /config/honcho.json /opt/data/hermes/honcho.json
+            install -m 600 /config/honcho.json /opt/data/hermes/.honcho.json.new && mv -f /opt/data/hermes/.honcho.json.new /opt/data/hermes/honcho.json
             [ -d /opt/data/hermes/plugins/honcho ] || /opt/hermes/.venv/bin/hermes plugins install honcho --yes-deps
             /opt/hermes/.venv/bin/hermes plugins enable honcho || true
             # Model routes for subagents (delegation.backend: model_map)
@@ -164,12 +186,19 @@ controllers:
             [ -d /opt/data/hermes/plugins/claude-subscription-directsdk-experimental ] || /opt/hermes/.venv/bin/hermes plugins install claude-subscription-directsdk --yes-deps || echo "claude-subscription-directsdk install failed; continuing"
             /opt/hermes/.venv/bin/hermes plugins enable claude-subscription-directsdk-experimental || true
             P=/opt/data/hermes/plugins/claude-accounts
-            rm -rf "$P.new"
+            rm -rf "$P.new" "$P.old"
             install -d -m 755 "$P.new" "$P.new/dashboard"
             install -m 644 /claude-accounts/plugin.yaml /claude-accounts/__init__.py /claude-accounts/core.py "$P.new/"
             install -m 644 /claude-accounts/plugin_api.py "$P.new/dashboard/plugin_api.py"
             install -m 644 /claude-accounts/manifest.json "$P.new/dashboard/manifest.json"
-            rm -rf "$P" && mv "$P.new" "$P"
+            # Replaced only when it changed, by two renames: the old pod's gateway may still load it
+            if diff -r "$P.new" "$P" >/dev/null 2>&1; then
+              rm -rf "$P.new"
+            else
+              [ ! -d "$P" ] || mv "$P" "$P.old"
+              mv "$P.new" "$P"
+              rm -rf "$P.old"
+            fi
             install -d -m 700 /opt/data/hermes/claude
             /opt/hermes/.venv/bin/hermes plugins enable claude-accounts || true
         env: &env
@@ -209,12 +238,14 @@ controllers:
         dependsOn: init
         restartPolicy: Always
         image: *image
+        # Once the pod is stopping (the hermes container's preStop marks it), a gateway that exited is not started
+        #   again: it would contend with the new pod's gateway for the lock
         command:
-          - /opt/hermes/.venv/bin/hermes
-          - gateway
-          - run
-          - --no-supervise
-          - --external-supervisor
+          - /bin/sh
+          - -c
+          - |
+            [ -e /tmp/pod-stopping ] && exec sleep infinity
+            exec /opt/hermes/.venv/bin/hermes gateway run --no-supervise --external-supervisor
         workingDir: /opt/data/hermes
         env:
           <<: *env
@@ -243,6 +274,7 @@ controllers:
           limits:
             memory: 8Gi
         probes:
+          # A standby waits up to gateway.runtime_lock_wait_seconds (840 s) for the old pod's gateway, then boots
           startup:
             enabled: true
             custom: true
@@ -250,9 +282,9 @@ controllers:
               httpGet:
                 path: /health
                 port: 8642
-              periodSeconds: 5
+              periodSeconds: 1
               timeoutSeconds: 5
-              failureThreshold: 120
+              failureThreshold: 960
           liveness:
             enabled: true
             custom: true
@@ -263,6 +295,18 @@ controllers:
               periodSeconds: 30
               timeoutSeconds: 10
               failureThreshold: 5
+          # The Webapp listener answers only while this gateway owns the volume: 200 when serving and in the
+          #   restart wait (approvals stay answerable there), 503 while starting or stopping. The hub uses it
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /api/health
+                port: 9120
+              periodSeconds: 1
+              timeoutSeconds: 2
+              failureThreshold: 2
         securityContext: *securityContext
     containers:
       # Hosts one hermes acp per editor connection that the hub forwards. Its own container, so editor sessions
@@ -291,7 +335,7 @@ controllers:
           limits:
             memory: 4Gi
         probes:
-          liveness: &acpProbe
+          liveness:
             enabled: true
             custom: true
             spec:
@@ -301,7 +345,21 @@ controllers:
               periodSeconds: 30
               timeoutSeconds: 5
               failureThreshold: 3
-          readiness: *acpProbe
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 9130
+              periodSeconds: 1
+              timeoutSeconds: 2
+              failureThreshold: 2
+        # Stays up, so the pod stays ready, until the gateway leaves its restart wait
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/opt/hermes/.venv/bin/python", "-I", "/etc/hermes-prestop.py"]
         securityContext: *securityContext
       hermes:
         image: *image
@@ -323,27 +381,15 @@ controllers:
             memory: 1Gi
           limits:
             memory: 8Gi
-        probes:
-          # The dashboard listens on loopback only, so the kubelet can't reach it; probe from inside the container
-          liveness: &hermesProbe
-            enabled: true
-            custom: true
-            spec:
-              exec:
-                command: ["curl", "-sf", "-o", "/dev/null", "http://127.0.0.1:9119/"]
-              periodSeconds: 30
-              timeoutSeconds: 10
-              failureThreshold: 5
-          readiness: *hermesProbe
-          startup:
-            enabled: true
-            custom: true
-            spec:
-              exec:
-                command: ["curl", "-sf", "-o", "/dev/null", "http://127.0.0.1:9119/"]
-              periodSeconds: 5
-              timeoutSeconds: 5
-              failureThreshold: 120
+        # No probes: only the operator uses the dashboard, so the hub's traffic need not wait for it, and its preStop
+        #   below must run only on a pod stop, never on a liveness restart
+        # A pod stop restarts the gateway gracefully: SIGTERM with gateway.sigterm_restart_wait opens the restart
+        #   wait, where running turns finish and approvals stay answerable. The main containers stay up (and the
+        #   pod ready) until it ends; only then does the kubelet stop the gateway sidecar
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/opt/hermes/.venv/bin/python", "-I", "/etc/hermes-prestop.py", "signal"]
         securityContext: *securityContext
       # The dashboard demands a login on any non-loopback bind. It stays on loopback, and this proxy presents
       #   requests as loopback ones, which hands out operator access, so nothing routes to it: reach it with
@@ -360,14 +406,37 @@ controllers:
           limits:
             memory: 128Mi
         probes:
-          liveness: &proxyProbe
+          liveness:
             enabled: true
             custom: true
             spec:
               httpGet:
                 path: /healthz
                 port: 8080
-          readiness: *proxyProbe
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              periodSeconds: 1
+              failureThreshold: 2
+        # Stays up, so the pod stays ready, until the gateway leaves its restart wait
+        lifecycle:
+          preStop:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  i=0
+                  while [ ! -e /tmp/pod-stopping ]; do [ $i -ge 25 ] && exit 0; sleep 0.2; i=$((i+1)); done
+                  f=0 i=0
+                  while [ $i -lt 760 ] && [ $f -lt 3 ]; do
+                    if wget -q -T 2 -O /dev/null http://127.0.0.1:9120/api/health; then f=0; else f=$((f+1)); fi
+                    sleep 1; i=$((i+1))
+                  done
         securityContext: *securityContext
 
 service:
@@ -486,6 +555,9 @@ configMaps:
           # A foreground command still running after 2 minutes moves to the background and notifies on exit
           #   (hermes-patches 0002; talaria 0.19.5 and later does the same for device commands)
           auto_background_seconds: 120
+          # Background commands on his computers and in his sandbox keep running when the pod restarts; the new
+          #   gateway reattaches them and still sends their notices (hermes-patches 0012). Nothing runs in this pod
+          process_handoff_backends: [device]
         # Compaction keeps the newest loaded skill, up to 12,000 chars (about 3K tokens), instead of a reload marker
         #   (hermes-patches 0015). A larger skill still gets the marker
         compression:
@@ -525,9 +597,11 @@ configMaps:
         # Cron schedules ("every monday 9am") and the agent's clock use US Central, not the pod's UTC
         timezone: America/Chicago
         # For hermes-hub. A wildcard bind is behind dashboard sign-in: the gateway's basic provider, user hub
-        # On a pod stop, let running turns finish (up to 10 minutes) before Hermes exits
+        # A pod stop is a graceful restart: running turns finish (up to 9 minutes, under the hub's 10-minute prompt
+        #   hold) while approvals stay answerable and new prompts wait for the new pod; then a short drain
         agent:
-          restart_drain_timeout: 600
+          restart_after_turn_timeout: 540
+          restart_drain_timeout: 30
           # No hosted connectors through Nous (manage_connections) and no installs from the online catalog (manage_catalog)
           disabled_toolsets:
             - connections
@@ -543,6 +617,9 @@ configMaps:
                 fallback: device
                 fallback_device: sandbox-jacob
                 fallback_root: /work
+                # How long a device keeps a command for the next gateway after a leg drops: the device's own cap
+                #   (device.max-grace, 10 minutes)
+                grace_seconds: 600
                 # The one hub user of this backend: sandbox chats and scheduled jobs use this user's Firefox
                 user: reddragon
             # One Claude subscription per slot; the login lives in /opt/data/hermes/claude/<id>. The pickers offer
@@ -564,6 +641,13 @@ configMaps:
                     label: Claude (caam)
                   - id: maam
                     label: Claude (maam)
+        # Rolling updates (hermes-patches 0010, 0011): SIGTERM opens the restart wait, and the new pod's gateway waits
+        #   for this one's lock instead of exiting
+        gateway:
+          sigterm_restart_wait: true
+          runtime_lock_wait_seconds: 840
+          # His devices' connections (talaria) may come back during that wait, so turns still running there finish
+          restart_wait_plugin_sockets: [device]
         webapp:
           enabled: true
           host: 0.0.0.0
@@ -631,6 +715,54 @@ configMaps:
         9n3CmZUmbynZ+E/QWNENpW/pDNZdWFy43PASmML5FHu4m9Sn
         =oqMI
         -----END PGP PUBLIC KEY BLOCK-----
+      # preStop of the main containers: keep the container, and so the pod's readiness, up while the gateway
+      #   sidecar is in its restart wait, so the hub still reaches it to answer approvals. With "signal" (the
+      #   dashboard, which has no liveness probe, so its preStop runs only on a pod stop) it first marks the pod
+      #   stopping and sends the gateway SIGTERM, which opens that wait (gateway.sigterm_restart_wait)
+      hermes-prestop.py: |
+        import os
+        import signal
+        import sys
+        import time
+        import urllib.request
+
+        marker = "/tmp/pod-stopping"
+        if sys.argv[1:] == ["signal"]:
+            open(marker, "w").close()
+            # Serve on until the new pod's gateway has warmed up and waits for the lock (gateway.standby), so it
+            #   takes over within a second; a stop with no successor goes on after 2 minutes
+            start = time.time()
+            standby = "/opt/data/hermes/gateway.standby"
+            while time.time() - start < 120:
+                try:
+                    if os.path.getmtime(standby) >= start - 1:
+                        break
+                except OSError:
+                    pass
+                time.sleep(0.5)
+            for pid in filter(str.isdigit, os.listdir("/proc")):
+                try:
+                    with open(f"/proc/{pid}/cmdline", "rb") as f:
+                        argv = f.read().split(b"\0")
+                except OSError:
+                    continue
+                if b"gateway" in argv and b"run" in argv and b"--external-supervisor" in argv:
+                    os.kill(int(pid), signal.SIGTERM)
+        # Without the marker this is a restart of this container alone (a failed liveness probe), not a pod stop
+        start = time.monotonic()
+        while not os.path.exists(marker):
+            if time.monotonic() - start > 5:
+                sys.exit(0)
+            time.sleep(0.2)
+        deadline = time.monotonic() + 760
+        failures = 0
+        while time.monotonic() < deadline and failures < 3:
+            try:
+                urllib.request.urlopen("http://127.0.0.1:9120/api/health", timeout=2).close()
+                failures = 0
+            except Exception:
+                failures += 1
+            time.sleep(1)
       # The image has no passwd entry for uid 568
       passwd: |
         root:x:0:0:root:/root:/bin/sh
@@ -1982,9 +2114,14 @@ persistence:
         hermes:
           - *passwd
           - *group
+          - &prestop
+            path: /etc/hermes-prestop.py
+            subPath: hermes-prestop.py
+            readOnly: true
         acp-host:
           - *passwd
           - *group
+          - *prestop
         proxy:
           - path: /etc/nginx/nginx.conf
             subPath: nginx.conf
