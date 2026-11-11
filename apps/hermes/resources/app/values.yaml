@@ -395,11 +395,17 @@ configMaps:
           base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
           context_length: 131072
         # The Nous provider would use the pod's default Claude login; claude-accounts offers the pool (claude-pool)
-        #   instead. anthropic has no ANTHROPIC_API_KEY: the API keys are the claude-api-* providers below
+        #   instead of one provider per account (claude-<id>, one line per slot in plugins.entries below). anthropic
+        #   has no ANTHROPIC_API_KEY: the API keys are the claude-api-* providers below
         model_catalog:
           excluded_providers:
             - claude-subscription-directsdk-experimental
             - anthropic
+            - claude-jaam
+            - claude-jamaag
+            - claude-ja2000aag
+            - claude-caam
+            - claude-maam
         # Claude API credits, one provider per account key (hermes-anthropic). Never part of the pool. The
         #   newest model of each family; all four have a 1M window on the API
         providers:
@@ -541,7 +547,9 @@ configMaps:
             # One Claude subscription per slot; the login lives in /opt/data/hermes/claude/<id>. The pickers offer
             #   claude-pool, which runs each chat on a signed-in slot with room (the soonest weekly reset; a chat
             #   keeps its slot until that slot is at a limit). claude-<id> still serves chats that picked a slot
-            #   before. Rename a slot by its label only: the id names its login directory
+            #   before. Rename a slot by its label only: the id names its login directory. api_billing_day (1-28,
+            #   default 1) is the day the slot's plan bills, when its API credits refresh; the hub's API credit
+            #   estimate counts from it
             claude-accounts:
               settings:
                 accounts:
@@ -685,8 +693,8 @@ configMaps:
       plugin.yaml: |
         name: claude-accounts
         kind: model-provider
-        version: 0.2.0
-        description: Claude subscription accounts as one pooled provider (claude-pool) plus one unlisted provider per account (claude-<id>), on top of claude-subscription-directsdk-experimental, with sign-in, usage and pool routes for hermes-hub
+        version: 0.2.1
+        description: Claude subscription accounts as one pooled provider (claude-pool) plus one provider per account (claude-<id>) that config hides from the pickers, on top of claude-subscription-directsdk-experimental, with sign-in, usage, pool and API credit routes for hermes-hub
         author: Jacob McSwain
         requires_hermes: ">=0.21.4"
       __init__.py: |
@@ -695,8 +703,8 @@ configMaps:
         Each slot in the plugin's `accounts` setting becomes provider `claude-<id>`, a copy of Nous'
         claude-subscription-directsdk-experimental provider whose Claude Code children run with that
         slot's own config dir (CLAUDE_CONFIG_DIR=<root>/<id>). The pickers offer only `claude-pool`, which
-        runs each request on one of those accounts (core.choose); the account providers stay unlisted, so
-        chats that already use one keep working. The Nous plugin's code is not changed; config hides its own
+        runs each request on one of those accounts (core.choose); config hides the account providers from the
+        pickers (model_catalog.excluded_providers), and chats that already use one keep working. The Nous plugin's code is not changed; config hides its own
         provider from the pickers (model_catalog.excluded_providers), since it would use the shared default login.
         The sign-in, usage and pool routes for hermes-hub are in dashboard/plugin_api.py.
         """
@@ -799,7 +807,7 @@ configMaps:
                 profile = AccountProfile(**{**values, "name": acct.provider, "display_name": acct.label,
                                             "description": f"{acct.label}: Claude subscription through Claude Code, "
                                                            f"login in {acct.config_dir}",
-                                            "base_url": f"process://{acct.provider}", "hidden": True})
+                                            "base_url": f"process://{acct.provider}", "hidden": False})
                 profile.account = acct
                 profile.supports_streaming = getattr(template, "supports_streaming", True)
                 register_provider(profile)
@@ -924,7 +932,11 @@ configMaps:
 
                 def discover_models(self, **kwargs):
                     kwargs.pop("env", None)
-                    return core.pool_models(lambda acct: setup.discover_models(env=core.account_env(acct), **kwargs))
+                    rows = core.pool_models(lambda acct: setup.discover_models(env=core.account_env(acct), **kwargs))
+                    if rows:
+                        # The picker lists fallback_models first and appends live ids it lacks; keep the two the same.
+                        self.fallback_models = tuple(row["id"] for row in rows)
+                    return rows
 
                 def fetch_account_usage(self, *, base_url=None, api_key=None):
                     from agent.account_usage import AccountUsageSnapshot
@@ -1018,6 +1030,8 @@ configMaps:
         class Account:
             id: str
             label: str
+            # The day of the month the account's plan bills on, which starts its API credit cycle.
+            billing_day: int = 1
 
             @property
             def provider(self) -> str:
@@ -1049,7 +1063,9 @@ configMaps:
                 if any(a.id == row["id"] for a in out):
                     continue
                 label = row.get("label") if isinstance(row.get("label"), str) and row["label"].strip() else f"Claude ({row['id']})"
-                out.append(Account(row["id"], label.strip()))
+                day = row.get("api_billing_day")
+                day = day if isinstance(day, int) and not isinstance(day, bool) and 1 <= day <= 28 else 1
+                out.append(Account(row["id"], label.strip(), day))
             return out
 
 
@@ -1644,6 +1660,102 @@ configMaps:
             out = row.json()
             out.update(pinned=pinned, message=None, weekly_resets_text=reset_text(row.weekly_reset) if row.weekly_reset else None)
             return out
+
+
+        # --- API credits: the monthly credit a Max or Ultra plan includes, less what Hermes spent through the account's
+        # API key (provider claude-api-<id>). Anthropic has no API that returns the balance, so this is an estimate that
+        # counts only Hermes's own use. Hermes records those turns under the "custom" route at api.anthropic.com with no
+        # price, so each session's turns go to the API provider the session is on, priced at Anthropic's list prices.
+
+        API_CREDITS_USD = {"max": 100.0, "ultra": 200.0}
+        API_HOST = "https://api.anthropic.com"
+        STATE_DB = Path(os.environ.get("HERMES_HOME", "/opt/data/hermes")) / "state.db"
+
+
+        def api_provider(acct: Account) -> str:
+            return f"claude-api-{acct.id}"
+
+
+        def api_key_env(acct: Account) -> str:
+            return "ANTHROPIC_API_KEY_" + acct.id.upper().replace("-", "_")
+
+
+        def billing_cycle(day: int, at: Optional[datetime] = None) -> tuple[datetime, datetime]:
+            """The current credit cycle, midnight Central to midnight Central on the billing day."""
+            try:
+                from zoneinfo import ZoneInfo
+                tz = ZoneInfo(POOL_TZ)
+            except Exception:
+                tz = timezone.utc
+            local = (at or now()).astimezone(tz)
+            year, month = local.year, local.month
+            if local.day < day:
+                year, month = (year - 1, 12) if month == 1 else (year, month - 1)
+            start = datetime(year, month, day, tzinfo=tz)
+            end = datetime(year + 1, 1, day, tzinfo=tz) if month == 12 else datetime(year, month + 1, day, tzinfo=tz)
+            return start, end
+
+
+        def _session_provider(model_config: Any) -> Optional[str]:
+            try:
+                config = json.loads(model_config) if isinstance(model_config, str) else None
+            except ValueError:
+                return None
+            if not isinstance(config, dict):
+                return None
+            runtime = config.get("gateway_runtime") if isinstance(config.get("gateway_runtime"), dict) else {}
+            value = config.get("provider") or runtime.get("provider")
+            return value if isinstance(value, str) else None
+
+
+        def _api_spend(provider: str, since: datetime) -> tuple[float, int]:
+            """(USD at list price, turns that could not be priced) for the provider's rows seen since the cycle start."""
+            import sqlite3
+            from agent.usage_pricing import CanonicalUsage, estimate_usage_cost
+            rows = []
+            db = sqlite3.connect(f"file:{STATE_DB}?mode=ro", uri=True, timeout=5)
+            try:
+                rows = db.execute(
+                    "SELECT u.model, u.billing_provider, u.input_tokens, u.output_tokens, u.cache_read_tokens, u.cache_write_tokens,"
+                    " u.api_call_count, s.model_config FROM session_model_usage u JOIN sessions s ON s.id = u.session_id"
+                    " WHERE u.billing_base_url LIKE ? AND u.last_seen >= ? AND instr(s.model_config, ?) > 0",
+                    (API_HOST + "%", since.timestamp(), f'"{provider}"')).fetchall()
+            finally:
+                db.close()
+            spent, unpriced = 0.0, 0
+            for model, billed, inp, out, read, write, calls, config in rows:
+                if billed not in ("custom", provider) or _session_provider(config) != provider:
+                    continue
+                usage = CanonicalUsage(input_tokens=inp or 0, output_tokens=out or 0, cache_read_tokens=read or 0,
+                                       cache_write_tokens=write or 0, request_count=calls or 0)
+                cost = estimate_usage_cost(model, usage, provider="anthropic", base_url=API_HOST)
+                if cost.amount_usd is None:
+                    unpriced += calls or 0
+                else:
+                    spent += float(cost.amount_usd)
+            return spent, unpriced
+
+
+        def _run_api_credits(acct: Account, plan: Optional[str]) -> dict:
+            start, end = billing_cycle(acct.billing_day)
+            monthly = API_CREDITS_USD.get((plan or "").lower())
+            out = {"provider": api_provider(acct), "monthly_usd": monthly, "spent_usd": None, "left_usd": None,
+                   "since": iso(start), "resets_at": iso(end), "unpriced_calls": 0, "error": None}
+            try:
+                spent, unpriced = _api_spend(api_provider(acct), start)
+            except Exception as exc:  # the estimate is a convenience; never fail the route on it
+                out["error"] = f"could not read Hermes's usage: {type(exc).__name__}"
+                return out
+            out.update(spent_usd=round(spent, 4), unpriced_calls=unpriced,
+                       left_usd=round(max(0.0, monthly - spent), 2) if monthly is not None else None)
+            return out
+
+
+        def api_credits(acct: Account, plan: Optional[str]) -> Optional[dict]:
+            """The account's API credit estimate, or None when Hermes has no API key for it."""
+            if not os.environ.get(api_key_env(acct)):
+                return None
+            return _cached((acct.id, "api_credits"), USAGE_TTL, lambda: _run_api_credits(acct, plan))
       plugin_api.py: |
         """claude-accounts routes for hermes-hub, mounted at /api/plugins/claude-accounts/ behind dashboard sign-in:
         the account slots, their sign-in and usage, and the account the pool runs a chat on.
@@ -1701,10 +1813,12 @@ configMaps:
         def _account_json(acct, with_usage: bool) -> dict:
             core = _core()
             signin = core.current_signin(acct)
+            status = core.status(acct)
             return {"id": acct.id, "label": acct.label, "provider": acct.provider, "config_dir": str(acct.config_dir),
-                    "status": core.status(acct), "last_email": core.last_email(acct),
+                    "status": status, "last_email": core.last_email(acct),
                     "signin": signin.json() if signin else None,
-                    "usage": core.usage(acct, _fetch_usage(acct)) if with_usage else None}
+                    "usage": core.usage(acct, _fetch_usage(acct)) if with_usage else None,
+                    "api_credits": core.api_credits(acct, status.get("subscription_type")) if with_usage else None}
 
 
         def _lookup(account_id: str):
@@ -1798,7 +1912,7 @@ configMaps:
         {
           "name": "claude-accounts",
           "label": "Claude accounts",
-          "description": "Status, plan limits and sign-in of the Claude account slots, and the pool's account for a chat, for hermes-hub.",
+          "description": "Status, plan limits and sign-in of the Claude account slots, the pool's account for a chat and an API credit estimate, for hermes-hub.",
           "api": "plugin_api.py",
           "tab": { "hidden": true }
         }
