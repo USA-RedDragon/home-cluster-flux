@@ -41,7 +41,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.20.0@sha256:dafeed26fe1adcd4ef40abd9f8a49e63eabcb63c7f265045078eb9a5cf4a9dca
+          tag: v0.21.0@sha256:1b06add279545aa0f18ade1193321c0e546781a0c4f8db2b87fd661f6b9d1f89
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -62,7 +62,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p3@sha256:79251e5532d411cd7b4089ece8b4997fdab9b7c50bd2a28d713da9cd915b607d
+          tag: &hermesTag v0.23.1-p4@sha256:aff813123c0cf4b51c320be6190b4cc39fdc7ee723d858741f2dc926a4a8f9ae
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -376,11 +376,20 @@ configMaps:
           backend: device
           cwd: /opt/data/hermes/empty-cwd
           # A foreground command still running after 2 minutes moves to the background and notifies on exit
-          #   (hermes-patches 0002; Hermes does this on its local backend only, not yet on device)
+          #   (hermes-patches 0002; talaria 0.19.5 and later does the same for device commands)
           auto_background_seconds: 120
           # Background commands on her computers and in her sandbox keep running when the pod restarts; the new
           #   gateway reattaches them and still sends their notices (hermes-patches 0012). Nothing runs in this pod
           process_handoff_backends: [device]
+        # Compaction keeps the newest loaded skill, up to 12,000 chars (about 3K tokens), instead of a reload marker
+        #   (hermes-patches 0015). A larger skill still gets the marker
+        compression:
+          keep_last_skill_chars: 12000
+        # The device browser and agent-messaging tools stay in the tool list instead of behind tool_search, so the
+        #   model calls them directly (hermes-patches 0013). Hermes sends them only while a computer offers them
+        tools:
+          tool_search:
+            eager: [device-browser, device-agents]
         # image.render (TUI inline previews) reads only images Hermes stored (hermes-patches 0003)
         security:
           image_render_paths: media
