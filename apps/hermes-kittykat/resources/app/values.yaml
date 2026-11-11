@@ -41,7 +41,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.19.5@sha256:9b278623d2310745654db79bb72c9eca61479993523f151a30cf317398ff4164
+          tag: v0.19.6@sha256:53398547009d6ace463a32c9c34bace1d82a3876c73d5160481d113390ba9812
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -62,7 +62,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p2@sha256:5915c03b764d743683ecf73c9994bde18f296628c885c91b1c9ecf39be7eae6b
+          tag: &hermesTag v0.23.1-p3@sha256:79251e5532d411cd7b4089ece8b4997fdab9b7c50bd2a28d713da9cd915b607d
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -651,7 +651,7 @@ persistence:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.19.5@sha256:9b278623d2310745654db79bb72c9eca61479993523f151a30cf317398ff4164
+        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.19.6@sha256:53398547009d6ace463a32c9c34bace1d82a3876c73d5160481d113390ba9812
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
