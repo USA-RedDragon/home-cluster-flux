@@ -25,7 +25,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.9.0@sha256:08454e10140eaca0ebccb66fd6940da6fabd040447bb582282cb2942edfe4f97
+          tag: v0.10.0@sha256:286b668d44a3d25e42b995f7384010ddb5b6513aa1463370a6843a08b14eef3e
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -339,6 +339,8 @@ configMaps:
         plugins:
           entries:
             device:
+              # Lets the plugin hide Hermes's browser_vault tool
+              granted_capabilities: [tools.override]
               settings:
                 backend_id: kittykat
                 placeholder: /opt/data/hermes/device-placeholder
@@ -517,7 +519,7 @@ persistence:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.9.0@sha256:08454e10140eaca0ebccb66fd6940da6fabd040447bb582282cb2942edfe4f97
+        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.10.0@sha256:286b668d44a3d25e42b995f7384010ddb5b6513aa1463370a6843a08b14eef3e
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
