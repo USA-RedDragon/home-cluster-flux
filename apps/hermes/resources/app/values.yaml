@@ -25,7 +25,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.13.0@sha256:cb768fa63b51e61b5510a203e5441190c8cbe1109a1561982a29da159a53a3d0
+          tag: v0.14.0@sha256:aa4fcaa81420155f52d24dac0d49b9dba8602087232aefb6de0d9b674b4e3194
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -353,6 +353,8 @@ configMaps:
                 fallback: device
                 fallback_device: sandbox-jacob
                 fallback_root: /work
+                # The one hub user of this backend: sandbox chats and scheduled jobs use this user's Firefox
+                user: reddragon
         webapp:
           enabled: true
           host: 0.0.0.0
@@ -530,7 +532,7 @@ persistence:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.13.0@sha256:cb768fa63b51e61b5510a203e5441190c8cbe1109a1561982a29da159a53a3d0
+        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.14.0@sha256:aa4fcaa81420155f52d24dac0d49b9dba8602087232aefb6de0d9b674b4e3194
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
