@@ -1083,6 +1083,8 @@ configMaps:
                     s.changed.notify_all()
             code = proc.wait()
             if code == 0:
+                with _cache_lock:
+                    _cache.pop((s.acct.id, "usage"), None)
                 st = status(s.acct, fresh=True)
                 with s.changed:
                     s.email = st.get("email")
