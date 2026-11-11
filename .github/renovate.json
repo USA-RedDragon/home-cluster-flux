@@ -442,7 +442,7 @@
             "automerge": false
         },
         {
-            "description": "Hermes Agent: one PR per release for every Hermes image in apps/hermes and apps/hermes-kittykat, never merged on its own. The gate is the Hermes compatibility check on the Renovate PRs for the same release in hermes-hub and hermes-device",
+            "description": "Hermes Agent: one PR per release for every Hermes image in apps/hermes and apps/hermes-kittykat, never merged on its own and never held back by the PR limits. The gate is the Hermes compatibility check on the Renovate PRs for the same release in hermes-hub and hermes-device",
             "matchDatasources": [
                 "docker"
             ],
@@ -452,6 +452,9 @@
             "groupName": "Hermes Agent",
             "dependencyDashboardApproval": false,
             "automerge": false,
+            "prConcurrentLimit": 0,
+            "prHourlyLimit": 0,
+            "prPriority": 10,
             "prBodyNotes": [
                 "**Before merging:** Hermes {{{newVersion}}} must pass the Hermes compatibility check on the Renovate PR for the same release in [hermes-hub](https://github.com/USA-RedDragon/hermes-hub/pulls?q=is%3Apr+hermes-agent+{{{newVersion}}}) (check \"Hermes contract\") and [hermes-device](https://github.com/USA-RedDragon/hermes-device/pulls?q=is%3Apr+hermes-agent+{{{newVersion}}}) (check \"Hermes plugin\"). A red check means the upgrade breaks the hub or the device plugin. Steps and rollout order: [docs/hermes-upgrade.md](https://github.com/USA-RedDragon/hermes-hub/blob/main/docs/hermes-upgrade.md)."
             ]
