@@ -47,8 +47,9 @@ controllers:
       claude-download:
         dependsOn: device-plugin
         image: &image
-          repository: &hermesRepository jacob.pub/docker.io/nousresearch/hermes-agent
-          tag: &hermesTag v0.23.1@sha256:276d44685c65c0cb2a25f190b63c65c8906f9dc76486fb1c05ae71b5826bda08
+          # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
+          repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
+          tag: &hermesTag v0.23.1-p1@sha256:c2d66bbaf6f5fb337f8d7e850741e215984a99db89f4cb41057bb15536b163cf
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -428,11 +429,26 @@ configMaps:
             model: qwen3.5:2b
             reasoning_effort: none
             context_length: 131072
+            # Chats on Claude summarize on their own model at their 1M window's threshold (patch 0001 of
+            #   hermes-patches); every other chat uses the small local model above
+            main_model_providers: [claude-account1, claude-account2, anthropic]
         # Code work happens in each device's own Hermes; this one's shell is a sandbox in its pod
         # Sessions bound to a PC run commands there; every other session runs in the person's sandbox pod, never here
         terminal:
           backend: device
           cwd: /opt/data/hermes/empty-cwd
+          # A foreground command still running after 2 minutes moves to the background and notifies on exit
+          #   (hermes-patches 0002; Hermes does this on its local backend only, not yet on device)
+          auto_background_seconds: 120
+        # image.render (TUI inline previews) reads only images Hermes stored (hermes-patches 0003)
+        security:
+          image_render_paths: media
+        sessions:
+          # A background process that exits while nobody is viewing its chat runs as an agent turn, up to 10 in
+          #   a row, so the agent picks the work back up (hermes-patches 0007)
+          unviewed_completion_turns: 10
+          # Editors (ACP session/list) also offer chats the hub, TUI and CLI started (hermes-patches 0008)
+          acp_list_sources: [acp, gui, local, tui, cli]
         browser:
           chromium_args:
             - --no-sandbox
