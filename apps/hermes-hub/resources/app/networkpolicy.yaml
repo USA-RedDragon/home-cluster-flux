@@ -64,6 +64,12 @@ spec:
               - matchPattern: "**.cluster.local"
               - matchName: "authentik.mcswain.dev"
               - matchName: "api.telegram.org"
+              # Web Push services
+              - matchName: "fcm.googleapis.com"
+              - matchName: "updates.push.services.mozilla.com"
+              - matchName: "web.push.apple.com"
+              - matchPattern: "*.push.apple.com"
+              - matchPattern: "*.notify.windows.com"
     # The hub's PostgreSQL cluster
     - toEndpoints:
         - matchLabels:
@@ -112,6 +118,26 @@ spec:
     # The Telegram bot, when it is turned on
     - toFQDNs:
         - matchName: "api.telegram.org"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # Prometheus, for the GPU busy time on the Usage page
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
+    # Web Push: browsers' push services (Chrome FCM, Firefox, Apple, Edge)
+    - toFQDNs:
+        - matchName: "fcm.googleapis.com"
+        - matchName: "updates.push.services.mozilla.com"
+        - matchName: "web.push.apple.com"
+        - matchPattern: "*.push.apple.com"
+        - matchPattern: "*.notify.windows.com"
       toPorts:
         - ports:
             - port: "443"

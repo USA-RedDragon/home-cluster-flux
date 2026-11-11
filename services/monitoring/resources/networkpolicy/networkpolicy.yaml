@@ -142,6 +142,15 @@ spec:
         - ports:
             - port: "9090"
               protocol: TCP
+    # hermes-hub's Usage page reads the GPU's busy time
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-hub
+            app.kubernetes.io/controller: hermes-hub
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
