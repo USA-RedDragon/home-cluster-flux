@@ -175,3 +175,23 @@ spec:
             - fc00::/7
             - fe80::/10
             - ff00::/8
+---
+# The b2-backup-operator's backup pods dump the database; their DNS and internet egress come from podLabels
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: restic-backup-egress
+  namespace: hermes-hub
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: restic
+      app.kubernetes.io/managed-by: b2-backup-operator
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            cnpg.io/cluster: postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
