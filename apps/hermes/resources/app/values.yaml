@@ -231,8 +231,8 @@ controllers:
           - secretRef:
               name: hermes-hub-auth
           - &anthropic
-            # Claude API: ANTHROPIC_API_KEY for Hermes' own anthropic provider, from Jacob's Claude Console
-            #   organization. Optional, so Hermes starts without it; claude-accounts never passes it to Claude Code
+            # Claude API keys of four accounts (ANTHROPIC_API_KEY_<ACCOUNT>) for the claude-api-* providers.
+            #   Optional, so Hermes starts without them; claude-accounts never passes them to Claude Code
             secretRef:
               name: hermes-anthropic
               optional: true
@@ -394,10 +394,47 @@ configMaps:
           provider: custom
           base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
           context_length: 131072
-        # The Nous provider would use the pod's default Claude login; claude-accounts offers one provider per account
+        # The Nous provider would use the pod's default Claude login; claude-accounts offers the pool (claude-pool)
+        #   instead. anthropic has no ANTHROPIC_API_KEY: the API keys are the claude-api-* providers below
         model_catalog:
           excluded_providers:
             - claude-subscription-directsdk-experimental
+            - anthropic
+        # Claude API credits, one provider per account key (hermes-anthropic). Never part of the pool. The
+        #   newest model of each family; all four have a 1M window on the API
+        providers:
+          claude-api-caam:
+            name: Claude API (caam)
+            base_url: https://api.anthropic.com
+            key_env: ANTHROPIC_API_KEY_CAAM
+            api_mode: anthropic_messages
+            context_length: 1000000
+            discover_models: false
+            models: [claude-opus-5-5, claude-sonnet-5-5, claude-fable-5-2, claude-haiku-5-5]
+          claude-api-ja2000aag:
+            name: Claude API (ja2000aag)
+            base_url: https://api.anthropic.com
+            key_env: ANTHROPIC_API_KEY_JA2000AAG
+            api_mode: anthropic_messages
+            context_length: 1000000
+            discover_models: false
+            models: [claude-opus-5-5, claude-sonnet-5-5, claude-fable-5-2, claude-haiku-5-5]
+          claude-api-jaam:
+            name: Claude API (jaam)
+            base_url: https://api.anthropic.com
+            key_env: ANTHROPIC_API_KEY_JAAM
+            api_mode: anthropic_messages
+            context_length: 1000000
+            discover_models: false
+            models: [claude-opus-5-5, claude-sonnet-5-5, claude-fable-5-2, claude-haiku-5-5]
+          claude-api-jamaag:
+            name: Claude API (jamaag)
+            base_url: https://api.anthropic.com
+            key_env: ANTHROPIC_API_KEY_JAMAAG
+            api_mode: anthropic_messages
+            context_length: 1000000
+            discover_models: false
+            models: [claude-opus-5-5, claude-sonnet-5-5, claude-fable-5-2, claude-haiku-5-5]
         # Hermes detects Ollama and asks it for num_ctx, capped at this window for every model on this route
         #   (subagents too; another num_ctx reloads the model). Not model.ollama_num_ctx: that one also capped a
         #   chat switched to Claude at 131072
@@ -433,7 +470,8 @@ configMaps:
             context_length: 131072
             # Chats on Claude summarize on their own model at their 1M window's threshold (patch 0001 of
             #   hermes-patches); every other chat uses the small local model above
-            main_model_providers: [claude-jaam, claude-jamaag, claude-ja2000aag, claude-caam, claude-maam, anthropic]
+            main_model_providers: [claude-pool, claude-jaam, claude-jamaag, claude-ja2000aag, claude-caam, claude-maam, anthropic,
+                                   claude-api-caam, claude-api-ja2000aag, claude-api-jaam, claude-api-jamaag]
         # Code work happens in each device's own Hermes; this one's shell is a sandbox in its pod
         # Sessions bound to a PC run commands there; every other session runs in the person's sandbox pod, never here
         terminal:
@@ -500,8 +538,10 @@ configMaps:
                 fallback_root: /work
                 # The one hub user of this backend: sandbox chats and scheduled jobs use this user's Firefox
                 user: reddragon
-            # One Claude subscription per slot, provider claude-<id> in the model picker; the login lives in
-            #   /opt/data/hermes/claude/<id>. Rename a slot by its label only: the id names its login directory
+            # One Claude subscription per slot; the login lives in /opt/data/hermes/claude/<id>. The pickers offer
+            #   claude-pool, which runs each chat on a signed-in slot with room (the soonest weekly reset; a chat
+            #   keeps its slot until that slot is at a limit). claude-<id> still serves chats that picked a slot
+            #   before. Rename a slot by its label only: the id names its login directory
             claude-accounts:
               settings:
                 accounts:
@@ -645,22 +685,25 @@ configMaps:
       plugin.yaml: |
         name: claude-accounts
         kind: model-provider
-        version: 0.1.0
-        description: One provider per Claude subscription account (claude-<id>), on top of claude-subscription-directsdk-experimental, with sign-in and usage routes for hermes-hub
+        version: 0.2.0
+        description: Claude subscription accounts as one pooled provider (claude-pool) plus one unlisted provider per account (claude-<id>), on top of claude-subscription-directsdk-experimental, with sign-in, usage and pool routes for hermes-hub
         author: Jacob McSwain
         requires_hermes: ">=0.21.4"
       __init__.py: |
-        """claude-accounts: one Hermes model provider per Claude subscription account.
+        """claude-accounts: the Claude subscription accounts as Hermes model providers.
 
         Each slot in the plugin's `accounts` setting becomes provider `claude-<id>`, a copy of Nous'
         claude-subscription-directsdk-experimental provider whose Claude Code children run with that
-        slot's own config dir (CLAUDE_CONFIG_DIR=<root>/<id>). The Nous plugin's code is not changed;
-        config hides its own provider from the pickers (model_catalog.excluded_providers), since it would use
-        the shared default login.
-        The sign-in and usage routes for hermes-hub are in dashboard/plugin_api.py.
+        slot's own config dir (CLAUDE_CONFIG_DIR=<root>/<id>). The pickers offer only `claude-pool`, which
+        runs each request on one of those accounts (core.choose); the account providers stay unlisted, so
+        chats that already use one keep working. The Nous plugin's code is not changed; config hides its own
+        provider from the pickers (model_catalog.excluded_providers), since it would use the shared default login.
+        The sign-in, usage and pool routes for hermes-hub are in dashboard/plugin_api.py.
         """
         from __future__ import annotations
 
+        import copy
+        import importlib
         import importlib.util
         import logging
         import sys
@@ -672,6 +715,9 @@ configMaps:
 
         BASE = "claude-subscription-directsdk-experimental"
         _CORE = "hermes_claude_accounts_core"
+        # The top-level request key that carries a chat's (session id, cache scope id) from build_api_kwargs_extras
+        # to the pool client, which removes it before the request goes on.
+        POOL_KEY = "hermes_claude_pool_key"
 
 
         def _core():
@@ -753,10 +799,163 @@ configMaps:
                 profile = AccountProfile(**{**values, "name": acct.provider, "display_name": acct.label,
                                             "description": f"{acct.label}: Claude subscription through Claude Code, "
                                                            f"login in {acct.config_dir}",
-                                            "base_url": f"process://{acct.provider}", "hidden": False})
+                                            "base_url": f"process://{acct.provider}", "hidden": True})
                 profile.account = acct
                 profile.supports_streaming = getattr(template, "supports_streaming", True)
                 register_provider(profile)
+            _register_pool(core, base, setup, values, template)
+
+
+        def _register_pool(core, base, setup, values, template):
+            from providers import register_provider
+            directsdk = importlib.import_module(base.__name__ + ".directsdk")
+            Client, Request, Stream = directsdk.Client, directsdk.Request, directsdk.Stream
+            Parent = base.ClaudeOAuthDirectSDKProfile
+
+            class PoolRequest(Request):
+                """The request Hermes holds. Each try on an account is its own request, cancelled with this one."""
+
+                current = None
+
+                def cancel(self):
+                    super().cancel()
+                    inner = self.current
+                    if inner is not None:
+                        inner.cancel()
+
+            class PoolClient(Client):
+                """Runs each request on the chat's account. A try that fails because the account is signed out or at
+                a limit moves to the next account; only a failure before any output does."""
+
+                def __init__(self, **kwargs):
+                    kwargs.pop("env", None)
+                    super().__init__(**kwargs)
+                    self.base_url = f"process://{core.POOL_PROVIDER}"
+
+                def _register(self):
+                    request = PoolRequest(self)
+                    with self._lock:
+                        if self._closed:
+                            raise RuntimeError("Claude client is closed")
+                        self._requests.add(request)
+                    return request
+
+                def _create(self, request=None, **kwargs):
+                    key = kwargs.pop(POOL_KEY, None)
+                    request = request or self._register()
+                    try:
+                        body, manifest, names = directsdk.request_body(kwargs)
+                        system, frames = directsdk.prepare_history(kwargs.get("messages", []), names)
+                        if not isinstance(kwargs.get("model"), str) or not kwargs["model"]:
+                            raise ValueError("model is required")
+                    except BaseException:
+                        with self._lock:
+                            self._requests.discard(request)
+                        raise
+                    stream = Stream(self._pool_run(request, key, kwargs, body, manifest, names, system, frames), request)
+                    if kwargs.get("stream"):
+                        return stream
+                    try:
+                        for chunk in stream:
+                            if hasattr(chunk, "_response"):
+                                return chunk._response
+                        raise RuntimeError("Native response missing")
+                    finally:
+                        stream.close()
+
+                def _pool_run(self, outer, key, kwargs, body, manifest, names, system, frames):
+                    session_id, scope_id = key if isinstance(key, (list, tuple)) and len(key) == 2 else (None, None)
+                    tried = []
+                    try:
+                        while True:
+                            if outer.cancelled.is_set():
+                                raise RuntimeError("Claude request cancelled")
+                            row, _ = core.choose(session_id, kwargs["model"], setup.fetch_usage, scope_id=scope_id,
+                                                 skip=tuple(tried))
+                            view = copy.copy(self)
+                            view.env = core.account_env(row.acct)
+                            inner = Request(view)
+                            with self._lock:
+                                self._requests.add(inner)
+                            outer.current = inner
+                            if outer.cancelled.is_set():
+                                inner.cancel()
+                            run = Client._run(view, inner, kwargs, body, manifest, names, system, frames)
+                            try:
+                                first = next(run)
+                            except StopIteration:
+                                return
+                            except BaseException as exc:
+                                run.close()
+                                if outer.cancelled.is_set() or not core.after_failure(row.acct, exc, kwargs["model"], setup.fetch_usage):
+                                    raise
+                                logger.info("claude-pool: %s is signed out or at a limit; moving to another account", row.acct.id)
+                                tried.append(row.acct.id)
+                                continue
+                            try:
+                                yield first
+                                yield from run
+                            finally:
+                                run.close()
+                            return
+                    finally:
+                        with self._lock:
+                            self._requests.discard(outer)
+
+            class PoolProfile(Parent):
+                """Claude on whichever subscription account has room; see core.choose."""
+
+                def create_client(self, **client_kwargs):
+                    return PoolClient(**client_kwargs)
+
+                def build_api_kwargs_extras(self, *, reasoning_config=None, **context):
+                    extra, top = super().build_api_kwargs_extras(reasoning_config=reasoning_config, **context)
+                    session_id, scope_id = context.get("session_id"), context.get("cache_scope_id")
+                    if session_id or scope_id:
+                        top = {**top, POOL_KEY: (session_id, scope_id)}
+                    return extra, top
+
+                def setup_status(self, **kwargs):
+                    accts = core.accounts()
+                    acct = next((a for a in accts if core.status(a).get("logged_in")), accts[0] if accts else None)
+                    if acct is not None:
+                        kwargs.setdefault("env", core.account_env(acct))
+                    return super().setup_status(**kwargs)
+
+                def discover_models(self, **kwargs):
+                    kwargs.pop("env", None)
+                    return core.pool_models(lambda acct: setup.discover_models(env=core.account_env(acct), **kwargs))
+
+                def fetch_account_usage(self, *, base_url=None, api_key=None):
+                    from agent.account_usage import AccountUsageSnapshot
+                    stamp = datetime.now(timezone.utc)
+                    try:
+                        row, _ = core.choose(None, "", setup.fetch_usage, record=False)
+                    except core.PoolExhausted as exc:
+                        return AccountUsageSnapshot(provider=self.name, source="claude_code_get_usage", fetched_at=stamp,
+                                                    title="Claude plan limits", windows=(), details=(), unavailable_reason=str(exc))
+                    limits, reason = setup.fetch_usage(env=core.account_env(row.acct))
+                    windows, details = base.usage_windows(limits) if limits is not None else ((), ())
+                    return AccountUsageSnapshot(provider=self.name, source="claude_code_get_usage", fetched_at=stamp,
+                                                title=f"{row.acct.label} plan limits", windows=tuple(windows),
+                                                details=tuple(details), unavailable_reason=reason)
+
+            nous_classify = values.get("classify_api_error")
+
+            def classify(error, **kwargs):
+                # Every account at its limit ends the turn with the reset time; it never moves to API credits.
+                if isinstance(error, core.PoolExhausted):
+                    return {"reason": "rate_limit", "retryable": False, "should_fallback": False}
+                return nous_classify(error, **kwargs) if callable(nous_classify) else None
+
+            newest = tuple(r["id"] for r in core.newest_per_family([{"id": m} for m in template.fallback_models or ()]))
+            profile = PoolProfile(**{**values, "name": core.POOL_PROVIDER, "display_name": "Claude",
+                                     "description": "Claude on the signed-in subscription account with room whose weekly limit "
+                                                    "resets soonest; a chat keeps its account until that account is at a limit",
+                                     "base_url": f"process://{core.POOL_PROVIDER}", "hidden": False,
+                                     "fallback_models": newest, "classify_api_error": classify})
+            profile.supports_streaming = getattr(template, "supports_streaming", True)
+            register_provider(profile)
 
 
         _register()
@@ -770,6 +969,7 @@ configMaps:
         """
         from __future__ import annotations
 
+        import fcntl
         import json
         import os
         import re
@@ -779,6 +979,7 @@ configMaps:
         import tempfile
         import threading
         import time
+        from concurrent.futures import ThreadPoolExecutor
         from dataclasses import dataclass, field
         from datetime import datetime, timedelta, timezone
         from pathlib import Path
@@ -794,7 +995,7 @@ configMaps:
         STATUS_TTL = 10
         USAGE_TTL = 60
 
-        _ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,31}$")
+        _ID = re.compile(r"^(?!pool$|api-)[a-z0-9][a-z0-9-]{0,31}$")
         _CODE = re.compile(r"^[A-Za-z0-9._~-]{1,1024}#[A-Za-z0-9._~-]{1,256}$")
         _ESCAPES = re.compile(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b\[[0-9;?]*[A-Za-z]")
         _URL = re.compile(r"https://\S+/oauth/authorize\?\S+")
@@ -861,6 +1062,8 @@ configMaps:
             env = dict(os.environ if base is None else base)
             for key in _DROP:
                 env.pop(key, None)
+            for key in [k for k in env if k.startswith("ANTHROPIC_API_KEY")]:
+                env.pop(key)
             env.update(_QUIET)
             env["CLAUDE_CONFIG_DIR"] = str(acct.config_dir)
             if not env.get("USER") and not env.get("LOGNAME"):
@@ -938,6 +1141,32 @@ configMaps:
 
         def status(acct: Account, fresh: bool = False) -> dict:
             return _cached((acct.id, "status"), STATUS_TTL, lambda: _run_status(acct), fresh)
+
+
+        _refreshing: set = set()
+
+
+        def _cached_stale(key: tuple[str, str], ttl: float, fetch: Callable[[], Any]) -> Any:
+            """Like _cached, but an expired value is returned at once while a background thread reads it again."""
+            with _cache_lock:
+                hit = _cache.get(key)
+                if hit and time.monotonic() - hit[0] < ttl:
+                    return hit[1]
+                if hit and key in _refreshing:
+                    return hit[1]
+                if hit:
+                    _refreshing.add(key)
+
+            def refresh():
+                try:
+                    _cached(key, ttl, fetch, fresh=True)
+                finally:
+                    with _cache_lock:
+                        _refreshing.discard(key)
+            if hit:
+                threading.Thread(target=refresh, daemon=True, name=f"claude-pool-{key[0]}-{key[1]}").start()
+                return hit[1]
+            return _cached(key, ttl, fetch, fresh=True)
 
 
         def _percent(value) -> Optional[float]:
@@ -1171,8 +1400,253 @@ configMaps:
                 _set(s, "cancelled", "The sign-in was cancelled.")
                 _kill(s.proc)
             return s
+
+
+        # --- the pool: one provider whose turns run on whichever signed-in account has room ---
+        # A chat keeps the account it started on (its prompt cache is there) until that account is at a limit or
+        # signed out; a new chat, or one that must move, gets the account whose weekly window resets soonest.
+        # The pins and the accounts known to be at a limit are in one file, so the dashboard process (the hub's
+        # routes) sees what the gateway process (the turns) chose.
+
+        POOL_PROVIDER = "claude-pool"
+        POOL_FILE = ROOT / ".pool.json"
+        POOL_TZ = "America/Chicago"
+        # How long an account that answered "limit reached" stays out when its usage names no reset time.
+        LIMIT_HOLD = 15 * 60
+        PIN_DAYS = 90
+        FAMILIES = ("opus", "sonnet", "fable", "haiku")
+        _FAR = datetime.max.replace(tzinfo=timezone.utc)
+
+
+        class PoolExhausted(RuntimeError):
+            """No signed-in account has room. Never answered with API credits."""
+
+
+        def parse_time(value: Any) -> Optional[datetime]:
+            if not isinstance(value, str) or not value.strip():
+                return None
+            try:
+                t = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+            except ValueError:
+                return None
+            return t if t.tzinfo else t.replace(tzinfo=timezone.utc)
+
+
+        def reset_text(t: datetime) -> str:
+            """A reset time as Jacob reads it: "Mon 12:00 AM CST"."""
+            try:
+                from zoneinfo import ZoneInfo
+                local = t.astimezone(ZoneInfo(POOL_TZ))
+            except Exception:
+                local = t.astimezone(timezone.utc)
+            return local.strftime("%a %-I:%M %p %Z")
+
+
+        def _pool_state() -> dict:
+            try:
+                data = json.loads(POOL_FILE.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                return {"pins": {}, "sessions": {}, "blocked": {}}
+            if not isinstance(data, dict):
+                data = {}
+            for key in ("pins", "sessions", "blocked"):
+                if not isinstance(data.get(key), dict):
+                    data[key] = {}
+            return data
+
+
+        def _pool_update(change: Callable[[dict], None]) -> dict:
+            POOL_FILE.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            with open(POOL_FILE.with_suffix(".lock"), "a+") as lock:
+                fcntl.flock(lock, fcntl.LOCK_EX)
+                state = _pool_state()
+                change(state)
+                cutoff = iso(now() - timedelta(days=PIN_DAYS))
+                state["pins"] = {k: v for k, v in state["pins"].items() if isinstance(v, dict) and str(v.get("at", "")) >= cutoff}
+                state["sessions"] = {s: k for s, k in state["sessions"].items() if k in state["pins"]}
+                state["blocked"] = {a: t for a, t in state["blocked"].items() if (parse_time(t) or now()) > now()}
+                tmp = POOL_FILE.with_suffix(".tmp")
+                tmp.write_text(json.dumps(state), encoding="utf-8")
+                os.replace(tmp, POOL_FILE)
+            return state
+
+
+        def pin_key(session_id: Optional[str], scope_id: Optional[str] = None) -> Optional[str]:
+            return (scope_id or session_id or None) and str(scope_id or session_id)
+
+
+        def pinned_account(state: dict, session_id: Optional[str]) -> Optional[str]:
+            if not session_id:
+                return None
+            key = state["sessions"].get(session_id, session_id)
+            pin = state["pins"].get(key)
+            return pin.get("account") if isinstance(pin, dict) else None
+
+
+        @dataclass
+        class Standing:
+            """An account as the pool sees it for one model."""
+            acct: Account
+            signed_in: bool
+            has_room: bool
+            weekly_reset: Optional[datetime] = None
+            free_at: Optional[datetime] = None
+            usage: Optional[dict] = None
+
+            def json(self) -> dict:
+                return {"account": self.acct.id, "label": self.acct.label, "provider": self.acct.provider,
+                        "signed_in": self.signed_in, "has_room": self.has_room, "weekly_resets_at": iso(self.weekly_reset),
+                        "free_at": iso(self.free_at)}
+
+
+        def _applies(window: dict, model: str) -> bool:
+            kind = window.get("kind")
+            if kind in ("session", "weekly_all"):
+                return True
+            if kind == "weekly_scoped":
+                name = str(window.get("label") or "").removesuffix(" week").strip().lower()
+                return bool(name) and name in (model or "").lower()
+            return False
+
+
+        def standing(acct: Account, model: str, fetch_usage: Callable[..., tuple], blocked: dict) -> Standing:
+            st = _cached_stale((acct.id, "status"), STATUS_TTL, lambda: _run_status(acct))
+            if not st.get("logged_in"):
+                return Standing(acct, False, False)
+            u = _cached_stale((acct.id, "usage"), USAGE_TTL, lambda: _run_usage(acct, fetch_usage))
+            windows = [w for w in u.get("windows") or [] if isinstance(w, dict)]
+            weekly = next((parse_time(w.get("resets_at")) for w in windows if w.get("kind") == "weekly_all"), None)
+            full = [w for w in windows if _applies(w, model) and isinstance(w.get("used_percent"), (int, float)) and w["used_percent"] >= 100]
+            held = parse_time(blocked.get(acct.id))
+            if held is not None and held <= now():
+                held = None
+            if not full and held is None:
+                return Standing(acct, True, True, weekly, None, u)
+            times = [t for t in [parse_time(w.get("resets_at")) for w in full] + [held] if t is not None]
+            return Standing(acct, True, False, weekly, max(times) if times else None, u)
+
+
+        def standings(model: str, fetch_usage: Callable[..., tuple], state: dict, only: Optional[list] = None) -> list[Standing]:
+            accts = only if only is not None else accounts()
+            if not accts:
+                return []
+            with ThreadPoolExecutor(max_workers=len(accts)) as pool:
+                return list(pool.map(lambda a: standing(a, model, fetch_usage, state["blocked"]), accts))
+
+
+        def exhausted_message(rows: list[Standing]) -> str:
+            signed = [r for r in rows if r.signed_in]
+            if not signed:
+                return "No Claude account is signed in. Sign one in on the hub's Usage page."
+            times = [r.free_at for r in signed if r.free_at is not None]
+            if not times:
+                return "All Claude accounts are at their limit."
+            return f"All Claude accounts are at their limit; the first resets {reset_text(min(times))}"
+
+
+        def choose(session_id: Optional[str], model: str, fetch_usage: Callable[..., tuple], *, scope_id: Optional[str] = None,
+                   skip: tuple = (), record: bool = True) -> tuple[Standing, bool]:
+            """The account for the next request of a chat, and whether it is the chat's pinned one.
+
+            Raises PoolExhausted when no signed-in account has room."""
+            state = _pool_state()
+            key = pin_key(session_id, scope_id)
+            pinned = pinned_account(state, key)
+            if pinned is None and session_id and session_id != key:
+                pinned = pinned_account(state, session_id)
+            order = accounts()
+            current = next((a for a in order if a.id == pinned and a.id not in skip), None)
+            if current is not None:
+                row = standing(current, model, fetch_usage, state["blocked"])
+                if row.has_room:
+                    pin = state["pins"].get(key) if key else None
+                    stale = not isinstance(pin, dict) or str(pin.get("at", "")) < iso(now() - timedelta(days=1))
+                    if record and key and (stale or (session_id and state["sessions"].get(session_id) != key)):
+                        _pool_update(lambda s: _pin(s, key, session_id, row.acct.id))
+                    return row, True
+            rows = standings(model, fetch_usage, state, order)
+            open_rows = [r for r in rows if r.has_room and r.acct.id not in skip]
+            if not open_rows:
+                raise PoolExhausted(exhausted_message(rows))
+            best = min(open_rows, key=lambda r: (r.weekly_reset or _FAR, order.index(r.acct)))
+            if record and key:
+                _pool_update(lambda s: _pin(s, key, session_id, best.acct.id))
+            return best, False
+
+
+        def _pin(state: dict, key: str, session_id: Optional[str], account_id: str) -> None:
+            state["pins"][key] = {"account": account_id, "at": iso(now())}
+            if session_id:
+                state["sessions"][session_id] = key
+
+
+        def after_failure(acct: Account, error: BaseException, model: str, fetch_usage: Callable[..., tuple]) -> bool:
+            """Whether a request that failed on this account should move to another one: the account is signed out
+            or at a limit. An account at a limit stays out until its full windows reset."""
+            name = type(error).__name__
+            code = getattr(error, "status_code", None)
+            text = str(error)
+            if name == "ClaudeCodeLoggedOut" or code == 401:
+                return not status(acct, fresh=True).get("logged_in")
+            if code != 429:
+                return False
+            with _cache_lock:
+                _cache.pop((acct.id, "usage"), None)
+            row = standing(acct, model, fetch_usage, {})
+            plan_limit = text.startswith("Native API error")
+            if row.has_room and not plan_limit:
+                return False
+            until = row.free_at or (now() + timedelta(seconds=LIMIT_HOLD))
+            _pool_update(lambda s: s["blocked"].__setitem__(acct.id, iso(until)))
+            return True
+
+
+        def model_family(model_id: str) -> tuple[str, tuple]:
+            """("opus", (5, 5)) for claude-opus-5-5[1m]; a trailing snapshot date is not part of the version."""
+            parts = model_id.removesuffix("[1m]").removeprefix("claude-").split("-")
+            if parts and len(parts[-1]) == 8 and parts[-1].isdigit():
+                parts = parts[:-1]
+            version = tuple(int(p) for p in parts[1:] if p.isdigit())
+            return (parts[0] if parts else ""), version
+
+
+        def newest_per_family(rows: list[dict]) -> list[dict]:
+            """The newest model of each family, Opus, Sonnet, Fable and Haiku first."""
+            best: dict[str, tuple] = {}
+            for row in rows:
+                family, version = model_family(str(row.get("id") or ""))
+                if family and (family not in best or version > best[family][0]):
+                    best[family] = (version, row)
+            rank = {f: i for i, f in enumerate(FAMILIES)}
+            return [best[f][1] for f in sorted(best, key=lambda f: (rank.get(f, len(rank)), f))]
+
+
+        def pool_models(discover: Callable[[Account], Optional[list]]) -> Optional[list[dict]]:
+            """The models every signed-in account offers, newest of each family. None when no account answers."""
+            accts = accounts()
+            if not accts:
+                return None
+            with ThreadPoolExecutor(max_workers=len(accts)) as pool:
+                lists = list(pool.map(lambda a: _cached((a.id, "models"), 600, lambda: discover(a)), accts))
+            lists = [rows for rows in lists if rows]
+            if not lists:
+                return None
+            common = set.intersection(*({str(r.get("id")) for r in rows} for rows in lists))
+            return newest_per_family([r for r in lists[0] if str(r.get("id")) in common])
+
+
+        def pool_view(session_id: Optional[str], model: str, fetch_usage: Callable[..., tuple]) -> dict:
+            """What the hub shows under the model picker: the account the chat's next turn runs on."""
+            try:
+                row, pinned = choose(session_id, model, fetch_usage, record=False)
+            except PoolExhausted as exc:
+                return {"account": None, "pinned": False, "message": str(exc)}
+            out = row.json()
+            out.update(pinned=pinned, message=None, weekly_resets_text=reset_text(row.weekly_reset) if row.weekly_reset else None)
+            return out
       plugin_api.py: |
-        """claude-accounts routes for hermes-hub, mounted at /api/plugins/claude-accounts/ behind dashboard sign-in.
+        """claude-accounts routes for hermes-hub, mounted at /api/plugins/claude-accounts/ behind dashboard sign-in:
+        the account slots, their sign-in and usage, and the account the pool runs a chat on.
 
         A sign-in code passes from the request body to Claude Code's stdin and is never logged or kept.
         """
@@ -1262,6 +1736,16 @@ configMaps:
             return err or _core().usage(acct, _fetch_usage(acct))
 
 
+        @router.get("/pool")
+        def pool(session: str = "", model: str = ""):
+            """The account the chat's next turn on claude-pool runs on, or why none can; nothing is recorded."""
+            core = _core()
+            accts = core.accounts()
+            if not accts:
+                return {"account": None, "pinned": False, "message": "No Claude account slot is set up."}
+            return core.pool_view(session or None, model, _fetch_usage(accts[0]))
+
+
         @router.post("/accounts/{account_id}/signin")
         def signin_start(account_id: str):
             acct, err = _lookup(account_id)
@@ -1314,7 +1798,7 @@ configMaps:
         {
           "name": "claude-accounts",
           "label": "Claude accounts",
-          "description": "Status, plan limits and sign-in of the Claude account slots, for hermes-hub.",
+          "description": "Status, plan limits and sign-in of the Claude account slots, and the pool's account for a chat, for hermes-hub.",
           "api": "plugin_api.py",
           "tab": { "hidden": true }
         }
