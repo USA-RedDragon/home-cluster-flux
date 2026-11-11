@@ -6,6 +6,9 @@ metadata:
 spec:
   bucket: mcswain-kubernetes-backups
   mode: Prefix
+  passwordSecretRef:
+    key: RESTIC_PASSWORD
+    name: restic-envs
   path: k8s/hermes-kittykat
 ---
 apiVersion: b2backup.mcswain.dev/v1
