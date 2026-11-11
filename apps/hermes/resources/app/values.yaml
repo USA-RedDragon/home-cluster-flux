@@ -224,6 +224,12 @@ controllers:
         envFrom:
           - secretRef:
               name: hermes-hub-auth
+          - &anthropic
+            # Claude API: ANTHROPIC_API_KEY for Hermes' own anthropic provider, from Jacob's Claude Console
+            #   organization. Optional, so Hermes starts without it; claude-accounts never passes it to Claude Code
+            secretRef:
+              name: hermes-anthropic
+              optional: true
         resources:
           requests:
             cpu: 50m
@@ -259,6 +265,8 @@ controllers:
         image: *image
         command: ["/opt/hermes-device/hermes-device", "acp-host"]
         workingDir: /opt/data/hermes
+        envFrom:
+          - *anthropic
         env:
           <<: *env
           TMPDIR: /tmp
@@ -300,6 +308,8 @@ controllers:
           - "9119"
           - --no-open
         workingDir: /opt/data/hermes
+        envFrom:
+          - *anthropic
         env: *env
         resources:
           requests:
