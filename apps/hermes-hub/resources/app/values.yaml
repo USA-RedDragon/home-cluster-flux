@@ -52,6 +52,8 @@ controllers:
           HUB_TELEGRAM_ENABLED: "true"
           # Paired computers and sandboxes; the hub signs each device connection with this key
           HUB_DEVICE_ENABLED: "true"
+          # Envoy pods sit in front of the hub; take the device address from X-Forwarded-For
+          HUB_DEVICE_TRUSTED_PROXIES: 172.17.0.0/16
           HUB_DEVICE_SIGNING_KEY:
             valueFrom:
               secretKeyRef:
