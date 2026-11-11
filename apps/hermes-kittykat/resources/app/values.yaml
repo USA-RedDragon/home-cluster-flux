@@ -330,6 +330,10 @@ configMaps:
         # On a pod stop, let running turns finish (up to 10 minutes) before Hermes exits
         agent:
           restart_drain_timeout: 600
+          # No hosted connectors through Nous (manage_connections) and no installs from the online catalog (manage_catalog)
+          disabled_toolsets:
+            - connections
+            - catalog
         plugins:
           entries:
             device:
