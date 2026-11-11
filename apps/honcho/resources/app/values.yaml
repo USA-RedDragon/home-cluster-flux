@@ -55,6 +55,16 @@ controllers:
             value: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/low/v1
           - name: DERIVER_MODEL_CONFIG__MODEL
             value: &model qwen3.8:27b
+          # Per-message extraction without thinking: 0.4 s instead of 11 s per call on qwen3.8 (measured);
+          #   recall and dreams keep thinking
+          - name: DERIVER_MODEL_CONFIG__THINKING_EFFORT
+            value: "none"
+          # The default is one worker, which left the 5090 idle while the queue grew
+          - name: DERIVER_WORKERS
+            value: "4"
+          # More messages per extraction call (default 1024)
+          - name: DERIVER_REPRESENTATION_BATCH_TARGET_INPUT_TOKENS
+            value: "4096"
           # If peers never gain observations, Ollama is ignoring json_schema; then set
           #   DERIVER_MODEL_CONFIG__STRUCTURED_OUTPUT_MODE=json_object
           - name: SUMMARY_MODEL_CONFIG__MODEL
