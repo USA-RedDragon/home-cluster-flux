@@ -65,6 +65,10 @@ controllers:
           # More messages per extraction call (default 1024)
           - name: DERIVER_REPRESENTATION_BATCH_TARGET_INPUT_TOKENS
             value: "4096"
+          # Claim a work unit as soon as it has a message. The default gate (512 tokens or 30 min)
+          #   held short sessions for 30 min while the feeder waited for the queue to drain
+          - name: DERIVER_REPRESENTATION_BATCH_WORK_UNIT_TARGET_TOKENS
+            value: "0"
           # If peers never gain observations, Ollama is ignoring json_schema; then set
           #   DERIVER_MODEL_CONFIG__STRUCTURED_OUTPUT_MODE=json_object
           - name: SUMMARY_MODEL_CONFIG__MODEL
