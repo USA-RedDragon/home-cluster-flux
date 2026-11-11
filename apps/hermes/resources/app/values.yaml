@@ -41,12 +41,100 @@ controllers:
             type: RuntimeDefault
           capabilities:
             drop: ["ALL"]
-      init:
+      # Claude Code's native binary for the Claude subscription providers, on the volume (the image stays as
+      #   published). Downloads a version that is not installed yet; claude-verify checks it. A failure here
+      #   or there leaves Hermes running without the Claude subscription providers
+      claude-download:
         dependsOn: device-plugin
         image: &image
           repository: jacob.pub/docker.io/nousresearch/hermes-agent
           tag: v0.22.7@sha256:e6d81ae52ebf6a43efa529701405509f20054ba818f179ddd748bed4f8af584c
           pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            D=/opt/data/hermes/claude-code
+            V=$CLAUDE_CODE_VERSION
+            install -d -m 700 /opt/data/hermes "$D" "$D/versions" || exit 1
+            [ -x "$D/versions/$V/claude" ] && exit 0
+            rm -rf "$D"/staging-*
+            S="$D/staging-$V"
+            R="https://downloads.claude.ai/claude-code-releases/$V"
+            install -d -m 700 "$S" &&
+              curl -fsSL --retry 3 --connect-timeout 20 -o "$S/manifest.json" "$R/manifest.json" &&
+              curl -fsSL --retry 3 --connect-timeout 20 -o "$S/manifest.json.sig" "$R/manifest.json.sig" &&
+              curl -fsSL --retry 3 --connect-timeout 20 -o "$S/claude" "$R/linux-x64/claude" ||
+              { echo "Claude Code $V download failed"; rm -rf "$S"; }
+            exit 0
+        env:
+          CLAUDE_CODE_VERSION: &claudeCodeVersion "2.1.322"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 256Mi
+        securityContext: &securityContext
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+      # Installs the download only when Anthropic's release key signed its manifest (sqv, Sequoia's verifier, is
+      #   in Debian's base image) and the binary matches the manifest's checksum. It checks the installed binary
+      #   again on every start
+      claude-verify:
+        dependsOn: claude-download
+        image:
+          repository: jacob.pub/docker.io/library/debian
+          tag: 13.7-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            V=$CLAUDE_CODE_VERSION
+            D=/opt/data/hermes/claude-code
+            check() {
+              sqv --keyring /config/claude-code.asc --signature-file "$1/manifest.json.sig" "$1/manifest.json" >/dev/null &&
+                grep -q "\"version\": \"$V\"" "$1/manifest.json" &&
+                sum=$(sed -n '/"linux-x64": {/,/}/s/.*"checksum": "\([0-9a-f]\{64\}\)".*/\1/p' "$1/manifest.json") &&
+                [ -n "$sum" ] && echo "$sum  $1/claude" | sha256sum -c --quiet
+            }
+            if [ ! -x "$D/versions/$V/claude" ] && [ -d "$D/staging-$V" ]; then
+              if check "$D/staging-$V"; then
+                chmod 755 "$D/staging-$V/claude" && mv "$D/staging-$V" "$D/versions/$V"
+              else
+                echo "Claude Code $V failed verification; not installed"
+                rm -rf "$D/staging-$V"
+              fi
+            fi
+            rm -f /opt/data/hermes/bin/claude
+            if [ -x "$D/versions/$V/claude" ]; then
+              if check "$D/versions/$V"; then
+                install -d -m 700 /opt/data/hermes/bin && ln -s "$D/versions/$V/claude" /opt/data/hermes/bin/claude &&
+                  echo "Claude Code $V verified"
+              else
+                echo "Installed Claude Code $V failed verification; removed"
+                rm -rf "$D/versions/$V"
+              fi
+            fi
+            for old in "$D"/versions/*; do [ "$old" = "$D/versions/$V" ] || rm -rf "$old"; done
+            exit 0
+        env:
+          CLAUDE_CODE_VERSION: *claudeCodeVersion
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+        securityContext: *securityContext
+      init:
+        dependsOn: claude-verify
+        image: *image
         command:
           - /bin/sh
           - -ec
@@ -94,13 +182,7 @@ controllers:
             memory: 128Mi
           limits:
             memory: 1Gi
-        securityContext: &securityContext
-          readOnlyRootFilesystem: true
-          allowPrivilegeEscalation: false
-          seccompProfile:
-            type: RuntimeDefault
-          capabilities:
-            drop: ["ALL"]
+        securityContext: *securityContext
       # One gateway per home. As a native sidecar it takes the lock before the dashboard starts, so the dashboard
       #   attaches to it instead of spawning its own
       gateway:
@@ -395,6 +477,38 @@ configMaps:
         with open(path + ".tmp", "w") as f:
             safe_dump(config, f, sort_keys=False)
         os.replace(path + ".tmp", path)
+      # Anthropic's Claude Code release key (fingerprint 31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE, from
+      #   https://downloads.claude.ai/keys/claude-code.asc, as code.claude.com/docs/en/setup gives it)
+      claude-code.asc: |
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+
+        mQINBGnK73ABEACnbytJXkjweYrwIr0aLEFRlH+C0nF44KxFc7gQmJ6PjSPMGZAD
+        dxZcaixU7zZl8WxEpVO0wLmIH8cf2zGOdyuZg1Yaugk1vHb2b8WBhAGCQJdPgB8W
+        XquedepEYtk56uP/gCoTjJDUZluEGBHnlnuujSJ4orxEdhSykEoAUfJZGEILPpMd
+        bphFt/Sn+Eb/TxM5jpKPdwnv8AShNF/1mZU1fWTQq9tRKJUakZj04gdaDFElQXak
+        CtTij+GT6yoYCARSHwGO+PC/Pr6q4tc+D7LRjxSBvUWDoFSmlqb/PJ1hj9D/7I2O
+        e4XXniAPWMR56KvxHlzOzrNQdJujbJdSkCwh1ZijkSd3y8ayW5WYUTGdRab99NUw
+        agzlabe/VVF6kzJ0Scn5q3PihB2Y9Bwo0CKnkYk7a7KT77EWv0Kkq+VHmOtqX3a2
+        hhX+b6a6ve9rzJ1qZYGj+obv/C3Sx1LzUjAfqVy7RJDf2uAoP5t2g8u/TkSpUxhM
+        VEjZBkSxYZhMyzQM6t8IgkUfnSrIPTHixbDWARZ4beMOBjxyPZK1nP7OOrNR3TkK
+        JtwLMQAabURCDnL0PjS0iwBTU4jtumBD1XSULyWuoTvMljrpQr1nV1oDyOt0OLqa
+        KA2McWtd9PdXhC8y2EIg7TmrTlJLfHYbdmkiCYj4J49Q8HWkN/6WE+RTUwARAQAB
+        tD5BbnRocm9waWMgQ2xhdWRlIENvZGUgUmVsZWFzZSBTaWduaW5nIDxzZWN1cml0
+        eUBhbnRocm9waWMuY29tPokCUQQTAQoAOxYhBDHd3iTd+rZ59C170rqpKf8afsrO
+        BQJpyu9wAhsPBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJELqpKf8afsrO
+        l5IP/2I8X1dFy5xYczWB/coIxGjuzS/V6ByZGZZEJsbr04pmuHiFUykJqPGWGQ6q
+        U0YF5iEwvEkaagS5m7DzhSEf3FM3Cgafax/6d70tar9Vr1D+w6uPfxetu7u/WYJp
+        aolIsdh5fTrBh9zSM1Njl8FM8wG8CwZQjS33Oa7d8cwRkgdUWbt6LXgz+cTQNuBn
+        BgW6Ks7oZFI25dfu0ojDR+aDFJg4+4wZoyDLPvJz1SIrJ5WFGs67zsx9SfS3yZnf
+        XKmBe+f0dUy+GJ2nFZrXFf99+c0dPEHYO8DCeAHZizjkFrdYtUHdDU0YDYEGkLJa
+        bE+pgcpkHf5EvsZzHsyDbl95W/eh7pcXMbwkN+W4CBYUE9X4uHhqzWaC5yAVRWUA
+        1BJ9V4LjZfHPLEJt0I3TxzXiEg9/BVeaTYq9RjaxIFo9Nfk158HqJY6SA5jslBlx
+        Gv/No8u+xVcze2UJyGVfEIUfm92+0UAIkny3+5cuVV0ICzJxXlXj0CnLM9Lt50wE
+        p3suVwuBEviCbZ08eAH1Ht8gbBdSsiOkIU8CX3v/scwHHx5q0+NBL6xLrQObg13a
+        tRXBlKObfElkPN3lTUbUnJOW4U8uSjH8VRP+AujKWMDFe7x0zCs+iYY1mTOvbrTS
+        9n3CmZUmbynZ+E/QWNENpW/pDNZdWFy43PASmML5FHu4m9Sn
+        =oqMI
+        -----END PGP PUBLIC KEY BLOCK-----
       # The image has no passwd entry for uid 568
       passwd: |
         root:x:0:0:root:/root:/bin/sh
@@ -472,6 +586,10 @@ persistence:
           - path: /opt/data
         device-plugin:
           - path: /opt/data
+        claude-download:
+          - path: /opt/data
+        claude-verify:
+          - path: /opt/data
   managed:
     type: configMap
     identifier: managed
@@ -502,6 +620,9 @@ persistence:
           - &group
             path: /etc/group
             subPath: group
+            readOnly: true
+        claude-verify:
+          - path: /config
             readOnly: true
         gateway:
           - *passwd

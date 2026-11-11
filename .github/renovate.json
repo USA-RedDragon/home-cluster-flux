@@ -21,6 +21,19 @@
     },
     "customManagers": [
         {
+            "description": "Claude Code CLI on the Hermes volume: the init containers download and verify this version (signed manifest, so no checksum to pin)",
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)apps\\/hermes\\/resources\\/app\\/values\\.yaml$/"
+            ],
+            "matchStrings": [
+                "CLAUDE_CODE_VERSION: &claudeCodeVersion \"(?<currentValue>[0-9.]+)\""
+            ],
+            "depNameTemplate": "@anthropic-ai/claude-code",
+            "datasourceTemplate": "npm",
+            "versioningTemplate": "semver"
+        },
+        {
             "customType": "regex",
             "managerFilePatterns": [
                 "/(^|/)kube-system\\/etcd-(backup|defrag)\\.yaml/"
@@ -457,6 +470,20 @@
             "prPriority": 10,
             "prBodyNotes": [
                 "**Before merging:** Hermes {{{newVersion}}} must pass the Hermes compatibility check on the Renovate PR for the same release in [hermes-hub](https://github.com/USA-RedDragon/hermes-hub/pulls?q=is%3Apr+hermes-agent+{{{newVersion}}}) (check \"Hermes contract\") and [hermes-device](https://github.com/USA-RedDragon/hermes-device/pulls?q=is%3Apr+hermes-agent+{{{newVersion}}}) (check \"Hermes plugin\"). A red check means the upgrade breaks the hub or the device plugin. Steps and rollout order: [docs/hermes-upgrade.md](https://github.com/USA-RedDragon/hermes-hub/blob/main/docs/hermes-upgrade.md)."
+            ]
+        },
+        {
+            "description": "Claude Code CLI for Hermes' Claude subscription providers: its own PR, never automerged",
+            "matchDatasources": [
+                "npm"
+            ],
+            "matchPackageNames": [
+                "@anthropic-ai/claude-code"
+            ],
+            "groupName": "Claude Code CLI",
+            "automerge": false,
+            "prBodyNotes": [
+                "Newer Claude models may need this Claude Code version: the claude-subscription-directsdk plugin page lists the minimum CLI version for each model. Merging restarts Hermes; check no turn is running first."
             ]
         }
     ]
