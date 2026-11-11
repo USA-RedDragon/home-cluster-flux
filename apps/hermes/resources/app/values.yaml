@@ -325,6 +325,9 @@ configMaps:
           memory_enabled: true
           user_profile_enabled: true
           nudge_interval: 10
+          # Raised from 2,200 / 1,375 for the rules imported from Jacob's Claude setup
+          memory_char_limit: 8000
+          user_char_limit: 3000
         auth:
           adopt_external_logins: false
         updates:
