@@ -27,7 +27,7 @@ controllers:
       sandbox:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device-sandbox
-          tag: v0.5.0@sha256:35d4ff3fd62a63898d2e06d993252bb74ff42ff86e2dce91b1aac16321c23357
+          tag: v0.6.0@sha256:f521ea465d45a948a8c81c7ce1e98f3c602420da1419ae5c9e2891f36c9cc46d
           pullPolicy: IfNotPresent
         env:
           # The hub's Service, not its public route: the sandbox reaches nothing on the LAN
