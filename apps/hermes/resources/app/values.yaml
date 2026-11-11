@@ -282,8 +282,13 @@ configMaps:
           provider: custom
           base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
           context_length: 131072
-          # Every agent, subagents too, asks Ollama for the window it loads models with; another num_ctx reloads them
-          ollama_num_ctx: 131072
+        # Hermes detects Ollama and asks it for num_ctx, capped at this window for every model on this route
+        #   (subagents too; another num_ctx reloads the model). Not model.ollama_num_ctx: that one also capped a
+        #   chat switched to Claude at 131072
+        custom_providers:
+          - name: local-ollama
+            base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
+            context_length: 131072
         # Small model: qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not). The agent picks a route
         #   per subagent; a subagent with no route runs on the main model. To add Claude Haiku, add a route with
         #   provider: anthropic and the key; "default: <route>" sends every unrouted subagent to one route
@@ -382,6 +387,7 @@ configMaps:
 
         # Settings an earlier version of this deployment managed; the merge alone would keep them
         config.get("mcp_servers", {}).pop("rea", None)
+        config.get("model", {}).pop("ollama_num_ctx", None)
         for key in ("ssh_host", "ssh_user", "ssh_key", "ssh_port"):
             config.get("terminal", {}).pop(key, None)
 
