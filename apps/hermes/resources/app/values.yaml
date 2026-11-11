@@ -25,7 +25,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.19.0@sha256:0e7846b6416da74a0788cd22c47f32c94f91170fe1e03079f983cd9f650757f4
+          tag: v0.19.4@sha256:ef59c3bf22cf3a0c6ef35db02ca57e276d17e04917746e2cda7635c9b8db0bc6
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -179,6 +179,8 @@ controllers:
           # The image the gateway runs, which the device plugin reports so that talaria chat runs the same build
           HERMES_IMAGE_REPOSITORY: *hermesRepository
           HERMES_IMAGE_TAG: *hermesTag
+          # The upstream image hermes-patches builds on, which devices can pull when they cannot pull the patched one
+          HERMES_BASE_IMAGE: docker.io/nousresearch/hermes-agent:v0.23.1@sha256:276d44685c65c0cb2a25f190b63c65c8906f9dc76486fb1c05ae71b5826bda08
           # Device paths too: file tools write through the device, and the device enforces its own roots. /home does
           #   not exist in the pod
           HERMES_WRITE_SAFE_ROOT: /opt/data/hermes:/home:/work
@@ -1401,7 +1403,7 @@ persistence:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.19.0@sha256:0e7846b6416da74a0788cd22c47f32c94f91170fe1e03079f983cd9f650757f4
+        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.19.4@sha256:ef59c3bf22cf3a0c6ef35db02ca57e276d17e04917746e2cda7635c9b8db0bc6
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
