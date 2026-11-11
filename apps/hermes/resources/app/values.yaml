@@ -321,9 +321,10 @@ configMaps:
             - --disable-dev-shm-usage
         memory:
           provider: honcho
-          memory_enabled: false
-          user_profile_enabled: false
-          nudge_interval: 0
+          # Hermes's defaults: its own notes (MEMORY.md, USER.md) next to Honcho, managed in the hub's Memory page
+          memory_enabled: true
+          user_profile_enabled: true
+          nudge_interval: 10
         auth:
           adopt_external_logins: false
         updates:
