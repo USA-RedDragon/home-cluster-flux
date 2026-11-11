@@ -433,7 +433,7 @@ configMaps:
             context_length: 131072
             # Chats on Claude summarize on their own model at their 1M window's threshold (patch 0001 of
             #   hermes-patches); every other chat uses the small local model above
-            main_model_providers: [claude-account1, claude-account2, anthropic]
+            main_model_providers: [claude-jaam, claude-jamaag, claude-ja2000aag, claude-caam, claude-maam, anthropic]
         # Code work happens in each device's own Hermes; this one's shell is a sandbox in its pod
         # Sessions bound to a PC run commands there; every other session runs in the person's sandbox pod, never here
         terminal:
@@ -505,10 +505,16 @@ configMaps:
             claude-accounts:
               settings:
                 accounts:
-                  - id: account1
-                    label: Claude (account1)
-                  - id: account2
-                    label: Claude (account2)
+                  - id: jaam
+                    label: Claude (jaam)
+                  - id: jamaag
+                    label: Claude (jamaag)
+                  - id: ja2000aag
+                    label: Claude (ja2000aag)
+                  - id: caam
+                    label: Claude (caam)
+                  - id: maam
+                    label: Claude (maam)
         webapp:
           enabled: true
           host: 0.0.0.0
