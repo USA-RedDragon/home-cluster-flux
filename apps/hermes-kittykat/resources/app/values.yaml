@@ -326,6 +326,8 @@ configMaps:
           adopt_external_logins: false
         updates:
           check: false
+        # Cron schedules ("every monday 9am") and the agent's clock use US Central, not the pod's UTC
+        timezone: America/Chicago
         # For hermes-hub. A wildcard bind is behind dashboard sign-in: the gateway's basic provider, user hub
         # On a pod stop, let running turns finish (up to 10 minutes) before Hermes exits
         agent:
