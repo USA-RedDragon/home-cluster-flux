@@ -14,9 +14,9 @@ controllers:
       surge: 1
       unavailable: 1
     pod:
-      # Restart wait for running turns (agent.restart_after_turn_timeout, 540 s), the drain (30 s), Hermes'
-      #   shutdown watchdog (60 s) and a margin
-      terminationGracePeriodSeconds: 720
+      # Waiting for the new pod's standby (up to 120 s), the restart wait for running turns
+      #   (agent.restart_after_turn_timeout, 540 s), the drain (30 s), Hermes' shutdown watchdog (60 s) and a margin
+      terminationGracePeriodSeconds: 780
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -158,7 +158,7 @@ controllers:
           limits:
             memory: 8Gi
         probes:
-          # A standby waits up to gateway.runtime_lock_wait_seconds (720 s) for the old pod's gateway, then boots
+          # A standby waits up to gateway.runtime_lock_wait_seconds (840 s) for the old pod's gateway, then boots
           startup:
             enabled: true
             custom: true
@@ -168,7 +168,7 @@ controllers:
                 port: 8642
               periodSeconds: 1
               timeoutSeconds: 5
-              failureThreshold: 900
+              failureThreshold: 960
           liveness:
             enabled: true
             custom: true
@@ -312,7 +312,7 @@ controllers:
                   i=0
                   while [ ! -e /tmp/pod-stopping ]; do [ $i -ge 25 ] && exit 0; sleep 0.2; i=$((i+1)); done
                   f=0 i=0
-                  while [ $i -lt 700 ] && [ $f -lt 3 ]; do
+                  while [ $i -lt 760 ] && [ $f -lt 3 ]; do
                     if wget -q -T 2 -O /dev/null http://127.0.0.1:9120/api/health; then f=0; else f=$((f+1)); fi
                     sleep 1; i=$((i+1))
                   done
@@ -446,7 +446,7 @@ configMaps:
         #   for this one's lock instead of exiting
         gateway:
           sigterm_restart_wait: true
-          runtime_lock_wait_seconds: 720
+          runtime_lock_wait_seconds: 840
           # Her devices' connections (talaria) may come back during that wait, so turns still running there finish
           restart_wait_plugin_sockets: [device]
         webapp:
@@ -492,6 +492,17 @@ configMaps:
         marker = "/tmp/pod-stopping"
         if sys.argv[1:] == ["signal"]:
             open(marker, "w").close()
+            # Serve on until the new pod's gateway has warmed up and waits for the lock (gateway.standby), so it
+            #   takes over within a second; a stop with no successor goes on after 2 minutes
+            start = time.time()
+            standby = "/opt/data/hermes/gateway.standby"
+            while time.time() - start < 120:
+                try:
+                    if os.path.getmtime(standby) >= start - 1:
+                        break
+                except OSError:
+                    pass
+                time.sleep(0.5)
             for pid in filter(str.isdigit, os.listdir("/proc")):
                 try:
                     with open(f"/proc/{pid}/cmdline", "rb") as f:
@@ -506,7 +517,7 @@ configMaps:
             if time.monotonic() - start > 5:
                 sys.exit(0)
             time.sleep(0.2)
-        deadline = time.monotonic() + 700
+        deadline = time.monotonic() + 760
         failures = 0
         while time.monotonic() < deadline and failures < 3:
             try:
