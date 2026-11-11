@@ -25,7 +25,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.18.0@sha256:05de256815b89966ee2143074b1a4cb64b98a886895ede10f007e3bdd20ca52c
+          tag: v0.19.0@sha256:0e7846b6416da74a0788cd22c47f32c94f91170fe1e03079f983cd9f650757f4
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -47,8 +47,8 @@ controllers:
       claude-download:
         dependsOn: device-plugin
         image: &image
-          repository: jacob.pub/docker.io/nousresearch/hermes-agent
-          tag: v0.23.1@sha256:276d44685c65c0cb2a25f190b63c65c8906f9dc76486fb1c05ae71b5826bda08
+          repository: &hermesRepository jacob.pub/docker.io/nousresearch/hermes-agent
+          tag: &hermesTag v0.23.1@sha256:276d44685c65c0cb2a25f190b63c65c8906f9dc76486fb1c05ae71b5826bda08
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -175,6 +175,9 @@ controllers:
           HOME: /opt/data/hermes
           USER: hermes
           HERMES_HOME: /opt/data/hermes
+          # The image the gateway runs, which the device plugin reports so that talaria chat runs the same build
+          HERMES_IMAGE_REPOSITORY: *hermesRepository
+          HERMES_IMAGE_TAG: *hermesTag
           # Device paths too: file tools write through the device, and the device enforces its own roots. /home does
           #   not exist in the pod
           HERMES_WRITE_SAFE_ROOT: /opt/data/hermes:/home:/work
@@ -270,11 +273,11 @@ controllers:
         env:
           <<: *env
           TMPDIR: /tmp
-          HERMES_DEVICE_ACP_HOST_LISTEN: ":9130"
-          HERMES_DEVICE_ACP_HOST_BACKEND_ID: jacob
-          HERMES_DEVICE_ACP_HOST_PLACEHOLDER: /opt/data/hermes/device-placeholder
-          HERMES_DEVICE_ACP_HOST_HERMES: /opt/hermes/.venv/bin/hermes
-          HERMES_DEVICE_ACP_HOST_HUB_PUBLIC_KEY: |
+          TALARIA_ACP_HOST_LISTEN: ":9130"
+          TALARIA_ACP_HOST_BACKEND_ID: jacob
+          TALARIA_ACP_HOST_PLACEHOLDER: /opt/data/hermes/device-placeholder
+          TALARIA_ACP_HOST_HERMES: /opt/hermes/.venv/bin/hermes
+          TALARIA_ACP_HOST_HUB_PUBLIC_KEY: |
             -----BEGIN PUBLIC KEY-----
             MCowBQYDK2VwAyEAiuaEZ3j30C2FUMJrm1r10rJZyt1EwAYGKor/3LZqjSA=
             -----END PUBLIC KEY-----
@@ -1382,7 +1385,7 @@ persistence:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.18.0@sha256:05de256815b89966ee2143074b1a4cb64b98a886895ede10f007e3bdd20ca52c
+        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.19.0@sha256:0e7846b6416da74a0788cd22c47f32c94f91170fe1e03079f983cd9f650757f4
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
