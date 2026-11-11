@@ -119,3 +119,36 @@ spec:
             - fc00::/7
             - fe80::/10
             - ff00::/8
+---
+# b2bk's helper pods (snapshots, restore, shell) don't get the ScheduledBackup's podLabels, so under default-deny they
+# get DNS and internet here
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: b2bk-egress
+  namespace: hermes-kittykat
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/managed-by: b2bk
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
+        - cidr: ::/0
+          except:
+            - fc00::/7
+            - fe80::/10
+            - ff00::/8
