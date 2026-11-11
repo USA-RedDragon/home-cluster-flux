@@ -158,6 +158,19 @@ controllers:
             # The server cwd of sessions that run in the sandbox; Hermes reads AGENTS.md and git state from it, so keep it empty
             install -d -m 700 /opt/data/hermes/empty-cwd
             /opt/hermes/.venv/bin/hermes plugins enable device || true
+            # Claude subscriptions: Nous' plugin drives the claude CLI; claude-accounts (ours, in /claude-accounts) adds
+            #   one provider per account login in /opt/data/hermes/claude/<id> and the hub's sign-in and usage routes
+            [ -d /opt/data/hermes/plugins/claude-subscription-directsdk-experimental ] || /opt/hermes/.venv/bin/hermes plugins install claude-subscription-directsdk --yes-deps || echo "claude-subscription-directsdk install failed; continuing"
+            /opt/hermes/.venv/bin/hermes plugins enable claude-subscription-directsdk-experimental || true
+            P=/opt/data/hermes/plugins/claude-accounts
+            rm -rf "$P.new"
+            install -d -m 755 "$P.new" "$P.new/dashboard"
+            install -m 644 /claude-accounts/plugin.yaml /claude-accounts/__init__.py /claude-accounts/core.py "$P.new/"
+            install -m 644 /claude-accounts/plugin_api.py "$P.new/dashboard/plugin_api.py"
+            install -m 644 /claude-accounts/manifest.json "$P.new/dashboard/manifest.json"
+            rm -rf "$P" && mv "$P.new" "$P"
+            install -d -m 700 /opt/data/hermes/claude
+            /opt/hermes/.venv/bin/hermes plugins enable claude-accounts || true
         env: &env
           HOME: /opt/data/hermes
           USER: hermes
@@ -176,6 +189,7 @@ controllers:
               secretKeyRef:
                 name: hermes-honcho
                 key: HONCHO_API_KEY
+          CLAUDE_SUBSCRIPTION_DIRECTSDK_COMMAND: /opt/data/hermes/bin/claude
         resources:
           requests:
             cpu: 10m
@@ -442,6 +456,15 @@ configMaps:
                 fallback_root: /work
                 # The one hub user of this backend: sandbox chats and scheduled jobs use this user's Firefox
                 user: reddragon
+            # One Claude subscription per slot, provider claude-<id> in the model picker; the login lives in
+            #   /opt/data/hermes/claude/<id>. Rename a slot by its label only: the id names its login directory
+            claude-accounts:
+              settings:
+                accounts:
+                  - id: account1
+                    label: Claude (account1)
+                  - id: account2
+                    label: Claude (account2)
         webapp:
           enabled: true
           host: 0.0.0.0
@@ -566,6 +589,681 @@ configMaps:
           proxy_send_timeout 24h;
         }
 
+  # The claude-accounts Hermes plugin; the init container installs it into /opt/data/hermes/plugins/claude-accounts
+  claude-accounts:
+    data:
+      plugin.yaml: |
+        name: claude-accounts
+        kind: model-provider
+        version: 0.1.0
+        description: One provider per Claude subscription account (claude-<id>), on top of claude-subscription-directsdk-experimental, with sign-in and usage routes for hermes-hub
+        author: Jacob McSwain
+        requires_hermes: ">=0.21.4"
+      __init__.py: |
+        """claude-accounts: one Hermes model provider per Claude subscription account.
+
+        Each slot in the plugin's `accounts` setting becomes provider `claude-<id>`, a copy of Nous'
+        claude-subscription-directsdk-experimental provider whose Claude Code children run with that
+        slot's own config dir (CLAUDE_CONFIG_DIR=<root>/<id>). The Nous plugin's code is not changed;
+        its single provider is hidden from the pickers, since its login would be the shared default one.
+        The sign-in and usage routes for hermes-hub are in dashboard/plugin_api.py.
+        """
+        from __future__ import annotations
+
+        import importlib.util
+        import logging
+        import sys
+        from dataclasses import fields
+        from datetime import datetime, timezone
+        from pathlib import Path
+
+        logger = logging.getLogger(__name__)
+
+        BASE = "claude-subscription-directsdk-experimental"
+        _CORE = "hermes_claude_accounts_core"
+
+
+        def _core():
+            module = sys.modules.get(_CORE)
+            if module is None:
+                spec = importlib.util.spec_from_file_location(_CORE, Path(__file__).with_name("core.py"))
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[_CORE] = module
+                spec.loader.exec_module(module)
+            return module
+
+
+        def _base_module():
+            """The Nous plugin's package, imported under the module name Hermes itself gives it.
+
+            This directory sorts before the Nous one, so its import usually comes first: import the Nous
+            plugin the way the provider scan would (same name, same registration layer), and the scan
+            then skips it as already imported."""
+            for module in list(sys.modules.values()):
+                profile = getattr(module, "profile", None)
+                if getattr(profile, "name", None) == BASE and hasattr(module, "ClaudeOAuthDirectSDKProfile"):
+                    return module
+            base_dir = Path(__file__).resolve().parent.parent / BASE
+            own = Path(__file__).resolve().parent.name.replace("-", "_")
+            if not __name__.endswith("_" + own) or not (base_dir / "__init__.py").exists():
+                return None
+            name = __name__[: -len(own)] + BASE.replace("-", "_")
+            import providers
+            providers._exec_plugin_module(base_dir, "user", name)
+            return sys.modules.get(name)
+
+
+        def _register():
+            core = _core()
+            base = _base_module()
+            if base is None:
+                logger.warning("claude-accounts: the %s plugin is not installed; no Claude account providers", BASE)
+                return
+            from providers import register_provider
+            setup = sys.modules[base.__name__ + ".directsdk_setup"]
+            Parent = base.ClaudeOAuthDirectSDKProfile
+
+            class AccountProfile(Parent):
+                """The Nous provider, bound to one Claude account's config dir."""
+
+                account = None
+
+                def _env(self):
+                    return core.account_env(self.account)
+
+                def create_client(self, **client_kwargs):
+                    client_kwargs["env"] = self._env()
+                    client = super().create_client(**client_kwargs)
+                    client.base_url = self.base_url
+                    return client
+
+                def setup_status(self, **kwargs):
+                    kwargs.setdefault("env", self._env())
+                    return super().setup_status(**kwargs)
+
+                def discover_models(self, **kwargs):
+                    kwargs.setdefault("env", self._env())
+                    return super().discover_models(**kwargs)
+
+                def fetch_account_usage(self, *, base_url=None, api_key=None):
+                    from agent.account_usage import AccountUsageSnapshot
+                    limits, reason = setup.fetch_usage(env=self._env())
+                    windows, details = base.usage_windows(limits) if limits is not None else ((), ())
+                    return AccountUsageSnapshot(provider=self.name, source="claude_code_get_usage",
+                                                fetched_at=datetime.now(timezone.utc), title=f"{self.display_name} plan limits",
+                                                windows=tuple(windows), details=tuple(details), unavailable_reason=reason)
+
+            template = base.profile
+            template.hidden = True
+            values = {f.name: getattr(template, f.name) for f in fields(template) if f.init}
+            for acct in core.accounts():
+                profile = AccountProfile(**{**values, "name": acct.provider, "display_name": acct.label,
+                                            "description": f"{acct.label}: Claude subscription through Claude Code, "
+                                                           f"login in {acct.config_dir}",
+                                            "base_url": f"process://{acct.provider}", "hidden": False})
+                profile.account = acct
+                profile.supports_streaming = getattr(template, "supports_streaming", True)
+                register_provider(profile)
+
+
+        _register()
+      core.py: |
+        """Shared state of the claude-accounts plugin: the account slots, their Claude Code status and plan
+        limits, and the sign-in runs. The provider half (__init__.py) and the route half
+        (dashboard/plugin_api.py) load this file once, as one module object.
+
+        Never reads the files Claude Code keeps its login in. Everything about an account comes from the
+        CLI itself: `claude auth status --json` and the `get_usage` control request.
+        """
+        from __future__ import annotations
+
+        import json
+        import os
+        import re
+        import secrets
+        import signal
+        import subprocess
+        import tempfile
+        import threading
+        import time
+        from dataclasses import dataclass, field
+        from datetime import datetime, timedelta, timezone
+        from pathlib import Path
+        from typing import Any, Callable, Optional
+        from urllib.parse import parse_qs, urlparse
+
+        PLUGIN = "claude-accounts"
+        ROOT = Path(os.environ.get("CLAUDE_ACCOUNTS_ROOT", "/opt/data/hermes/claude"))
+        CLI = os.environ.get("CLAUDE_SUBSCRIPTION_DIRECTSDK_COMMAND", "/opt/data/hermes/bin/claude")
+        SIGNIN_TIMEOUT = 600
+        URL_TIMEOUT = 20
+        CODE_TIMEOUT = 60
+        STATUS_TTL = 10
+        USAGE_TTL = 60
+
+        _ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,31}$")
+        _CODE = re.compile(r"^[A-Za-z0-9._~-]{1,1024}#[A-Za-z0-9._~-]{1,256}$")
+        _ESCAPES = re.compile(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b\[[0-9;?]*[A-Za-z]")
+        _URL = re.compile(r"https://\S+/oauth/authorize\?\S+")
+        # Set for Hermes' own anthropic provider; a Claude Code child would bill the API with them.
+        _DROP = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_FOUNDRY_API_KEY", "ANTHROPIC_BASE_URL",
+                 "CLAUDE_CODE_OAUTH_TOKEN", "CLAUDE_SUBSCRIPTION_DIRECTSDK_CONFIG_DIR")
+        _QUIET = {"DISABLE_AUTOUPDATER": "1", "DISABLE_FEEDBACK_COMMAND": "1", "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1"}
+        _KINDS = {"Current session": "session", "Current week": "weekly_all"}
+
+
+        def now() -> datetime:
+            return datetime.now(timezone.utc)
+
+
+        def iso(value: Optional[datetime]) -> Optional[str]:
+            return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z") if value else None
+
+
+        @dataclass(frozen=True)
+        class Account:
+            id: str
+            label: str
+
+            @property
+            def provider(self) -> str:
+                return f"claude-{self.id}"
+
+            @property
+            def config_dir(self) -> Path:
+                return ROOT / self.id
+
+
+        def _settings() -> dict:
+            try:
+                from hermes_cli.config import load_config_readonly
+                config = load_config_readonly() or {}
+            except Exception:
+                return {}
+            for key in ("plugins", "entries", PLUGIN, "settings"):
+                config = config.get(key) if isinstance(config, dict) else None
+            return config if isinstance(config, dict) else {}
+
+
+        def accounts(settings: Optional[dict] = None) -> list[Account]:
+            """The slots in the plugin's `accounts` setting, in order; a bad or repeated id is skipped."""
+            rows = (settings if settings is not None else _settings()).get("accounts")
+            out: list[Account] = []
+            for row in rows if isinstance(rows, list) else []:
+                if not isinstance(row, dict) or not isinstance(row.get("id"), str) or not _ID.match(row["id"]):
+                    continue
+                if any(a.id == row["id"] for a in out):
+                    continue
+                label = row.get("label") if isinstance(row.get("label"), str) and row["label"].strip() else f"Claude ({row['id']})"
+                out.append(Account(row["id"], label.strip()))
+            return out
+
+
+        def account(account_id: str) -> Optional[Account]:
+            return next((a for a in accounts() if a.id == account_id), None)
+
+
+        def account_env(acct: Account, base: Optional[dict] = None) -> dict:
+            """Hermes' environment for a Claude Code child of this account: its own config dir, no API key."""
+            env = dict(os.environ if base is None else base)
+            for key in _DROP:
+                env.pop(key, None)
+            env.update(_QUIET)
+            env["CLAUDE_CONFIG_DIR"] = str(acct.config_dir)
+            if not env.get("USER") and not env.get("LOGNAME"):
+                env["USER"] = env["LOGNAME"] = "hermes"
+            acct.config_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
+            return env
+
+
+        # --- what the plugin remembers about a slot: only the email it was last signed in to ---
+
+        def _slot_file(acct: Account) -> Path:
+            return ROOT / ".slots" / f"{acct.id}.json"
+
+
+        def last_email(acct: Account) -> Optional[str]:
+            try:
+                value = json.loads(_slot_file(acct).read_text(encoding="utf-8")).get("last_email")
+            except (OSError, ValueError, AttributeError):
+                return None
+            return value if isinstance(value, str) and value else None
+
+
+        def _remember(acct: Account, email: Optional[str]) -> None:
+            if not email or email == last_email(acct):
+                return
+            path = _slot_file(acct)
+            path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            tmp = path.with_suffix(".tmp")
+            tmp.write_text(json.dumps({"last_email": email, "at": iso(now())}), encoding="utf-8")
+            os.replace(tmp, path)
+
+
+        # --- status and usage, cached ---
+
+        _cache_lock = threading.Lock()
+        _cache: dict[tuple[str, str], tuple[float, Any]] = {}
+
+
+        def _cached(key: tuple[str, str], ttl: float, fetch: Callable[[], Any], fresh: bool = False) -> Any:
+            with _cache_lock:
+                hit = _cache.get(key)
+                if hit and not fresh and time.monotonic() - hit[0] < ttl:
+                    return hit[1]
+            value = fetch()
+            with _cache_lock:
+                _cache[key] = (time.monotonic(), value)
+            return value
+
+
+        def _run_status(acct: Account) -> dict:
+            checked = iso(now())
+            blank = {"logged_in": False, "email": None, "org_name": None, "subscription_type": None,
+                     "login_expires_at": None, "checked_at": checked, "error": None}
+            try:
+                run = subprocess.run([CLI, "auth", "status", "--json"], env=account_env(acct), stdin=subprocess.DEVNULL,
+                                     capture_output=True, text=True, timeout=20, cwd=str(acct.config_dir))
+                data = json.loads(run.stdout)
+            except FileNotFoundError:
+                return {**blank, "error": f"Claude Code is not installed at {CLI}"}
+            except subprocess.TimeoutExpired:
+                return {**blank, "error": "Claude Code did not answer in time"}
+            except (OSError, ValueError):
+                return {**blank, "error": "Claude Code gave no status"}
+            if not isinstance(data, dict):
+                return {**blank, "error": "Claude Code gave no status"}
+
+            def text(key):
+                return data.get(key) if isinstance(data.get(key), str) else None
+            status = {**blank, "logged_in": data.get("loggedIn") is True, "email": text("email"), "org_name": text("orgName"),
+                      "subscription_type": text("subscriptionType"), "login_expires_at": text("loginExpiresAt")}
+            if status["logged_in"]:
+                _remember(acct, status["email"])
+            return status
+
+
+        def status(acct: Account, fresh: bool = False) -> dict:
+            return _cached((acct.id, "status"), STATUS_TTL, lambda: _run_status(acct), fresh)
+
+
+        def _percent(value) -> Optional[float]:
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or value != value or value in (float("inf"), float("-inf")):
+                return None
+            return float(value)
+
+
+        def usage_rows(payload: dict) -> list[dict]:
+            """`get_usage` rate_limits -> windows with their kind kept ("session" = 5 hours, "weekly_all" = the week)."""
+            limits = payload.get("limits")
+            rows = []
+            if isinstance(limits, list) and limits:
+                for entry in limits:
+                    if not isinstance(entry, dict):
+                        continue
+                    kind = entry.get("kind") if isinstance(entry.get("kind"), str) else "unknown"
+                    scope = entry.get("scope") if isinstance(entry.get("scope"), dict) else {}
+                    model = scope.get("model") if isinstance(scope.get("model"), dict) else {}
+                    name = model.get("display_name") if isinstance(model.get("display_name"), str) else ""
+                    label = {"session": "Current session", "weekly_all": "Current week"}.get(kind) or (f"{name} week" if name else kind)
+                    rows.append({"kind": kind, "label": label, "used_percent": _percent(entry.get("percent")),
+                                 "resets_at": entry.get("resets_at") if isinstance(entry.get("resets_at"), str) else None})
+                return rows
+            for key, kind, label in (("five_hour", "session", "Current session"), ("seven_day", "weekly_all", "Current week"),
+                                     ("seven_day_opus", "weekly_opus", "Opus week"), ("seven_day_sonnet", "weekly_sonnet", "Sonnet week")):
+                window = payload.get(key)
+                if not isinstance(window, dict):
+                    continue
+                used = _percent(window.get("utilization"))
+                if used is not None and used <= 1:
+                    used *= 100.0
+                rows.append({"kind": kind, "label": label, "used_percent": used,
+                             "resets_at": window.get("resets_at") if isinstance(window.get("resets_at"), str) else None})
+            return rows
+
+
+        def _run_usage(acct: Account, fetch_usage: Callable[..., tuple]) -> dict:
+            try:
+                limits, reason = fetch_usage(env=account_env(acct))
+            except Exception as exc:  # the CLI's answer is untrusted; never fail the route on it
+                limits, reason = None, f"usage check failed: {type(exc).__name__}"
+            details = []
+            if isinstance(limits, dict):
+                extra = limits.get("extra_usage") if isinstance(limits.get("extra_usage"), dict) else {}
+                spent, cap = _percent(extra.get("used_credits")), _percent(extra.get("monthly_limit"))
+                if extra.get("is_enabled") and spent is not None and cap is not None:
+                    details.append(f"Extra usage: {spent:.2f} / {cap:.2f} {extra.get('currency') or 'USD'}")
+            return {"windows": usage_rows(limits) if isinstance(limits, dict) else [], "details": details,
+                    "unavailable_reason": None if isinstance(limits, dict) else (reason or "no plan limits"),
+                    "fetched_at": iso(now())}
+
+
+        def usage(acct: Account, fetch_usage: Callable[..., tuple], fresh: bool = False) -> dict:
+            return _cached((acct.id, "usage"), USAGE_TTL, lambda: _run_usage(acct, fetch_usage), fresh)
+
+
+        # --- sign-in: `claude auth login` with stdin and stdout on pipes ---
+        # Off a TTY the CLI prints "If the browser didn't open, visit: <url>" (the manual-code URL), then reads
+        # "code#state" lines from stdin. The code goes to its stdin and nowhere else.
+
+        ACTIVE = ("starting", "waiting_code", "verifying")
+
+
+        @dataclass
+        class SignIn:
+            acct: Account
+            reason: str
+            email_hint: Optional[str]
+            id: str = field(default_factory=lambda: secrets.token_urlsafe(12))
+            state: str = "starting"
+            url: Optional[str] = None
+            message: Optional[str] = None
+            email: Optional[str] = None
+            started_at: datetime = field(default_factory=now)
+            proc: Optional[subprocess.Popen] = None
+            output: str = ""
+            changed: threading.Condition = field(default_factory=threading.Condition)
+
+            @property
+            def expires_at(self) -> datetime:
+                return self.started_at + timedelta(seconds=SIGNIN_TIMEOUT)
+
+            def json(self) -> dict:
+                return {"id": self.id, "account": self.acct.id, "label": self.acct.label, "email_hint": self.email_hint,
+                        "reason": self.reason, "state": self.state, "url": self.url, "message": self.message, "email": self.email,
+                        "started_at": iso(self.started_at), "expires_at": iso(self.expires_at)}
+
+
+        _signins: dict[str, SignIn] = {}
+        _signin_lock = threading.Lock()
+
+
+        def current_signin(acct: Account) -> Optional[SignIn]:
+            with _signin_lock:
+                return _signins.get(acct.id)
+
+
+        def _kill(proc: Optional[subprocess.Popen]) -> None:
+            if proc is None or proc.poll() is not None:
+                return
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except OSError:
+                pass
+            try:
+                proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                pass
+
+
+        def _set(s: SignIn, state: str, message: Optional[str] = None) -> None:
+            with s.changed:
+                if s.state in ACTIVE:
+                    s.state, s.message = state, message
+                s.changed.notify_all()
+
+
+        def _failure_text(output: str) -> str:
+            lines = [ln.strip() for ln in _ESCAPES.sub("", output).splitlines() if ln.strip()]
+            lines = [ln for ln in lines if "oauth/authorize" not in ln and not ln.startswith(("Opening browser", "Paste code"))]
+            for ln in reversed(lines):
+                if "fail" in ln.lower() or "error" in ln.lower() or "invalid" in ln.lower():
+                    return ln[:300]
+            return "Claude Code did not finish the sign-in."
+
+
+        def _reader(s: SignIn, on_done: Callable[[SignIn], None]) -> None:
+            proc = s.proc
+            assert proc is not None and proc.stdout is not None
+            while True:
+                chunk = os.read(proc.stdout.fileno(), 4096)
+                if not chunk:
+                    break
+                with s.changed:
+                    s.output = (s.output + chunk.decode("utf-8", "replace"))[-16384:]
+                    if s.url is None:
+                        match = _URL.search(_ESCAPES.sub("", s.output))
+                        if match:
+                            s.url = match.group(0)
+                            if s.state == "starting":
+                                s.state = "waiting_code"
+                    s.changed.notify_all()
+            code = proc.wait()
+            if code == 0:
+                st = status(s.acct, fresh=True)
+                with s.changed:
+                    s.email = st.get("email")
+                if st.get("logged_in"):
+                    _set(s, "succeeded", f"Signed in{' as ' + s.email if s.email else ''}.")
+                else:
+                    _set(s, "failed", "Claude Code exited, but it reports no login for this account.")
+            else:
+                _set(s, "failed", _failure_text(s.output) if s.state != "starting" or s.output else f"Claude Code exited with code {code}.")
+            with s.changed:
+                s.output = ""
+            on_done(s)
+
+
+        def _watchdog(s: SignIn) -> None:
+            with s.changed:
+                s.changed.wait_for(lambda: s.state not in ACTIVE, timeout=SIGNIN_TIMEOUT)
+            if s.state in ACTIVE:
+                _set(s, "timed_out", "The sign-in waited 10 minutes for a code and was stopped. Start it again.")
+                _kill(s.proc)
+
+
+        def start_signin(acct: Account, argv: Optional[list[str]] = None, on_done: Callable[[SignIn], None] = lambda s: None) -> SignIn:
+            """Start `claude auth login` for the account, or return its sign-in that is still running."""
+            with _signin_lock:
+                old = _signins.get(acct.id)
+                if old is not None and old.state in ACTIVE:
+                    return old
+                hint = last_email(acct)
+                s = SignIn(acct, "expired" if hint else "first", hint)
+                _signins[acct.id] = s
+            cmd = argv or [CLI, "auth", "login", "--claudeai"] + (["--email", hint] if hint else [])
+            try:
+                s.proc = subprocess.Popen(cmd, env=account_env(acct), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                          stderr=subprocess.STDOUT, cwd=tempfile.gettempdir(), start_new_session=True)
+            except OSError as exc:
+                _set(s, "failed", f"Claude Code could not start: {exc.strerror or type(exc).__name__}")
+                return s
+            threading.Thread(target=_reader, args=(s, on_done), daemon=True, name=f"claude-signin-{acct.id}").start()
+            threading.Thread(target=_watchdog, args=(s,), daemon=True, name=f"claude-signin-timeout-{acct.id}").start()
+            with s.changed:
+                s.changed.wait_for(lambda: s.state != "starting", timeout=URL_TIMEOUT)
+            if s.state == "starting":
+                _set(s, "failed", "Claude Code printed no sign-in address.")
+                _kill(s.proc)
+            return s
+
+
+        class SignInError(Exception):
+            def __init__(self, status_code: int, code: str, message: str):
+                super().__init__(message)
+                self.status_code, self.code, self.message = status_code, code, message
+
+
+        def submit_code(acct: Account, signin_id: str, code: str) -> SignIn:
+            s = current_signin(acct)
+            if s is None or s.id != signin_id or s.state != "waiting_code":
+                raise SignInError(409, "wrong_signin", "This sign-in is no longer waiting for a code. Start it again.")
+            code = (code or "").strip()
+            if not _CODE.match(code):
+                raise SignInError(400, "bad_code", "That is not a whole code. Copy all of the code the Claude page shows.")
+            state = parse_qs(urlparse(s.url or "").query).get("state", [None])[0]
+            if state and code.split("#", 1)[1] != state:
+                raise SignInError(400, "bad_code", "That code is from another sign-in. Use the code from the link above.")
+            with s.changed:
+                s.state = "verifying"
+            try:
+                assert s.proc is not None and s.proc.stdin is not None
+                s.proc.stdin.write((code + "\n").encode())
+                s.proc.stdin.flush()
+            except (OSError, ValueError, AssertionError):
+                _set(s, "failed", "Claude Code stopped before it took the code. Start the sign-in again.")
+                return s
+            finally:
+                code = ""
+            with s.changed:
+                s.changed.wait_for(lambda: s.state != "verifying", timeout=CODE_TIMEOUT)
+            return s
+
+
+        def cancel_signin(acct: Account) -> Optional[SignIn]:
+            s = current_signin(acct)
+            if s is not None and s.state in ACTIVE:
+                _set(s, "cancelled", "The sign-in was cancelled.")
+                _kill(s.proc)
+            return s
+      plugin_api.py: |
+        """claude-accounts routes for hermes-hub, mounted at /api/plugins/claude-accounts/ behind dashboard sign-in.
+
+        A sign-in code passes from the request body to Claude Code's stdin and is never logged or kept.
+        """
+        from __future__ import annotations
+
+        import importlib.util
+        import logging
+        import sys
+        from pathlib import Path
+        from typing import Any
+
+        from fastapi import APIRouter, Request
+        from fastapi.responses import JSONResponse
+
+        router = APIRouter()
+        logger = logging.getLogger("claude_accounts")
+        _CORE = "hermes_claude_accounts_core"
+
+
+        def _core():
+            module = sys.modules.get(_CORE)
+            if module is None:
+                spec = importlib.util.spec_from_file_location(_CORE, Path(__file__).parent.parent / "core.py")
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[_CORE] = module
+                spec.loader.exec_module(module)
+            return module
+
+
+        def _error(status: int, code: str, message: str) -> JSONResponse:
+            return JSONResponse({"error": code, "message": message}, status_code=status)
+
+
+        def _fetch_usage(acct):
+            """The Nous plugin's `get_usage` call, reached through this account's registered provider."""
+            from providers import get_provider_profile
+            profile = get_provider_profile(acct.provider)
+            module = sys.modules.get(type(profile).__mro__[1].__module__ + ".directsdk_setup") if profile else None
+            if module is None:
+                return lambda **_: (None, "the Claude provider plugin is not loaded")
+            return module.fetch_usage
+
+
+        def _cli_version() -> Any:
+            core = _core()
+            try:
+                return Path(core.CLI).resolve().parent.name or None
+            except OSError:
+                return None
+
+
+        def _account_json(acct, with_usage: bool) -> dict:
+            core = _core()
+            signin = core.current_signin(acct)
+            return {"id": acct.id, "label": acct.label, "provider": acct.provider, "config_dir": str(acct.config_dir),
+                    "status": core.status(acct), "last_email": core.last_email(acct),
+                    "signin": signin.json() if signin else None,
+                    "usage": core.usage(acct, _fetch_usage(acct)) if with_usage else None}
+
+
+        def _lookup(account_id: str):
+            acct = _core().account(account_id)
+            return acct, (None if acct else _error(404, "unknown_account", "No Claude account slot has that id."))
+
+
+        def _done(s) -> None:
+            logger.info("Claude sign-in for %s ended: %s", s.acct.id, s.state)
+
+
+        @router.get("/accounts")
+        def list_accounts(usage: int = 0) -> dict:
+            return {"cli_version": _cli_version(), "accounts": [_account_json(a, bool(usage)) for a in _core().accounts()]}
+
+
+        @router.get("/accounts/{account_id}/status")
+        def account_status(account_id: str):
+            acct, err = _lookup(account_id)
+            if err:
+                return err
+            _core().status(acct, fresh=True)
+            return _account_json(acct, False)
+
+
+        @router.get("/accounts/{account_id}/usage")
+        def account_usage(account_id: str):
+            acct, err = _lookup(account_id)
+            return err or _core().usage(acct, _fetch_usage(acct))
+
+
+        @router.post("/accounts/{account_id}/signin")
+        def signin_start(account_id: str):
+            acct, err = _lookup(account_id)
+            if err:
+                return err
+            s = _core().start_signin(acct, on_done=_done)
+            logger.info("Claude sign-in for %s: %s", acct.id, s.state)
+            return s.json()
+
+
+        @router.get("/accounts/{account_id}/signin")
+        def signin_get(account_id: str):
+            acct, err = _lookup(account_id)
+            if err:
+                return err
+            s = _core().current_signin(acct)
+            return s.json() if s else _error(404, "not_found", "No sign-in for this account.")
+
+
+        @router.post("/accounts/{account_id}/signin/code")
+        async def signin_code(account_id: str, request: Request):
+            import asyncio
+            acct, err = _lookup(account_id)
+            if err:
+                return err
+            try:
+                body = await request.json()
+            except Exception:
+                return _error(400, "bad_code", "The request has no code.")
+            if not isinstance(body, dict) or not isinstance(body.get("code"), str) or not isinstance(body.get("signin_id"), str):
+                return _error(400, "bad_code", "The request has no code.")
+            core = _core()
+            try:
+                s = await asyncio.to_thread(core.submit_code, acct, body["signin_id"], body["code"])
+            except core.SignInError as exc:
+                return _error(exc.status_code, exc.code, exc.message)
+            finally:
+                body = None
+            return s.json()
+
+
+        @router.delete("/accounts/{account_id}/signin")
+        def signin_cancel(account_id: str):
+            acct, err = _lookup(account_id)
+            if err:
+                return err
+            s = _core().cancel_signin(acct)
+            return s.json() if s else _error(404, "not_found", "No sign-in for this account.")
+      manifest.json: |
+        {
+          "name": "claude-accounts",
+          "label": "Claude accounts",
+          "description": "Status, plan limits and sign-in of the Claude account slots, for hermes-hub.",
+          "api": "plugin_api.py",
+          "tab": { "hidden": true }
+        }
+
 persistence:
   data:
     type: persistentVolumeClaim
@@ -639,6 +1337,14 @@ persistence:
             readOnly: true
           - path: /etc/nginx/dashboard.conf
             subPath: dashboard.conf
+            readOnly: true
+  claude-accounts:
+    type: configMap
+    identifier: claude-accounts
+    advancedMounts:
+      hermes:
+        init:
+          - path: /claude-accounts
             readOnly: true
   tmp:
     type: emptyDir
