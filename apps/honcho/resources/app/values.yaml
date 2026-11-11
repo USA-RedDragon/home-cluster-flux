@@ -73,6 +73,9 @@ controllers:
           #   DERIVER_MODEL_CONFIG__STRUCTURED_OUTPUT_MODE=json_object
           - name: SUMMARY_MODEL_CONFIG__MODEL
             value: *model
+          # Summaries without thinking too: they took 40 to 160 s each with it, on the one low-priority slot
+          - name: SUMMARY_MODEL_CONFIG__THINKING_EFFORT
+            value: "none"
           - name: DREAM_DEDUCTION_MODEL_CONFIG__MODEL
             value: *model
           - name: DREAM_INDUCTION_MODEL_CONFIG__MODEL
