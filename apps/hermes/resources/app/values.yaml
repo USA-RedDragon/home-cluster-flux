@@ -388,6 +388,10 @@ configMaps:
           provider: custom
           base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
           context_length: 131072
+        # The Nous provider would use the pod's default Claude login; claude-accounts offers one provider per account
+        model_catalog:
+          excluded_providers:
+            - claude-subscription-directsdk-experimental
         # Hermes detects Ollama and asks it for num_ctx, capped at this window for every model on this route
         #   (subagents too; another num_ctx reloads the model). Not model.ollama_num_ctx: that one also capped a
         #   chat switched to Claude at 131072
@@ -615,7 +619,8 @@ configMaps:
         Each slot in the plugin's `accounts` setting becomes provider `claude-<id>`, a copy of Nous'
         claude-subscription-directsdk-experimental provider whose Claude Code children run with that
         slot's own config dir (CLAUDE_CONFIG_DIR=<root>/<id>). The Nous plugin's code is not changed;
-        its single provider is hidden from the pickers, since its login would be the shared default one.
+        config hides its own provider from the pickers (model_catalog.excluded_providers), since it would use
+        the shared default login.
         The sign-in and usage routes for hermes-hub are in dashboard/plugin_api.py.
         """
         from __future__ import annotations
@@ -704,7 +709,6 @@ configMaps:
                                                 windows=tuple(windows), details=tuple(details), unavailable_reason=reason)
 
             template = base.profile
-            template.hidden = True
             values = {f.name: getattr(template, f.name) for f in fields(template) if f.init}
             for acct in core.accounts():
                 profile = AccountProfile(**{**values, "name": acct.provider, "display_name": acct.label,
