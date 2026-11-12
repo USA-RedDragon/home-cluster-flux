@@ -58,7 +58,7 @@ controllers:
           capabilities:
             drop: ["ALL"]
       init:
-        dependsOn: device-plugin
+        dependsOn: claude-verify
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
@@ -88,6 +88,26 @@ controllers:
             # The server cwd of sessions that run in the sandbox; Hermes reads AGENTS.md and git state from it, so keep it empty
             install -d -m 700 /opt/data/hermes/empty-cwd
             /opt/hermes/.venv/bin/hermes plugins enable device || true
+            # Claude subscriptions: Nous' plugin drives the claude CLI; claude-accounts (ours, in /claude-accounts) adds
+            #   one provider per account login in /opt/data/hermes/claude/<id> and the hub's sign-in and usage routes
+            [ -d /opt/data/hermes/plugins/claude-subscription-directsdk-experimental ] || /opt/hermes/.venv/bin/hermes plugins install claude-subscription-directsdk --yes-deps || echo "claude-subscription-directsdk install failed; continuing"
+            /opt/hermes/.venv/bin/hermes plugins enable claude-subscription-directsdk-experimental || true
+            P=/opt/data/hermes/plugins/claude-accounts
+            rm -rf "$P.new" "$P.old"
+            install -d -m 755 "$P.new" "$P.new/dashboard"
+            install -m 644 /claude-accounts/plugin.yaml /claude-accounts/__init__.py /claude-accounts/core.py "$P.new/"
+            install -m 644 /claude-accounts/plugin_api.py "$P.new/dashboard/plugin_api.py"
+            install -m 644 /claude-accounts/manifest.json "$P.new/dashboard/manifest.json"
+            # Replaced only when it changed, by two renames: the old pod's gateway may still load it
+            if diff -r "$P.new" "$P" >/dev/null 2>&1; then
+              rm -rf "$P.new"
+            else
+              [ ! -d "$P" ] || mv "$P" "$P.old"
+              mv "$P.new" "$P"
+              rm -rf "$P.old"
+            fi
+            install -d -m 700 /opt/data/hermes/claude
+            /opt/hermes/.venv/bin/hermes plugins enable claude-accounts || true
         env: &env
           HOME: /opt/data/hermes
           USER: hermes
@@ -110,6 +130,7 @@ controllers:
               secretKeyRef:
                 name: hermes-kittykat-honcho
                 key: HONCHO_API_KEY
+          CLAUDE_SUBSCRIPTION_DIRECTSDK_COMMAND: /opt/data/hermes/bin/claude
         resources:
           requests:
             cpu: 10m
@@ -123,6 +144,93 @@ controllers:
             type: RuntimeDefault
           capabilities:
             drop: ["ALL"]
+      # Claude Code's native binary for the Claude subscription providers, on the volume (the image stays as
+      #   published). Downloads a version that is not installed yet; claude-verify checks it. A failure here
+      #   or there leaves Hermes running without the Claude subscription providers
+      claude-download:
+        dependsOn: device-plugin
+        image: *image
+        command:
+          - /bin/sh
+          - -c
+          - |
+            D=/opt/data/hermes/claude-code
+            V=$CLAUDE_CODE_VERSION
+            install -d -m 700 /opt/data/hermes "$D" "$D/versions" || exit 1
+            [ -x "$D/versions/$V/claude" ] && exit 0
+            rm -rf "$D"/staging-*
+            S="$D/staging-$V"
+            R="https://downloads.claude.ai/claude-code-releases/$V"
+            install -d -m 700 "$S" &&
+              curl -fsSL --retry 3 --connect-timeout 20 -o "$S/manifest.json" "$R/manifest.json" &&
+              curl -fsSL --retry 3 --connect-timeout 20 -o "$S/manifest.json.sig" "$R/manifest.json.sig" &&
+              curl -fsSL --retry 3 --connect-timeout 20 -o "$S/claude" "$R/linux-x64/claude" ||
+              { echo "Claude Code $V download failed"; rm -rf "$S"; }
+            exit 0
+        env:
+          CLAUDE_CODE_VERSION: &claudeCodeVersion "2.1.322"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 256Mi
+        securityContext: *securityContext
+      # Installs the download only when Anthropic's release key signed its manifest (sqv, Sequoia's verifier, is
+      #   in Debian's base image) and the binary matches the manifest's checksum. It checks the installed binary
+      #   again on every start
+      claude-verify:
+        dependsOn: claude-download
+        image:
+          repository: jacob.pub/docker.io/library/debian
+          tag: 13.7-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2
+          pullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            V=$CLAUDE_CODE_VERSION
+            D=/opt/data/hermes/claude-code
+            check() {
+              sqv --keyring /config/claude-code.asc --signature-file "$1/manifest.json.sig" "$1/manifest.json" >/dev/null &&
+                grep -q "\"version\": \"$V\"" "$1/manifest.json" &&
+                sum=$(sed -n '/"linux-x64": {/,/}/s/.*"checksum": "\([0-9a-f]\{64\}\)".*/\1/p' "$1/manifest.json") &&
+                [ -n "$sum" ] && echo "$sum  $1/claude" | sha256sum -c --quiet
+            }
+            if [ ! -x "$D/versions/$V/claude" ] && [ -d "$D/staging-$V" ]; then
+              if check "$D/staging-$V"; then
+                chmod 755 "$D/staging-$V/claude" && mv "$D/staging-$V" "$D/versions/$V"
+              else
+                echo "Claude Code $V failed verification; not installed"
+                rm -rf "$D/staging-$V"
+              fi
+            fi
+            # On a rollout the old pod's gateway still runs from this volume: swap the link in one rename, and keep the
+            #   version it links to until the next start
+            prev=$(readlink /opt/data/hermes/bin/claude 2>/dev/null || true)
+            if [ -x "$D/versions/$V/claude" ] && check "$D/versions/$V"; then
+              install -d -m 700 /opt/data/hermes/bin && ln -sfn "$D/versions/$V/claude" /opt/data/hermes/bin/.claude.new &&
+                mv -Tf /opt/data/hermes/bin/.claude.new /opt/data/hermes/bin/claude && echo "Claude Code $V verified"
+            else
+              if [ -x "$D/versions/$V/claude" ]; then
+                echo "Installed Claude Code $V failed verification; removed"
+                rm -rf "$D/versions/$V"
+              fi
+              rm -f /opt/data/hermes/bin/claude
+            fi
+            for old in "$D"/versions/*; do
+              case "$old" in "$D/versions/$V" | "${prev%/claude}") ;; *) rm -rf "$old" ;; esac
+            done
+            exit 0
+        env:
+          CLAUDE_CODE_VERSION: *claudeCodeVersion
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+        securityContext: *securityContext
       # One gateway per home. As a native sidecar it takes the lock before the dashboard starts, so the dashboard
       #   attaches to it instead of spawning its own
       gateway:
@@ -346,6 +454,18 @@ configMaps:
           context_length: 131072
           # Every agent, subagents too, asks Ollama for the window it loads models with; another num_ctx reloads them
           ollama_num_ctx: 131072
+        # The Nous provider would use the pod's default Claude login; claude-accounts offers the pool (claude-pool)
+        #   instead of one provider per account (claude-<id>, one line per slot in plugins.entries below). anthropic
+        #   has no ANTHROPIC_API_KEY here, so it stays out of the pickers
+        model_catalog:
+          excluded_providers:
+            - claude-subscription-directsdk-experimental
+            - anthropic
+            - claude-jaam
+            - claude-jamaag
+            - claude-ja2000aag
+            - claude-caam
+            - claude-maam
         # Small model: qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not). The agent picks a route
         #   per subagent; a subagent with no route runs on the main model. To add Claude Haiku, add a route with
         #   provider: anthropic and the key; "default: <route>" sends every unrouted subagent to one route
@@ -375,6 +495,9 @@ configMaps:
             model: qwen3.5:2b
             reasoning_effort: none
             context_length: 131072
+            # Chats on Claude summarize on their own model at their 1M window's threshold (patch 0001 of
+            #   hermes-patches); every other chat uses the small local model above
+            main_model_providers: [claude-pool, claude-jaam, claude-jamaag, claude-ja2000aag, claude-caam, claude-maam]
         # Sessions bound to one of her computers run commands there; every other session runs in her sandbox pod
         terminal:
           backend: device
@@ -456,6 +579,25 @@ configMaps:
                 grace_seconds: 600
                 # The one hub user of this backend: sandbox chats and scheduled jobs use this user's Firefox
                 user: kittykat
+            # One Claude subscription per slot; the login lives in /opt/data/hermes/claude/<id>. The pickers offer
+            #   claude-pool, which runs each chat on a signed-in slot with room (the soonest weekly reset; a chat
+            #   keeps its slot until that slot is at a limit). claude-<id> still serves chats that picked a slot
+            #   before. Rename a slot by its label only: the id names its login directory. api_billing_day (1-28,
+            #   default 1) is the day the slot's plan bills, when its API credits refresh; the hub's API credit
+            #   estimate counts from it
+            claude-accounts:
+              settings:
+                accounts:
+                  - id: jaam
+                    label: Claude (jaam)
+                  - id: jamaag
+                    label: Claude (jamaag)
+                  - id: ja2000aag
+                    label: Claude (ja2000aag)
+                  - id: caam
+                    label: Claude (caam)
+                  - id: maam
+                    label: Claude (maam)
         # Rolling updates (hermes-patches 0010, 0011): SIGTERM opens the restart wait, and the new pod's gateway waits
         #   for this one's lock instead of exiting
         gateway:
@@ -613,6 +755,38 @@ configMaps:
         root:x:0:
         hermes:x:568:
         nogroup:x:65534:
+      # Anthropic's Claude Code release key (fingerprint 31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE, from
+      #   https://downloads.claude.ai/keys/claude-code.asc, as code.claude.com/docs/en/setup gives it)
+      claude-code.asc: |
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+
+        mQINBGnK73ABEACnbytJXkjweYrwIr0aLEFRlH+C0nF44KxFc7gQmJ6PjSPMGZAD
+        dxZcaixU7zZl8WxEpVO0wLmIH8cf2zGOdyuZg1Yaugk1vHb2b8WBhAGCQJdPgB8W
+        XquedepEYtk56uP/gCoTjJDUZluEGBHnlnuujSJ4orxEdhSykEoAUfJZGEILPpMd
+        bphFt/Sn+Eb/TxM5jpKPdwnv8AShNF/1mZU1fWTQq9tRKJUakZj04gdaDFElQXak
+        CtTij+GT6yoYCARSHwGO+PC/Pr6q4tc+D7LRjxSBvUWDoFSmlqb/PJ1hj9D/7I2O
+        e4XXniAPWMR56KvxHlzOzrNQdJujbJdSkCwh1ZijkSd3y8ayW5WYUTGdRab99NUw
+        agzlabe/VVF6kzJ0Scn5q3PihB2Y9Bwo0CKnkYk7a7KT77EWv0Kkq+VHmOtqX3a2
+        hhX+b6a6ve9rzJ1qZYGj+obv/C3Sx1LzUjAfqVy7RJDf2uAoP5t2g8u/TkSpUxhM
+        VEjZBkSxYZhMyzQM6t8IgkUfnSrIPTHixbDWARZ4beMOBjxyPZK1nP7OOrNR3TkK
+        JtwLMQAabURCDnL0PjS0iwBTU4jtumBD1XSULyWuoTvMljrpQr1nV1oDyOt0OLqa
+        KA2McWtd9PdXhC8y2EIg7TmrTlJLfHYbdmkiCYj4J49Q8HWkN/6WE+RTUwARAQAB
+        tD5BbnRocm9waWMgQ2xhdWRlIENvZGUgUmVsZWFzZSBTaWduaW5nIDxzZWN1cml0
+        eUBhbnRocm9waWMuY29tPokCUQQTAQoAOxYhBDHd3iTd+rZ59C170rqpKf8afsrO
+        BQJpyu9wAhsPBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJELqpKf8afsrO
+        l5IP/2I8X1dFy5xYczWB/coIxGjuzS/V6ByZGZZEJsbr04pmuHiFUykJqPGWGQ6q
+        U0YF5iEwvEkaagS5m7DzhSEf3FM3Cgafax/6d70tar9Vr1D+w6uPfxetu7u/WYJp
+        aolIsdh5fTrBh9zSM1Njl8FM8wG8CwZQjS33Oa7d8cwRkgdUWbt6LXgz+cTQNuBn
+        BgW6Ks7oZFI25dfu0ojDR+aDFJg4+4wZoyDLPvJz1SIrJ5WFGs67zsx9SfS3yZnf
+        XKmBe+f0dUy+GJ2nFZrXFf99+c0dPEHYO8DCeAHZizjkFrdYtUHdDU0YDYEGkLJa
+        bE+pgcpkHf5EvsZzHsyDbl95W/eh7pcXMbwkN+W4CBYUE9X4uHhqzWaC5yAVRWUA
+        1BJ9V4LjZfHPLEJt0I3TxzXiEg9/BVeaTYq9RjaxIFo9Nfk158HqJY6SA5jslBlx
+        Gv/No8u+xVcze2UJyGVfEIUfm92+0UAIkny3+5cuVV0ICzJxXlXj0CnLM9Lt50wE
+        p3suVwuBEviCbZ08eAH1Ht8gbBdSsiOkIU8CX3v/scwHHx5q0+NBL6xLrQObg13a
+        tRXBlKObfElkPN3lTUbUnJOW4U8uSjH8VRP+AujKWMDFe7x0zCs+iYY1mTOvbrTS
+        9n3CmZUmbynZ+E/QWNENpW/pDNZdWFy43PASmML5FHu4m9Sn
+        =oqMI
+        -----END PGP PUBLIC KEY BLOCK-----
       # Her own workspace, so her memory never mixes with Jacob's
       honcho.json: |
         {
@@ -661,6 +835,1236 @@ configMaps:
           proxy_send_timeout 24h;
         }
 
+  # The claude-accounts Hermes plugin; the init container installs it into /opt/data/hermes/plugins/claude-accounts
+  claude-accounts:
+    data:
+      plugin.yaml: |
+        name: claude-accounts
+        kind: model-provider
+        version: 0.2.3
+        description: Claude subscription accounts as one pooled provider (claude-pool) plus one provider per account (claude-<id>) that config hides from the pickers, on top of claude-subscription-directsdk-experimental, with sign-in, usage, pool and API credit routes for hermes-hub
+        author: Jacob McSwain
+        requires_hermes: ">=0.21.4"
+      __init__.py: |
+        """claude-accounts: the Claude subscription accounts as Hermes model providers.
+
+        Each slot in the plugin's `accounts` setting becomes provider `claude-<id>`, a copy of Nous'
+        claude-subscription-directsdk-experimental provider whose Claude Code children run with that
+        slot's own config dir (CLAUDE_CONFIG_DIR=<root>/<id>). The pickers offer only `claude-pool`, which
+        runs each request on one of those accounts (core.choose); config hides the account providers from the
+        pickers (model_catalog.excluded_providers), and chats that already use one keep working. The Nous plugin's code is not changed; config hides its own
+        provider from the pickers (model_catalog.excluded_providers), since it would use the shared default login.
+        The sign-in, usage and pool routes for hermes-hub are in dashboard/plugin_api.py.
+        """
+        from __future__ import annotations
+
+        import copy
+        import importlib
+        import importlib.util
+        import logging
+        import sys
+        from dataclasses import fields
+        from datetime import datetime, timezone
+        from pathlib import Path
+
+        logger = logging.getLogger(__name__)
+
+        BASE = "claude-subscription-directsdk-experimental"
+        _CORE = "hermes_claude_accounts_core"
+        # The top-level request key that carries a chat's (session id, cache scope id) from build_api_kwargs_extras
+        # to the pool client, which removes it before the request goes on.
+        POOL_KEY = "hermes_claude_pool_key"
+
+
+        def _core():
+            module = sys.modules.get(_CORE)
+            if module is None:
+                spec = importlib.util.spec_from_file_location(_CORE, Path(__file__).with_name("core.py"))
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[_CORE] = module
+                spec.loader.exec_module(module)
+            return module
+
+
+        def _base_module():
+            """The Nous plugin's package, imported under the module name Hermes itself gives it.
+
+            This directory sorts before the Nous one, so its import usually comes first: import the Nous
+            plugin the way the provider scan would (same name, same registration layer), and the scan
+            then skips it as already imported."""
+            for module in list(sys.modules.values()):
+                profile = getattr(module, "profile", None)
+                if getattr(profile, "name", None) == BASE and hasattr(module, "ClaudeOAuthDirectSDKProfile"):
+                    return module
+            base_dir = Path(__file__).resolve().parent.parent / BASE
+            own = Path(__file__).resolve().parent.name.replace("-", "_")
+            if not __name__.endswith("_" + own) or not (base_dir / "__init__.py").exists():
+                return None
+            name = __name__[: -len(own)] + BASE.replace("-", "_")
+            import providers
+            disabled = getattr(providers, "_plugin_disabled", None)
+            if disabled is not None and disabled(base_dir):
+                return None
+            providers._exec_plugin_module(base_dir, "user", name)
+            return sys.modules.get(name)
+
+
+        def _register():
+            core = _core()
+            base = _base_module()
+            if base is None:
+                logger.warning("claude-accounts: the %s plugin is not installed; no Claude account providers", BASE)
+                return
+            from providers import register_provider
+            setup = sys.modules[base.__name__ + ".directsdk_setup"]
+            Parent = base.ClaudeOAuthDirectSDKProfile
+
+            class AccountProfile(Parent):
+                """The Nous provider, bound to one Claude account's config dir."""
+
+                account = None
+
+                def _env(self):
+                    return core.account_env(self.account)
+
+                def create_client(self, **client_kwargs):
+                    client_kwargs["env"] = self._env()
+                    client = super().create_client(**client_kwargs)
+                    client.base_url = self.base_url
+                    return client
+
+                def setup_status(self, **kwargs):
+                    kwargs.setdefault("env", self._env())
+                    return super().setup_status(**kwargs)
+
+                def discover_models(self, **kwargs):
+                    kwargs.setdefault("env", self._env())
+                    return super().discover_models(**kwargs)
+
+                def fetch_account_usage(self, *, base_url=None, api_key=None):
+                    from agent.account_usage import AccountUsageSnapshot
+                    limits, reason = setup.fetch_usage(env=self._env())
+                    windows, details = base.usage_windows(limits) if limits is not None else ((), ())
+                    return AccountUsageSnapshot(provider=self.name, source="claude_code_get_usage",
+                                                fetched_at=datetime.now(timezone.utc), title=f"{self.display_name} plan limits",
+                                                windows=tuple(windows), details=tuple(details), unavailable_reason=reason)
+
+            template = base.profile
+            values = {f.name: getattr(template, f.name) for f in fields(template) if f.init}
+            for acct in core.accounts():
+                profile = AccountProfile(**{**values, "name": acct.provider, "display_name": acct.label,
+                                            "description": f"{acct.label}: Claude subscription through Claude Code, "
+                                                           f"login in {acct.config_dir}",
+                                            "base_url": f"process://{acct.provider}", "hidden": False})
+                profile.account = acct
+                profile.supports_streaming = getattr(template, "supports_streaming", True)
+                register_provider(profile)
+            _register_pool(core, base, setup, values, template)
+
+
+        def _register_pool(core, base, setup, values, template):
+            from providers import register_provider
+            directsdk = importlib.import_module(base.__name__ + ".directsdk")
+            Client, Request, Stream = directsdk.Client, directsdk.Request, directsdk.Stream
+            Parent = base.ClaudeOAuthDirectSDKProfile
+
+            class PoolRequest(Request):
+                """The request Hermes holds. Each try on an account is its own request, cancelled with this one."""
+
+                current = None
+
+                def cancel(self):
+                    super().cancel()
+                    inner = self.current
+                    if inner is not None:
+                        inner.cancel()
+
+            class PoolClient(Client):
+                """Runs each request on the chat's account. A try that fails because the account is signed out or at
+                a limit moves to the next account; only a failure before any output does."""
+
+                def __init__(self, **kwargs):
+                    kwargs.pop("env", None)
+                    super().__init__(**kwargs)
+                    self.base_url = f"process://{core.POOL_PROVIDER}"
+
+                def _register(self):
+                    request = PoolRequest(self)
+                    with self._lock:
+                        if self._closed:
+                            raise RuntimeError("Claude client is closed")
+                        self._requests.add(request)
+                    return request
+
+                def _create(self, request=None, **kwargs):
+                    key = kwargs.pop(POOL_KEY, None)
+                    request = request or self._register()
+                    try:
+                        body, manifest, names = directsdk.request_body(kwargs)
+                        system, frames = directsdk.prepare_history(kwargs.get("messages", []), names)
+                        if not isinstance(kwargs.get("model"), str) or not kwargs["model"]:
+                            raise ValueError("model is required")
+                    except BaseException:
+                        with self._lock:
+                            self._requests.discard(request)
+                        raise
+                    stream = Stream(self._pool_run(request, key, kwargs, body, manifest, names, system, frames), request)
+                    if kwargs.get("stream"):
+                        return stream
+                    try:
+                        for chunk in stream:
+                            if hasattr(chunk, "_response"):
+                                return chunk._response
+                        raise RuntimeError("Native response missing")
+                    finally:
+                        stream.close()
+
+                def _pool_run(self, outer, key, kwargs, body, manifest, names, system, frames):
+                    session_id, scope_id = key if isinstance(key, (list, tuple)) and len(key) == 2 else (None, None)
+                    tried = []
+                    try:
+                        while True:
+                            if outer.cancelled.is_set():
+                                raise RuntimeError("Claude request cancelled")
+                            row, _ = core.choose(session_id, kwargs["model"], setup.fetch_usage, scope_id=scope_id,
+                                                 skip=tuple(tried))
+                            view = copy.copy(self)
+                            view.env = core.account_env(row.acct)
+                            inner = Request(view)
+                            with self._lock:
+                                self._requests.add(inner)
+                            outer.current = inner
+                            if outer.cancelled.is_set():
+                                inner.cancel()
+                            run = Client._run(view, inner, kwargs, body, manifest, names, system, frames)
+                            try:
+                                first = next(run)
+                            except StopIteration:
+                                return
+                            except BaseException as exc:
+                                run.close()
+                                if outer.cancelled.is_set() or not core.after_failure(row.acct, exc, kwargs["model"], setup.fetch_usage):
+                                    raise
+                                logger.info("claude-pool: %s is signed out or at a limit; moving to another account", row.acct.id)
+                                tried.append(row.acct.id)
+                                continue
+                            try:
+                                yield first
+                                yield from run
+                            finally:
+                                run.close()
+                            return
+                    finally:
+                        with self._lock:
+                            self._requests.discard(outer)
+
+            class PoolProfile(Parent):
+                """Claude on whichever subscription account has room; see core.choose."""
+
+                def create_client(self, **client_kwargs):
+                    return PoolClient(**client_kwargs)
+
+                def build_api_kwargs_extras(self, *, reasoning_config=None, **context):
+                    extra, top = super().build_api_kwargs_extras(reasoning_config=reasoning_config, **context)
+                    session_id, scope_id = context.get("session_id"), context.get("cache_scope_id")
+                    if session_id or scope_id:
+                        top = {**top, POOL_KEY: (session_id, scope_id)}
+                    return extra, top
+
+                def setup_status(self, **kwargs):
+                    accts = core.accounts()
+                    acct = next((a for a in accts if core.status(a).get("logged_in")), accts[0] if accts else None)
+                    if acct is not None:
+                        kwargs.setdefault("env", core.account_env(acct))
+                    return super().setup_status(**kwargs)
+
+                def discover_models(self, **kwargs):
+                    kwargs.pop("env", None)
+                    rows = core.pool_models(lambda acct: setup.discover_models(env=core.account_env(acct), **kwargs))
+                    if rows:
+                        # The picker lists fallback_models first and appends live ids it lacks; keep the two the same.
+                        self.fallback_models = tuple(row["id"] for row in rows)
+                    return rows
+
+                def fetch_account_usage(self, *, base_url=None, api_key=None):
+                    from agent.account_usage import AccountUsageSnapshot
+                    stamp = datetime.now(timezone.utc)
+                    try:
+                        row, _ = core.choose(None, "", setup.fetch_usage, record=False)
+                    except core.PoolExhausted as exc:
+                        return AccountUsageSnapshot(provider=self.name, source="claude_code_get_usage", fetched_at=stamp,
+                                                    title="Claude plan limits", windows=(), details=(), unavailable_reason=str(exc))
+                    limits, reason = setup.fetch_usage(env=core.account_env(row.acct))
+                    windows, details = base.usage_windows(limits) if limits is not None else ((), ())
+                    return AccountUsageSnapshot(provider=self.name, source="claude_code_get_usage", fetched_at=stamp,
+                                                title=f"{row.acct.label} plan limits", windows=tuple(windows),
+                                                details=tuple(details), unavailable_reason=reason)
+
+            nous_classify = values.get("classify_api_error")
+
+            def classify(error, **kwargs):
+                # Every account at its limit ends the turn with the reset time; it never moves to API credits.
+                if isinstance(error, core.PoolExhausted):
+                    return {"reason": "rate_limit", "retryable": False, "should_fallback": False}
+                return nous_classify(error, **kwargs) if callable(nous_classify) else None
+
+            newest = tuple(r["id"] for r in core.newest_per_family([{"id": m} for m in template.fallback_models or ()]))
+            profile = PoolProfile(**{**values, "name": core.POOL_PROVIDER, "display_name": "Claude",
+                                     "description": "Claude on the signed-in subscription account with room whose weekly limit "
+                                                    "resets soonest; a chat keeps its account until that account is at a limit",
+                                     "base_url": f"process://{core.POOL_PROVIDER}", "hidden": False,
+                                     "fallback_models": newest, "classify_api_error": classify})
+            profile.supports_streaming = getattr(template, "supports_streaming", True)
+            register_provider(profile)
+
+
+        _register()
+      core.py: |
+        """Shared state of the claude-accounts plugin: the account slots, their Claude Code status and plan
+        limits, and the sign-in runs. The provider half (__init__.py) and the route half
+        (dashboard/plugin_api.py) load this file once, as one module object.
+
+        Never reads the files Claude Code keeps its login in. Everything about an account comes from the
+        CLI itself: `claude auth status --json` and the `get_usage` control request.
+        """
+        from __future__ import annotations
+
+        import fcntl
+        import json
+        import os
+        import re
+        import secrets
+        import signal
+        import subprocess
+        import tempfile
+        import threading
+        import time
+        from concurrent.futures import ThreadPoolExecutor
+        from dataclasses import dataclass, field
+        from datetime import datetime, timedelta, timezone
+        from pathlib import Path
+        from typing import Any, Callable, Optional
+        from urllib.parse import parse_qs, urlparse
+
+        PLUGIN = "claude-accounts"
+        ROOT = Path(os.environ.get("CLAUDE_ACCOUNTS_ROOT", "/opt/data/hermes/claude"))
+        CLI = os.environ.get("CLAUDE_SUBSCRIPTION_DIRECTSDK_COMMAND", "/opt/data/hermes/bin/claude")
+        SIGNIN_TIMEOUT = 600
+        URL_TIMEOUT = 20
+        CODE_TIMEOUT = 60
+        STATUS_TTL = 10
+        USAGE_TTL = 60
+
+        _ID = re.compile(r"^(?!pool$|api-)[a-z0-9][a-z0-9-]{0,31}$")
+        _CODE = re.compile(r"^[A-Za-z0-9._~-]{1,1024}#[A-Za-z0-9._~-]{1,256}$")
+        _ESCAPES = re.compile(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b\[[0-9;?]*[A-Za-z]")
+        _URL = re.compile(r"https://\S+/oauth/authorize\?\S+")
+        # Set for Hermes' own anthropic provider; a Claude Code child would bill the API with them.
+        _DROP = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_FOUNDRY_API_KEY", "ANTHROPIC_BASE_URL",
+                 "CLAUDE_CODE_OAUTH_TOKEN", "CLAUDE_SUBSCRIPTION_DIRECTSDK_CONFIG_DIR")
+        _QUIET = {"DISABLE_AUTOUPDATER": "1", "DISABLE_FEEDBACK_COMMAND": "1", "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1"}
+        _KINDS = {"Current session": "session", "Current week": "weekly_all"}
+
+
+        def now() -> datetime:
+            return datetime.now(timezone.utc)
+
+
+        def iso(value: Optional[datetime]) -> Optional[str]:
+            return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z") if value else None
+
+
+        @dataclass(frozen=True)
+        class Account:
+            id: str
+            label: str
+            # The day of the month the account's plan bills on, which starts its API credit cycle.
+            billing_day: int = 1
+
+            @property
+            def provider(self) -> str:
+                return f"claude-{self.id}"
+
+            @property
+            def config_dir(self) -> Path:
+                return ROOT / self.id
+
+
+        def _settings() -> dict:
+            try:
+                from hermes_cli.config import load_config_readonly
+                config = load_config_readonly() or {}
+            except Exception:
+                return {}
+            for key in ("plugins", "entries", PLUGIN, "settings"):
+                config = config.get(key) if isinstance(config, dict) else None
+            return config if isinstance(config, dict) else {}
+
+
+        def accounts(settings: Optional[dict] = None) -> list[Account]:
+            """The slots in the plugin's `accounts` setting, in order; a bad or repeated id is skipped."""
+            rows = (settings if settings is not None else _settings()).get("accounts")
+            out: list[Account] = []
+            for row in rows if isinstance(rows, list) else []:
+                if not isinstance(row, dict) or not isinstance(row.get("id"), str) or not _ID.match(row["id"]):
+                    continue
+                if any(a.id == row["id"] for a in out):
+                    continue
+                label = row.get("label") if isinstance(row.get("label"), str) and row["label"].strip() else f"Claude ({row['id']})"
+                day = row.get("api_billing_day")
+                day = day if isinstance(day, int) and not isinstance(day, bool) and 1 <= day <= 28 else 1
+                out.append(Account(row["id"], label.strip(), day))
+            return out
+
+
+        def account(account_id: str) -> Optional[Account]:
+            return next((a for a in accounts() if a.id == account_id), None)
+
+
+        def account_env(acct: Account, base: Optional[dict] = None) -> dict:
+            """Hermes' environment for a Claude Code child of this account: its own config dir, no API key."""
+            env = dict(os.environ if base is None else base)
+            for key in _DROP:
+                env.pop(key, None)
+            for key in [k for k in env if k.startswith("ANTHROPIC_API_KEY")]:
+                env.pop(key)
+            env.update(_QUIET)
+            env["CLAUDE_CONFIG_DIR"] = str(acct.config_dir)
+            if not env.get("USER") and not env.get("LOGNAME"):
+                env["USER"] = env["LOGNAME"] = "hermes"
+            acct.config_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
+            return env
+
+
+        # --- what the plugin remembers about a slot: only the email it was last signed in to ---
+
+        def _slot_file(acct: Account) -> Path:
+            return ROOT / ".slots" / f"{acct.id}.json"
+
+
+        def last_email(acct: Account) -> Optional[str]:
+            try:
+                value = json.loads(_slot_file(acct).read_text(encoding="utf-8")).get("last_email")
+            except (OSError, ValueError, AttributeError):
+                return None
+            return value if isinstance(value, str) and value else None
+
+
+        def _remember(acct: Account, email: Optional[str]) -> None:
+            if not email or email == last_email(acct):
+                return
+            path = _slot_file(acct)
+            path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            tmp = path.with_suffix(".tmp")
+            tmp.write_text(json.dumps({"last_email": email, "at": iso(now())}), encoding="utf-8")
+            os.replace(tmp, path)
+
+
+        # --- status and usage, cached ---
+
+        _cache_lock = threading.Lock()
+        _cache: dict[tuple[str, str], tuple[float, Any]] = {}
+
+
+        def _cached(key: tuple[str, str], ttl: float, fetch: Callable[[], Any], fresh: bool = False) -> Any:
+            with _cache_lock:
+                hit = _cache.get(key)
+                if hit and not fresh and time.monotonic() - hit[0] < ttl:
+                    return hit[1]
+            value = fetch()
+            with _cache_lock:
+                _cache[key] = (time.monotonic(), value)
+            return value
+
+
+        def _run_status(acct: Account) -> dict:
+            checked = iso(now())
+            blank = {"logged_in": False, "email": None, "org_name": None, "subscription_type": None,
+                     "login_expires_at": None, "checked_at": checked, "error": None}
+            try:
+                run = subprocess.run([CLI, "auth", "status", "--json"], env=account_env(acct), stdin=subprocess.DEVNULL,
+                                     capture_output=True, text=True, timeout=20, cwd=str(acct.config_dir))
+                data = json.loads(run.stdout)
+            except FileNotFoundError:
+                return {**blank, "error": f"Claude Code is not installed at {CLI}"}
+            except subprocess.TimeoutExpired:
+                return {**blank, "error": "Claude Code did not answer in time"}
+            except (OSError, ValueError):
+                return {**blank, "error": "Claude Code gave no status"}
+            if not isinstance(data, dict):
+                return {**blank, "error": "Claude Code gave no status"}
+
+            def text(key):
+                return data.get(key) if isinstance(data.get(key), str) else None
+            status = {**blank, "logged_in": data.get("loggedIn") is True, "email": text("email"), "org_name": text("orgName"),
+                      "subscription_type": text("subscriptionType"), "login_expires_at": text("loginExpiresAt")}
+            if status["logged_in"]:
+                _remember(acct, status["email"])
+            return status
+
+
+        def status(acct: Account, fresh: bool = False) -> dict:
+            return _cached((acct.id, "status"), STATUS_TTL, lambda: _run_status(acct), fresh)
+
+
+        _refreshing: set = set()
+
+
+        def _cached_stale(key: tuple[str, str], ttl: float, fetch: Callable[[], Any]) -> Any:
+            """Like _cached, but an expired value is returned at once while a background thread reads it again."""
+            with _cache_lock:
+                hit = _cache.get(key)
+                if hit and time.monotonic() - hit[0] < ttl:
+                    return hit[1]
+                if hit and key in _refreshing:
+                    return hit[1]
+                if hit:
+                    _refreshing.add(key)
+
+            def refresh():
+                try:
+                    _cached(key, ttl, fetch, fresh=True)
+                finally:
+                    with _cache_lock:
+                        _refreshing.discard(key)
+            if hit:
+                threading.Thread(target=refresh, daemon=True, name=f"claude-pool-{key[0]}-{key[1]}").start()
+                return hit[1]
+            return _cached(key, ttl, fetch, fresh=True)
+
+
+        def _percent(value) -> Optional[float]:
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or value != value or value in (float("inf"), float("-inf")):
+                return None
+            return float(value)
+
+
+        def usage_rows(payload: dict) -> list[dict]:
+            """`get_usage` rate_limits -> windows with their kind kept ("session" = 5 hours, "weekly_all" = the week)."""
+            limits = payload.get("limits")
+            rows = []
+            if isinstance(limits, list) and limits:
+                for entry in limits:
+                    if not isinstance(entry, dict):
+                        continue
+                    kind = entry.get("kind") if isinstance(entry.get("kind"), str) else "unknown"
+                    scope = entry.get("scope") if isinstance(entry.get("scope"), dict) else {}
+                    model = scope.get("model") if isinstance(scope.get("model"), dict) else {}
+                    name = model.get("display_name") if isinstance(model.get("display_name"), str) else ""
+                    label = {"session": "Current session", "weekly_all": "Current week"}.get(kind) or (f"{name} week" if name else kind)
+                    rows.append({"kind": kind, "label": label, "used_percent": _percent(entry.get("percent")),
+                                 "resets_at": entry.get("resets_at") if isinstance(entry.get("resets_at"), str) else None})
+                return rows
+            for key, kind, label in (("five_hour", "session", "Current session"), ("seven_day", "weekly_all", "Current week"),
+                                     ("seven_day_opus", "weekly_opus", "Opus week"), ("seven_day_sonnet", "weekly_sonnet", "Sonnet week")):
+                window = payload.get(key)
+                if not isinstance(window, dict):
+                    continue
+                used = _percent(window.get("utilization"))
+                if used is not None and used <= 1:
+                    used *= 100.0
+                rows.append({"kind": kind, "label": label, "used_percent": used,
+                             "resets_at": window.get("resets_at") if isinstance(window.get("resets_at"), str) else None})
+            return rows
+
+
+        def _run_usage(acct: Account, fetch_usage: Callable[..., tuple]) -> dict:
+            try:
+                limits, reason = fetch_usage(env=account_env(acct))
+            except Exception as exc:  # the CLI's answer is untrusted; never fail the route on it
+                limits, reason = None, f"usage check failed: {type(exc).__name__}"
+            details = []
+            if isinstance(limits, dict):
+                extra = limits.get("extra_usage") if isinstance(limits.get("extra_usage"), dict) else {}
+                spent, cap = _percent(extra.get("used_credits")), _percent(extra.get("monthly_limit"))
+                if extra.get("is_enabled") and spent is not None and cap is not None:
+                    details.append(f"Extra usage: {spent:.2f} / {cap:.2f} {extra.get('currency') or 'USD'}")
+            return {"windows": usage_rows(limits) if isinstance(limits, dict) else [], "details": details,
+                    "unavailable_reason": None if isinstance(limits, dict) else (reason or "no plan limits"),
+                    "fetched_at": iso(now())}
+
+
+        def usage(acct: Account, fetch_usage: Callable[..., tuple], fresh: bool = False) -> dict:
+            return _cached((acct.id, "usage"), USAGE_TTL, lambda: _run_usage(acct, fetch_usage), fresh)
+
+
+        # --- sign-in: `claude auth login` with stdin and stdout on pipes ---
+        # Off a TTY the CLI prints "If the browser didn't open, visit: <url>" (the manual-code URL), then reads
+        # "code#state" lines from stdin. The code goes to its stdin and nowhere else.
+
+        ACTIVE = ("starting", "waiting_code", "verifying")
+
+
+        @dataclass
+        class SignIn:
+            acct: Account
+            reason: str
+            email_hint: Optional[str]
+            id: str = field(default_factory=lambda: secrets.token_urlsafe(12))
+            state: str = "starting"
+            url: Optional[str] = None
+            message: Optional[str] = None
+            email: Optional[str] = None
+            started_at: datetime = field(default_factory=now)
+            proc: Optional[subprocess.Popen] = None
+            output: str = ""
+            changed: threading.Condition = field(default_factory=threading.Condition)
+
+            @property
+            def expires_at(self) -> datetime:
+                return self.started_at + timedelta(seconds=SIGNIN_TIMEOUT)
+
+            def json(self) -> dict:
+                return {"id": self.id, "account": self.acct.id, "label": self.acct.label, "email_hint": self.email_hint,
+                        "reason": self.reason, "state": self.state, "url": self.url, "message": self.message, "email": self.email,
+                        "started_at": iso(self.started_at), "expires_at": iso(self.expires_at)}
+
+
+        _signins: dict[str, SignIn] = {}
+        _signin_lock = threading.Lock()
+
+
+        def current_signin(acct: Account) -> Optional[SignIn]:
+            with _signin_lock:
+                return _signins.get(acct.id)
+
+
+        def _kill(proc: Optional[subprocess.Popen]) -> None:
+            if proc is None or proc.poll() is not None:
+                return
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except OSError:
+                pass
+            try:
+                proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                pass
+
+
+        def _set(s: SignIn, state: str, message: Optional[str] = None) -> None:
+            with s.changed:
+                if s.state in ACTIVE:
+                    s.state, s.message = state, message
+                s.changed.notify_all()
+
+
+        def _failure_text(output: str) -> str:
+            lines = [ln.strip() for ln in _ESCAPES.sub("", output).splitlines() if ln.strip()]
+            lines = [ln for ln in lines if "oauth/authorize" not in ln and not ln.startswith(("Opening browser", "Paste code"))]
+            for ln in reversed(lines):
+                if "fail" in ln.lower() or "error" in ln.lower() or "invalid" in ln.lower():
+                    return ln[:300]
+            return "Claude Code did not finish the sign-in."
+
+
+        def _reader(s: SignIn, on_done: Callable[[SignIn], None]) -> None:
+            proc = s.proc
+            assert proc is not None and proc.stdout is not None
+            while True:
+                chunk = os.read(proc.stdout.fileno(), 4096)
+                if not chunk:
+                    break
+                with s.changed:
+                    s.output = (s.output + chunk.decode("utf-8", "replace"))[-16384:]
+                    if s.url is None:
+                        match = _URL.search(_ESCAPES.sub("", s.output))
+                        if match:
+                            s.url = match.group(0)
+                            if s.state == "starting":
+                                s.state = "waiting_code"
+                    s.changed.notify_all()
+            code = proc.wait()
+            if code == 0:
+                with _cache_lock:
+                    _cache.pop((s.acct.id, "usage"), None)
+                st = status(s.acct, fresh=True)
+                with s.changed:
+                    s.email = st.get("email")
+                if st.get("logged_in"):
+                    _set(s, "succeeded", f"Signed in{' as ' + s.email if s.email else ''}.")
+                else:
+                    _set(s, "failed", "Claude Code exited, but it reports no login for this account.")
+            else:
+                _set(s, "failed", _failure_text(s.output) if s.state != "starting" or s.output else f"Claude Code exited with code {code}.")
+            with s.changed:
+                s.output = ""
+            on_done(s)
+
+
+        def _watchdog(s: SignIn) -> None:
+            with s.changed:
+                s.changed.wait_for(lambda: s.state not in ACTIVE, timeout=SIGNIN_TIMEOUT)
+            if s.state in ACTIVE:
+                _set(s, "timed_out", "The sign-in waited 10 minutes for a code and was stopped. Start it again.")
+                _kill(s.proc)
+
+
+        def start_signin(acct: Account, argv: Optional[list[str]] = None, on_done: Callable[[SignIn], None] = lambda s: None) -> SignIn:
+            """Start `claude auth login` for the account, or return its sign-in that is still running."""
+            with _signin_lock:
+                old = _signins.get(acct.id)
+                if old is not None and old.state in ACTIVE:
+                    return old
+                hint = last_email(acct)
+                s = SignIn(acct, "expired" if hint else "first", hint)
+                _signins[acct.id] = s
+            cmd = argv or [CLI, "auth", "login", "--claudeai"] + (["--email", hint] if hint else [])
+            try:
+                s.proc = subprocess.Popen(cmd, env=account_env(acct), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                          stderr=subprocess.STDOUT, cwd=tempfile.gettempdir(), start_new_session=True)
+            except OSError as exc:
+                _set(s, "failed", f"Claude Code could not start: {exc.strerror or type(exc).__name__}")
+                return s
+            threading.Thread(target=_reader, args=(s, on_done), daemon=True, name=f"claude-signin-{acct.id}").start()
+            threading.Thread(target=_watchdog, args=(s,), daemon=True, name=f"claude-signin-timeout-{acct.id}").start()
+            with s.changed:
+                s.changed.wait_for(lambda: s.state != "starting", timeout=URL_TIMEOUT)
+            if s.state == "starting":
+                _set(s, "failed", "Claude Code printed no sign-in address.")
+                _kill(s.proc)
+            return s
+
+
+        class SignInError(Exception):
+            def __init__(self, status_code: int, code: str, message: str):
+                super().__init__(message)
+                self.status_code, self.code, self.message = status_code, code, message
+
+
+        def submit_code(acct: Account, signin_id: str, code: str) -> SignIn:
+            s = current_signin(acct)
+            if s is None or s.id != signin_id or s.state != "waiting_code":
+                raise SignInError(409, "wrong_signin", "This sign-in is no longer waiting for a code. Start it again.")
+            code = (code or "").strip()
+            if not _CODE.match(code):
+                raise SignInError(400, "bad_code", "That is not a whole code. Copy all of the code the Claude page shows.")
+            state = parse_qs(urlparse(s.url or "").query).get("state", [None])[0]
+            if state and code.split("#", 1)[1] != state:
+                raise SignInError(400, "bad_code", "That code is from another sign-in. Use the code from the link above.")
+            with s.changed:
+                s.state = "verifying"
+            try:
+                assert s.proc is not None and s.proc.stdin is not None
+                s.proc.stdin.write((code + "\n").encode())
+                s.proc.stdin.flush()
+            except (OSError, ValueError, AssertionError):
+                _set(s, "failed", "Claude Code stopped before it took the code. Start the sign-in again.")
+                return s
+            finally:
+                code = ""
+            with s.changed:
+                s.changed.wait_for(lambda: s.state != "verifying", timeout=CODE_TIMEOUT)
+            return s
+
+
+        def cancel_signin(acct: Account) -> Optional[SignIn]:
+            s = current_signin(acct)
+            if s is not None and s.state in ACTIVE:
+                _set(s, "cancelled", "The sign-in was cancelled.")
+                _kill(s.proc)
+            return s
+
+
+        # --- the pool: one provider whose turns run on whichever signed-in account has room ---
+        # A chat keeps the account it started on (its prompt cache is there) until that account is at a limit or
+        # signed out; a new chat, or one that must move, gets the account whose weekly window resets soonest.
+        # The pins and the accounts known to be at a limit are in one file, so the dashboard process (the hub's
+        # routes) sees what the gateway process (the turns) chose.
+
+        POOL_PROVIDER = "claude-pool"
+        POOL_FILE = ROOT / ".pool.json"
+        POOL_TZ = "America/Chicago"
+        # How long an account that answered "limit reached" stays out when its usage names no reset time.
+        LIMIT_HOLD = 15 * 60
+        PIN_DAYS = 90
+        FAMILIES = ("opus", "sonnet", "fable", "haiku")
+        _FAR = datetime.max.replace(tzinfo=timezone.utc)
+
+
+        class PoolExhausted(RuntimeError):
+            """No signed-in account has room. Never answered with API credits."""
+
+
+        def parse_time(value: Any) -> Optional[datetime]:
+            if not isinstance(value, str) or not value.strip():
+                return None
+            try:
+                t = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+            except ValueError:
+                return None
+            return t if t.tzinfo else t.replace(tzinfo=timezone.utc)
+
+
+        def reset_text(t: datetime) -> str:
+            """A reset time as Jacob reads it: "Mon 12:00 AM CST"."""
+            try:
+                from zoneinfo import ZoneInfo
+                local = t.astimezone(ZoneInfo(POOL_TZ))
+            except Exception:
+                local = t.astimezone(timezone.utc)
+            return local.strftime("%a %-I:%M %p %Z")
+
+
+        def _pool_state() -> dict:
+            try:
+                data = json.loads(POOL_FILE.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                return {"pins": {}, "sessions": {}, "blocked": {}}
+            if not isinstance(data, dict):
+                data = {}
+            for key in ("pins", "sessions", "blocked"):
+                if not isinstance(data.get(key), dict):
+                    data[key] = {}
+            return data
+
+
+        def _pool_update(change: Callable[[dict], None]) -> dict:
+            POOL_FILE.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            with open(POOL_FILE.with_suffix(".lock"), "a+") as lock:
+                fcntl.flock(lock, fcntl.LOCK_EX)
+                state = _pool_state()
+                change(state)
+                cutoff = iso(now() - timedelta(days=PIN_DAYS))
+                state["pins"] = {k: v for k, v in state["pins"].items() if isinstance(v, dict) and str(v.get("at", "")) >= cutoff}
+                state["sessions"] = {s: k for s, k in state["sessions"].items() if k in state["pins"]}
+                state["blocked"] = {a: t for a, t in state["blocked"].items() if (parse_time(t) or now()) > now()}
+                tmp = POOL_FILE.with_suffix(".tmp")
+                tmp.write_text(json.dumps(state), encoding="utf-8")
+                os.replace(tmp, POOL_FILE)
+            return state
+
+
+        def pin_key(session_id: Optional[str], scope_id: Optional[str] = None) -> Optional[str]:
+            return (scope_id or session_id or None) and str(scope_id or session_id)
+
+
+        def pinned_account(state: dict, session_id: Optional[str]) -> Optional[str]:
+            if not session_id:
+                return None
+            key = state["sessions"].get(session_id, session_id)
+            pin = state["pins"].get(key)
+            return pin.get("account") if isinstance(pin, dict) else None
+
+
+        @dataclass
+        class Standing:
+            """An account as the pool sees it for one model."""
+            acct: Account
+            signed_in: bool
+            has_room: bool
+            weekly_reset: Optional[datetime] = None
+            free_at: Optional[datetime] = None
+            usage: Optional[dict] = None
+
+            def json(self) -> dict:
+                return {"account": self.acct.id, "label": self.acct.label, "provider": self.acct.provider,
+                        "signed_in": self.signed_in, "has_room": self.has_room, "weekly_resets_at": iso(self.weekly_reset),
+                        "free_at": iso(self.free_at)}
+
+
+        def _applies(window: dict, model: str) -> bool:
+            kind = window.get("kind")
+            if kind in ("session", "weekly_all"):
+                return True
+            if kind == "weekly_scoped":
+                name = str(window.get("label") or "").removesuffix(" week").strip().lower()
+                return bool(name) and name in (model or "").lower()
+            return False
+
+
+        def standing(acct: Account, model: str, fetch_usage: Callable[..., tuple], blocked: dict) -> Standing:
+            st = _cached_stale((acct.id, "status"), STATUS_TTL, lambda: _run_status(acct))
+            if not st.get("logged_in"):
+                return Standing(acct, False, False)
+            u = _cached_stale((acct.id, "usage"), USAGE_TTL, lambda: _run_usage(acct, fetch_usage))
+            windows = [w for w in u.get("windows") or [] if isinstance(w, dict)]
+            weekly = next((parse_time(w.get("resets_at")) for w in windows if w.get("kind") == "weekly_all"), None)
+            full = [w for w in windows if _applies(w, model) and isinstance(w.get("used_percent"), (int, float)) and w["used_percent"] >= 100]
+            held = parse_time(blocked.get(acct.id))
+            if held is not None and held <= now():
+                held = None
+            if not full and held is None:
+                return Standing(acct, True, True, weekly, None, u)
+            times = [t for t in [parse_time(w.get("resets_at")) for w in full] + [held] if t is not None]
+            return Standing(acct, True, False, weekly, max(times) if times else None, u)
+
+
+        def standings(model: str, fetch_usage: Callable[..., tuple], state: dict, only: Optional[list] = None) -> list[Standing]:
+            accts = only if only is not None else accounts()
+            if not accts:
+                return []
+            with ThreadPoolExecutor(max_workers=len(accts)) as pool:
+                return list(pool.map(lambda a: standing(a, model, fetch_usage, state["blocked"]), accts))
+
+
+        def exhausted_message(rows: list[Standing]) -> str:
+            signed = [r for r in rows if r.signed_in]
+            if not signed:
+                return "No Claude account is signed in. Sign one in on the hub's Usage page."
+            times = [r.free_at for r in signed if r.free_at is not None]
+            if not times:
+                return "All Claude accounts are at their limit."
+            return f"All Claude accounts are at their limit; the first resets {reset_text(min(times))}"
+
+
+        def choose(session_id: Optional[str], model: str, fetch_usage: Callable[..., tuple], *, scope_id: Optional[str] = None,
+                   skip: tuple = (), record: bool = True) -> tuple[Standing, bool]:
+            """The account for the next request of a chat, and whether it is the chat's pinned one.
+
+            Raises PoolExhausted when no signed-in account has room."""
+            state = _pool_state()
+            key = pin_key(session_id, scope_id)
+            pinned = pinned_account(state, key)
+            if pinned is None and session_id and session_id != key:
+                pinned = pinned_account(state, session_id)
+            order = accounts()
+            current = next((a for a in order if a.id == pinned and a.id not in skip), None)
+            if current is not None:
+                row = standing(current, model, fetch_usage, state["blocked"])
+                if row.has_room:
+                    pin = state["pins"].get(key) if key else None
+                    stale = not isinstance(pin, dict) or str(pin.get("at", "")) < iso(now() - timedelta(days=1))
+                    if record and key and (stale or (session_id and state["sessions"].get(session_id) != key)):
+                        _pool_update(lambda s: _pin(s, key, session_id, row.acct.id))
+                    return row, True
+            rows = standings(model, fetch_usage, state, order)
+            open_rows = [r for r in rows if r.has_room and r.acct.id not in skip]
+            if not open_rows:
+                raise PoolExhausted(exhausted_message(rows))
+            best = min(open_rows, key=lambda r: (r.weekly_reset or _FAR, order.index(r.acct)))
+            if record and key:
+                _pool_update(lambda s: _pin(s, key, session_id, best.acct.id))
+            return best, False
+
+
+        def _pin(state: dict, key: str, session_id: Optional[str], account_id: str) -> None:
+            state["pins"][key] = {"account": account_id, "at": iso(now())}
+            if session_id:
+                state["sessions"][session_id] = key
+
+
+        def after_failure(acct: Account, error: BaseException, model: str, fetch_usage: Callable[..., tuple]) -> bool:
+            """Whether a request that failed on this account should move to another one: the account is signed out
+            or at a limit. An account at a limit stays out until its full windows reset."""
+            name = type(error).__name__
+            code = getattr(error, "status_code", None)
+            text = str(error)
+            if name == "ClaudeCodeLoggedOut" or code == 401:
+                return not status(acct, fresh=True).get("logged_in")
+            if code != 429:
+                return False
+            with _cache_lock:
+                _cache.pop((acct.id, "usage"), None)
+            row = standing(acct, model, fetch_usage, {})
+            plan_limit = text.startswith("Native API error")
+            if row.has_room and not plan_limit:
+                return False
+            until = row.free_at or (now() + timedelta(seconds=LIMIT_HOLD))
+            _pool_update(lambda s: s["blocked"].__setitem__(acct.id, iso(until)))
+            return True
+
+
+        def model_family(model_id: str) -> tuple[str, tuple]:
+            """("opus", (5, 5)) for claude-opus-5-5[1m]; a trailing snapshot date is not part of the version."""
+            parts = model_id.removesuffix("[1m]").removeprefix("claude-").split("-")
+            if parts and len(parts[-1]) == 8 and parts[-1].isdigit():
+                parts = parts[:-1]
+            version = tuple(int(p) for p in parts[1:] if p.isdigit())
+            return (parts[0] if parts else ""), version
+
+
+        def newest_per_family(rows: list[dict]) -> list[dict]:
+            """The newest model of each family, Opus, Sonnet, Fable and Haiku first."""
+            best: dict[str, tuple] = {}
+            for row in rows:
+                family, version = model_family(str(row.get("id") or ""))
+                if family and (family not in best or version > best[family][0]):
+                    best[family] = (version, row)
+            rank = {f: i for i, f in enumerate(FAMILIES)}
+            return [best[f][1] for f in sorted(best, key=lambda f: (rank.get(f, len(rank)), f))]
+
+
+        def pool_models(discover: Callable[[Account], Optional[list]]) -> Optional[list[dict]]:
+            """The models every signed-in account offers, newest of each family. None when no account answers."""
+            accts = accounts()
+            if not accts:
+                return None
+            with ThreadPoolExecutor(max_workers=len(accts)) as pool:
+                lists = list(pool.map(lambda a: _cached((a.id, "models"), 600, lambda: discover(a)), accts))
+            lists = [rows for rows in lists if rows]
+            if not lists:
+                return None
+            common = set.intersection(*({str(r.get("id")) for r in rows} for rows in lists))
+            return newest_per_family([r for r in lists[0] if str(r.get("id")) in common])
+
+
+        def pool_view(session_id: Optional[str], model: str, fetch_usage: Callable[..., tuple]) -> dict:
+            """What the hub shows under the model picker: the account the chat's next turn runs on."""
+            try:
+                row, pinned = choose(session_id, model, fetch_usage, record=False)
+            except PoolExhausted as exc:
+                return {"account": None, "pinned": False, "message": str(exc)}
+            out = row.json()
+            out.update(pinned=pinned, message=None, weekly_resets_text=reset_text(row.weekly_reset) if row.weekly_reset else None)
+            return out
+
+
+        # --- API credits: the monthly credit a Max or Ultra plan includes, less what Hermes spent through the account's
+        # API key (provider claude-api-<id>). Anthropic has no API that returns the balance, so this is an estimate that
+        # counts only Hermes's own use. Hermes records those turns under the "custom" route at api.anthropic.com with no
+        # price, so each session's turns go to the API provider the session is on, priced at Anthropic's list prices.
+
+        API_CREDITS_USD = {"max": 100.0, "ultra": 200.0}
+        API_HOST = "https://api.anthropic.com"
+        STATE_DB = Path(os.environ.get("HERMES_HOME", "/opt/data/hermes")) / "state.db"
+
+
+        def api_provider(acct: Account) -> str:
+            return f"claude-api-{acct.id}"
+
+
+        def api_key_env(acct: Account) -> str:
+            return "ANTHROPIC_API_KEY_" + acct.id.upper().replace("-", "_")
+
+
+        def billing_cycle(day: int, at: Optional[datetime] = None) -> tuple[datetime, datetime]:
+            """The current credit cycle, midnight Central to midnight Central on the billing day."""
+            try:
+                from zoneinfo import ZoneInfo
+                tz = ZoneInfo(POOL_TZ)
+            except Exception:
+                tz = timezone.utc
+            local = (at or now()).astimezone(tz)
+            year, month = local.year, local.month
+            if local.day < day:
+                year, month = (year - 1, 12) if month == 1 else (year, month - 1)
+            start = datetime(year, month, day, tzinfo=tz)
+            end = datetime(year + 1, 1, day, tzinfo=tz) if month == 12 else datetime(year, month + 1, day, tzinfo=tz)
+            return start, end
+
+
+        def _session_provider(model_config: Any) -> Optional[str]:
+            try:
+                config = json.loads(model_config) if isinstance(model_config, str) else None
+            except ValueError:
+                return None
+            if not isinstance(config, dict):
+                return None
+            runtime = config.get("gateway_runtime") if isinstance(config.get("gateway_runtime"), dict) else {}
+            value = config.get("provider") or runtime.get("provider")
+            return value if isinstance(value, str) else None
+
+
+        def _api_spend(provider: str, since: datetime) -> tuple[float, int]:
+            """(USD at list price, turns that could not be priced) for the provider's rows seen since the cycle start."""
+            import sqlite3
+            from agent.usage_pricing import CanonicalUsage, estimate_usage_cost
+            rows = []
+            db = sqlite3.connect(f"file:{STATE_DB}?mode=ro", uri=True, timeout=5)
+            try:
+                rows = db.execute(
+                    "SELECT u.model, u.billing_provider, u.input_tokens, u.output_tokens, u.cache_read_tokens, u.cache_write_tokens,"
+                    " u.api_call_count, s.model_config FROM session_model_usage u JOIN sessions s ON s.id = u.session_id"
+                    " WHERE u.billing_base_url LIKE ? AND u.last_seen >= ? AND instr(s.model_config, ?) > 0",
+                    (API_HOST + "%", since.timestamp(), f'"{provider}"')).fetchall()
+            finally:
+                db.close()
+            spent, unpriced = 0.0, 0
+            for model, billed, inp, out, read, write, calls, config in rows:
+                if billed not in ("custom", provider) or _session_provider(config) != provider:
+                    continue
+                usage = CanonicalUsage(input_tokens=inp or 0, output_tokens=out or 0, cache_read_tokens=read or 0,
+                                       cache_write_tokens=write or 0, request_count=calls or 0)
+                cost = estimate_usage_cost(model, usage, provider="anthropic", base_url=API_HOST)
+                if cost.amount_usd is None:
+                    unpriced += calls or 0
+                else:
+                    spent += float(cost.amount_usd)
+            return spent, unpriced
+
+
+        def _run_api_credits(acct: Account, plan: Optional[str]) -> dict:
+            start, end = billing_cycle(acct.billing_day)
+            monthly = API_CREDITS_USD.get((plan or "").lower())
+            out = {"provider": api_provider(acct), "monthly_usd": monthly, "spent_usd": None, "left_usd": None,
+                   "since": iso(start), "resets_at": iso(end), "unpriced_calls": 0, "error": None}
+            try:
+                spent, unpriced = _api_spend(api_provider(acct), start)
+            except Exception as exc:  # the estimate is a convenience; never fail the route on it
+                out["error"] = f"could not read Hermes's usage: {type(exc).__name__}"
+                return out
+            out.update(spent_usd=round(spent, 4), unpriced_calls=unpriced,
+                       left_usd=round(max(0.0, monthly - spent), 2) if monthly is not None else None)
+            return out
+
+
+        def api_credits(acct: Account, plan: Optional[str]) -> Optional[dict]:
+            """The account's API credit estimate, or None when Hermes has no API key for it."""
+            if not os.environ.get(api_key_env(acct)):
+                return None
+            return _cached((acct.id, "api_credits"), USAGE_TTL, lambda: _run_api_credits(acct, plan))
+      plugin_api.py: |
+        """claude-accounts routes for hermes-hub, mounted at /api/plugins/claude-accounts/ behind dashboard sign-in:
+        the account slots, their sign-in and usage, and the account the pool runs a chat on.
+
+        A sign-in code passes from the request body to Claude Code's stdin and is never logged or kept.
+        """
+        from __future__ import annotations
+
+        import importlib.util
+        import logging
+        import sys
+        from pathlib import Path
+        from typing import Any
+
+        from fastapi import APIRouter, Request
+        from fastapi.responses import JSONResponse
+
+        router = APIRouter()
+        logger = logging.getLogger("claude_accounts")
+        _CORE = "hermes_claude_accounts_core"
+
+
+        def _core():
+            module = sys.modules.get(_CORE)
+            if module is None:
+                spec = importlib.util.spec_from_file_location(_CORE, Path(__file__).parent.parent / "core.py")
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[_CORE] = module
+                spec.loader.exec_module(module)
+            return module
+
+
+        def _error(status: int, code: str, message: str) -> JSONResponse:
+            return JSONResponse({"error": code, "message": message}, status_code=status)
+
+
+        def _fetch_usage(acct):
+            """The Nous plugin's `get_usage` call, reached through this account's registered provider."""
+            from providers import get_provider_profile
+            profile = get_provider_profile(acct.provider)
+            module = sys.modules.get(type(profile).__mro__[1].__module__ + ".directsdk_setup") if profile else None
+            if module is None:
+                return lambda **_: (None, "the Claude provider plugin is not loaded")
+            return module.fetch_usage
+
+
+        def _cli_version() -> Any:
+            core = _core()
+            try:
+                return Path(core.CLI).resolve().parent.name or None
+            except OSError:
+                return None
+
+
+        def _account_json(acct, with_usage: bool) -> dict:
+            core = _core()
+            signin = core.current_signin(acct)
+            status = core.status(acct)
+            return {"id": acct.id, "label": acct.label, "provider": acct.provider, "config_dir": str(acct.config_dir),
+                    "status": status, "last_email": core.last_email(acct),
+                    "signin": signin.json() if signin else None,
+                    "usage": core.usage(acct, _fetch_usage(acct)) if with_usage else None,
+                    "api_credits": core.api_credits(acct, status.get("subscription_type")) if with_usage else None}
+
+
+        def _lookup(account_id: str):
+            acct = _core().account(account_id)
+            return acct, (None if acct else _error(404, "unknown_account", "No Claude account slot has that id."))
+
+
+        def _done(s) -> None:
+            logger.info("Claude sign-in for %s ended: %s", s.acct.id, s.state)
+
+
+        @router.get("/accounts")
+        def list_accounts(usage: int = 0) -> dict:
+            return {"cli_version": _cli_version(), "accounts": [_account_json(a, bool(usage)) for a in _core().accounts()]}
+
+
+        @router.get("/accounts/{account_id}/status")
+        def account_status(account_id: str):
+            acct, err = _lookup(account_id)
+            if err:
+                return err
+            _core().status(acct, fresh=True)
+            return _account_json(acct, False)
+
+
+        @router.get("/accounts/{account_id}/usage")
+        def account_usage(account_id: str):
+            acct, err = _lookup(account_id)
+            return err or _core().usage(acct, _fetch_usage(acct))
+
+
+        @router.get("/pool")
+        def pool(session: str = "", model: str = ""):
+            """The account the chat's next turn on claude-pool runs on, or why none can; nothing is recorded."""
+            core = _core()
+            accts = core.accounts()
+            if not accts:
+                return {"account": None, "pinned": False, "message": "No Claude account slot is set up."}
+            return core.pool_view(session or None, model, _fetch_usage(accts[0]))
+
+
+        @router.post("/accounts/{account_id}/signin")
+        def signin_start(account_id: str):
+            acct, err = _lookup(account_id)
+            if err:
+                return err
+            s = _core().start_signin(acct, on_done=_done)
+            logger.info("Claude sign-in for %s: %s", acct.id, s.state)
+            return s.json()
+
+
+        @router.get("/accounts/{account_id}/signin")
+        def signin_get(account_id: str):
+            acct, err = _lookup(account_id)
+            if err:
+                return err
+            s = _core().current_signin(acct)
+            return s.json() if s else _error(404, "not_found", "No sign-in for this account.")
+
+
+        @router.post("/accounts/{account_id}/signin/code")
+        async def signin_code(account_id: str, request: Request):
+            import asyncio
+            acct, err = _lookup(account_id)
+            if err:
+                return err
+            try:
+                body = await request.json()
+            except Exception:
+                return _error(400, "bad_code", "The request has no code.")
+            if not isinstance(body, dict) or not isinstance(body.get("code"), str) or not isinstance(body.get("signin_id"), str):
+                return _error(400, "bad_code", "The request has no code.")
+            core = _core()
+            try:
+                s = await asyncio.to_thread(core.submit_code, acct, body["signin_id"], body["code"])
+            except core.SignInError as exc:
+                return _error(exc.status_code, exc.code, exc.message)
+            finally:
+                body = None
+            return s.json()
+
+
+        @router.delete("/accounts/{account_id}/signin")
+        def signin_cancel(account_id: str):
+            acct, err = _lookup(account_id)
+            if err:
+                return err
+            s = _core().cancel_signin(acct)
+            return s.json() if s else _error(404, "not_found", "No sign-in for this account.")
+      manifest.json: |
+        {
+          "name": "claude-accounts",
+          "label": "Claude accounts",
+          "description": "Status, plan limits and sign-in of the Claude account slots, the pool's account for a chat and an API credit estimate, for hermes-hub.",
+          "api": "plugin_api.py",
+          "tab": { "hidden": true }
+        }
+
 persistence:
   data:
     type: persistentVolumeClaim
@@ -680,6 +2084,10 @@ persistence:
         acp-host:
           - path: /opt/data
         device-plugin:
+          - path: /opt/data
+        claude-download:
+          - path: /opt/data
+        claude-verify:
           - path: /opt/data
   managed:
     type: configMap
@@ -712,6 +2120,9 @@ persistence:
             path: /etc/group
             subPath: group
             readOnly: true
+        claude-verify:
+          - path: /config
+            readOnly: true
         gateway:
           - *passwd
           - *group
@@ -732,6 +2143,14 @@ persistence:
             readOnly: true
           - path: /etc/nginx/dashboard.conf
             subPath: dashboard.conf
+            readOnly: true
+  claude-accounts:
+    type: configMap
+    identifier: claude-accounts
+    advancedMounts:
+      hermes:
+        init:
+          - path: /claude-accounts
             readOnly: true
   tmp:
     type: emptyDir
