@@ -65,7 +65,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p21@sha256:7bd121ab18308860e4407e903a89b7d3548164843c1dd1d7dcd5c2b70a012461
+          tag: &hermesTag v0.23.1-p22@sha256:87cd1c2e03b294f2822c315893d6ecc74f93199e6c28a4b2a5b8177e4c46eace
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -541,6 +541,12 @@ configMaps:
           # Background processes a subagent leaves running move to its parent instead of dying with it, also when it is
           #   stopped for a restart handoff (hermes-patches 0027)
           keep_child_processes: true
+          # Each task of a delegate_task call returns as soon as it finishes instead of when the whole call does
+          #   (upstream's delegation.independent_completions; ungrouped tasks complete one by one, tasks sharing a group together)
+          independent_completions: true
+          # A subagent that has agent_send is told it can answer its parent mid-run with agent_send(to="parent", ...),
+          #   in its system prompt and in each delegate_task steer (hermes-patches 0042)
+          parent_reply_guidance: true
           backends:
             model_map:
               options:
