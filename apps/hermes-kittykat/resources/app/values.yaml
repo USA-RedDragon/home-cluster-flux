@@ -294,9 +294,10 @@ controllers:
           - secretRef:
               name: hermes-kittykat-deepinfra
               optional: true
+        # The takeover boot is CPU-bound (about 0.25 CPU-seconds); at 50m on a busy node it took 3 s
         resources:
           requests:
-            cpu: 50m
+            cpu: 500m
             memory: 512Mi
           limits:
             memory: 8Gi
