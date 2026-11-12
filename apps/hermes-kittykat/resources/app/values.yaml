@@ -646,11 +646,13 @@ configMaps:
         # Cron schedules ("every monday 9am") and the agent's clock use US Central, not the pod's UTC
         timezone: America/Chicago
         # For hermes-hub. A wildcard bind is behind dashboard sign-in: the gateway's basic provider, user hub
-        # Hub chats run as platform "desktop"; upstream's hint describes the Hermes desktop app (widgets, math), which the
+        # Hub chats run as platform "desktop", and chats imported from Claude Code as "cli"; upstream's hint describes the Hermes desktop app (widgets, math), which the
         #   hub does not render
         platform_hints:
           desktop:
-            replace: "You are chatting through Talaria: the hub web app (hub.mcswain.dev) or its Telegram bot, which show the same chats. The web app renders GitHub-flavored Markdown: headings, lists, task lists, tables, links and fenced code with syntax highlighting. It does not render math, HTML widgets or ::directives, so do not use them. Deliver a file by writing MEDIA:/absolute/path on its own line: images, audio and video show inline, other files get a download chip. Telegram shows the same reply in a narrow view, so keep tables to a few short columns."
+            replace: "You are chatting through Talaria: the hub web app (hub.mcswain.dev) or its Telegram bot, which show the same chats. The web app renders GitHub-flavored Markdown: headings, lists, task lists, tables, links and fenced code with syntax highlighting. It does not render math, HTML widgets or ::directives, so do not use them. Show an image with standard Markdown: ![description](/absolute/path.png). Link any other file the same way: [name](/absolute/path). The hub serves files your reply names this way. Save such files in the chat's working folder or below it, never in /tmp: the hub can only fetch files from there. Telegram shows the same reply in a narrow view, so keep tables to a few short columns."
+          cli:
+            replace: "You are chatting through Talaria: the hub web app (hub.mcswain.dev) or its Telegram bot, which show the same chats. The web app renders GitHub-flavored Markdown: headings, lists, task lists, tables, links and fenced code with syntax highlighting. It does not render math, HTML widgets or ::directives, so do not use them. Show an image with standard Markdown: ![description](/absolute/path.png). Link any other file the same way: [name](/absolute/path). The hub serves files your reply names this way. Save such files in the chat's working folder or below it, never in /tmp: the hub can only fetch files from there. Telegram shows the same reply in a narrow view, so keep tables to a few short columns."
         # A pod stop is a graceful restart: running turns finish (up to 9 minutes, under the hub's 10-minute prompt
         #   hold) while approvals stay answerable and new prompts wait for the new pod; then a short drain
         agent:
