@@ -2966,7 +2966,7 @@ configMaps:
       plugin.yaml: |
         name: project-memory
         kind: standalone
-        version: 0.2.0
+        version: 0.3.0
         description: One curated memory per project (the git repository of a chat's bound device folder), as the project_memory tool and a system prompt block next to the global memory, with routes for hermes-hub's Memory page
         author: Jacob McSwain
         requires_hermes: ">=0.22.5"
@@ -2978,7 +2978,8 @@ configMaps:
         Registers the ``project_memory`` tool (toolset ``project-memory``), the ``project-memory`` system prompt section
         (the project's notes next to the global memory block, frozen with the prompt like that block), a
         ``subagent_start`` hook that marks delegate children, which may not write project memory while they may not
-        write memory, an ``agent_turn_start`` hook that resets the per-turn cap on failed writes, and one paragraph in the built-in memory tool's description that sends project facts here.
+        write memory, an ``agent_turn_start`` hook that resets the per-turn cap on failed writes, a wrapper on Hermes's memory
+        approval replay that applies staged project writes to their project, and one paragraph in the built-in memory tool's description that sends project facts here.
         core.py has the details; dashboard/plugin_api.py has the routes for hermes-hub.
         """
         from __future__ import annotations
@@ -3013,6 +3014,7 @@ configMaps:
             if "agent_turn_start" in VALID_HOOKS:
                 ctx.register_hook("agent_turn_start", core.on_turn_start)
             core.extend_memory_schema()
+            core.install_pending_replay()
       core.py: |
         """Shared core of project-memory: one curated MEMORY.md per project, for chats bound to a device folder.
 
@@ -3704,6 +3706,95 @@ configMaps:
 
 
         WRITE_ACTIONS = ("add", "patch", "replace", "remove")
+        DESTRUCTIVE = ("patch", "replace", "remove")
+        # The target of a staged project write in Hermes's memory approval queue. Hermes's own replay refuses it, so a
+        # process without this plugin can never apply a project write to the global MEMORY.md.
+        PENDING_TARGET = "project"
+
+
+        def _op_line(op: dict) -> str:
+            act, content, old = op.get("action", "?"), op.get("content") or "", op.get("old_text") or ""
+            if act == "remove":
+                return f"- remove: {old}"
+            if act == "patch":
+                return f"- patch span '{old}' -> '{content}' (rest of the entry is kept)"
+            if act == "replace":
+                return f"- replace entry matching '{old}' with: {content}"
+            return f"- {act}: {content}"
+
+
+        def _stage(st, slug: str, project: str, operations: list, *, summary: str, message: str,
+                   origin: Optional[str] = None) -> dict:
+            """Stage a batch in Hermes's memory approval queue (``/memory pending`` and the hub's approval controls),
+            pinned to the entries it selects now, as Hermes pins its own staged writes."""
+            from tools import write_approval as wa
+            pinned = st.resolve_batch_entries("memory", operations)
+            if not pinned.get("success"):
+                return pinned
+            ops = [op if entry is None else {**op, "matched_entry": entry}
+                   for op, entry in zip(operations, pinned["matched_entries"])]
+            payload = {"action": "batch", "target": PENDING_TARGET, "project": slug, "project_identity": project,
+                       "operations": ops}
+            record = wa.stage_write(wa.MEMORY, payload, summary=summary[:200], origin=origin or wa.current_origin())
+            return {"success": True, "staged": True, "pending_id": record["id"], "project": project, "message": message}
+
+
+        def _gate(st, slug: str, project: str, operations: list) -> Optional[dict]:
+            """The same rules as Hermes's memory tool: unattended background review stages patch, replace and remove;
+            with memory.write_approval on, a write is approved inline, staged for approval, or refused when the user
+            denies it. None lets the write go ahead."""
+            detail = "\n".join(_op_line(op) for op in operations)
+            label = f"project memory {project}"
+            if _unattended_review() and any(op.get("action") in DESTRUCTIVE for op in operations):
+                try:
+                    return _stage(st, slug, project, operations,
+                                  summary=f"background review consolidation (batch on {label}): {detail}",
+                                  message=("Background review may not change or delete project memory entries unattended. "
+                                           "The proposed batch was staged for the user's approval (/memory pending)."),
+                                  origin="background_review")
+                except Exception:
+                    logger.warning("project-memory: could not stage a background-review batch; denying", exc_info=True)
+                    return {"success": False, "error": "Background review may not change or delete project memory "
+                                                       "entries; add is still available."}
+            if not _approval_on():
+                return None
+            from tools import write_approval as wa
+            summary = f"apply {len(operations)} op(s) to {label}"
+            decision = wa.evaluate_gate(wa.MEMORY, inline_summary=summary, inline_detail=detail)
+            if decision.allow:
+                return None
+            if decision.blocked:
+                return {"success": False, "error": decision.message, "project": project}
+            return _stage(st, slug, project, operations, summary=f"{summary}: {detail[:120]}", message=decision.message)
+
+
+        def apply_pending(payload: dict, original) -> dict:
+            """Replay a staged project write on its project's MEMORY.md with Hermes's own replay rules."""
+            slug = payload.get("project")
+            if not valid_slug(slug) or read_meta(slug) is None:
+                return {"success": False, "error": f"The project of this pending write ({payload.get('project_identity') or slug}) "
+                                                   "no longer exists; nothing was applied. Reject it."}
+            return original({**payload, "target": "memory"}, store(slug))
+
+
+        def install_pending_replay() -> None:
+            """Route staged project writes in Hermes's memory approval replay to their project, once."""
+            try:
+                from tools import memory_tool
+            except Exception:
+                return
+            original = memory_tool.apply_memory_pending
+            if getattr(original, "_project_memory", False):
+                return
+
+            def apply_memory_pending(payload, store):
+                if isinstance(payload, dict) and payload.get("target") == PENDING_TARGET:
+                    return apply_pending(payload, original)
+                return original(payload, store)
+
+            apply_memory_pending._project_memory = True
+            apply_memory_pending.__doc__ = original.__doc__
+            memory_tool.apply_memory_pending = apply_memory_pending
 
 
         def handle(args: Any, **kwargs) -> str:
@@ -3726,12 +3817,6 @@ configMaps:
                 if children_blocked() and is_child(session_id):
                     return _tool_error("Subagents may not write project memory, as they may not write memory. Report the "
                                        "fact in your result; the parent agent can save it.")
-                if _unattended_review() and any(o.get("action") != "add" for o in operations):
-                    return _tool_error("Background review may not change or delete project memory entries; add is still "
-                                       "available.")
-                if _approval_on():
-                    return _tool_error("Memory write approval is on, and project memory has no approval queue, so nothing "
-                                       "was written. Tell the user the fact; they can save it in the hub's Memory page.")
             slug, why = project_for_session(session_id, live=False)
             if slug is None:
                 return _tool_error(why)
@@ -3749,6 +3834,9 @@ configMaps:
             except Exception:
                 FAILURE_CLASS, token = None, None
             try:
+                held = _gate(st, slug, project, operations)
+                if held is not None:
+                    return json.dumps(held, ensure_ascii=False)
                 result = st.apply_batch("memory", operations)
             finally:
                 if FAILURE_CLASS is not None:
@@ -3954,9 +4042,25 @@ configMaps:
             if current and not new and set(current) <= set(gone):
                 raise Refused(*_failure("would_empty", char_limit(), ""))
             return _apply(slug, lambda st: st.apply_batch("memory", ops))
+
+
+        def pending() -> dict:
+            """The staged project writes in Hermes's memory approval queue, with their project, for the hub to show next
+            to the global pending writes."""
+            from tools import write_approval as wa
+            out = []
+            for rec in wa.list_pending(wa.MEMORY):
+                payload = rec.get("payload") if isinstance(rec.get("payload"), dict) else {}
+                if payload.get("target") != PENDING_TARGET:
+                    continue
+                slug = payload.get("project")
+                meta = read_meta(slug) if valid_slug(slug) else None
+                out.append({"id": str(rec.get("id") or ""), "project": slug if isinstance(slug, str) else "",
+                            "identity": (meta or {}).get("identity") or str(payload.get("project_identity") or slug or "")})
+            return {"pending": out}
       plugin_api.py: |
         """project-memory routes for hermes-hub, mounted at /api/plugins/project-memory/ behind dashboard sign-in: the
-        projects, and one project's notes in the shape of the device plugin's /memory with the same four changes."""
+        projects, the staged project writes in Hermes's memory approval queue, and one project's notes in the shape of the device plugin's /memory with the same four changes."""
         from __future__ import annotations
 
         import asyncio
@@ -4005,6 +4109,11 @@ configMaps:
         @router.get("/projects")
         async def projects():
             return await _call(_core().list_projects)
+
+
+        @router.get("/pending")
+        async def pending():
+            return await _call(_core().pending)
 
 
         @router.get("/projects/{project_id}")
