@@ -579,6 +579,8 @@ configMaps:
                   provider: deepinfra
                   via: DeepInfra, pay per token
                   model: deepseek-ai/DeepSeek-V4.1-Flash-1017
+                  # Pinned use only: Auto never picks a pay-per-token route
+                  auto: false
                 # Kimi K3, not K3.1 Pro: DeepInfra answers K3.1 Pro with 429 engine_overloaded since it launched (Nov 11)
                 - name: kimi
                   title: Kimi K3
@@ -586,6 +588,8 @@ configMaps:
                   provider: deepinfra
                   via: DeepInfra, pay per token
                   model: moonshotai/Kimi-K3
+                  # Pinned use only: Auto never picks a pay-per-token route
+                  auto: false
                 - name: sonnet
                   title: Sonnet 5.5
                   description: "Claude Sonnet 5.5. Normal coding and analysis: multi-step changes, debugging with clear evidence, reviews, writing tests. The default choice for real work that is not trivial."
@@ -2351,7 +2355,8 @@ configMaps:
                     if not opts:
                         return {}
                     lines = ["Which model route runs this subagent. Omit for the chat's default route.",
-                             *(f"{name}: {o['description']}" for name, o in opts.items())]
+                             *(f"{name}: {o['description']}" + ("" if o["auto"] else " Only when the user pins this chat's subagents to it.")
+                               for name, o in opts.items())]
                     return {PARAMETER: {"type": "string", "enum": list(opts), "description": "\n".join(lines)}}
 
                 def description(self, config: Mapping[str, Any]) -> str:
@@ -2390,6 +2395,11 @@ configMaps:
                                 f"time. Wait for its result, or leave `option` out to use your own model.")
                         _helper_started(sid)
                         return {**opts[helper]["route"], "label": label}
+                    if chosen in opts and not opts[chosen]["auto"]:
+                        allowed = ", ".join(f"`{n}`" for n, o in opts.items() if o["auto"])
+                        raise DelegationRouteError(
+                            f"Route `{chosen}` runs only when the user pins this chat's subagents to it. Pick one of {allowed}, "
+                            f"or leave `option` out.")
                     if not chosen:
                         chosen = core.default_route(config, opts)
                     if not chosen:
@@ -2472,7 +2482,7 @@ configMaps:
                 out[name] = {"name": name, "description": description, "route": route, "model": model,
                              "title": _text(entry, "title") or model, "helper": entry.get("helper") is True,
                              "pool": _text(entry, "provider") == POOL, "provider": _text(entry, "provider"),
-                             "via": _text(entry, "via")}
+                             "via": _text(entry, "via"), "auto": entry.get("auto") is not False}
             return out
 
 
