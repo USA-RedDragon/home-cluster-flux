@@ -62,7 +62,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p8@sha256:cdda16cedbdf6cde09c81625c757e172ba649c55af783971d22b018e2a20193a
+          tag: &hermesTag v0.23.1-p9@sha256:3d1b4436301075e28ecc4362b00d0d169dae2c19a3c5cd48ba03222ad0c4cfd2
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -397,6 +397,9 @@ configMaps:
         # image.render (TUI inline previews) reads only images Hermes stored (hermes-patches 0003)
         security:
           image_render_paths: media
+        # The hermes-agent skill's index entry was the last mention of the product in the system prompt
+        skills:
+          disabled: [hermes-agent]
         sessions:
           # A background process that exits, or a background subagent that finishes, while nobody is viewing its
           #   chat runs as an agent turn, up to 10 in a row for both together, so the agent picks the work back
@@ -463,6 +466,9 @@ configMaps:
           # Idle agents release together within 5 s on the way out, instead of up to 30 s each while Honcho
           #   waits out its read-ahead for a next turn (hermes-patches 0011)
           restart_agent_cleanup_seconds: 5
+          # Subagents are handed to the new pod instead (delegation.restart_handoff); set explicitly, because a key
+          #   dropped from this overlay stays in config.yaml
+          restart_wait_delegations: false
         webapp:
           enabled: true
           host: 0.0.0.0
