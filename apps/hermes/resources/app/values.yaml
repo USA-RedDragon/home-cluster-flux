@@ -574,9 +574,10 @@ configMaps:
           # A pod restart hands running background subagents to the new pod, which resumes them from their stored
           #   transcripts under the same delegation, so a rollout never loses one (hermes-patches 0016)
           restart_handoff: true
-          # A subagent is stopped at a clean point 5 s after the restart wait ends; a command it runs then moves to
-          #   the background and the new pod hands the real result back (measured on upstairs-pc and the sandbox)
-          restart_handoff_grace_seconds: 5
+          # A subagent is stopped at a clean point as soon as the restart wait ends; a command it runs then moves to
+          #   the background at once and the new pod hands the real result back (measured on upstairs-pc and the
+          #   sandbox). Waiting 5 s first only made every stop with a running subagent 5 s longer
+          restart_handoff_grace_seconds: 0
           # A background subagent on a provider that queues the request or answers 429 fails after one stale window
           #   (no first chunk in 180 s) or at once, instead of 15+ minutes of retries (hermes-patches 0023)
           stream_stale_giveup: 1
@@ -823,6 +824,17 @@ configMaps:
           # A socket still relayed when the relay window ends gets close 1012, which the hub reconnects from at
           #   once, instead of a cut connection (hermes-patches 0040)
           restart_listener_relay_close_sockets: true
+          # The hub's sockets kept through the restart wait end their sessions at the stop but get their close
+          #   frame only 1 s after the new pod's gateway answers ready, so the hub reconnects once, straight to the
+          #   new pod, instead of once at the stop and again when the relay ends (hermes-patches 0043)
+          restart_socket_close_delay_seconds: 1
+          # Idle chats' memory providers (Honcho) shut down after the release, once their writes were flushed, and
+          #   this pod waits up to 30 s for them before it exits: a Honcho read-ahead held every busy stop 7 s
+          #   (hermes-patches 0044)
+          restart_memory_shutdown_after_release_seconds: 30
+          # Each stop writes a timing trace to stop-trace/<pid>.log in the data dir, for the zero-gap measurement
+          #   (hermes-patches 0038)
+          stop_trace: true
         webapp:
           enabled: true
           host: 0.0.0.0
