@@ -752,8 +752,8 @@ configMaps:
           listener_start_hold_seconds: 20
           # From the stop signal to the release, what this gateway would refuse (writes, sign-in and new
           #   sockets once the restart wait ends) waits instead and is forwarded to the new pod's gateway once it
-          #   took over; GET reads are served while the stores are open, and the hub's sockets stay open through
-          #   the restart wait (hermes-patches 0037)
+          #   took over; GET reads are served during the restart wait, and the hub's sockets stay open through
+          #   it (hermes-patches 0037)
           restart_listener_hold_seconds: 90
         webapp:
           enabled: true
