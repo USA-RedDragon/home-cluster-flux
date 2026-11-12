@@ -535,7 +535,6 @@ configMaps:
             base_url: https://api.deepinfra.com/v1/openai
             key_env: DEEPINFRA_API_KEY
             api_mode: chat_completions
-            context_length: 1048576
             discover_models: false
             models: [moonshotai/Kimi-K3.1-Pro, moonshotai/Kimi-K3, deepseek-ai/DeepSeek-V4.1-Flash-1017]
         # Hermes detects Ollama and asks it for num_ctx, capped at this window for every model on this route
@@ -609,6 +608,8 @@ configMaps:
             base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/low/v1
             model: qwen3.5:2b
             reasoning_effort: none
+            # /low waits behind people's turns on the GPU; a title can wait instead of falling back to another model
+            timeout: 180
           compression:
             provider: custom
             base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
@@ -616,7 +617,9 @@ configMaps:
             reasoning_effort: none
             context_length: 131072
             # Chats on Claude summarize on their own model at their 1M window's threshold (patch 0001 of
-            #   hermes-patches); every other chat uses the small local model above
+            #   hermes-patches), and so does any chat whose window is larger than this model's (DeepInfra, ChatGPT);
+            #   other chats use the small local model above
+            main_model_when_larger: true
             main_model_providers: [claude-pool, claude-jaam, claude-jamaag, claude-ja2000aag, claude-caam, claude-maam, anthropic,
                                    claude-api-caam, claude-api-ja2000aag, claude-api-jaam, claude-api-jamaag]
         # Code work happens in each device's own Hermes; this one's shell is a sandbox in its pod
