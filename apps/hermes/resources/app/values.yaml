@@ -65,7 +65,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p6@sha256:8e117755367e24daf861e08850340638d07916033bee24c41395a71422b39313
+          tag: &hermesTag v0.23.1-p8@sha256:cdda16cedbdf6cde09c81625c757e172ba649c55af783971d22b018e2a20193a
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -173,6 +173,7 @@ controllers:
             install -m 600 /config/honcho.json /opt/data/hermes/.honcho.json.new && mv -f /opt/data/hermes/.honcho.json.new /opt/data/hermes/honcho.json
             [ -d /opt/data/hermes/plugins/honcho ] || /opt/hermes/.venv/bin/hermes plugins install honcho --yes-deps
             /opt/hermes/.venv/bin/hermes plugins enable honcho || true
+            /opt/hermes/.venv/bin/python /config/honcho-delegation-reply.py
             # Model routes for subagents (delegation.backend: model_map): subagent-routes (ours, in /subagent-routes)
             #   provides that backend with a per-chat choice, in place of advanced-delegation's
             /opt/hermes/.venv/bin/hermes plugins disable advanced-delegation || true
@@ -280,6 +281,10 @@ controllers:
             #   Optional, so Hermes starts without them; claude-accounts never passes them to Claude Code
             secretRef:
               name: hermes-anthropic
+              optional: true
+          # DEEPINFRA_API_KEY for the deepinfra provider; optional like the Anthropic keys
+          - secretRef:
+              name: hermes-deepinfra
               optional: true
         resources:
           requests:
@@ -524,6 +529,15 @@ configMaps:
             context_length: 1000000
             discover_models: false
             models: [claude-opus-5-5, claude-sonnet-5-5, claude-fable-5-2, claude-haiku-5-5]
+          # Open-weight models on DeepInfra, pay per token (hermes-deepinfra)
+          deepinfra:
+            name: DeepInfra
+            base_url: https://api.deepinfra.com/v1/openai
+            key_env: DEEPINFRA_API_KEY
+            api_mode: chat_completions
+            context_length: 1048576
+            discover_models: false
+            models: [moonshotai/Kimi-K3.1-Pro, moonshotai/Kimi-K3, deepseek-ai/DeepSeek-V4.1-Flash-1017]
         # Hermes detects Ollama and asks it for num_ctx, capped at this window for every model on this route
         #   (subagents too; another num_ctx reloads the model). Not model.ollama_num_ctx: that one also capped a
         #   chat switched to Claude at 131072
@@ -539,6 +553,9 @@ configMaps:
         #   claude-api-* providers are never routes. qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not)
         delegation:
           backend: model_map
+          # A pod restart hands running background subagents to the new pod, which resumes them from their stored
+          #   transcripts under the same delegation, so a rollout never loses one (hermes-patches 0016)
+          restart_handoff: true
           backends:
             model_map:
               options:
@@ -558,6 +575,16 @@ configMaps:
                   description: "Claude Haiku 5.5. Fast and the cheapest Claude route. Volume work and many parallel tasks: searches, reading and summarizing files, data gathering, simple code changes and checks."
                   provider: claude-pool
                   model: claude-haiku-5-5
+                - name: flash
+                  title: DeepSeek V4.1 Flash
+                  description: "DeepSeek V4.1 Flash on DeepInfra, pay per token and very cheap. Volume work when the Claude accounts are low: searches, reading and summarizing files, data gathering, simple code changes. Weaker than Sonnet on hard agentic work."
+                  provider: deepinfra
+                  model: deepseek-ai/DeepSeek-V4.1-Flash-1017
+                - name: kimi
+                  title: Kimi K3.1 Pro
+                  description: "Kimi K3.1 Pro on DeepInfra, pay per token. Strong open model for real coding and analysis, close to Sonnet; uses no Claude account limits. Slower to start because it always thinks first."
+                  provider: deepinfra
+                  model: moonshotai/Kimi-K3.1-Pro
                 - name: sonnet
                   title: Sonnet 5.5
                   description: "Claude Sonnet 5.5. Normal coding and analysis: multi-step changes, debugging with clear evidence, reviews, writing tests. The default choice for real work that is not trivial."
@@ -615,6 +642,9 @@ configMaps:
         # image.render (TUI inline previews) reads only images Hermes stored (hermes-patches 0003)
         security:
           image_render_paths: media
+        # The hermes-agent skill's index entry was the last mention of the product in the system prompt
+        skills:
+          disabled: [hermes-agent]
         sessions:
           # A background process that exits, or a background subagent that finishes, while nobody is viewing its
           #   chat runs as an agent turn, up to 10 in a row for both together, so the agent picks the work back
@@ -642,11 +672,18 @@ configMaps:
         # Cron schedules ("every monday 9am") and the agent's clock use US Central, not the pod's UTC
         timezone: America/Chicago
         # For hermes-hub. A wildcard bind is behind dashboard sign-in: the gateway's basic provider, user hub
+        # Hub chats run as platform "desktop"; upstream's hint describes the Hermes desktop app (widgets, math), which the
+        #   hub does not render
+        platform_hints:
+          desktop:
+            replace: "You are chatting through Talaria: the hub web app (hub.mcswain.dev) or its Telegram bot, which show the same chats. The web app renders GitHub-flavored Markdown: headings, lists, task lists, tables, links and fenced code with syntax highlighting. It does not render math, HTML widgets or ::directives, so do not use them. Deliver a file by writing MEDIA:/absolute/path on its own line: images, audio and video show inline, other files get a download chip. Telegram shows the same reply in a narrow view, so keep tables to a few short columns."
         # A pod stop is a graceful restart: running turns finish (up to 9 minutes, under the hub's 10-minute prompt
         #   hold) while approvals stay answerable and new prompts wait for the new pod; then a short drain
         agent:
           restart_after_turn_timeout: 540
           restart_drain_timeout: 30
+          # No paragraph pointing at the Hermes docs (hermes-patches 0017)
+          product_help_guidance: false
           # No hosted connectors through Nous (manage_connections) and no installs from the online catalog (manage_catalog)
           disabled_toolsets:
             - connections
@@ -693,12 +730,76 @@ configMaps:
           runtime_lock_wait_seconds: 840
           # His devices' connections (talaria) may come back during that wait, so turns still running there finish
           restart_wait_plugin_sockets: [device]
+          # Idle agents release together within 5 s on the way out, instead of up to 30 s each while Honcho
+          #   waits out its read-ahead for a next turn (hermes-patches 0011)
+          restart_agent_cleanup_seconds: 5
+          # Subagents are handed to the new pod instead (delegation.restart_handoff); set explicitly, because a key
+          #   dropped from this overlay stays in config.yaml
+          restart_wait_delegations: false
         webapp:
           enabled: true
           host: 0.0.0.0
           port: 9120
   config:
     data:
+      # The Honcho plugin from the catalog drops a background-subagent result turn whole; this keeps the agent's reply
+      #   and drops only the notice. Pinned to the installed file: any other version fails init, so refresh it then
+      honcho-delegation-reply.py: |
+        import hashlib
+        import os
+        import sys
+
+        # The Honcho memory plugin (catalog version 1.1.0) drops every turn whose user side is a gateway
+        # notice. For a background-subagent result that loses the agent's reply too: keep the reply and drop
+        # only the notice. Applied to exactly the pinned file; any other file fails this step, so a plugin
+        # update cannot silently lose or clobber the change.
+        PATH = "/opt/data/hermes/plugins/honcho/__init__.py"
+        ORIGINAL = "ccfd3bbbe3631d2418e84d13cca0fcd4fecc7f6aca988feded633e155a996614"
+        PATCHED = "e94585e875785d305e0287968542d57227c232b2a4df96396d09973a37678972"
+        EDITS = (
+            ('_INTERNAL_GATEWAY_TURN_RE = re.compile(\n',
+             '_DELEGATION_RESULT_NOTICE_RE = re.compile(\n'
+             '    r"^\\s*(?:\\[ASYNC (?:DELEGATION )?(?:BATCH )?COMPLETE[^\\]]*\\]|"\n'
+             '    r"A background fan-out of \\d+ subagent\\(s\\) you dispatched earlier has finished\\.|"\n'
+             '    r"A background subagent you dispatched earlier has finished\\.)",\n'
+             '    re.IGNORECASE,\n'
+             ')\n'
+             '_INTERNAL_GATEWAY_TURN_RE = re.compile(\n'),
+            ('        if _is_internal_gateway_turn(user_content):\n'
+             '            logger.debug("Honcho sync skipped machine-generated gateway turn")\n'
+             '            return\n',
+             '        if _is_internal_gateway_turn(user_content):\n'
+             '            if not _DELEGATION_RESULT_NOTICE_RE.match(user_content or ""):\n'
+             '                logger.debug("Honcho sync skipped machine-generated gateway turn")\n'
+             '                return\n'
+             '            user_content = ""\n'),
+        )
+
+
+        def patched(text):
+            for old, new in EDITS:
+                if text.count(old) != 1:
+                    sys.exit(f"honcho plugin: expected one copy of {old.splitlines()[0]!r}")
+                text = text.replace(old, new)
+            return text
+
+
+        if __name__ == "__main__":
+            data = open(PATH, "rb").read()
+            digest = hashlib.sha256(data).hexdigest()
+            if digest == PATCHED:
+                print("honcho plugin: delegation replies already kept")
+            elif digest == ORIGINAL:
+                new = patched(data.decode()).encode()
+                if hashlib.sha256(new).hexdigest() != PATCHED:
+                    sys.exit("honcho plugin: patched file does not match the pinned result")
+                with open(PATH + ".new", "wb") as f:
+                    f.write(new)
+                os.replace(PATH + ".new", PATH)
+                print("honcho plugin: now keeps the reply to a background-subagent result")
+            else:
+                sys.exit(f"honcho plugin: {PATH} is not the pinned 1.1.0 file ({digest}); refresh "
+                         "honcho-delegation-reply.py for the new version")
       merge-managed.py: |
         import os
         from hermes_yaml import safe_dump, safe_load
