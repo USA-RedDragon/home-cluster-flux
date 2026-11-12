@@ -2101,11 +2101,11 @@ configMaps:
       plugin.yaml: |
         name: subagent-routes
         kind: standalone
-        version: 0.1.0
+        version: 0.1.1
         description: The model routes a chat's subagents may use (delegation.backend model_map, in place of advanced-delegation's), chosen per chat in hermes-hub
         author: Jacob McSwain
         requires_hermes: ">=0.22.5"
-        provides_hooks: [pre_llm_call, subagent_stop]
+        provides_hooks: [pre_llm_call, subagent_stop, on_session_delete]
       __init__.py: |
         """subagent-routes: the model routes a chat's subagents may use, chosen per chat in hermes-hub.
 
@@ -2202,6 +2202,11 @@ configMaps:
                     _starting.pop(parent_session_id, None)
 
 
+        def _on_session_delete(session_id: Any = None, **_: Any) -> None:
+            if isinstance(session_id, str) and session_id:
+                _core().forget(session_id)
+
+
         def _on_pre_llm_call(session_id: Any = None, **_: Any) -> Any:
             if not isinstance(session_id, str) or not session_id:
                 return None
@@ -2296,6 +2301,7 @@ configMaps:
             ctx.register_delegation_provider(provider)
             ctx.register_hook("pre_llm_call", _on_pre_llm_call)
             ctx.register_hook("subagent_stop", _on_subagent_stop)
+            ctx.register_hook("on_session_delete", _on_session_delete)
       routes.py: |
         """Shared core of subagent-routes: the model routes, the per-chat choices and where they are kept.
 
@@ -2401,20 +2407,20 @@ configMaps:
 
 
         def note(choice: str, opts: Mapping[str, dict]) -> str:
-            """The line the model reads in the user's message while a chat has a choice set."""
+            """The line the model reads in the user's message while a chat has a choice set. The newest one is the rule."""
             if choice == NONE:
-                return ("[Subagents in this chat: off. The user turned subagents off for this chat, so do not call "
+                return ("[Subagents in this chat (this replaces any earlier subagent note): off. The user turned subagents off for this chat, so do not call "
                         "delegate_task; do the work yourself.]")
             if choice in opts:
                 o = opts[choice]
-                return (f"[Subagents in this chat: every subagent runs on {o['title']} (route `{choice}`), whatever `option` "
+                return (f"[Subagents in this chat (this replaces any earlier subagent note): every subagent runs on {o['title']} (route `{choice}`), whatever `option` "
                         f"says, so leave `option` out.]")
             if choice.startswith(HELP) and choice[len(HELP):] in opts:
                 name = choice[len(HELP):]
-                return (f"[Subagents in this chat: subagents run on your own model, so leave `option` out. Only when you "
+                return (f"[Subagents in this chat (this replaces any earlier subagent note): subagents run on your own model, so leave `option` out. Only when you "
                         f"are stuck, you may start one subagent with option `{name}` ({opts[name]['title']}) to help; only one "
                         f"such helper runs at a time.]")
-            return ("[Subagents in this chat: auto. Pick each subagent's `option`: local routes or haiku for volume work, "
+            return ("[Subagents in this chat (this replaces any earlier subagent note): auto. Pick each subagent's `option`: local routes or haiku for volume work, "
                     "sonnet for normal work, opus or fable only for hard judgment or after a cheaper route failed.]")
 
 
@@ -2535,6 +2541,12 @@ configMaps:
         def choice_for(session_id: str, opts: Mapping[str, dict]) -> str:
             choice, _ = stored_choice(session_id)
             return choice if choice and valid_choice(choice, opts) else AUTO
+
+
+        def forget(session_id: str) -> None:
+            """Drop a deleted session's choice."""
+            if session_id in _read():
+                _write(session_id, None)
 
 
         def set_choice(session_id: str, choice: str) -> str:
