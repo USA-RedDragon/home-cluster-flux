@@ -14,6 +14,9 @@ controllers:
       surge: 1
       unavailable: 1
     pod:
+      # Bumped to roll the pod for handover timing tests
+      annotations:
+        rollout-test: "5"
       # Waiting for the new pod's standby (up to 120 s), the restart wait for running turns
       #   (agent.restart_after_turn_timeout, 540 s), the drain (30 s), Hermes' shutdown watchdog (60 s) and a margin
       terminationGracePeriodSeconds: 780
@@ -769,9 +772,9 @@ configMaps:
           # A socket still relayed when the relay window ends gets close 1012, which the hub reconnects from at
           #   once, instead of a cut connection (hermes-patches 0040)
           restart_listener_relay_close_sockets: true
-          # No stop trace (hermes-patches 0038); set explicitly, because a key dropped from this overlay stays in
-          #   config.yaml
-          stop_trace: false
+          # Each stop writes a timing trace to stop-trace/<pid>.log in the data dir, to find what a busy stop
+          #   waits on (hermes-patches 0038)
+          stop_trace: true
         webapp:
           enabled: true
           host: 0.0.0.0
