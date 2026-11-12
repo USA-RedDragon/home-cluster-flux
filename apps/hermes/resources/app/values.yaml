@@ -65,7 +65,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p22@sha256:87cd1c2e03b294f2822c315893d6ecc74f93199e6c28a4b2a5b8177e4c46eace
+          tag: &hermesTag v0.23.1-p23@sha256:ed21dda54b7d04d1867a039a37541c33074dea2577701b3f136798ec83531781
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -811,6 +811,15 @@ configMaps:
           #   took over; GET reads are served during the restart wait, and the hub's sockets stay open through
           #   it (hermes-patches 0037)
           restart_listener_hold_seconds: 90
+          # Requests still running when the stop seals the listener get 0.5 s, and so do the ones cancelled then:
+          #   the hub's device-bus long poll (up to 25 s in a worker thread) held every idle stop 15 to 23 s
+          #   (hermes-patches 0041)
+          restart_reads_grace_seconds: 0.5
+          # The socket tickets this gateway minted still open sockets on the new pod's gateway (hermes-patches 0039)
+          restart_ticket_handover: true
+          # A socket still relayed when the relay window ends gets close 1012, which the hub reconnects from at
+          #   once, instead of a cut connection (hermes-patches 0040)
+          restart_listener_relay_close_sockets: true
         webapp:
           enabled: true
           host: 0.0.0.0
