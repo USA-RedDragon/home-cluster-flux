@@ -62,7 +62,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p7@sha256:feb398c9c42977e9cc865b9e150d6ea8830cd5afc72463fe96a8e88b8cc3b1b9
+          tag: &hermesTag v0.23.1-p8@sha256:cdda16cedbdf6cde09c81625c757e172ba649c55af783971d22b018e2a20193a
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -79,6 +79,7 @@ controllers:
             install -m 600 /config/honcho.json /opt/data/hermes/.honcho.json.new && mv -f /opt/data/hermes/.honcho.json.new /opt/data/hermes/honcho.json
             [ -d /opt/data/hermes/plugins/honcho ] || /opt/hermes/.venv/bin/hermes plugins install honcho --yes-deps
             /opt/hermes/.venv/bin/hermes plugins enable honcho || true
+            /opt/hermes/.venv/bin/python /config/honcho-delegation-reply.py
             # Model routes for subagents (delegation.backend: model_map)
             [ -d /opt/data/hermes/plugins/advanced-delegation ] || /opt/hermes/.venv/bin/hermes plugins install advanced-delegation --yes-deps || echo "advanced-delegation install failed; continuing"
             /opt/hermes/.venv/bin/hermes plugins enable advanced-delegation || true
@@ -350,6 +351,9 @@ configMaps:
         #   provider: anthropic and the key; "default: <route>" sends every unrouted subagent to one route
         delegation:
           backend: model_map
+          # A pod restart hands running background subagents to the new pod, which resumes them from their stored
+          #   transcripts under the same delegation, so a rollout never loses one (hermes-patches 0016)
+          restart_handoff: true
           backends:
             model_map:
               options:
@@ -452,14 +456,70 @@ configMaps:
           # Idle agents release together within 5 s on the way out, instead of up to 30 s each while Honcho
           #   waits out its read-ahead for a next turn (hermes-patches 0011)
           restart_agent_cleanup_seconds: 5
-          # Background subagents hold the restart wait like turns (up to agent.restart_after_turn_timeout)
-          restart_wait_delegations: true
         webapp:
           enabled: true
           host: 0.0.0.0
           port: 9120
   config:
     data:
+      # The Honcho plugin from the catalog drops a background-subagent result turn whole; this keeps the agent's reply
+      #   and drops only the notice. Pinned to the installed file: any other version fails init, so refresh it then
+      honcho-delegation-reply.py: |
+        import hashlib
+        import os
+        import sys
+
+        # The Honcho memory plugin (catalog version 1.1.0) drops every turn whose user side is a gateway
+        # notice. For a background-subagent result that loses the agent's reply too: keep the reply and drop
+        # only the notice. Applied to exactly the pinned file; any other file fails this step, so a plugin
+        # update cannot silently lose or clobber the change.
+        PATH = "/opt/data/hermes/plugins/honcho/__init__.py"
+        ORIGINAL = "ccfd3bbbe3631d2418e84d13cca0fcd4fecc7f6aca988feded633e155a996614"
+        PATCHED = "e94585e875785d305e0287968542d57227c232b2a4df96396d09973a37678972"
+        EDITS = (
+            ('_INTERNAL_GATEWAY_TURN_RE = re.compile(\n',
+             '_DELEGATION_RESULT_NOTICE_RE = re.compile(\n'
+             '    r"^\\s*(?:\\[ASYNC (?:DELEGATION )?(?:BATCH )?COMPLETE[^\\]]*\\]|"\n'
+             '    r"A background fan-out of \\d+ subagent\\(s\\) you dispatched earlier has finished\\.|"\n'
+             '    r"A background subagent you dispatched earlier has finished\\.)",\n'
+             '    re.IGNORECASE,\n'
+             ')\n'
+             '_INTERNAL_GATEWAY_TURN_RE = re.compile(\n'),
+            ('        if _is_internal_gateway_turn(user_content):\n'
+             '            logger.debug("Honcho sync skipped machine-generated gateway turn")\n'
+             '            return\n',
+             '        if _is_internal_gateway_turn(user_content):\n'
+             '            if not _DELEGATION_RESULT_NOTICE_RE.match(user_content or ""):\n'
+             '                logger.debug("Honcho sync skipped machine-generated gateway turn")\n'
+             '                return\n'
+             '            user_content = ""\n'),
+        )
+
+
+        def patched(text):
+            for old, new in EDITS:
+                if text.count(old) != 1:
+                    sys.exit(f"honcho plugin: expected one copy of {old.splitlines()[0]!r}")
+                text = text.replace(old, new)
+            return text
+
+
+        if __name__ == "__main__":
+            data = open(PATH, "rb").read()
+            digest = hashlib.sha256(data).hexdigest()
+            if digest == PATCHED:
+                print("honcho plugin: delegation replies already kept")
+            elif digest == ORIGINAL:
+                new = patched(data.decode()).encode()
+                if hashlib.sha256(new).hexdigest() != PATCHED:
+                    sys.exit("honcho plugin: patched file does not match the pinned result")
+                with open(PATH + ".new", "wb") as f:
+                    f.write(new)
+                os.replace(PATH + ".new", PATH)
+                print("honcho plugin: now keeps the reply to a background-subagent result")
+            else:
+                sys.exit(f"honcho plugin: {PATH} is not the pinned 1.1.0 file ({digest}); refresh "
+                         "honcho-delegation-reply.py for the new version")
       merge-managed.py: |
         import os
         from hermes_yaml import safe_dump, safe_load
