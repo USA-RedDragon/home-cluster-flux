@@ -41,7 +41,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.25.0@sha256:27f6e2c4e29f5d701abeb2739e0146035e934af31d81be59ca182dc3705c316d
+          tag: v0.25.1@sha256:4b82967c9b7ee6ad6f5c324cd5e25e022ba1b9ef75c9d41630c9f450479c891d
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
