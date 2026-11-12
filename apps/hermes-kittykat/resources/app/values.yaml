@@ -465,13 +465,10 @@ configMaps:
       # Pinned on top of /opt/data/hermes/config.yaml, and merged into it at start; other settings changed in the
       #   dashboard persist on the PVC
       config.yaml: |
+        # New chats start on Sonnet 5.5 with its 1M window, through the Claude account pool
         model:
-          default: qwen3.8:27b
-          provider: custom
-          base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
-          context_length: 131072
-          # Every agent, subagents too, asks Ollama for the window it loads models with; another num_ctx reloads them
-          ollama_num_ctx: 131072
+          default: claude-sonnet-5-5[1m]
+          provider: claude-pool
         # The Nous provider would use the pod's default Claude login; claude-accounts offers the pool (claude-pool)
         #   instead of one provider per account (claude-<id>, one line per slot in plugins.entries below). anthropic
         #   has no ANTHROPIC_API_KEY here, so it stays out of the pickers
@@ -776,6 +773,9 @@ configMaps:
                     base[key] = value
 
         merge(config, managed)
+        if managed.get("model", {}).get("provider") == "claude-pool":
+            for key in ("base_url", "context_length", "ollama_num_ctx"):
+                config.get("model", {}).pop(key, None)
         with open(path + ".tmp", "w") as f:
             safe_dump(config, f, sort_keys=False)
         os.replace(path + ".tmp", path)
