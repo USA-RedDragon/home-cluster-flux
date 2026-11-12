@@ -301,26 +301,28 @@ controllers:
           limits:
             memory: 8Gi
         probes:
-          # A standby waits up to gateway.runtime_lock_wait_seconds (840 s) for the old pod's gateway, then boots
+          # A warmed-up standby (gateway.standby on the volume) counts as started and alive, so the other containers
+          #   start while it waits for the old pod's gateway and only this gateway's readiness gates the takeover
           startup:
             enabled: true
             custom: true
             spec:
-              httpGet:
-                path: /health
-                port: 8642
+              exec:
+                command: &gatewayProbe
+                  - /bin/sh
+                  - -c
+                  - test -e /opt/data/hermes/gateway.standby || curl -fsS -m 5 -o /dev/null http://127.0.0.1:8642/health
               periodSeconds: 1
-              timeoutSeconds: 5
+              timeoutSeconds: 6
               failureThreshold: 960
           liveness:
             enabled: true
             custom: true
             spec:
-              httpGet:
-                path: /health
-                port: 8642
+              exec:
+                command: *gatewayProbe
               periodSeconds: 30
-              timeoutSeconds: 10
+              timeoutSeconds: 11
               failureThreshold: 5
           # The Webapp listener answers only while this gateway owns the volume: 200 when serving and in the
           #   restart wait (approvals stay answerable there), 503 while starting or stopping. The hub uses it
