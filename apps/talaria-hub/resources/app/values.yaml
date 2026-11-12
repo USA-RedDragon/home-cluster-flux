@@ -26,7 +26,7 @@ controllers:
       hermes-hub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-hub
-          tag: v0.26.20@sha256:4e8bb0c9cbf97c6317df383e63ed6b32bb789371d9d5c6a7c0930a2068756f3a
+          tag: v0.26.21@sha256:598ad07d9e2766cb9b55a82830949f8e00a106b50c79954f57b27f20f7dca052
           pullPolicy: IfNotPresent
         # users and backends can only be set in the config file, so it comes from the hermes-hub Secret with the
         #   backend passwords; the other settings are here
