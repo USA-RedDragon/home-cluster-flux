@@ -62,7 +62,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p19@sha256:900a4bafc1ea5b2667d2e4ce399d1238f4bcd62aa3bf2a803640b86b73be9c2c
+          tag: &hermesTag v0.23.1-p20@sha256:4c0ce9bb328d465dfb848ee55a8a810cca28f5d2f94f325bb1e2cde4d279967d
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -752,6 +752,9 @@ configMaps:
           #   took over; GET reads are served during the restart wait, and the hub's sockets stay open through
           #   it (hermes-patches 0037)
           restart_listener_hold_seconds: 90
+          # Each stop writes a timing trace to stop-trace/<pid>.log in the data dir, to find what an idle stop
+          #   waits on (hermes-patches 0038)
+          stop_trace: true
         webapp:
           enabled: true
           host: 0.0.0.0
