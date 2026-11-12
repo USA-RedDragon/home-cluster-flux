@@ -1,0 +1,117 @@
+# Compress server-sent events (text/event-stream) with Brotli and Gzip.
+#
+# Why: Envoy's compressor only compresses its default content types, which do
+# not include text/event-stream, so event streams (such as the Talaria hub's
+# chat stream, several MB for a big chat) went out uncompressed. Setting
+# content_type replaces the default list, so the defaults are listed again.
+#
+# Brotli and Gzip flush on every data frame (BROTLI_OPERATION_FLUSH,
+# Z_SYNC_FLUSH), so each event still reaches the client when it is sent
+# (measured through Envoy 1.39.5 over HTTP/1.1, HTTP/2 and HTTP/3: every event
+# within 1 ms). Zstd is left out: in Envoy 1.39 its compressor ignores flush,
+# and 40 events sent over 4 s all arrived when the stream ended. This is fixed
+# upstream in envoyproxy/envoy#48865, not yet released. Without
+# text/event-stream in its list, zstd is skipped when Envoy picks the encoding
+# for an event stream.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyPatchPolicy
+metadata:
+  name: internal-compress-sse
+  namespace: envoy-gateway-system
+spec:
+  type: JSONPatch
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: internal
+  jsonPatches:
+    - type: "type.googleapis.com/envoy.config.listener.v3.Listener"
+      name: envoy-gateway-system/internal/http
+      operation:
+        op: add
+        jsonPath: "$..http_filters[?(@.name=='envoy.filters.http.compressor.brotli' || @.name=='envoy.filters.http.compressor.gzip')].typed_config"
+        path: /response_direction_config
+        value:
+          common_config:
+            content_type:
+              - text/html
+              - text/plain
+              - text/css
+              - application/javascript
+              - application/x-javascript
+              - text/javascript
+              - text/x-javascript
+              - text/ecmascript
+              - text/js
+              - text/jscript
+              - text/x-js
+              - application/ecmascript
+              - application/x-json
+              - application/xml
+              - application/json
+              - image/svg+xml
+              - text/xml
+              - application/xhtml+xml
+              - application/grpc-web
+              - application/grpc-web+proto
+              - text/event-stream
+    - type: "type.googleapis.com/envoy.config.listener.v3.Listener"
+      name: envoy-gateway-system/internal/https
+      operation:
+        op: add
+        jsonPath: "$..http_filters[?(@.name=='envoy.filters.http.compressor.brotli' || @.name=='envoy.filters.http.compressor.gzip')].typed_config"
+        path: /response_direction_config
+        value:
+          common_config:
+            content_type:
+              - text/html
+              - text/plain
+              - text/css
+              - application/javascript
+              - application/x-javascript
+              - text/javascript
+              - text/x-javascript
+              - text/ecmascript
+              - text/js
+              - text/jscript
+              - text/x-js
+              - application/ecmascript
+              - application/x-json
+              - application/xml
+              - application/json
+              - image/svg+xml
+              - text/xml
+              - application/xhtml+xml
+              - application/grpc-web
+              - application/grpc-web+proto
+              - text/event-stream
+    - type: "type.googleapis.com/envoy.config.listener.v3.Listener"
+      name: envoy-gateway-system/internal/https-quic
+      operation:
+        op: add
+        jsonPath: "$..http_filters[?(@.name=='envoy.filters.http.compressor.brotli' || @.name=='envoy.filters.http.compressor.gzip')].typed_config"
+        path: /response_direction_config
+        value:
+          common_config:
+            content_type:
+              - text/html
+              - text/plain
+              - text/css
+              - application/javascript
+              - application/x-javascript
+              - text/javascript
+              - text/x-javascript
+              - text/ecmascript
+              - text/js
+              - text/jscript
+              - text/x-js
+              - application/ecmascript
+              - application/x-json
+              - application/xml
+              - application/json
+              - image/svg+xml
+              - text/xml
+              - application/xhtml+xml
+              - application/grpc-web
+              - application/grpc-web+proto
+              - text/event-stream
