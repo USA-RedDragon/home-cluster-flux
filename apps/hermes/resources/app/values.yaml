@@ -578,11 +578,13 @@ configMaps:
                   title: DeepSeek V4.1 Flash
                   description: "DeepSeek V4.1 Flash on DeepInfra, pay per token and very cheap. Volume work when the Claude accounts are low: searches, reading and summarizing files, data gathering, simple code changes. Weaker than Sonnet on hard agentic work."
                   provider: deepinfra
+                  via: DeepInfra, pay per token
                   model: deepseek-ai/DeepSeek-V4.1-Flash-1017
                 - name: kimi
                   title: Kimi K3.1 Pro
                   description: "Kimi K3.1 Pro on DeepInfra, pay per token. Strong open model for real coding and analysis, close to Sonnet; uses no Claude account limits. Slower to start because it always thinks first."
                   provider: deepinfra
+                  via: DeepInfra, pay per token
                   model: moonshotai/Kimi-K3.1-Pro
                 - name: sonnet
                   title: Sonnet 5.5
@@ -2466,7 +2468,8 @@ configMaps:
                     route["fallback_providers"] = list(entry["fallback_providers"])
                 out[name] = {"name": name, "description": description, "route": route, "model": model,
                              "title": _text(entry, "title") or model, "helper": entry.get("helper") is True,
-                             "pool": _text(entry, "provider") == POOL}
+                             "pool": _text(entry, "provider") == POOL, "provider": _text(entry, "provider"),
+                             "via": _text(entry, "via")}
             return out
 
 
@@ -2495,8 +2498,12 @@ configMaps:
                     "line": "The model picks a route for each subagent: local and Haiku for volume, Sonnet for normal work, "
                             "Opus or Fable only for hard judgment or after a cheaper route failed.", "em": ""}]
             for o in opts.values():
-                if o["pool"]:
+                if o["via"]:
+                    line, em = f"Every subagent runs on {o['title']}, through {o['via']}.", o["title"]
+                elif o["pool"]:
                     line, em = f"Every subagent runs on {o['title']}, through the Claude account pool.", o["title"]
+                elif o["provider"]:
+                    line, em = f"Every subagent runs on {o['title']}, through {o['provider']}.", o["title"]
                 else:
                     line, em = f"Every subagent runs on {o['model']} on the local GPU.", o["model"]
                 out.append({"id": o["name"], "label": o["title"], "group": "Every subagent on", "line": line, "em": em})
