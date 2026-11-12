@@ -832,9 +832,9 @@ configMaps:
           #   this pod waits up to 30 s for them before it exits: a Honcho read-ahead held every busy stop 7 s
           #   (hermes-patches 0044)
           restart_memory_shutdown_after_release_seconds: 30
-          # Each stop writes a timing trace to stop-trace/<pid>.log in the data dir, for the zero-gap measurement
-          #   (hermes-patches 0038)
-          stop_trace: true
+          # No stop trace (hermes-patches 0038); set explicitly, because a key dropped from this overlay stays in
+          #   config.yaml
+          stop_trace: false
         webapp:
           enabled: true
           host: 0.0.0.0
