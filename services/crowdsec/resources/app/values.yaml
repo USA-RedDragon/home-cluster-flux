@@ -3,7 +3,7 @@ container_runtime: containerd
 
 image:
   repository: jacob.pub/docker.io/crowdsecurity/crowdsec
-  tag: v1.8.1@sha256:0f2523fa61ef507f15d953045cface490cc880670c62f2755ced17524107f71a
+  tag: v1.8.2@sha256:65b74942f7e7ed5c60fde4ac15fc4ba715904c398c8b16dd451f4907d90347d4
   kubectl:
     repository: jacob.pub/docker.io/alpine/kubectl
     tag: 1.37.1@sha256:b57b3bd3cd9f4f02dd444281857126aa78efa4b7b7e6ec57579dd927bf146fc3
