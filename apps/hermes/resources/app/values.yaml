@@ -65,7 +65,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p17@sha256:b7bc32e5ac4745e3e6e613a145c4e21378ed18b0edf6066df6a61a89e955ba7b
+          tag: &hermesTag v0.23.1-p19@sha256:900a4bafc1ea5b2667d2e4ce399d1238f4bcd62aa3bf2a803640b86b73be9c2c
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -798,6 +798,11 @@ configMaps:
           #   refused, and this pod stays serving until the new one is ready (hermes-patches 0035, 0036)
           restart_listener_relay_seconds: 30
           listener_start_hold_seconds: 20
+          # From the stop signal to the release, what this gateway would refuse (writes, sign-in and new
+          #   sockets once the restart wait ends) waits instead and is forwarded to the new pod's gateway once it
+          #   took over; GET reads are served during the restart wait, and the hub's sockets stay open through
+          #   it (hermes-patches 0037)
+          restart_listener_hold_seconds: 90
         webapp:
           enabled: true
           host: 0.0.0.0
