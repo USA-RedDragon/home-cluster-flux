@@ -62,7 +62,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p6@sha256:8e117755367e24daf861e08850340638d07916033bee24c41395a71422b39313
+          tag: &hermesTag v0.23.1-p7@sha256:feb398c9c42977e9cc865b9e150d6ea8830cd5afc72463fe96a8e88b8cc3b1b9
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -449,6 +449,11 @@ configMaps:
           runtime_lock_wait_seconds: 840
           # Her devices' connections (talaria) may come back during that wait, so turns still running there finish
           restart_wait_plugin_sockets: [device]
+          # Idle agents release together within 5 s on the way out, instead of up to 30 s each while Honcho
+          #   waits out its read-ahead for a next turn (hermes-patches 0011)
+          restart_agent_cleanup_seconds: 5
+          # Background subagents hold the restart wait like turns (up to agent.restart_after_turn_timeout)
+          restart_wait_delegations: true
         webapp:
           enabled: true
           host: 0.0.0.0
