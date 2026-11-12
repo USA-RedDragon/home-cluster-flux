@@ -527,6 +527,10 @@ configMaps:
           # A subagent is stopped at a clean point 5 s after the restart wait ends; a command it runs then moves to
           #   the background and the new pod hands the real result back (measured on upstairs-pc and the sandbox)
           restart_handoff_grace_seconds: 5
+          # A background subagent on a provider that queues the request or answers 429 fails after one stale window
+          #   (no first chunk in 180 s) or at once, instead of 15+ minutes of retries (hermes-patches 0023)
+          stream_stale_giveup: 1
+          auto_recovery_cycles: 0
           backends:
             model_map:
               options:
