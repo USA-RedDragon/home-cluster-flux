@@ -65,7 +65,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p16@sha256:54eaeeffa0f109fe1599efd10d980c4498935c7475b3b7f18b364d868906c89a
+          tag: &hermesTag v0.23.1-p17@sha256:b7bc32e5ac4745e3e6e613a145c4e21378ed18b0edf6066df6a61a89e955ba7b
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -329,7 +329,8 @@ controllers:
               timeoutSeconds: 11
               failureThreshold: 5
           # The Webapp listener answers only while this gateway owns the volume: 200 when serving and in the
-          #   restart wait (approvals stay answerable there), 503 while starting or stopping. The hub uses it
+          #   restart wait (approvals stay answerable there), 503 while starting or stopping. The hub uses it.
+          #   A starting gateway holds the probe until READY (listener_start_hold_seconds), hence the timeout
           readiness:
             enabled: true
             custom: true
@@ -338,7 +339,7 @@ controllers:
                 path: /api/health
                 port: 9120
               periodSeconds: 1
-              timeoutSeconds: 2
+              timeoutSeconds: 5
               failureThreshold: 2
         securityContext: *securityContext
     containers:
@@ -744,6 +745,11 @@ configMaps:
           # The old gateway's Webapp listener stays up through its stop until it releases the profile lock, so the new
           #   pod's standby takes over with well under 2 s without a gateway (hermes-patches 0031)
           restart_listener_handover: true
+          # After it released the lock, that listener stays open and relays each connection to the new pod's
+          #   gateway, retrying until it listens, which holds it until READY: clients wait instead of being
+          #   refused, and this pod stays serving until the new one is ready (hermes-patches 0035, 0036)
+          restart_listener_relay_seconds: 30
+          listener_start_hold_seconds: 20
         webapp:
           enabled: true
           host: 0.0.0.0
