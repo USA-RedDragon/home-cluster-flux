@@ -16,7 +16,7 @@ controllers:
     pod:
       # Bumped to roll the pod for handover timing tests
       annotations:
-        rollout-test: "10"
+        rollout-test: "11"
       # Waiting for the new pod's standby (up to 120 s), the restart wait for running turns
       #   (agent.restart_after_turn_timeout, 540 s), the drain (30 s), Hermes' shutdown watchdog (60 s) and a margin
       terminationGracePeriodSeconds: 780
