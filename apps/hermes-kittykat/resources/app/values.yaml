@@ -734,6 +734,9 @@ configMaps:
           # Subagents are handed to the new pod instead (delegation.restart_handoff); set explicitly, because a key
           #   dropped from this overlay stays in config.yaml
           restart_wait_delegations: false
+          # The old gateway's Webapp listener stays up through its stop until it releases the profile lock, so the new
+          #   pod's standby takes over with well under 2 s without a gateway (hermes-patches 0031)
+          restart_listener_handover: true
         webapp:
           enabled: true
           host: 0.0.0.0
