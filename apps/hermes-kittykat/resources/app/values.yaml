@@ -533,12 +533,13 @@ configMaps:
                   provider: deepinfra
                   via: DeepInfra, pay per token
                   model: deepseek-ai/DeepSeek-V4.1-Flash-1017
+                # Kimi K3, not K3.1 Pro: DeepInfra answers K3.1 Pro with 429 engine_overloaded since it launched (Nov 11)
                 - name: kimi
-                  title: Kimi K3.1 Pro
-                  description: "Kimi K3.1 Pro on DeepInfra, pay per token. Strong open model for real coding and analysis, close to Sonnet; uses no Claude account limits. Slower to start because it always thinks first."
+                  title: Kimi K3
+                  description: "Kimi K3 on DeepInfra, pay per token. Strong open model for real coding and analysis, close to Sonnet; uses no Claude account limits. Slower to start because it always thinks first."
                   provider: deepinfra
                   via: DeepInfra, pay per token
-                  model: moonshotai/Kimi-K3.1-Pro
+                  model: moonshotai/Kimi-K3
                 - name: sonnet
                   title: Sonnet 5.5
                   description: "Claude Sonnet 5.5. Normal coding and analysis: multi-step changes, debugging with clear evidence, reviews, writing tests. The default choice for real work that is not trivial."
