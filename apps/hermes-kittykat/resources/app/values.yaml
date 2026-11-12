@@ -62,7 +62,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p9@sha256:3d1b4436301075e28ecc4362b00d0d169dae2c19a3c5cd48ba03222ad0c4cfd2
+          tag: &hermesTag v0.23.1-p10@sha256:a56a83a7ee96ac33b72c6ef036cb7668a6909edbce3a1a63b7f39d75ec72418d
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
