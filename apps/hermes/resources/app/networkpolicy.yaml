@@ -22,6 +22,17 @@ spec:
       app.kubernetes.io/instance: hermes
       app.kubernetes.io/name: hermes
   ingress:
+    # The old pod's gateway relays its Webapp listener to the new pod's during a rollout
+    #   (gateway.restart_listener_relay_seconds)
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/controller: hermes
+            app.kubernetes.io/instance: hermes
+            app.kubernetes.io/name: hermes
+      toPorts:
+        - ports:
+            - port: "9120"
+              protocol: TCP
     # hermes-hub, to the gateway's Webapp listener and acp-host
     - fromEndpoints:
         - matchLabels:
@@ -34,6 +45,15 @@ spec:
             - port: "9130"
               protocol: TCP
   egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/controller: hermes
+            app.kubernetes.io/instance: hermes
+            app.kubernetes.io/name: hermes
+      toPorts:
+        - ports:
+            - port: "9120"
+              protocol: TCP
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
