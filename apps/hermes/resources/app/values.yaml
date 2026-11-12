@@ -41,7 +41,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.22.0@sha256:04bf96cd39c8c03ec99b051aa44cbc6c58a61e147bd542dc223daf5316d07030
+          tag: v0.25.0@sha256:27f6e2c4e29f5d701abeb2739e0146035e934af31d81be59ca182dc3705c316d
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -739,6 +739,9 @@ configMaps:
                 # How long a device keeps a command for the next gateway after a leg drops: the device's own cap
                 #   (device.max-grace, 10 minutes)
                 grace_seconds: 600
+                # A tool call for a device that is away (a gateway handoff, a hub restart) waits up to this long for it to
+                #   reconnect before it fails with "not connected" (talaria 0.25.0)
+                reconnect_wait_seconds: 60
                 # The one hub user of this backend: sandbox chats and scheduled jobs use this user's Firefox
                 user: reddragon
             # One Claude subscription per slot; the login lives in /opt/data/hermes/claude/<id>. The pickers offer
