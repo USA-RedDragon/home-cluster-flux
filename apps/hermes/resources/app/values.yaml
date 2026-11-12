@@ -180,7 +180,7 @@ controllers:
             P=/opt/data/hermes/plugins/subagent-routes
             rm -rf "$P.new" "$P.old"
             install -d -m 755 "$P.new" "$P.new/dashboard"
-            install -m 644 /subagent-routes/plugin.yaml /subagent-routes/__init__.py /subagent-routes/routes.py "$P.new/"
+            install -m 644 /subagent-routes/plugin.yaml /subagent-routes/__init__.py /subagent-routes/routes.py /subagent-routes/waiting.py "$P.new/"
             install -m 644 /subagent-routes/plugin_api.py "$P.new/dashboard/plugin_api.py"
             install -m 644 /subagent-routes/manifest.json "$P.new/dashboard/manifest.json"
             if diff -r "$P.new" "$P" >/dev/null 2>&1; then
@@ -675,6 +675,9 @@ configMaps:
           #   chat runs as an agent turn, up to 10 in a row for both together, so the agent picks the work back
           #   up (hermes-patches 0007)
           unviewed_completion_turns: 10
+          # A background subagent's result that arrives while its chat's turn is running rides that turn's next tool
+          #   result instead of waiting for the turn to end (hermes-patches 0022)
+          mid_turn_subagent_results: true
           # Editors (ACP session/list) also offer chats the hub, TUI and CLI started (hermes-patches 0008)
           acp_list_sources: [acp, gui, local, tui, cli]
         browser:
@@ -717,6 +720,13 @@ configMaps:
             - catalog
         plugins:
           entries:
+            # Subagents (each turn) and chats (once) are told to wait with terminal(background=true) and
+            #   process_manage wait, and a foreground terminal command that waits by sleeping is refused with that
+            #   advice (subagent-routes waiting.py)
+            subagent-routes:
+              settings:
+                wait_guidance: true
+                sleep_guard: true
             device:
               # Lets the plugin hide Hermes's browser_vault tool
               granted_capabilities: [tools.override]
@@ -2232,11 +2242,11 @@ configMaps:
       plugin.yaml: |
         name: subagent-routes
         kind: standalone
-        version: 0.1.1
+        version: 0.2.0
         description: The model routes a chat's subagents may use (delegation.backend model_map, in place of advanced-delegation's), chosen per chat in hermes-hub
         author: Jacob McSwain
         requires_hermes: ">=0.22.5"
-        provides_hooks: [pre_llm_call, subagent_stop, on_session_delete]
+        provides_hooks: [pre_llm_call, pre_tool_call, subagent_stop, on_session_delete]
       __init__.py: |
         """subagent-routes: the model routes a chat's subagents may use, chosen per chat in hermes-hub.
 
@@ -2252,33 +2262,58 @@ configMaps:
         * ``none``: every task is refused.
 
         Each turn of a chat with a choice gets one line in the user's message (``pre_llm_call``) that says the rule, since
-        the schema is the same in every chat.
+        the schema is the same in every chat. The schema is fixed when a chat starts, so a chat that began before a route
+        existed does not list it; ``route_task`` takes any current route all the same, and such a chat in Auto is told the
+        current routes once.
+
+        With ``plugins.entries.subagent-routes.settings`` ``wait_guidance: true``, every subagent turn, and each chat once,
+        is told how to wait without sleep polling; with ``sleep_guard: true``, a foreground ``terminal`` command that waits by
+        sleeping is refused (``pre_tool_call``) with what to do instead (waiting.py).
         """
 
         from __future__ import annotations
 
         import importlib.util
+        import json
         import logging
         import sys
         import threading
         import time
         from pathlib import Path
-        from typing import Any, Mapping
+        from typing import Any, Mapping, Optional
 
         logger = logging.getLogger("subagent_routes")
         _CORE = "hermes_subagent_routes_core"
+        _WAITING = "hermes_subagent_routes_waiting"
         PARAMETER = "option"
         HELP_LABEL = " (help)"
+        ROUTES_MARK = "[Subagent routes now:"
+        _CTX: Any = None
+
+
+        def _load(name: str, filename: str):
+            module = sys.modules.get(name)
+            if module is None:
+                spec = importlib.util.spec_from_file_location(name, Path(__file__).with_name(filename))
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[name] = module
+                spec.loader.exec_module(module)
+            return module
 
 
         def _core():
-            module = sys.modules.get(_CORE)
-            if module is None:
-                spec = importlib.util.spec_from_file_location(_CORE, Path(__file__).with_name("routes.py"))
-                module = importlib.util.module_from_spec(spec)
-                sys.modules[_CORE] = module
-                spec.loader.exec_module(module)
-            return module
+            return _load(_CORE, "routes.py")
+
+
+        def _waiting():
+            return _load(_WAITING, "waiting.py")
+
+
+        def _setting(name: str) -> bool:
+            try:
+                return _CTX is not None and _CTX.get_config(name, False) is True
+            except Exception:
+                return False
 
 
         def _session_id() -> str:
@@ -2338,16 +2373,100 @@ configMaps:
                 _core().forget(session_id)
 
 
-        def _on_pre_llm_call(session_id: Any = None, **_: Any) -> Any:
+        def _noted(history: Any, mark: str) -> bool:
+            """Whether a user row of ``history`` already carries ``mark`` (context rides its row's ``api_content``)."""
+            for message in history if isinstance(history, list) else ():
+                if isinstance(message, Mapping) and message.get("role") == "user":
+                    if any(mark in str(message.get(key) or "") for key in ("api_content", "content")):
+                        return True
+            return False
+
+
+        _listed_lock = threading.Lock()
+        _listed_cache: dict[str, tuple[float, Optional[list[str]]]] = {}
+        LISTED_TTL = 600.0
+
+
+        def _listed_routes(session_id: str) -> Optional[list[str]]:
+            """``_stored_routes``, kept for ``LISTED_TTL`` per session: a stored schema changes only at compaction."""
+            now = time.monotonic()
+            with _listed_lock:
+                hit = _listed_cache.get(session_id)
+                if hit is not None and now - hit[0] < LISTED_TTL:
+                    return hit[1]
+            listed = _stored_routes(session_id)
+            with _listed_lock:
+                if len(_listed_cache) >= 256:
+                    _listed_cache.clear()
+                _listed_cache[session_id] = (now, listed)
+            return listed
+
+
+        def _stored_routes(session_id: str) -> Optional[list[str]]:
+            """The ``option`` values this session's stored ``delegate_task`` schema lists (``[]`` without the parameter),
+            or None when the session has no stored delegate_task definition."""
+            core = _core()
+            try:
+                with core._db() as db:
+                    row = db.get_session(session_id) or {}
+                pin = json.loads(row.get("tool_names") or "null")
+            except Exception:
+                return None
+            tools = pin.get("tools") if isinstance(pin, dict) else None
+            for tool in tools if isinstance(tools, list) else ():
+                function = tool.get("function") if isinstance(tool, dict) else None
+                if not isinstance(function, dict) or function.get("name") != "delegate_task":
+                    continue
+                try:
+                    option = function["parameters"]["properties"]["tasks"]["items"]["properties"].get(PARAMETER) or {}
+                except (KeyError, TypeError, AttributeError):
+                    return []
+                enum = option.get("enum") if isinstance(option, dict) else None
+                return [str(v) for v in enum] if isinstance(enum, list) else []
+            return None
+
+
+        def routes_note(listed: list[str], opts: Mapping[str, dict]) -> Optional[str]:
+            """For an Auto chat whose stored schema misses current routes: the routes it may pass now."""
+            auto = [name for name, o in opts.items() if o["auto"]]
+            if not [name for name in auto if name not in listed]:
+                return None
+            current = ", ".join(f"`{name}` ({opts[name]['title']})" for name in auto)
+            old = ", ".join(f"`{name}`" for name in listed) or "none"
+            return (f"{ROUTES_MARK} this chat's delegate_task tool was fixed when the chat began and lists {old}, but "
+                    f"`option` takes any current route: {current}. Each result names the route and model it ran on.]")
+
+
+        def _on_pre_llm_call(session_id: Any = None, platform: Any = "", conversation_history: Any = None,
+                             **_: Any) -> Any:
             if not isinstance(session_id, str) or not session_id:
                 return None
+            waiting = _waiting()
+            if platform == "subagent":
+                return {"context": waiting.GUIDANCE} if _setting("wait_guidance") else None
             core = _core()
+            parts = []
             choice, _ = core.stored_choice(session_id)
-            if not choice:
-                return None
             from tools.delegate_tool_config import _load_config
             opts = core.options(_load_config())
-            return {"context": core.note(choice if core.valid_choice(choice, opts) else core.AUTO, opts)}
+            choice = choice if choice and core.valid_choice(choice, opts) else (core.AUTO if choice else None)
+            if choice:
+                parts.append(core.note(choice, opts))
+            if choice in (None, core.AUTO) and opts and not _noted(conversation_history, ROUTES_MARK):
+                listed = _listed_routes(session_id)
+                note = routes_note(listed, opts) if listed is not None else None
+                if note:
+                    parts.append(note)
+            if _setting("wait_guidance") and not waiting.has_guidance(conversation_history):
+                parts.append(waiting.GUIDANCE)
+            return {"context": "\n".join(parts)} if parts else None
+
+
+        def _on_pre_tool_call(tool_name: Any = None, args: Any = None, **_: Any) -> Any:
+            if tool_name != "terminal" or not _setting("sleep_guard"):
+                return None
+            message = _waiting().refusal(tool_name, args)
+            return {"action": "block", "message": message} if message else None
 
 
         def _provider():
@@ -2428,6 +2547,8 @@ configMaps:
 
 
         def register(ctx) -> None:
+            global _CTX
+            _CTX = ctx
             try:
                 provider = _provider()
             except ModuleNotFoundError as exc:
@@ -2437,6 +2558,7 @@ configMaps:
                 return
             ctx.register_delegation_provider(provider)
             ctx.register_hook("pre_llm_call", _on_pre_llm_call)
+            ctx.register_hook("pre_tool_call", _on_pre_tool_call)
             ctx.register_hook("subagent_stop", _on_subagent_stop)
             ctx.register_hook("on_session_delete", _on_session_delete)
       routes.py: |
@@ -2697,6 +2819,139 @@ configMaps:
             at = tip(session_id)
             _write(at, choice)
             return at
+      waiting.py: |
+        """Waiting without sleep polling, for chats and their subagents (part of subagent-routes).
+
+        ``GUIDANCE`` is the line ``pre_llm_call`` adds for a subagent on each turn and for a chat once. ``sleep_poll`` finds a
+        foreground ``terminal`` command that waits by sleeping, which the ``pre_tool_call`` guard refuses with ``REFUSAL``:
+        a ``sleep`` of more than ``MAX_SLEEP`` seconds alone or chained with ``;``, ``&&``, ``||`` or ``|``, and any
+        ``while`` or ``until`` loop that sleeps. Quoted text and comments are not commands, a script the command runs is not
+        read, a ``sleep`` sent to the background with ``&`` does not block, and a ``background=true`` command is never
+        refused: a background loop that sleeps is the right way to wait for a condition.
+        """
+
+        from __future__ import annotations
+
+        import os
+        import re
+        import shlex
+        from typing import Any, Mapping, Optional
+
+        MAX_SLEEP = 30.0
+        GUIDANCE = ("[Waiting: to wait for something slow, start it with terminal(background=true), then call "
+                    "process_manage(action='wait', session_id=..., timeout=...). Repeat the wait if it times out. Never use sleep "
+                    "to poll. To wait for a condition, run one background command that loops until the condition holds, then "
+                    "wait on it.]")
+        GUIDANCE_MARK = "[Waiting: to wait for something slow"
+        REFUSAL = ("Refused: this waits by sleeping. Start the slow part with terminal(background=true), then call "
+                   "process_manage(action='wait', session_id=<id>, timeout=<seconds>), and repeat wait if it times out. To wait "
+                   "for a condition, run one background command that loops until it holds, then wait on that.")
+
+        _SEPARATORS = frozenset({";", "&&", "||", "|", "|&", "&", "\n", "(", ")", "{", "}", ";;"})
+        _PREFIX_WORDS = frozenset({"do", "then", "else", "elif", "!", "time", "command", "exec", "nohup", "nice"})
+        _LOOP_OPEN = frozenset({"while", "until", "for", "select"})
+        _DURATION = re.compile(r"^(\d+(?:\.\d*)?|\.\d+)([smhd]?)$")
+        _UNITS = {"": 1.0, "s": 1.0, "m": 60.0, "h": 3600.0, "d": 86400.0}
+        _ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
+
+
+        def _tokens(command: str) -> Optional[list[str]]:
+            lex = shlex.shlex(command, posix=True, punctuation_chars=";&|()<>\n")
+            lex.whitespace = " \t\r"
+            lex.whitespace_split = True
+            try:
+                return list(lex)
+            except ValueError:  # unbalanced quotes: the shell refuses it anyway
+                return None
+
+
+        def _seconds(args: list[str]) -> Optional[float]:
+            """GNU sleep's total for its arguments; None when one is not a literal duration ($DELAY, a substitution)."""
+            total = 0.0
+            for arg in args:
+                if arg in ("inf", "infinity"):
+                    return float("inf")
+                match = _DURATION.match(arg)
+                if match is None:
+                    return None
+                total += float(match.group(1)) * _UNITS[match.group(2)]
+            return total
+
+
+        def sleep_poll(command: Any) -> bool:
+            """Whether a foreground ``command`` waits by sleeping (see the module docstring)."""
+            if not isinstance(command, str) or "sleep" not in command:
+                return False
+            tokens = _tokens(command)
+            if not tokens:
+                return False
+            loops: list[str] = []
+            at_command = True
+            i = 0
+            while i < len(tokens):
+                token = tokens[i]
+                if token in _SEPARATORS:
+                    at_command = True
+                    i += 1
+                    continue
+                if not at_command:
+                    i += 1
+                    continue
+                if token in _LOOP_OPEN:
+                    loops.append(token)
+                    at_command = token in ("while", "until")
+                    i += 1
+                    continue
+                if token == "done":
+                    if loops:
+                        loops.pop()
+                    at_command = False
+                    i += 1
+                    continue
+                if token in _PREFIX_WORDS or _ASSIGNMENT.match(token):
+                    i += 1
+                    continue
+                at_command = False
+                if os.path.basename(token) != "sleep":
+                    i += 1
+                    continue
+                end = i + 1
+                while end < len(tokens) and tokens[end] not in _SEPARATORS:
+                    end += 1
+                if end < len(tokens) and tokens[end] == "&":
+                    i = end
+                    continue
+                seconds = _seconds([arg for arg in tokens[i + 1:end] if not arg.startswith("-")])
+                if seconds is not None and (seconds > MAX_SLEEP or (seconds > 0 and {"while", "until"} & set(loops))):
+                    return True
+                i = end
+            return False
+
+
+        def refusal(tool_name: Any, args: Any) -> Optional[str]:
+            """``REFUSAL`` for a foreground ``terminal`` call that waits by sleeping, else None."""
+            if tool_name != "terminal" or not isinstance(args, Mapping):
+                return None
+            background = args.get("background")
+            if background is True or (isinstance(background, str) and background.strip().lower() == "true"):
+                return None
+            return REFUSAL if sleep_poll(args.get("command")) else None
+
+
+        def has_guidance(history: Any) -> bool:
+            """Whether a message in ``history`` already carries ``GUIDANCE`` (``pre_llm_call`` context is kept with the
+            user row it rode, in ``api_content``)."""
+            for message in history if isinstance(history, list) else ():
+                if not isinstance(message, Mapping) or message.get("role") != "user":
+                    continue
+                for key in ("api_content", "content"):
+                    value = message.get(key)
+                    if isinstance(value, str) and GUIDANCE_MARK in value:
+                        return True
+                    if isinstance(value, list) and any(isinstance(p, Mapping) and GUIDANCE_MARK in str(p.get("text") or "")
+                                                       for p in value):
+                        return True
+            return False
       plugin_api.py: |
         """subagent-routes routes for hermes-hub, mounted at /api/plugins/subagent-routes/ behind dashboard sign-in: the
         Subagents choice of one chat and the choices the picker offers."""
