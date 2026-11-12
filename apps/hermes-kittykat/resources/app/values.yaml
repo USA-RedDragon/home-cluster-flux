@@ -80,9 +80,23 @@ controllers:
             [ -d /opt/data/hermes/plugins/honcho ] || /opt/hermes/.venv/bin/hermes plugins install honcho --yes-deps
             /opt/hermes/.venv/bin/hermes plugins enable honcho || true
             /opt/hermes/.venv/bin/python /config/honcho-delegation-reply.py
-            # Model routes for subagents (delegation.backend: model_map)
-            [ -d /opt/data/hermes/plugins/advanced-delegation ] || /opt/hermes/.venv/bin/hermes plugins install advanced-delegation --yes-deps || echo "advanced-delegation install failed; continuing"
-            /opt/hermes/.venv/bin/hermes plugins enable advanced-delegation || true
+            # Model routes for subagents (delegation.backend: model_map): subagent-routes (ours, in /subagent-routes)
+            #   provides that backend with a per-chat choice, in place of advanced-delegation's
+            /opt/hermes/.venv/bin/hermes plugins disable advanced-delegation || true
+            P=/opt/data/hermes/plugins/subagent-routes
+            rm -rf "$P.new" "$P.old"
+            install -d -m 755 "$P.new" "$P.new/dashboard"
+            install -m 644 /subagent-routes/plugin.yaml /subagent-routes/__init__.py /subagent-routes/routes.py "$P.new/"
+            install -m 644 /subagent-routes/plugin_api.py "$P.new/dashboard/plugin_api.py"
+            install -m 644 /subagent-routes/manifest.json "$P.new/dashboard/manifest.json"
+            if diff -r "$P.new" "$P" >/dev/null 2>&1; then
+              rm -rf "$P.new"
+            else
+              [ ! -d "$P" ] || mv "$P" "$P.old"
+              mv "$P.new" "$P"
+              rm -rf "$P.old"
+            fi
+            /opt/hermes/.venv/bin/hermes plugins enable subagent-routes || true
             # Device sessions run with this server cwd; their commands run in the device directory
             install -d -m 700 /opt/data/hermes/device-placeholder
             # The server cwd of sessions that run in the sandbox; Hermes reads AGENTS.md and git state from it, so keep it empty
@@ -260,6 +274,10 @@ controllers:
         envFrom:
           - secretRef:
               name: hermes-kittykat-hub-auth
+          # DEEPINFRA_API_KEY for the deepinfra provider
+          - secretRef:
+              name: hermes-kittykat-deepinfra
+              optional: true
         resources:
           requests:
             cpu: 50m
@@ -466,9 +484,28 @@ configMaps:
             - claude-ja2000aag
             - claude-caam
             - claude-maam
-        # Small model: qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not). The agent picks a route
-        #   per subagent; a subagent with no route runs on the main model. To add Claude Haiku, add a route with
-        #   provider: anthropic and the key; "default: <route>" sends every unrouted subagent to one route
+        providers:
+          # Open-weight models on DeepInfra, pay per token (hermes-kittykat-deepinfra)
+          deepinfra:
+            name: DeepInfra
+            base_url: https://api.deepinfra.com/v1/openai
+            key_env: DEEPINFRA_API_KEY
+            api_mode: chat_completions
+            discover_models: false
+            models: [moonshotai/Kimi-K3.1-Pro, moonshotai/Kimi-K3, deepseek-ai/DeepSeek-V4.1-Flash-1017]
+        # Hermes detects Ollama and asks it for num_ctx, capped at this window for every model on this route
+        #   (subagents too; another num_ctx reloads the model). Not model.ollama_num_ctx: that one also capped a
+        #   chat switched to Claude at 131072
+        custom_providers:
+          - name: local-ollama
+            base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
+            context_length: 131072
+        # Subagent routes. Each chat's Subagents setting in the hub (subagent-routes) decides which of them its subagents
+        #   use: Auto lets the agent pick per subagent by these descriptions, a route pins every subagent to it, "<route>
+        #   when stuck" (helper: true) keeps subagents on the chat's own model with one helper at a time on that route,
+        #   and No subagents refuses them. A subagent with no route runs on the chat's own model. Claude routes go
+        #   through claude-pool, which gives each subagent session an account by the soonest-reset rule; the
+        #   claude-api-* providers are never routes. qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not)
         delegation:
           backend: model_map
           # A pod restart hands running background subagents to the new pod, which resumes them from their stored
@@ -478,10 +515,50 @@ configMaps:
             model_map:
               options:
                 - name: quick
+                  title: Local small (qwen3.5:2b)
                   description: "Small fast local model. Only for simple, single-step work: look up a fact, read or list a few files, summarize given text, a short mechanical edit. Not for debugging, planning, multi-step changes or anything that needs judgment."
                   base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
                   model: qwen3.5:2b
                   reasoning_effort: none
+                - name: local
+                  title: Local (qwen3.8:27b)
+                  description: "The local 27B model on the home GPU. Free and private, slower than Claude. Routine multi-step work with clear instructions: searches across files, gathering facts, drafting, simple code changes."
+                  base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
+                  model: qwen3.8:27b
+                - name: haiku
+                  title: Haiku 5.5
+                  description: "Claude Haiku 5.5. Fast and the cheapest Claude route. Volume work and many parallel tasks: searches, reading and summarizing files, data gathering, simple code changes and checks."
+                  provider: claude-pool
+                  model: claude-haiku-5-5
+                - name: flash
+                  title: DeepSeek V4.1 Flash
+                  description: "DeepSeek V4.1 Flash on DeepInfra, pay per token and very cheap. Volume work when the Claude accounts are low: searches, reading and summarizing files, data gathering, simple code changes. Weaker than Sonnet on hard agentic work."
+                  provider: deepinfra
+                  via: DeepInfra, pay per token
+                  model: deepseek-ai/DeepSeek-V4.1-Flash-1017
+                - name: kimi
+                  title: Kimi K3.1 Pro
+                  description: "Kimi K3.1 Pro on DeepInfra, pay per token. Strong open model for real coding and analysis, close to Sonnet; uses no Claude account limits. Slower to start because it always thinks first."
+                  provider: deepinfra
+                  via: DeepInfra, pay per token
+                  model: moonshotai/Kimi-K3.1-Pro
+                - name: sonnet
+                  title: Sonnet 5.5
+                  description: "Claude Sonnet 5.5. Normal coding and analysis: multi-step changes, debugging with clear evidence, reviews, writing tests. The default choice for real work that is not trivial."
+                  provider: claude-pool
+                  model: claude-sonnet-5-5
+                - name: opus
+                  title: Opus 5.5
+                  description: "Claude Opus 5.5. Hard judgment only: subtle bugs, design decisions, careful reviews of risky changes, or a task a cheaper route already failed. Uses the most of the accounts' limits."
+                  provider: claude-pool
+                  model: claude-opus-5-5
+                  helper: true
+                - name: fable
+                  title: Fable 5.2
+                  description: "Claude Fable 5.2. Hard judgment only, like opus: a second strong model for the hardest problems, or when opus is stuck. Uses much of the accounts' limits."
+                  provider: claude-pool
+                  model: claude-fable-5-2
+                  helper: true
         # Title generation runs in the background, so it goes through /low; compression holds up the turn, so it does not
         auxiliary:
           title_generation:
@@ -489,6 +566,8 @@ configMaps:
             base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/low/v1
             model: qwen3.5:2b
             reasoning_effort: none
+            # /low waits behind people's turns on the GPU; a title can wait instead of falling back to another model
+            timeout: 180
           compression:
             provider: custom
             base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
@@ -496,7 +575,9 @@ configMaps:
             reasoning_effort: none
             context_length: 131072
             # Chats on Claude summarize on their own model at their 1M window's threshold (patch 0001 of
-            #   hermes-patches); every other chat uses the small local model above
+            #   hermes-patches), and so does any chat whose window is larger than this model's (DeepInfra, ChatGPT);
+            #   other chats use the small local model above
+            main_model_when_larger: true
             main_model_providers: [claude-pool, claude-jaam, claude-jamaag, claude-ja2000aag, claude-caam, claude-maam]
         # Sessions bound to one of her computers run commands there; every other session runs in her sandbox pod
         terminal:
@@ -2065,6 +2146,536 @@ configMaps:
           "tab": { "hidden": true }
         }
 
+  # The subagent-routes Hermes plugin; the init container installs it into /opt/data/hermes/plugins/subagent-routes
+  subagent-routes:
+    data:
+      plugin.yaml: |
+        name: subagent-routes
+        kind: standalone
+        version: 0.1.1
+        description: The model routes a chat's subagents may use (delegation.backend model_map, in place of advanced-delegation's), chosen per chat in hermes-hub
+        author: Jacob McSwain
+        requires_hermes: ">=0.22.5"
+        provides_hooks: [pre_llm_call, subagent_stop, on_session_delete]
+      __init__.py: |
+        """subagent-routes: the model routes a chat's subagents may use, chosen per chat in hermes-hub.
+
+        It registers the ``model_map`` delegation backend in place of the advanced-delegation plugin's (which must be
+        disabled): the same ``delegation.backends.model_map.options`` and the same per-task ``option``, so the
+        ``delegate_task`` schema stays the same for every chat and chats built on the old backend route here at once.
+        On top of that, each chat has a choice (routes.py) that the hub sets through dashboard/plugin_api.py:
+
+        * ``auto``: the task's ``option`` picks the route; without one, ``default`` or the chat's own route.
+        * a route name: every subagent runs on that route, whatever ``option`` says.
+        * ``help-<route>``: subagents run on the chat's own route; ``option: <route>`` is accepted for one subagent at a
+          time, and any other option is refused.
+        * ``none``: every task is refused.
+
+        Each turn of a chat with a choice gets one line in the user's message (``pre_llm_call``) that says the rule, since
+        the schema is the same in every chat.
+        """
+
+        from __future__ import annotations
+
+        import importlib.util
+        import logging
+        import sys
+        import threading
+        import time
+        from pathlib import Path
+        from typing import Any, Mapping
+
+        logger = logging.getLogger("subagent_routes")
+        _CORE = "hermes_subagent_routes_core"
+        PARAMETER = "option"
+        HELP_LABEL = " (help)"
+
+
+        def _core():
+            module = sys.modules.get(_CORE)
+            if module is None:
+                spec = importlib.util.spec_from_file_location(_CORE, Path(__file__).with_name("routes.py"))
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[_CORE] = module
+                spec.loader.exec_module(module)
+            return module
+
+
+        def _session_id() -> str:
+            try:
+                from gateway.session_context import get_session_env
+                return get_session_env("HERMES_SESSION_ID", "") or ""
+            except Exception:
+                return ""
+
+
+        # --- helpers that are running or starting, per chat ---
+
+        _starting_lock = threading.Lock()
+        _starting: dict[str, float] = {}
+
+
+        def _live_helpers(ids: set[str], label: str) -> int:
+            """Running subagents of the chats ``ids`` whose route has ``label``."""
+            try:
+                from tools import delegate_tool_registry as registry
+            except ImportError:
+                return 0
+            with registry._active_subagents_lock:
+                records = list(registry._active_subagents.values())
+            count = 0
+            for record in records:
+                route = getattr(record.get("agent"), "_delegate_route", None)
+                if record.get("owner_agent_session_id") in ids and isinstance(route, dict) and route.get("label") == label:
+                    count += 1
+            return count
+
+
+        def _helper_busy(ids: list[str], label: str) -> bool:
+            if _live_helpers(set(ids), label):
+                with _starting_lock:
+                    for sid in ids:
+                        _starting.pop(sid, None)
+                return True
+            now = time.monotonic()
+            with _starting_lock:
+                return any(now - _starting.get(sid, -1e9) < _core().HELPER_START_GRACE for sid in ids)
+
+
+        def _helper_started(session_id: str) -> None:
+            with _starting_lock:
+                _starting[session_id] = time.monotonic()
+
+
+        def _on_subagent_stop(parent_session_id: Any = None, **_: Any) -> None:
+            if isinstance(parent_session_id, str):
+                with _starting_lock:
+                    _starting.pop(parent_session_id, None)
+
+
+        def _on_session_delete(session_id: Any = None, **_: Any) -> None:
+            if isinstance(session_id, str) and session_id:
+                _core().forget(session_id)
+
+
+        def _on_pre_llm_call(session_id: Any = None, **_: Any) -> Any:
+            if not isinstance(session_id, str) or not session_id:
+                return None
+            core = _core()
+            choice, _ = core.stored_choice(session_id)
+            if not choice:
+                return None
+            from tools.delegate_tool_config import _load_config
+            opts = core.options(_load_config())
+            return {"context": core.note(choice if core.valid_choice(choice, opts) else core.AUTO, opts)}
+
+
+        def _provider():
+            from agent.delegation_provider import DelegationProvider, DelegationRouteError
+
+            class SubagentRoutesProvider(DelegationProvider):
+                """``delegation.backend: model_map`` with a per-chat choice of routes."""
+
+                @property
+                def name(self) -> str:
+                    return _core().BACKEND
+
+                @property
+                def display_name(self) -> str:
+                    return "Model routes (per chat)"
+
+                @property
+                def summary(self) -> str:
+                    return "The agent picks a named model route per subagent, within what each chat allows."
+
+                def task_parameters(self, config: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
+                    opts = _core().options(config)
+                    if not opts:
+                        return {}
+                    lines = ["Which model route runs this subagent. Omit for the chat's default route.",
+                             *(f"{name}: {o['description']}" for name, o in opts.items())]
+                    return {PARAMETER: {"type": "string", "enum": list(opts), "description": "\n".join(lines)}}
+
+                def description(self, config: Mapping[str, Any]) -> str:
+                    if not _core().options(config):
+                        return ""
+                    return ("Each task may set `option` to run that subagent on one of the listed routes. Prefer the local "
+                            "routes or haiku for volume work, sonnet for normal work, and opus or fable only for hard judgment "
+                            "or after a cheaper route failed. The user can pin a chat's subagents to one route, allow only one "
+                            "helper, or turn subagents off; a note in the user's message then says so, and that rule wins.")
+
+                def route_task(self, task: Mapping[str, Any], config: Mapping[str, Any]) -> dict[str, Any]:
+                    core = _core()
+                    opts = core.options(config)
+                    sid = _session_id()
+                    choice, ids = core.stored_choice(sid)
+                    if not choice or not core.valid_choice(choice, opts):
+                        choice = core.AUTO
+                    chosen = task.get(PARAMETER) or ""
+                    if choice == core.NONE:
+                        raise DelegationRouteError(
+                            "The user turned subagents off for this chat, so no subagent was started. Do this work yourself.")
+                    if choice in opts:
+                        return {**opts[choice]["route"], "label": choice}
+                    if choice.startswith(core.HELP):
+                        helper = choice[len(core.HELP):]
+                        if not chosen:
+                            return {}
+                        if chosen != helper:
+                            raise DelegationRouteError(
+                                f"In this chat subagents run on your own model: leave `option` out. The only other route is "
+                                f"`{helper}`, for one helper when you are stuck.")
+                        label = helper + HELP_LABEL
+                        if _helper_busy(ids or [sid], label):
+                            raise DelegationRouteError(
+                                f"A `{helper}` helper is already running or starting in this chat, and only one runs at a "
+                                f"time. Wait for its result, or leave `option` out to use your own model.")
+                        _helper_started(sid)
+                        return {**opts[helper]["route"], "label": label}
+                    if not chosen:
+                        chosen = core.default_route(config, opts)
+                    if not chosen:
+                        return {}
+                    return {**opts[chosen]["route"], "label": chosen}
+
+            return SubagentRoutesProvider()
+
+
+        def register(ctx) -> None:
+            try:
+                provider = _provider()
+            except ModuleNotFoundError as exc:
+                if exc.name != "agent.delegation_provider":
+                    raise
+                logger.warning("subagent-routes needs a Hermes with pluggable delegation providers; inactive.")
+                return
+            ctx.register_delegation_provider(provider)
+            ctx.register_hook("pre_llm_call", _on_pre_llm_call)
+            ctx.register_hook("subagent_stop", _on_subagent_stop)
+            ctx.register_hook("on_session_delete", _on_session_delete)
+      routes.py: |
+        """Shared core of subagent-routes: the model routes, the per-chat choices and where they are kept.
+
+        The routes are ``delegation.backends.model_map.options`` in config.yaml, the same entries the advanced-delegation
+        plugin's model_map backend reads, plus display fields for hermes-hub (``title``; ``helper: true`` offers the route
+        as "<name> when stuck"). A chat's choice is one of ``auto``, a route name, ``help-<route>`` or ``none``. Choices
+        live in ``$HERMES_HOME/subagent-routes/choices.json``, keyed by session id. A write goes to the tip of the
+        session's compression chain, and a read walks from a session up its compression parents, so a choice follows the
+        chat across context compression. The gateway (routing) and the dashboard (the hub's routes) are separate
+        processes; both read and write that one file.
+        """
+
+        from __future__ import annotations
+
+        import contextlib
+        import fcntl
+        import json
+        import logging
+        import os
+        import threading
+        import time
+        from pathlib import Path
+        from typing import Any, Mapping, Optional
+
+        logger = logging.getLogger("subagent_routes")
+
+        BACKEND = "model_map"
+        AUTO, NONE, HELP = "auto", "none", "help-"
+        POOL = "claude-pool"
+        ROUTE_FIELDS = ("provider", "model", "base_url", "api_key", "api_mode", "reasoning_effort", "service_tier")
+        #: How long a helper the router allowed counts as running before its subagent shows in the registry.
+        HELPER_START_GRACE = 120.0
+        _LINEAGE_CAP = 64
+
+
+        def _text(entry: Mapping[str, Any], key: str) -> str:
+            value = entry.get(key)
+            return " ".join(value.split()) if isinstance(value, str) else ""
+
+
+        def options(delegation: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
+            """``{name: option}`` from ``delegation.backends.model_map.options`` in config order. An entry without a name,
+            description, model, or provider/base_url, or with a repeated name, is skipped."""
+            backends = delegation.get("backends") if isinstance(delegation, Mapping) else None
+            settings = backends.get(BACKEND) if isinstance(backends, Mapping) else None
+            raw = settings.get("options") if isinstance(settings, Mapping) else None
+            out: dict[str, dict[str, Any]] = {}
+            for entry in raw if isinstance(raw, list) else []:
+                if not isinstance(entry, Mapping):
+                    continue
+                name, description, model = _text(entry, "name"), _text(entry, "description"), _text(entry, "model")
+                if not (name and description and model and (_text(entry, "provider") or _text(entry, "base_url"))):
+                    continue
+                if name in out or name.startswith(HELP) or name in (AUTO, NONE):
+                    continue
+                route = {k: entry[k].strip() for k in ROUTE_FIELDS if isinstance(entry.get(k), str) and entry[k].strip()}
+                if isinstance(entry.get("fallback_providers"), list):
+                    route["fallback_providers"] = list(entry["fallback_providers"])
+                out[name] = {"name": name, "description": description, "route": route, "model": model,
+                             "title": _text(entry, "title") or model, "helper": entry.get("helper") is True,
+                             "pool": _text(entry, "provider") == POOL, "provider": _text(entry, "provider"),
+                             "via": _text(entry, "via")}
+            return out
+
+
+        def default_route(delegation: Mapping[str, Any], opts: Mapping[str, dict]) -> str:
+            backends = delegation.get("backends") if isinstance(delegation, Mapping) else None
+            settings = backends.get(BACKEND) if isinstance(backends, Mapping) else None
+            value = settings.get("default") if isinstance(settings, Mapping) else None
+            value = value.strip() if isinstance(value, str) else ""
+            return value if value in opts else ""
+
+
+        def valid_choice(choice: str, opts: Mapping[str, dict]) -> bool:
+            if choice in (AUTO, NONE) or choice in opts:
+                return True
+            return choice.startswith(HELP) and opts.get(choice[len(HELP):], {}).get("helper") is True
+
+
+        def _short(title: str) -> str:
+            return title.split()[0] if title.split() else title
+
+
+        def choices(opts: Mapping[str, dict]) -> list[dict[str, str]]:
+            """What the hub's Subagents picker offers, in order, each with the line it shows under the pickers. ``em`` is
+            the part of the line the hub shows in bold."""
+            out = [{"id": AUTO, "label": "Auto (model chooses)", "group": "",
+                    "line": "The model picks a route for each subagent: local and Haiku for volume, Sonnet for normal work, "
+                            "Opus or Fable only for hard judgment or after a cheaper route failed.", "em": ""}]
+            for o in opts.values():
+                if o["via"]:
+                    line, em = f"Every subagent runs on {o['title']}, through {o['via']}.", o["title"]
+                elif o["pool"]:
+                    line, em = f"Every subagent runs on {o['title']}, through the Claude account pool.", o["title"]
+                elif o["provider"]:
+                    line, em = f"Every subagent runs on {o['title']}, through {o['provider']}.", o["title"]
+                else:
+                    line, em = f"Every subagent runs on {o['model']} on the local GPU.", o["model"]
+                out.append({"id": o["name"], "label": o["title"], "group": "Every subagent on", "line": line, "em": em})
+            for o in opts.values():
+                if o["helper"]:
+                    out.append({"id": HELP + o["name"], "label": f"{_short(o['title'])} when stuck", "group": "Ask for help",
+                                "line": f"Subagents run on the chat's own model; when stuck, it may ask {o['title']} for help, "
+                                        f"at most one at a time.", "em": o["title"]})
+            out.append({"id": NONE, "label": "No subagents", "group": "", "line": "This chat does not start subagents.",
+                        "em": ""})
+            return out
+
+
+        def note(choice: str, opts: Mapping[str, dict]) -> str:
+            """The line the model reads in the user's message while a chat has a choice set. The newest one is the rule."""
+            if choice == NONE:
+                return ("[Subagents in this chat (this replaces any earlier subagent note): off. The user turned subagents off for this chat, so do not call "
+                        "delegate_task; do the work yourself.]")
+            if choice in opts:
+                o = opts[choice]
+                return (f"[Subagents in this chat (this replaces any earlier subagent note): every subagent runs on {o['title']} (route `{choice}`), whatever `option` "
+                        f"says, so leave `option` out.]")
+            if choice.startswith(HELP) and choice[len(HELP):] in opts:
+                name = choice[len(HELP):]
+                return (f"[Subagents in this chat (this replaces any earlier subagent note): subagents run on your own model, so leave `option` out. Only when you "
+                        f"are stuck, you may start one subagent with option `{name}` ({opts[name]['title']}) to help; only one "
+                        f"such helper runs at a time.]")
+            return ("[Subagents in this chat (this replaces any earlier subagent note): auto. Pick each subagent's `option`: local routes or haiku for volume work, "
+                    "sonnet for normal work, opus or fable only for hard judgment or after a cheaper route failed.]")
+
+
+        # --- the choices file ---
+
+        _cache_lock = threading.Lock()
+        _cache: dict[str, Any] = {"key": None, "data": {}}
+
+
+        def store_path() -> Path:
+            from hermes_constants import get_hermes_home
+            return Path(get_hermes_home()) / "subagent-routes" / "choices.json"
+
+
+        def _read() -> dict[str, dict[str, Any]]:
+            path = store_path()
+            try:
+                st = path.stat()
+            except FileNotFoundError:
+                return {}
+            key = (st.st_mtime_ns, st.st_size, st.st_ino)
+            with _cache_lock:
+                if _cache["key"] == key:
+                    return _cache["data"]
+            try:
+                data = json.loads(path.read_text())
+            except (OSError, ValueError):
+                logger.warning("subagent-routes: %s is unreadable; every chat is on auto", path)
+                data = {}
+            sessions = data.get("sessions") if isinstance(data, dict) else None
+            sessions = {k: v for k, v in (sessions or {}).items() if isinstance(v, dict) and isinstance(v.get("choice"), str)}
+            with _cache_lock:
+                _cache.update(key=key, data=sessions)
+            return sessions
+
+
+        @contextlib.contextmanager
+        def _locked():
+            path = store_path()
+            path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            with open(path.with_suffix(".lock"), "a") as lock:
+                fcntl.flock(lock, fcntl.LOCK_EX)
+                try:
+                    yield path
+                finally:
+                    fcntl.flock(lock, fcntl.LOCK_UN)
+
+
+        def _write(session_id: str, choice: Optional[str]) -> None:
+            with _locked() as path:
+                sessions = dict(_read())
+                if choice is None:
+                    sessions.pop(session_id, None)
+                else:
+                    sessions[session_id] = {"choice": choice, "at": int(time.time())}
+                tmp = path.with_suffix(".tmp")
+                tmp.write_text(json.dumps({"sessions": sessions}, sort_keys=True))
+                os.chmod(tmp, 0o600)
+                os.replace(tmp, path)
+
+
+        # --- session lineage ---
+
+        @contextlib.contextmanager
+        def _db():
+            from hermes_state import SessionDB
+            db = SessionDB(read_only=True)
+            try:
+                yield db
+            finally:
+                with contextlib.suppress(Exception):
+                    db.close()
+
+
+        def lineage(session_id: str) -> list[str]:
+            """``session_id`` and its compression parents, nearest first (a branch, reset or subagent child stops it)."""
+            ids = [session_id] if session_id else []
+            if not session_id:
+                return ids
+            try:
+                with _db() as db:
+                    row = db.get_session(session_id)
+                    while row and len(ids) < _LINEAGE_CAP and db._is_compression_child_row(row):
+                        parent = row.get("parent_session_id")
+                        if not parent or parent in ids:
+                            break
+                        ids.append(parent)
+                        row = db.get_session(parent)
+            except Exception as exc:
+                logger.warning("subagent-routes: could not read the lineage of %s: %s", session_id, exc)
+            return ids
+
+
+        def tip(session_id: str) -> str:
+            try:
+                with _db() as db:
+                    return db.get_compression_tip(session_id) or session_id
+            except Exception as exc:
+                logger.warning("subagent-routes: could not find the compression tip of %s: %s", session_id, exc)
+                return session_id
+
+
+        def stored_choice(session_id: str) -> tuple[Optional[str], list[str]]:
+            """The choice set for the chat ``session_id`` belongs to (None when none is) and the chat's ids from its
+            compression tip back, the newest choice first."""
+            sessions = _read()
+            if not session_id:
+                return None, []
+            if not sessions:
+                return None, [session_id]
+            ids = lineage(tip(session_id))
+            for sid in ids:
+                if sid in sessions:
+                    return sessions[sid]["choice"], ids
+            return None, ids
+
+
+        def choice_for(session_id: str, opts: Mapping[str, dict]) -> str:
+            choice, _ = stored_choice(session_id)
+            return choice if choice and valid_choice(choice, opts) else AUTO
+
+
+        def forget(session_id: str) -> None:
+            """Drop a deleted session's choice."""
+            if session_id in _read():
+                _write(session_id, None)
+
+
+        def set_choice(session_id: str, choice: str) -> str:
+            """Keep ``choice`` for the chat ``session_id`` belongs to. Returns the id it was kept at. ``auto`` is kept too, so
+            the model reads that the chat went back to auto."""
+            at = tip(session_id)
+            _write(at, choice)
+            return at
+      plugin_api.py: |
+        """subagent-routes routes for hermes-hub, mounted at /api/plugins/subagent-routes/ behind dashboard sign-in: the
+        Subagents choice of one chat and the choices the picker offers."""
+        from __future__ import annotations
+
+        import importlib.util
+        import sys
+        from pathlib import Path
+
+        from fastapi import APIRouter, Request
+        from fastapi.responses import JSONResponse
+
+        router = APIRouter()
+        _CORE = "hermes_subagent_routes_core"
+
+
+        def _core():
+            module = sys.modules.get(_CORE)
+            if module is None:
+                spec = importlib.util.spec_from_file_location(_CORE, Path(__file__).parent.parent / "routes.py")
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[_CORE] = module
+                spec.loader.exec_module(module)
+            return module
+
+
+        def _options():
+            from hermes_cli.config import load_config_readonly
+            delegation = load_config_readonly().get("delegation") or {}
+            return _core().options(delegation if isinstance(delegation, dict) else {})
+
+
+        def _answer(session_id: str) -> dict:
+            core = _core()
+            opts = _options()
+            return {"choice": core.choice_for(session_id, opts), "choices": core.choices(opts)}
+
+
+        @router.get("/sessions/{session_id}")
+        def get_choice(session_id: str) -> dict:
+            return _answer(session_id)
+
+
+        @router.put("/sessions/{session_id}")
+        async def put_choice(session_id: str, request: Request):
+            try:
+                body = await request.json()
+            except Exception:
+                body = None
+            choice = body.get("choice") if isinstance(body, dict) else None
+            core = _core()
+            if not isinstance(choice, str) or not core.valid_choice(choice, _options()):
+                return JSONResponse({"error": "bad_choice", "message": "That is not a Subagents choice here."}, status_code=400)
+            import asyncio
+            await asyncio.to_thread(core.set_choice, session_id, choice)
+            return _answer(session_id)
+      manifest.json: |
+        {
+          "name": "subagent-routes",
+          "label": "Subagent routes",
+          "description": "The Subagents choice of each chat (which model routes its subagents may use), for hermes-hub.",
+          "api": "plugin_api.py",
+          "tab": { "hidden": true }
+        }
+
 persistence:
   data:
     type: persistentVolumeClaim
@@ -2151,6 +2762,14 @@ persistence:
       hermes:
         init:
           - path: /claude-accounts
+            readOnly: true
+  subagent-routes:
+    type: configMap
+    identifier: subagent-routes
+    advancedMounts:
+      hermes:
+        init:
+          - path: /subagent-routes
             readOnly: true
   tmp:
     type: emptyDir
