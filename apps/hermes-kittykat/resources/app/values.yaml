@@ -62,7 +62,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p35@sha256:ad5c37383bd5c20607cfa8575c301bc8a22ab48084ad76b87b25a5a1a97ab1fc
+          tag: &hermesTag v0.23.1-p37@sha256:bd7a3b43c3d38c6dc71b9377443b65ac1a115124c657272fcf539745c7dae647
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -540,8 +540,13 @@ configMaps:
           process_handoff_backends: [device]
         # Compaction keeps the newest loaded skill, up to 12,000 chars (about 3K tokens), instead of a reload marker
         #   (talaria-hermes 0015). A larger skill still gets the marker
+        # Older agent messages drop their repeated instructions paragraph (talaria-hermes 0070)
+        context:
+          collapse_agent_messages: true
         compression:
-          keep_last_skill_chars: 12000
+          keep_last_skill_chars: 20000
+          # Old tool output is pruned once the context passes 100K tokens, keeping the last skill (talaria-hermes 0071)
+          proactive_prune_tokens: 100000
           # Compact at 80% of the window (upstream default is 50% for windows of 512K and up)
           threshold: 0.80
         # The device browser and agent-messaging tools stay in the tool list instead of behind tool_search, so the
@@ -579,6 +584,9 @@ configMaps:
             - --disable-dev-shm-usage
         memory:
           provider: honcho
+          # Honcho's recalled context rides only the turn it was fetched for, capped at 8000 characters (talaria-hermes 0069)
+          recall_history: false
+          recall_max_chars: 8000
           # Hermes's defaults: its own notes (MEMORY.md, USER.md) next to Honcho, managed in the hub's Memory page
           memory_enabled: true
           user_profile_enabled: true
