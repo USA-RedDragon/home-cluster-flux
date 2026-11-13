@@ -745,6 +745,9 @@ configMaps:
         # Rolling updates (talaria-hermes 0010, 0011): SIGTERM opens the restart wait, and the new pod's gateway waits
         #   for this one's lock instead of exiting
         gateway:
+          # The replay ring keeps a whole turn (bounded by its 4 MiB byte cap), so a hub that re-attaches mid-reply
+          #   replays it instead of getting snapshot_required and showing the reply split (talaria-hermes 0056)
+          replay_buffer_events: 0
           sigterm_restart_wait: true
           runtime_lock_wait_seconds: 840
           # Her devices' connections (talaria) may come back during that wait, so turns still running there finish
