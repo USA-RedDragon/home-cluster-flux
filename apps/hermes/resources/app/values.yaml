@@ -43,7 +43,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria
-          tag: v0.26.2@sha256:81376bc0927d8baf9313c166953f62067be7e1ebca655ca69989eb93a43eb396
+          tag: v0.26.3@sha256:2243d887cbb4a5faae2b8457e3a05c3f6dd1433afaac4ba1b4144c2bd103005a
           pullPolicy: IfNotPresent
         command: ["/talaria", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -1161,7 +1161,7 @@ persistence:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/talaria:v0.26.2@sha256:81376bc0927d8baf9313c166953f62067be7e1ebca655ca69989eb93a43eb396
+        reference: jacob.pub/ghcr.io/usa-reddragon/talaria:v0.26.3@sha256:2243d887cbb4a5faae2b8457e3a05c3f6dd1433afaac4ba1b4144c2bd103005a
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
