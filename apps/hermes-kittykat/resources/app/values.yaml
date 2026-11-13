@@ -787,8 +787,9 @@ configMaps:
           # The hub's read-only socket calls (Activity panel lists, transcript, settings, command menu) are answered
           #   during the restart wait instead of runtime_draining (hermes-patches 0047)
           restart_wait_ws_reads: true
-          # Each stop writes a timing trace to stop-trace/<pid>.log in the data dir (hermes-patches 0038)
-          stop_trace: true
+          # No stop trace (hermes-patches 0038); set explicitly, because a key dropped from this overlay stays in
+          #   config.yaml
+          stop_trace: false
         webapp:
           enabled: true
           host: 0.0.0.0
