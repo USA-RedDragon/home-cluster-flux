@@ -734,6 +734,8 @@ configMaps:
         #   approvals stay answerable and new prompts wait for the new pod; then a short drain
         agent:
           restart_after_turn_timeout: 540
+          # A question to the user waits 30 minutes; the 90-second default timed out before anyone saw it
+          clarify_timeout: 1800
           restart_drain_timeout: 30
           # No paragraph pointing at the Hermes docs (talaria-hermes 0017)
           product_help_guidance: false
