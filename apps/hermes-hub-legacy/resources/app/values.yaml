@@ -26,7 +26,7 @@ controllers:
       hermes-hub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-hub
-          tag: v0.26.65@sha256:d03d66c4559cc370f7919e807113660c20cc8bfad6fb31257f4359f95d9c1e18
+          tag: v0.26.71@sha256:fde74c13919426def8d516f42227512e3fc80a4b85dc9a10eec5ca82545f7f1e
           pullPolicy: IfNotPresent
         # users and backends can only be set in the config file, so it comes from the hermes-hub Secret with the
         #   backend passwords; the other settings are here
@@ -43,6 +43,8 @@ controllers:
           HUB_OIDC_ISSUER_URL: https://authentik.mcswain.dev/application/o/hermes-hub/
           HUB_OIDC_CLIENT_ID: tREPLBoC0qfZVyZUL0yRHgeIGFhf8JMy6xNncyhM
           HUB_UI_DEFAULT_BACKENDS: reddragon=jacob,kittykat=kittykat
+          # The install type, so setup help shows Helm commands
+          HUB_UI_INSTALL: helm
           HUB_STORE_DRIVER: postgres
           HUB_STORE_DSN:
             valueFrom:
