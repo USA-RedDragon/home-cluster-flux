@@ -235,3 +235,25 @@ spec:
         - ports:
             - port: "5432"
               protocol: TCP
+---
+# During the cutover talaria-hub's hub runs on this database until the data moves to talaria-hub's own cluster
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: talaria-hub-db
+  namespace: hermes-hub
+spec:
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: postgresql
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: talaria-hub
+            app.kubernetes.io/controller: talaria-hub
+            app.kubernetes.io/instance: talaria-hub
+            app.kubernetes.io/name: talaria-hub
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
