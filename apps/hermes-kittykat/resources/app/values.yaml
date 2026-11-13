@@ -60,7 +60,7 @@ controllers:
       init:
         dependsOn: plugins
         image: &image
-          # Hermes Agent with the patches in github.com/USA-RedDragon/talaria-hermes; the tag before -p is the upstream release
+          # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
           tag: &hermesTag v0.23.1-p31@sha256:172182d2cd0537f78bb1a514ce443fd50cf482e9de4a39820a48884400334add
           pullPolicy: IfNotPresent

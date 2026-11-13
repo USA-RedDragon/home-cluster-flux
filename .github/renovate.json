@@ -455,7 +455,7 @@
             "automerge": false
         },
         {
-            "description": "Hermes Agent: one PR per release of the patched image (USA-RedDragon/talaria-hermes, tags v<upstream>-p<n>) for every Hermes image in apps/hermes and apps/hermes-kittykat, never merged on its own and never held back by the PR limits. The gate is the Hermes compatibility check on the Renovate PRs for the same upstream release in talaria-hub and talaria",
+            "description": "Hermes Agent: one PR per release of the patched image (image talaria-hermes from USA-RedDragon/talaria hermes/, tags v<upstream>-p<n>) for every Hermes image in apps/hermes and apps/hermes-kittykat, never merged on its own and never held back by the PR limits. The gate is the Hermes compatibility check on the Renovate PRs for the same upstream release in talaria-hub and talaria",
             "matchDatasources": [
                 "docker"
             ],
