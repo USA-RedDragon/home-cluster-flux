@@ -67,7 +67,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p40@sha256:5b1629b14fd1afd08ebdbb236364607713364c342843c5e09689673221dd3b77
+          tag: &hermesTag v0.23.1-p42@sha256:e42f9419d99b21606340535873453a9d5421ff63a860184ae2bcbb34a28d7fdd
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -644,6 +644,10 @@ configMaps:
         context:
           collapse_agent_messages: true
         compression:
+          # Compaction writes a short structured summary and keeps a decision ledger of the user's approvals and
+          #   choices, which rides every handoff (talaria-hermes 0078, 0079)
+          summary_style: compact
+          decision_ledger_chars: 6000
           keep_last_skill_chars: 20000
           # Old tool output is pruned once the context passes 100K tokens, keeping the last skill (talaria-hermes 0071)
           proactive_prune_tokens: 100000
@@ -742,6 +746,12 @@ configMaps:
           resize_mode: fit
         dashboard:
           managed_read_only: true
+        # An approval, a subagent's included, waits 30 minutes before it fails closed (talaria-hermes 0080 shows a
+        #   subagent's in its parent chat); smart approval also blocks a step that a file, page, tool output or
+        #   subagent claims the user approved (talaria-hermes 0077)
+        approvals:
+          timeout: 1800
+          smart_provenance: true
         agent:
           restart_after_turn_timeout: 540
           # A question to the user waits 30 minutes; the 90-second default timed out before anyone saw it
@@ -811,6 +821,9 @@ configMaps:
         # Rolling updates (talaria-hermes 0010, 0011): SIGTERM opens the restart wait, and the new pod's gateway waits
         #   for this one's lock instead of exiting
         gateway:
+          # The replay ring keeps a whole turn (bounded by its 4 MiB byte cap), so a hub that re-attaches mid-reply
+          #   replays it instead of getting snapshot_required and showing the reply split (talaria-hermes 0056)
+          replay_buffer_events: 0
           sigterm_restart_wait: true
           runtime_lock_wait_seconds: 840
           # His devices' connections (talaria) may come back during that wait, so turns still running there finish
