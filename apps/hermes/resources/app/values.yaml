@@ -65,7 +65,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p31@sha256:172182d2cd0537f78bb1a514ce443fd50cf482e9de4a39820a48884400334add
+          tag: &hermesTag v0.23.1-p34@sha256:b6aaa214fab517e2d0d08874f90e1b6b5ee1f062fcf3e3f4b9d8c292049064e8
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -270,7 +270,7 @@ controllers:
         #   dashboard container never gets this provider, so its loopback listener stays open behind the proxy
         envFrom:
           - secretRef:
-              name: talaria-hub-auth
+              name: hermes-hub-auth
           - &anthropic
             # Claude API keys of four accounts (ANTHROPIC_API_KEY_<ACCOUNT>) for the claude-api-* providers.
             #   Optional, so Hermes starts without them; claude-accounts never passes them to Claude Code
@@ -550,6 +550,10 @@ configMaps:
         #   claude-api-* providers are never routes. qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not)
         delegation:
           backend: model_map
+          # Room for a whole fix-test-release task; the default 250 cut off long tasks before they released
+          max_iterations: 400
+          # Subagents always run in the background on every surface, Telegram included
+          gateway_mode: background
           # A pod restart hands running background subagents to the new pod, which resumes them from their stored
           #   transcripts under the same delegation, so a rollout never loses one (talaria-hermes 0016)
           restart_handoff: true
@@ -736,6 +740,8 @@ configMaps:
           restart_after_turn_timeout: 540
           # A question to the user waits 30 minutes; the 90-second default timed out before anyone saw it
           clarify_timeout: 1800
+          # One warning at 80% of the step budget so a subagent wraps up and reports instead of being cut off
+          budget_warning_ratio: 0.8
           restart_drain_timeout: 30
           # No paragraph pointing at the Hermes docs (talaria-hermes 0017)
           product_help_guidance: false
