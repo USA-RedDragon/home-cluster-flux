@@ -502,6 +502,8 @@ configMaps:
         #   claude-api-* providers are never routes. qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not)
         delegation:
           backend: model_map
+          # Room for a whole fix-test-release task; the default 250 cut off long tasks before they released
+          max_iterations: 400
           # A pod restart hands running background subagents to the new pod, which resumes them from their stored
           #   transcripts under the same delegation, so a rollout never loses one (talaria-hermes 0016)
           restart_handoff: true
@@ -679,6 +681,8 @@ configMaps:
         #   approvals stay answerable and new prompts wait for the new pod; then a short drain
         agent:
           restart_after_turn_timeout: 540
+          # One warning at 80% of the step budget so a subagent wraps up and reports instead of being cut off
+          budget_warning_ratio: 0.8
           restart_drain_timeout: 30
           # No paragraph pointing at the Hermes docs (talaria-hermes 0017)
           product_help_guidance: false
