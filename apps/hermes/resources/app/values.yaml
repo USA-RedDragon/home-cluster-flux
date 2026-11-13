@@ -41,7 +41,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.25.1@sha256:4b82967c9b7ee6ad6f5c324cd5e25e022ba1b9ef75c9d41630c9f450479c891d
+          tag: v0.25.3@sha256:c19e36561ac6b34798eea6464dfbf5f974b44102d30c1e1f789abc88c3a7eeb0
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -63,9 +63,9 @@ controllers:
       claude-download:
         dependsOn: device-plugin
         image: &image
-          # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
-          repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p25@sha256:97d275cbc1e18a73effbbad9bebfb0c626bce15adc356be2a415ae72db8c9d40
+          # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
+          repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
+          tag: &hermesTag v0.23.1-p31@sha256:172182d2cd0537f78bb1a514ce443fd50cf482e9de4a39820a48884400334add
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -155,13 +155,13 @@ controllers:
             memory: 64Mi
         securityContext: *securityContext
       # Installs the Claude account pool (talaria-claude-pool, private) and the subagent-routes and project-memory
-      #   plugins (talaria-plugins) into the volume on every start, each only when its content changed. The init
+      #   plugins (plugins/ in the talaria repo) into the volume on every start, each only when its content changed. The init
       #   container below enables them. Not part of the Hermes image, so the image keeps its own releases
       plugins:
         dependsOn: claude-verify
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-private-plugins
-          tag: v0.2.3-tp0.1.1@sha256:772c7bd0904ced21c518b850f9be4fb92c28f3e1227f872593a1ec3771fe2be3
+          tag: v0.2.4-tp0.1.1@sha256:0a545b68732e915688a67d847cc614e5f5932e2d7aac212bdc5b586b710e96cb
           pullPolicy: IfNotPresent
         command: [/usr/local/bin/talaria-install-plugins, /opt/data/hermes/plugins]
         resources:
@@ -191,7 +191,7 @@ controllers:
             [ -d /opt/data/hermes/plugins/honcho ] || /opt/hermes/.venv/bin/hermes plugins install honcho --yes-deps
             /opt/hermes/.venv/bin/hermes plugins enable honcho || true
             /opt/hermes/.venv/bin/python /config/honcho-delegation-reply.py
-            # Model routes for subagents (delegation.backend: model_map): subagent-routes (talaria-plugins, installed by the plugins container)
+            # Model routes for subagents (delegation.backend: model_map): subagent-routes (plugins/ in the talaria repo, installed by the plugins container)
             #   provides that backend with a per-chat choice, in place of advanced-delegation's
             /opt/hermes/.venv/bin/hermes plugins disable advanced-delegation || true
             /opt/hermes/.venv/bin/hermes plugins enable subagent-routes || true
@@ -206,7 +206,7 @@ controllers:
             /opt/hermes/.venv/bin/hermes plugins enable claude-subscription-directsdk-experimental || true
             install -d -m 700 /opt/data/hermes/claude
             /opt/hermes/.venv/bin/hermes plugins enable claude-accounts || true
-            # Project memory: project-memory (talaria-plugins, installed by the plugins container) keeps one MEMORY.md per git repository of a chat's
+            # Project memory: project-memory (plugins/ in the talaria repo, installed by the plugins container) keeps one MEMORY.md per git repository of a chat's
             #   bound device folder, as the project_memory tool and a prompt block next to the global memory
             /opt/hermes/.venv/bin/hermes plugins enable project-memory || true
         env: &env
@@ -216,7 +216,7 @@ controllers:
           # The image the gateway runs, which the device plugin reports so that talaria chat runs the same build
           HERMES_IMAGE_REPOSITORY: *hermesRepository
           HERMES_IMAGE_TAG: *hermesTag
-          # The upstream image hermes-patches builds on, which devices can pull when they cannot pull the patched one
+          # The upstream image talaria-hermes builds on, which devices can pull when they cannot pull the patched one
           HERMES_BASE_IMAGE: docker.io/nousresearch/hermes-agent:v0.23.1@sha256:276d44685c65c0cb2a25f190b63c65c8906f9dc76486fb1c05ae71b5826bda08
           # Device paths too: file tools write through the device, and the device enforces its own roots. /home does
           #   not exist in the pod
@@ -264,11 +264,11 @@ controllers:
               secretKeyRef:
                 name: hermes-api
                 key: API_SERVER_KEY
-        # The gateway serves the Webapp listener (webapp: in the managed config) that hermes-hub signs in to; the
+        # The gateway serves the Webapp listener (webapp: in the managed config) that talaria-hub signs in to; the
         #   dashboard container never gets this provider, so its loopback listener stays open behind the proxy
         envFrom:
           - secretRef:
-              name: hermes-hub-auth
+              name: talaria-hub-auth
           - &anthropic
             # Claude API keys of four accounts (ANTHROPIC_API_KEY_<ACCOUNT>) for the claude-api-* providers.
             #   Optional, so Hermes starts without them; claude-accounts never passes them to Claude Code
@@ -549,24 +549,24 @@ configMaps:
         delegation:
           backend: model_map
           # A pod restart hands running background subagents to the new pod, which resumes them from their stored
-          #   transcripts under the same delegation, so a rollout never loses one (hermes-patches 0016)
+          #   transcripts under the same delegation, so a rollout never loses one (talaria-hermes 0016)
           restart_handoff: true
           # A subagent is stopped at a clean point as soon as the restart wait ends; a command it runs then moves to
           #   the background at once and the new pod hands the real result back (measured on upstairs-pc and the
           #   sandbox). Waiting 5 s first only made every stop with a running subagent 5 s longer
           restart_handoff_grace_seconds: 0
           # A background subagent on a provider that queues the request or answers 429 fails after one stale window
-          #   (no first chunk in 180 s) or at once, instead of 15+ minutes of retries (hermes-patches 0023)
+          #   (no first chunk in 180 s) or at once, instead of 15+ minutes of retries (talaria-hermes 0023)
           stream_stale_giveup: 1
           auto_recovery_cycles: 0
           # Background processes a subagent leaves running move to its parent instead of dying with it, also when it is
-          #   stopped for a restart handoff (hermes-patches 0027)
+          #   stopped for a restart handoff (talaria-hermes 0027)
           keep_child_processes: true
           # Each task of a delegate_task call returns as soon as it finishes instead of when the whole call does
           #   (upstream's delegation.independent_completions; ungrouped tasks complete one by one, tasks sharing a group together)
           independent_completions: true
           # A subagent that has agent_send is told it can answer its parent mid-run with agent_send(to="parent", ...),
-          #   in its system prompt and in each delegate_task steer (hermes-patches 0042)
+          #   in its system prompt and in each delegate_task steer (talaria-hermes 0042)
           parent_reply_guidance: true
           backends:
             model_map:
@@ -649,7 +649,7 @@ configMaps:
             reasoning_effort: none
             context_length: 131072
             # Chats on Claude summarize on their own model at their 1M window's threshold (patch 0001 of
-            #   hermes-patches), and so does any chat whose window is larger than this model's (DeepInfra, ChatGPT);
+            #   talaria-hermes), and so does any chat whose window is larger than this model's (DeepInfra, ChatGPT);
             #   other chats use the small local model above
             main_model_when_larger: true
             main_model_providers: [claude-pool, claude-jaam, claude-jamaag, claude-ja2000aag, claude-caam, claude-maam, anthropic,
@@ -660,23 +660,23 @@ configMaps:
           backend: device
           cwd: /opt/data/hermes/empty-cwd
           # A foreground command still running after 2 minutes moves to the background and notifies on exit
-          #   (hermes-patches 0002; talaria 0.19.5 and later does the same for device commands)
+          #   (talaria-hermes 0002; talaria 0.19.5 and later does the same for device commands)
           auto_background_seconds: 120
           # Background commands on his computers and in his sandbox keep running when the pod restarts; the new
-          #   gateway reattaches them and still sends their notices (hermes-patches 0012). Nothing runs in this pod
+          #   gateway reattaches them and still sends their notices (talaria-hermes 0012). Nothing runs in this pod
           process_handoff_backends: [device]
         # Compaction keeps the newest loaded skill, up to 12,000 chars (about 3K tokens), instead of a reload marker
-        #   (hermes-patches 0015). A larger skill still gets the marker
+        #   (talaria-hermes 0015). A larger skill still gets the marker
         compression:
           keep_last_skill_chars: 12000
           # Compact at 80% of the window (upstream default is 50% for windows of 512K and up)
           threshold: 0.80
         # The device browser and agent-messaging tools stay in the tool list instead of behind tool_search, so the
-        #   model calls them directly (hermes-patches 0013). Hermes sends them only while a computer offers them
+        #   model calls them directly (talaria-hermes 0013). Hermes sends them only while a computer offers them
         tools:
           tool_search:
             eager: [device-browser, device-agents, project-memory]
-        # image.render (TUI inline previews) reads only images Hermes stored (hermes-patches 0003)
+        # image.render (TUI inline previews) reads only images Hermes stored (talaria-hermes 0003)
         security:
           image_render_paths: media
         # The hermes-agent skill's index entry was the last mention of the product in the system prompt
@@ -685,15 +685,18 @@ configMaps:
         sessions:
           # A background process that exits, or a background subagent that finishes, while nobody is viewing its
           #   chat runs as an agent turn, up to 10 in a row for both together, so the agent picks the work back
-          #   up (hermes-patches 0007)
+          #   up (talaria-hermes 0007)
           unviewed_completion_turns: 10
           # A background subagent's result that arrives while its chat's turn is running rides that turn's next tool
-          #   result instead of waiting for the turn to end (hermes-patches 0022)
+          #   result instead of waiting for the turn to end (talaria-hermes 0022)
           mid_turn_subagent_results: true
           # A newer model pick settles the one still stored for its chat: one that is asked replaces it, one that is
-          #   refused clears it, and the confirmation of a replaced pick is refused (hermes-patches 0045)
+          #   refused clears it, and the confirmation of a replaced pick is refused (talaria-hermes 0045)
           newest_pick_supersedes: true
-          # Editors (ACP session/list) also offer chats the hub, TUI and CLI started (hermes-patches 0008)
+          # A turn lease this gateway wrote but no turn of it still holds (its release write failed) is reclaimed
+          #   at once, so picks on an idle chat are not deferred for up to 300 s (talaria-hermes 0046)
+          reclaim_orphaned_turn_leases: true
+          # Editors (ACP session/list) also offer chats the hub, TUI and CLI started (talaria-hermes 0008)
           acp_list_sources: [acp, gui, local, tui, cli]
         browser:
           chromium_args:
@@ -714,7 +717,7 @@ configMaps:
           check: false
         # Cron schedules ("every monday 9am") and the agent's clock use US Central, not the pod's UTC
         timezone: America/Chicago
-        # For hermes-hub. A wildcard bind is behind dashboard sign-in: the gateway's basic provider, user hub
+        # For talaria-hub. A wildcard bind is behind dashboard sign-in: the gateway's basic provider, user hub
         # Hub chats run as platform "desktop", and chats imported from Claude Code as "cli"; upstream's hint describes the Hermes desktop app (widgets, math), which the
         #   hub does not render
         platform_hints:
@@ -722,12 +725,13 @@ configMaps:
             replace: "You are chatting through Talaria: the hub web app (hub.mcswain.dev) or its Telegram bot, which show the same chats. The web app renders GitHub-flavored Markdown: headings, lists, task lists, tables, links and fenced code with syntax highlighting. It does not render math, HTML widgets or ::directives, so do not use them. Show an image with standard Markdown: ![description](/absolute/path.png). Link any other file the same way: [name](/absolute/path). The hub serves files your reply names this way. Save such files in the chat's working folder or below it, never in /tmp: the hub can only fetch files from there. Telegram shows the same reply in a narrow view, so keep tables to a few short columns."
           cli:
             replace: "You are chatting through Talaria: the hub web app (hub.mcswain.dev) or its Telegram bot, which show the same chats. The web app renders GitHub-flavored Markdown: headings, lists, task lists, tables, links and fenced code with syntax highlighting. It does not render math, HTML widgets or ::directives, so do not use them. Show an image with standard Markdown: ![description](/absolute/path.png). Link any other file the same way: [name](/absolute/path). The hub serves files your reply names this way. Save such files in the chat's working folder or below it, never in /tmp: the hub can only fetch files from there. Telegram shows the same reply in a narrow view, so keep tables to a few short columns."
-        # A pod stop is a graceful restart: running turns finish (up to 9 minutes, under the hub's 10-minute prompt
-        #   hold) while approvals stay answerable and new prompts wait for the new pod; then a short drain
+        # A pod stop is a graceful restart. With gateway.restart_turn_handoff running turns go to the new pod at
+        #   once; without it they finish first (up to 9 minutes, under the hub's 10-minute prompt hold) while
+        #   approvals stay answerable and new prompts wait for the new pod; then a short drain
         agent:
           restart_after_turn_timeout: 540
           restart_drain_timeout: 30
-          # No paragraph pointing at the Hermes docs (hermes-patches 0017)
+          # No paragraph pointing at the Hermes docs (talaria-hermes 0017)
           product_help_guidance: false
           # No hosted connectors through Nous (manage_connections) and no installs from the online catalog (manage_catalog)
           disabled_toolsets:
@@ -778,7 +782,7 @@ configMaps:
                     label: Claude (caam)
                   - id: maam
                     label: Claude (maam)
-        # Rolling updates (hermes-patches 0010, 0011): SIGTERM opens the restart wait, and the new pod's gateway waits
+        # Rolling updates (talaria-hermes 0010, 0011): SIGTERM opens the restart wait, and the new pod's gateway waits
         #   for this one's lock instead of exiting
         gateway:
           sigterm_restart_wait: true
@@ -786,42 +790,50 @@ configMaps:
           # His devices' connections (talaria) may come back during that wait, so turns still running there finish
           restart_wait_plugin_sockets: [device]
           # Idle agents release together within 5 s on the way out, instead of up to 30 s each while Honcho
-          #   waits out its read-ahead for a next turn (hermes-patches 0011)
+          #   waits out its read-ahead for a next turn (talaria-hermes 0011)
           restart_agent_cleanup_seconds: 5
           # Subagents are handed to the new pod instead (delegation.restart_handoff); set explicitly, because a key
           #   dropped from this overlay stays in config.yaml
           restart_wait_delegations: false
           # The old gateway's Webapp listener stays up through its stop until it releases the profile lock, so the new
-          #   pod's standby takes over with well under 2 s without a gateway (hermes-patches 0031)
+          #   pod's standby takes over with well under 2 s without a gateway (talaria-hermes 0031)
           restart_listener_handover: true
           # After it released the lock, that listener stays open and relays each connection to the new pod's
           #   gateway, retrying until it listens, which holds it until READY: clients wait instead of being
-          #   refused, and this pod stays serving until the new one is ready (hermes-patches 0035, 0036)
+          #   refused, and this pod stays serving until the new one is ready (talaria-hermes 0035, 0036)
           restart_listener_relay_seconds: 30
           listener_start_hold_seconds: 20
           # From the stop signal to the release, what this gateway would refuse (writes, sign-in and new
           #   sockets once the restart wait ends) waits instead and is forwarded to the new pod's gateway once it
           #   took over; GET reads are served during the restart wait, and the hub's sockets stay open through
-          #   it (hermes-patches 0037)
+          #   it (talaria-hermes 0037)
           restart_listener_hold_seconds: 90
           # Requests still running when the stop seals the listener get 0.5 s, and so do the ones cancelled then:
           #   the hub's device-bus long poll (up to 25 s in a worker thread) held every idle stop 15 to 23 s
-          #   (hermes-patches 0041)
+          #   (talaria-hermes 0041)
           restart_reads_grace_seconds: 0.5
-          # The socket tickets this gateway minted still open sockets on the new pod's gateway (hermes-patches 0039)
+          # The socket tickets this gateway minted still open sockets on the new pod's gateway (talaria-hermes 0039)
           restart_ticket_handover: true
           # A socket still relayed when the relay window ends gets close 1012, which the hub reconnects from at
-          #   once, instead of a cut connection (hermes-patches 0040)
+          #   once, instead of a cut connection (talaria-hermes 0040)
           restart_listener_relay_close_sockets: true
           # The hub's sockets kept through the restart wait end their sessions at the stop but get their close
           #   frame only 1 s after the new pod's gateway answers ready, so the hub reconnects once, straight to the
-          #   new pod, instead of once at the stop and again when the relay ends (hermes-patches 0043)
+          #   new pod, instead of once at the stop and again when the relay ends (talaria-hermes 0043)
           restart_socket_close_delay_seconds: 1
           # Idle chats' memory providers (Honcho) shut down after the release, once their writes were flushed, and
           #   this pod waits up to 30 s for them before it exits: a Honcho read-ahead held every busy stop 7 s
-          #   (hermes-patches 0044)
+          #   (talaria-hermes 0044)
           restart_memory_shutdown_after_release_seconds: 30
-          # No stop trace (hermes-patches 0038); set explicitly, because a key dropped from this overlay stays in
+          # The hub's read-only socket calls (Activity panel lists, transcript, settings, command menu) are answered
+          #   during the restart wait instead of runtime_draining (talaria-hermes 0047)
+          restart_wait_ws_reads: true
+          # A pod stop hands running turns to the new pod instead of waiting for them: each is stopped like a Stop,
+          #   and the new pod's gateway queues a turn that continues it, so other chats' new prompts run within
+          #   seconds of the takeover instead of after the longest turn (talaria-hermes 0048)
+          restart_turn_handoff: true
+          restart_turn_handoff_wait_seconds: 0
+          # No stop trace (talaria-hermes 0038); set explicitly, because a key dropped from this overlay stays in
           #   config.yaml
           stop_trace: false
         webapp:
@@ -1041,7 +1053,7 @@ configMaps:
             include /etc/nginx/dashboard.conf;
           }
         }
-      # The Chat tab's TUI is unused; hermes-hub is the chat UI
+      # The Chat tab's TUI is unused; talaria-hub is the chat UI
       dashboard.conf: |
         location /api/pty { return 403; }
         location / {
