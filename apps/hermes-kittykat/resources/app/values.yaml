@@ -44,7 +44,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.25.1@sha256:4b82967c9b7ee6ad6f5c324cd5e25e022ba1b9ef75c9d41630c9f450479c891d
+          tag: v0.25.2@sha256:f834b60eed8f9441ca7624bb3bc76a76bb71d96596447470b89cf974e735b93a
           pullPolicy: IfNotPresent
         command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -65,7 +65,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p27@sha256:44a328bf615c7542420492bf86b3eded98b4bb9d90253691b40f6d3f70ed21e9
+          tag: &hermesTag v0.23.1-p29@sha256:7a17e3c6195fb02daa68dc00f2b3d98459650a991cede3dc30fa4299feda3a90
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -787,7 +787,7 @@ configMaps:
           restart_turn_handoff_wait_seconds: 0
           # No stop trace (hermes-patches 0038); set explicitly, because a key dropped from this overlay stays in
           #   config.yaml
-          stop_trace: false
+          stop_trace: true
         webapp:
           enabled: true
           host: 0.0.0.0
