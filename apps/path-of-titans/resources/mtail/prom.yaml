@@ -80,27 +80,25 @@ spec:
 
     - name: path-of-titans-external
       rules:
-        # Build 53835 stopped logging the /pulse heartbeat and keeps its server-list
-        # session over an XMPP websocket, which logs only closes and reconnects.
-        - alert: PathOfTitansServerListConnectionFlapping
+        - alert: PathOfTitansDelistedFromServerList
           expr: |
-            increase(pot_alderon_xmpp_events_total{event="ws_closed"}[15m]) >= 3
+            increase(pot_alderon_pulse_total{code="200"}[5m]) == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Path of Titans has stopped heartbeating to the Alderon server list"
+            description: "No successful pulse in 5 minutes. The server is likely delisted and unfindable, even though it is still running."
+
+        - alert: PathOfTitansServerListErrors
+          expr: |
+            increase(pot_alderon_pulse_total{code!="200"}[10m]) > 0
           for: 0m
           labels:
             severity: warning
           annotations:
-            summary: "Path of Titans keeps losing its Alderon server-list connection"
-            description: "{{ $value }} websocket closes in 15 minutes. The server may be dropping out of the server list."
-
-        - alert: PathOfTitansAlderonUnreachable
-          expr: |
-            increase(pot_alderon_update_checks_total[35m]) == 0
-          for: 5m
-          labels:
-            severity: critical
-          annotations:
-            summary: "Path of Titans has not reached the Alderon API in 35 minutes"
-            description: "The server checks for updates every 15 minutes and none were logged. Check egress to alderongames.com and whether the server hung."
+            summary: "Path of Titans server-list heartbeat returning errors"
+            description: "{{ $value }} non-200 responses from the Alderon server list (HTTP {{ $labels.code }})."
 
         # Ban checks time out when the BattlEye master is unreachable, which
         # means bans silently stop being enforced. The egress CiliumNetworkPolicy

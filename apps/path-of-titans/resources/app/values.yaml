@@ -96,10 +96,6 @@ controllers:
           repository: jacob.pub/ghcr.io/srs-hosting/path-of-titans
           tag: 53835h3@sha256:4f49ad5316ff824c2f90ee13bb43d6e3aa855a730d2d914c941089663a6558c4
           pullPolicy: IfNotPresent
-        # Since 53835 the server logs successful Alderon API calls, including
-        # the server-list /pulse heartbeat that mtail alerts on, only at Verbose.
-        args:
-        - -LogCmds=AlderonLog Verbose
         resources:
           requests:
             cpu: 300m
