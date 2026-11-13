@@ -6,6 +6,8 @@ defaultPodOptions:
 controllers:
   hermes:
     replicas: 1
+    serviceAccount:
+      identifier: hermes
     # The new pod boots next to the old one as a standby: its gateway waits for the old gateway's lock
     #   (gateway.runtime_lock_wait_seconds) and takes over within a second of its exit. Both pods mount the RWO
     #   volume on one node. maxUnavailable 0 would deadlock: the old pod only stops once the new one is ready
@@ -336,6 +338,15 @@ controllers:
         env:
           <<: *env
           TMPDIR: /tmp
+          # Its own pod, for the preStop's check of metadata.deletionTimestamp
+          POD_NAME:
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          POD_NAMESPACE:
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
           TALARIA_ACP_HOST_LISTEN: ":9130"
           TALARIA_ACP_HOST_BACKEND_ID: jacob
           TALARIA_ACP_HOST_PLACEHOLDER: /opt/data/hermes/device-placeholder
@@ -361,15 +372,52 @@ controllers:
               periodSeconds: 1
               timeoutSeconds: 2
               failureThreshold: 2
+          # A hung acp-host is restarted alone: the preStop below sees the pod is not being deleted and leaves the
+          #   gateway running. 3 failures 20 s apart (60 s) ride out a busy moment. The probe's own grace period is
+          #   short because a stopped (SIGSTOP) or hung process never acts on SIGTERM, and the pod's 780 s would
+          #   hold the restart that long
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 9130
+              periodSeconds: 20
+              timeoutSeconds: 5
+              failureThreshold: 3
+              terminationGracePeriodSeconds: 30
         # A pod stop restarts the gateway gracefully: SIGTERM with gateway.sigterm_restart_wait opens the restart
         #   wait, where running turns finish and approvals stay answerable. This container stays up (and the pod
-        #   ready) until it ends; only then does the kubelet stop the gateway sidecar. No liveness probe: this
-        #   preStop must run only on a pod stop, never on a container restart
+        #   ready) until it ends; only then does the kubelet stop the gateway sidecar. The hook checks with the API that
+        #   the pod is being deleted, so a liveness restart of this container leaves the gateway alone
         lifecycle:
           preStop:
             exec:
               command: ["/opt/hermes/.venv/bin/python", "-I", "/etc/hermes-prestop.py", "signal"]
         securityContext: *securityContext
+
+serviceAccount:
+  hermes: {}
+
+# Only acp-host gets the token (the projected volume below; the pod itself automounts none), to read its own pod in
+#   the preStop. Pod names change with every rollout, so resourceNames cannot pin it; get on pods in this
+#   namespace, which holds only this app's pods, is the narrowest rule that works
+rbac:
+  roles:
+    hermes:
+      type: Role
+      rules:
+        - apiGroups: [""]
+          resources: ["pods"]
+          verbs: ["get"]
+  bindings:
+    hermes:
+      type: RoleBinding
+      roleRef:
+        identifier: hermes
+      subjects:
+        - identifier: hermes
 
 service:
   hermes:
@@ -912,18 +960,54 @@ configMaps:
         =oqMI
         -----END PGP PUBLIC KEY BLOCK-----
       # preStop of acp-host: keeps the container, and so the pod's readiness, up while the gateway
-      #   sidecar is in its restart wait, so the hub still reaches it to answer approvals. With "signal" (acp-host has
-      #   no liveness probe, so its preStop runs only on a pod stop) it first marks the pod
-      #   stopping and sends the gateway SIGTERM, which opens that wait (gateway.sigterm_restart_wait)
+      #   sidecar is in its restart wait, so the hub still reaches it to answer approvals. acp-host has a liveness
+      #   probe, so this hook also runs when only this container restarts; there it must not touch the gateway.
+      #   It asks the API for its own pod: with metadata.deletionTimestamp unset it is a container restart and
+      #   the hook exits at once. With the timestamp set, or when the API cannot be asked (fail toward the
+      #   graceful stop), it marks the pod stopping and sends the gateway SIGTERM, which opens the restart wait
+      #   (gateway.sigterm_restart_wait). Every step is bounded, so a hung acp-host cannot hold it
       hermes-prestop.py: |
+        import json
         import os
         import signal
+        import ssl
         import sys
         import time
         import urllib.request
 
+        SA = "/var/run/secrets/kubernetes.io/serviceaccount"
         marker = "/tmp/pod-stopping"
+
+
+        def pod_is_restarting_alone():
+            """True only when the API answered and this pod has no deletionTimestamp."""
+            try:
+                host = os.environ["KUBERNETES_SERVICE_HOST"]
+                if ":" in host:
+                    host = f"[{host}]"
+                url = (f"https://{host}:{os.environ.get('KUBERNETES_SERVICE_PORT', '443')}"
+                       f"/api/v1/namespaces/{os.environ['POD_NAMESPACE']}/pods/{os.environ['POD_NAME']}")
+                with open(f"{SA}/token") as f:
+                    token = f.read().strip()
+                ctx = ssl.create_default_context(cafile=f"{SA}/ca.crt")
+            except Exception:
+                return False
+            for attempt in range(3):
+                try:
+                    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+                    with urllib.request.urlopen(req, timeout=3, context=ctx) as r:
+                        pod = json.load(r)
+                    return not pod.get("metadata", {}).get("deletionTimestamp")
+                except Exception:
+                    time.sleep(1)
+            return False
+
+
+        # Whatever happens, end before the pod's grace period does
+        signal.alarm(770)
         if sys.argv[1:] == ["signal"]:
+            if pod_is_restarting_alone():
+                sys.exit(0)
             open(marker, "w").close()
             # Serve on until the new pod's gateway has warmed up and waits for the lock (gateway.standby), so it
             #   takes over within a second; a stop with no successor goes on after 2 minutes
@@ -944,12 +1028,6 @@ configMaps:
                     continue
                 if b"gateway" in argv and b"run" in argv and b"--external-supervisor" in argv:
                     os.kill(int(pid), signal.SIGTERM)
-        # Without the marker this is a restart of this container alone (a failed liveness probe), not a pod stop
-        start = time.monotonic()
-        while not os.path.exists(marker):
-            if time.monotonic() - start > 5:
-                sys.exit(0)
-            time.sleep(0.2)
         deadline = time.monotonic() + 760
         failures = 0
         while time.monotonic() < deadline and failures < 3:
@@ -1058,12 +1136,32 @@ persistence:
           - path: /tmp
         acp-host:
           - path: /tmp
+  # The API token and CA, for acp-host only (the gateway and the init containers get none)
+  kube-api:
+    type: custom
+    volumeSpec:
+      projected:
+        defaultMode: 0444
+        sources:
+          - serviceAccountToken:
+              path: token
+              expirationSeconds: 3607
+          - configMap:
+              name: kube-root-ca.crt
+              items:
+                - key: ca.crt
+                  path: ca.crt
+    advancedMounts:
+      hermes:
+        acp-host:
+          - path: /var/run/secrets/kubernetes.io/serviceaccount
+            readOnly: true
   # The talaria binary, for acp-host
   talaria-bin:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/talaria:v0.26.1@sha256:1e8f144c123695b0b5044e85204dc353e4429b48cc5c2460f6dc4c79ef07401b
+        reference: jacob.pub/ghcr.io/usa-reddragon/talaria:v0.26.2@sha256:81376bc0927d8baf9313c166953f62067be7e1ebca655ca69989eb93a43eb396
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
