@@ -65,7 +65,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p34@sha256:b6aaa214fab517e2d0d08874f90e1b6b5ee1f062fcf3e3f4b9d8c292049064e8
+          tag: &hermesTag v0.23.1-p35@sha256:ad5c37383bd5c20607cfa8575c301bc8a22ab48084ad76b87b25a5a1a97ab1fc
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -464,9 +464,8 @@ configMaps:
           backend: model_map
           # Room for a whole fix-test-release task; the default 250 cut off long tasks before they released
           max_iterations: 400
-          # The background subagent limit is counted across all chats until the per-chat patch ships; 40 so one
-          #   busy chat cannot push other chats onto the blocking path
-          max_concurrent_children: 40
+          # Each chat runs up to 10 background subagents (the default); more wait in a queue and start when one of
+          #   that chat's slots frees, never inside the turn (talaria-hermes 0064)
           # Subagents always run in the background on every surface, Telegram included
           gateway_mode: background
           # A pod restart hands running background subagents to the new pod, which resumes them from their stored
@@ -651,6 +650,9 @@ configMaps:
         # A pod stop is a graceful restart. With gateway.restart_turn_handoff running turns go to the new pod at
         #   once; without it they finish first (up to 9 minutes, under the hub's 10-minute prompt hold) while
         #   approvals stay answerable and new prompts wait for the new pod; then a short drain
+        # Settings Flux pins here show read-only in the hub; writes to them are refused (talaria-hermes 0062)
+        dashboard:
+          managed_read_only: true
         agent:
           restart_after_turn_timeout: 540
           # A question to the user waits 30 minutes; the 90-second default timed out before anyone saw it
