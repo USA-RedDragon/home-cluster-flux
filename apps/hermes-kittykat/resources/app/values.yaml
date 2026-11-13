@@ -656,6 +656,9 @@ configMaps:
           # A newer model pick settles the one still stored for its chat: one that is asked replaces it, one that is
           #   refused clears it, and the confirmation of a replaced pick is refused (hermes-patches 0045)
           newest_pick_supersedes: true
+          # A turn lease this gateway wrote but no turn of it still holds (its release write failed) is reclaimed
+          #   at once, so picks on an idle chat are not deferred for up to 300 s (hermes-patches 0046)
+          reclaim_orphaned_turn_leases: true
           # Editors (ACP session/list) also offer chats the hub, TUI and CLI started (hermes-patches 0008)
           acp_list_sources: [acp, gui, local, tui, cli]
         browser:
