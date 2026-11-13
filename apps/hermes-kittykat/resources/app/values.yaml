@@ -318,10 +318,10 @@ controllers:
         securityContext: *securityContext
     containers:
       # Hosts one hermes acp per editor connection that the hub forwards. Its own container, so editor sessions
-      #   outlive gateway restarts; the binary comes from the hermes-device image, mounted read-only
+      #   outlive gateway restarts; the binary comes from the talaria image, mounted read-only
       acp-host:
         image: *image
-        command: ["/opt/hermes-device/hermes-device", "acp-host"]
+        command: ["/opt/talaria/talaria", "acp-host"]
         workingDir: /opt/data/hermes
         env:
           <<: *env
@@ -351,10 +351,31 @@ controllers:
               periodSeconds: 1
               timeoutSeconds: 2
               failureThreshold: 2
+          # Failures leave a marker for the preStop (hermes-prestop.py); a pass removes it. Slow on purpose: a
+          #   restart drops the editor sessions' hermes acp children
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    if curl -fsS -m 4 -o /dev/null http://127.0.0.1:9130/healthz; then
+                      rm -f /tmp/liveness-failed
+                    else
+                      touch /tmp/liveness-failed
+                      exit 1
+                    fi
+              periodSeconds: 10
+              timeoutSeconds: 6
+              failureThreshold: 3
         # A pod stop restarts the gateway gracefully: SIGTERM with gateway.sigterm_restart_wait opens the restart
         #   wait, where running turns finish and approvals stay answerable. This container stays up (and the pod
-        #   ready) until it ends; only then does the kubelet stop the gateway sidecar. No liveness probe: this
-        #   preStop must run only on a pod stop, never on a container restart
+        #   ready) until it ends; only then does the kubelet stop the gateway sidecar. The kubelet runs this
+        #   preStop on a liveness restart too: the liveness probe leaves /tmp/liveness-failed when it fails and the
+        #   preStop then skips the stop sequence
         lifecycle:
           preStop:
             exec:
@@ -820,7 +841,7 @@ configMaps:
         os.replace(path + ".tmp", path)
       # preStop of acp-host: keeps the container, and so the pod's readiness, up while the gateway
       #   sidecar is in its restart wait, so the hub still reaches it to answer approvals. With "signal" (acp-host has
-      #   no liveness probe, so its preStop runs only on a pod stop) it first marks the pod
+      #   liveness marker, see below) it first marks the pod
       #   stopping and sends the gateway SIGTERM, which opens that wait (gateway.sigterm_restart_wait)
       hermes-prestop.py: |
         import os
@@ -830,6 +851,14 @@ configMaps:
         import urllib.request
 
         marker = "/tmp/pod-stopping"
+        # The kubelet runs this preStop on a liveness restart as well. The liveness probe touches this file on every
+        #   failure and removes it on a pass, so a fresh one means this container alone is being restarted: leave
+        #   the gateway alone
+        try:
+            if time.time() - os.path.getmtime("/tmp/liveness-failed") < 60:
+                sys.exit(0)
+        except OSError:
+            pass
         if sys.argv[1:] == ["signal"]:
             open(marker, "w").close()
             # Serve on until the new pod's gateway has warmed up and waits for the lock (gateway.standby), so it
@@ -997,15 +1026,15 @@ persistence:
           - path: /tmp
         acp-host:
           - path: /tmp
-  # The hermes-device binary, for acp-host
-  device-bin:
+  # The talaria binary, for acp-host
+  talaria-bin:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.20.0@sha256:dafeed26fe1adcd4ef40abd9f8a49e63eabcb63c7f265045078eb9a5cf4a9dca
+        reference: jacob.pub/ghcr.io/usa-reddragon/talaria:v0.26.1@sha256:1e8f144c123695b0b5044e85204dc353e4429b48cc5c2460f6dc4c79ef07401b
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
         acp-host:
-          - path: /opt/hermes-device
+          - path: /opt/talaria
             readOnly: true
