@@ -47,12 +47,10 @@ controllers:
           # The install type, so setup help shows Helm commands
           HUB_UI_INSTALL: helm
           HUB_STORE_DRIVER: postgres
-          # For the cutover only: hub-store (made by the cutover script) points at the hub-db Service, which
-          #   names hermes-hub's database first and this namespace's after the data moves
           HUB_STORE_DSN:
             valueFrom:
               secretKeyRef:
-                name: hub-store
+                name: postgresql-app
                 key: uri
           HUB_TELEGRAM_ENABLED: "true"
           # Paired computers and sandboxes; the hub signs each device connection with this key
