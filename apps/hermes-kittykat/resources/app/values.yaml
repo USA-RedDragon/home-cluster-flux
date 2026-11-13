@@ -62,7 +62,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p25@sha256:97d275cbc1e18a73effbbad9bebfb0c626bce15adc356be2a415ae72db8c9d40
+          tag: &hermesTag v0.23.1-p26@sha256:fda687859437d3e20474a9d616b8aae0cce26c3adaa401e6e17d1bbca354f36c
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -781,9 +781,11 @@ configMaps:
           #   this pod waits up to 30 s for them before it exits: a Honcho read-ahead held every busy stop 7 s
           #   (hermes-patches 0044)
           restart_memory_shutdown_after_release_seconds: 30
-          # No stop trace (hermes-patches 0038); set explicitly, because a key dropped from this overlay stays in
-          #   config.yaml
-          stop_trace: false
+          # The hub's read-only socket calls (Activity panel lists, transcript, settings, command menu) are answered
+          #   during the restart wait instead of runtime_draining (hermes-patches 0047)
+          restart_wait_ws_reads: true
+          # Each stop writes a timing trace to stop-trace/<pid>.log in the data dir (hermes-patches 0038)
+          stop_trace: true
         webapp:
           enabled: true
           host: 0.0.0.0
