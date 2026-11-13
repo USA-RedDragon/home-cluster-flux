@@ -464,6 +464,9 @@ configMaps:
           backend: model_map
           # Room for a whole fix-test-release task; the default 250 cut off long tasks before they released
           max_iterations: 400
+          # The background subagent limit is counted across all chats until the per-chat patch ships; 40 so one
+          #   busy chat cannot push other chats onto the blocking path
+          max_concurrent_children: 40
           # Subagents always run in the background on every surface, Telegram included
           gateway_mode: background
           # A pod restart hands running background subagents to the new pod, which resumes them from their stored
