@@ -37,13 +37,13 @@ controllers:
         seccompProfile:
           type: RuntimeDefault
     initContainers:
-      # The device plugin, from the hermes-device image, so client, plugin and protocol share one release
+      # The device plugin, from the talaria image, so client, plugin and protocol share one release
       device-plugin:
         image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device
-          tag: v0.25.3@sha256:c19e36561ac6b34798eea6464dfbf5f974b44102d30c1e1f789abc88c3a7eeb0
+          repository: jacob.pub/ghcr.io/usa-reddragon/talaria
+          tag: v0.26.1@sha256:1e8f144c123695b0b5044e85204dc353e4429b48cc5c2460f6dc4c79ef07401b
           pullPolicy: IfNotPresent
-        command: ["/hermes-device", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
+        command: ["/talaria", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
           requests:
             cpu: 10m
