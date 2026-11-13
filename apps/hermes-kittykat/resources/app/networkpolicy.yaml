@@ -65,6 +65,16 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+    # The Kubernetes API, for acp-host's preStop (its own pod's deletionTimestamp); 6443 is the apiserver behind the
+    #   service address
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "6443"
+              protocol: TCP
     # SearXNG, the web search backend
     - toEndpoints:
         - matchLabels:
