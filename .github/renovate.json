@@ -332,14 +332,21 @@
             "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)-system-(?<compatibility>[a-z]+)$"
         },
         {
-            "description": "Path of Titans tags are <build>h<hotfix>, e.g. 48554h25",
+            "description": "Path of Titans tags are <build>h<hotfix>, e.g. 48554h25; clients refuse a server on a different build, so every build deploys immediately",
             "matchDatasources": [
                 "docker"
             ],
             "matchPackageNames": [
-                "ghcr.io/usa-reddragon/path-of-titans"
+                "/(^|\\/)ghcr\\.io/srs-hosting/path-of-titans$/"
             ],
-            "versioning": "regex:^(?<major>\\d+)h(?<minor>\\d+)$"
+            "versioning": "regex:^(?<major>\\d+)h(?<minor>\\d+)$",
+            "groupName": null,
+            "schedule": [
+                "at any time"
+            ],
+            "minimumReleaseAge": null,
+            "dependencyDashboardApproval": false,
+            "automerge": true
         },
         {
             "description": "sdr-enthusiasts tags are <variant>-build-<n>, e.g. telegraf-build-845; docker versioning rejects them",
