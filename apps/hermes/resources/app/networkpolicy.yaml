@@ -33,11 +33,14 @@ spec:
         - ports:
             - port: "9120"
               protocol: TCP
-    # hermes-hub, to the gateway's Webapp listener and acp-host
+    # The hub (hermes-hub, and talaria-hub after the rename), to the gateway's Webapp listener and acp-host
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: hermes-hub
             app.kubernetes.io/controller: hermes-hub
+        - matchLabels:
+            io.kubernetes.pod.namespace: talaria-hub
+            app.kubernetes.io/controller: talaria-hub
       toPorts:
         - ports:
             - port: "9120"

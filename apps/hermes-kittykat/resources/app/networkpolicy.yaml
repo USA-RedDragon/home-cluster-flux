@@ -21,7 +21,7 @@ spec:
       app.kubernetes.io/controller: hermes
       app.kubernetes.io/instance: hermes-kittykat
       app.kubernetes.io/name: hermes-kittykat
-  # hermes-hub, her front end, to the gateway's Webapp listener and acp-host
+  # The hub (hermes-hub, and talaria-hub after the rename), her front end, to the gateway's Webapp listener and acp-host
   ingress:
     # The old pod's gateway relays its Webapp listener to the new pod's during a rollout
     #   (gateway.restart_listener_relay_seconds)
@@ -38,6 +38,9 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: hermes-hub
             app.kubernetes.io/controller: hermes-hub
+        - matchLabels:
+            io.kubernetes.pod.namespace: talaria-hub
+            app.kubernetes.io/controller: talaria-hub
       toPorts:
         - ports:
             - port: "9120"

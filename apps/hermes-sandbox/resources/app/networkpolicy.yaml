@@ -26,6 +26,9 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: hermes-hub
             app.kubernetes.io/controller: hermes-hub
+        - matchLabels:
+            io.kubernetes.pod.namespace: talaria-hub
+            app.kubernetes.io/controller: talaria-hub
       toPorts:
         - ports:
             - port: "8080"

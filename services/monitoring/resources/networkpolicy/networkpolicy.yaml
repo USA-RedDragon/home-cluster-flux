@@ -142,11 +142,14 @@ spec:
         - ports:
             - port: "9090"
               protocol: TCP
-    # hermes-hub's Usage page reads the GPU's busy time
+    # The hub's Usage page (hermes-hub, and talaria-hub after the rename) reads the GPU's busy time
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: hermes-hub
             app.kubernetes.io/controller: hermes-hub
+        - matchLabels:
+            io.kubernetes.pod.namespace: talaria-hub
+            app.kubernetes.io/controller: talaria-hub
       toPorts:
         - ports:
             - port: "9090"
