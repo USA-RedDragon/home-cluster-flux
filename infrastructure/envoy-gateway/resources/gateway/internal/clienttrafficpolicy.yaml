@@ -1,10 +1,12 @@
+# No http3 here on purpose. Firefox 160 on a Tailscale client (framework-13) kept losing its HTTP/3 connections to the
+#   hub: every ~20 s all in-flight requests on them were cancelled and retried over new HTTP/2 connections, and each chat
+#   event stream ended within 3 s. HTTP/2 over TCP is steady. The public gateway keeps HTTP/3.
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
 metadata:
   name: internal-client-policy
   namespace: envoy-gateway-system
 spec:
-  http3: {}
   http2:
     initialStreamWindowSize: 1Mi
     initialConnectionWindowSize: 4Mi
