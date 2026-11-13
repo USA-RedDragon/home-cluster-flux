@@ -455,13 +455,13 @@
             "automerge": false
         },
         {
-            "description": "Hermes Agent: one PR per release of the patched image (USA-RedDragon/hermes-patches, tags v<upstream>-p<n>) for every Hermes image in apps/hermes and apps/hermes-kittykat, never merged on its own and never held back by the PR limits. The gate is the Hermes compatibility check on the Renovate PRs for the same upstream release in talaria-hub and talaria",
+            "description": "Hermes Agent: one PR per release of the patched image (USA-RedDragon/talaria-hermes, tags v<upstream>-p<n>) for every Hermes image in apps/hermes and apps/hermes-kittykat, never merged on its own and never held back by the PR limits. The gate is the Hermes compatibility check on the Renovate PRs for the same upstream release in talaria-hub and talaria",
             "matchDatasources": [
                 "docker"
             ],
             "matchPackageNames": [
                 "/(^|\\/)nousresearch\\/hermes-agent$/",
-                "/(^|\\/)usa-reddragon\\/hermes-patches$/"
+                "/(^|\\/)usa-reddragon\\/talaria-hermes$/"
             ],
             "groupName": "Hermes Agent",
             "dependencyDashboardApproval": false,
@@ -470,16 +470,16 @@
             "prHourlyLimit": 0,
             "prPriority": 10,
             "prBodyNotes": [
-                "**Before merging:** Hermes {{{replace '-p[0-9]+$' '' newVersion}}} must pass the Hermes compatibility check on the Renovate PR for the same release in [talaria-hub](https://github.com/USA-RedDragon/talaria-hub/pulls?q=is%3Apr+hermes-agent+{{{replace '-p[0-9]+$' '' newVersion}}}) (check \"Hermes contract\") and [talaria](https://github.com/USA-RedDragon/talaria/pulls?q=is%3Apr+hermes-agent+{{{replace '-p[0-9]+$' '' newVersion}}}) (check \"Hermes plugin\"). A red check means the upgrade breaks the hub or the device plugin. The image is upstream's with the patches in [hermes-patches](https://github.com/USA-RedDragon/hermes-patches); the part of the tag before -p is the upstream release. Steps and rollout order: [docs/hermes-upgrade.md](https://github.com/USA-RedDragon/talaria-hub/blob/main/docs/hermes-upgrade.md)."
+                "**Before merging:** Hermes {{{replace '-p[0-9]+$' '' newVersion}}} must pass the Hermes compatibility check on the Renovate PR for the same release in [talaria-hub](https://github.com/USA-RedDragon/talaria-hub/pulls?q=is%3Apr+hermes-agent+{{{replace '-p[0-9]+$' '' newVersion}}}) (check \"Hermes contract\") and [talaria](https://github.com/USA-RedDragon/talaria/pulls?q=is%3Apr+hermes-agent+{{{replace '-p[0-9]+$' '' newVersion}}}) (check \"Hermes plugin\"). A red check means the upgrade breaks the hub or the device plugin. The image is upstream's with the patches in [talaria-hermes](https://github.com/USA-RedDragon/talaria-hermes); the part of the tag before -p is the upstream release. Steps and rollout order: [docs/hermes-upgrade.md](https://github.com/USA-RedDragon/talaria-hub/blob/main/docs/hermes-upgrade.md)."
             ]
         },
         {
-            "description": "hermes-patches tags are v<upstream release>-p<n>, e.g. v0.23.1-p2",
+            "description": "talaria-hermes tags are v<upstream release>-p<n>, e.g. v0.23.1-p2",
             "matchDatasources": [
                 "docker"
             ],
             "matchPackageNames": [
-                "/(^|\\/)usa-reddragon\\/hermes-patches$/"
+                "/(^|\\/)usa-reddragon\\/talaria-hermes$/"
             ],
             "versioning": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-p(?<build>\\d+)$"
         },
