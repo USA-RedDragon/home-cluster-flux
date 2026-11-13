@@ -161,7 +161,7 @@ controllers:
         dependsOn: claude-verify
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-private-plugins
-          tag: v0.2.4-tp0.1.1@sha256:0a545b68732e915688a67d847cc614e5f5932e2d7aac212bdc5b586b710e96cb
+          tag: v0.2.4-tp0.1.2@sha256:0fd23ff31f9b4d532079aee4f483f8cad738e537003fa64cdcc5e4fa73199cf2
           pullPolicy: IfNotPresent
         command: [/usr/local/bin/talaria-install-plugins, /opt/data/hermes/plugins]
         resources:
@@ -688,6 +688,11 @@ configMaps:
               settings:
                 wait_guidance: true
                 sleep_guard: true
+            # Project notes save without asking while Hermes's own memory (memory.write_approval) keeps asking; entries
+            #   already pending stay pending (project-memory 0.1.2)
+            project-memory:
+              settings:
+                write_approval: false
             device:
               # Lets the plugin hide Hermes's browser_vault tool
               granted_capabilities: [tools.override]
