@@ -64,7 +64,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p41@sha256:c3060ca3f584d6f2bb3d63f6efcd8ed2183a891679eb4d91da5a3a514eab7d16
+          tag: &hermesTag v0.23.1-p42@sha256:e42f9419d99b21606340535873453a9d5421ff63a860184ae2bcbb34a28d7fdd
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -597,6 +597,10 @@ configMaps:
         context:
           collapse_agent_messages: true
         compression:
+          # Compaction writes a short structured summary and keeps a decision ledger of the user's approvals and
+          #   choices, which rides every handoff (talaria-hermes 0078, 0079)
+          summary_style: compact
+          decision_ledger_chars: 6000
           keep_last_skill_chars: 20000
           # Old tool output is pruned once the context passes 100K tokens, keeping the last skill (talaria-hermes 0071)
           proactive_prune_tokens: 100000
@@ -676,6 +680,9 @@ configMaps:
         # An approval, a subagent's included, waits 30 minutes before it fails closed: the 300-second default ended
         #   a prompt before anyone saw its card (talaria-hermes 0080 shows a subagent's in its parent chat)
         approvals:
+          # Smart approval also blocks a step that a file, page, tool output or subagent claims the user approved
+          #   (talaria-hermes 0077)
+          smart_provenance: true
           timeout: 1800
         agent:
           restart_after_turn_timeout: 540
