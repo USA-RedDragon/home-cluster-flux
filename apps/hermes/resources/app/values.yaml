@@ -67,7 +67,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p37@sha256:bd7a3b43c3d38c6dc71b9377443b65ac1a115124c657272fcf539745c7dae647
+          tag: &hermesTag v0.23.1-p40@sha256:5b1629b14fd1afd08ebdbb236364607713364c342843c5e09689673221dd3b77
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -192,7 +192,7 @@ controllers:
             install -m 600 /config/honcho.json /opt/data/hermes/.honcho.json.new && mv -f /opt/data/hermes/.honcho.json.new /opt/data/hermes/honcho.json
             [ -d /opt/data/hermes/plugins/honcho ] || /opt/hermes/.venv/bin/hermes plugins install honcho --yes-deps
             /opt/hermes/.venv/bin/hermes plugins enable honcho || true
-            /opt/hermes/.venv/bin/python /config/honcho-delegation-reply.py
+            /opt/hermes/.venv/bin/python /config/honcho-recall.py
             # Model routes for subagents (delegation.backend: model_map): subagent-routes (plugins/ in the talaria repo, installed by the plugins container)
             #   provides that backend with a per-chat choice, in place of advanced-delegation's
             /opt/hermes/.venv/bin/hermes plugins disable advanced-delegation || true
@@ -289,7 +289,8 @@ controllers:
           limits:
             memory: 8Gi
         probes:
-          # A warmed-up standby (gateway.standby on the volume) counts as started and alive, so the other containers
+          # A warmed-up standby (gateway.standby on the volume, touched within 10 s and naming this pod) counts as
+          #   started and alive, so the other containers
           #   start while it waits for the old pod's gateway and only this gateway's readiness gates the takeover
           startup:
             enabled: true
@@ -299,7 +300,8 @@ controllers:
                 command: &gatewayProbe
                   - /bin/sh
                   - -c
-                  - test -e /opt/data/hermes/gateway.standby || curl -fsS -m 5 -o /dev/null http://127.0.0.1:8642/health
+                  - |-
+                    f=/opt/data/hermes/gateway.standby; { find "$f" -newermt '-10 seconds' 2>/dev/null | grep -q . && grep -qF "\"hostname\": \"$(cat /etc/hostname)\"" "$f"; } || curl -fsS -m 5 -o /dev/null http://127.0.0.1:8642/health
               periodSeconds: 1
               timeoutSeconds: 6
               failureThreshold: 960
@@ -603,6 +605,9 @@ configMaps:
                   helper: true
         # Title generation runs in the background, so it goes through /low; compression holds up the turn, so it does not
         auxiliary:
+          # The background skill and memory reviewer is off, per Jacob's skill policy
+          background_review:
+            enabled: false
           title_generation:
             provider: custom
             base_url: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/low/v1
@@ -653,8 +658,29 @@ configMaps:
         security:
           image_render_paths: media
         # The hermes-agent skill's index entry was the last mention of the product in the system prompt
+        #   The rest of the list is from Jacob's skills audit on 2026-11-13
         skills:
-          disabled: [hermes-agent]
+          # A new skill that overlaps an existing one must say why it is new (talaria-hermes 0076)
+          create_overlap_threshold: 0.35
+          disabled:
+            - hermes-agent
+            - claude-code
+            - apple-notes
+            - apple-reminders
+            - codebase-inspection
+            - codex
+            - email-inbox-triage
+            - findmy
+            - google-workspace
+            - himalaya
+            - imessage
+            - manim-video
+            - obsidian
+            - sdlc-review
+            - songwriting-and-ai-music
+            - teams-meeting-pipeline
+            - xurl
+            - pure-python-png
         sessions:
           # A background process that exits, or a background subagent that finishes, while nobody is viewing its
           #   chat runs as an agent turn, up to 10 in a row for both together, so the agent picks the work back
@@ -679,9 +705,11 @@ configMaps:
             - --disable-dev-shm-usage
         memory:
           provider: honcho
-          # Honcho's recalled context rides only the turn it was fetched for, capped at 8000 characters (talaria-hermes 0069)
+          # Honcho's recalled context leaves older turns once the prompt cache is cold (an hour idle) or at compaction,
+          #   and is cut by section to 8000 characters (talaria-hermes 0069, 0075)
           recall_history: false
           recall_max_chars: 8000
+          recall_cold_after_seconds: 3600
           # Hermes's defaults: its own notes (MEMORY.md, USER.md) next to Honcho, managed in the hub's Memory page
           memory_enabled: true
           user_profile_enabled: true
@@ -758,6 +786,9 @@ configMaps:
                 reconnect_wait_seconds: 60
                 # The one hub user of this backend: sandbox chats and scheduled jobs use this user's Firefox
                 user: reddragon
+                # Skills the agent writes are mirrored as commits to this git checkout on upstairs-pc (skillsync)
+                skill_repo_device: d_3b5ed12afed75798
+                skill_repo_path: /home/reddragon/Projects/hermes-skills
             # One Claude subscription per slot; the login lives in /opt/data/hermes/claude/<id>. The pickers offer
             #   claude-pool, which runs each chat on a signed-in slot with room (the soonest weekly reset; a chat
             #   keeps its slot until that slot is at a limit). claude-<id> still serves chats that picked a slot
@@ -837,64 +868,87 @@ configMaps:
           port: 9120
   config:
     data:
-      # The Honcho plugin from the catalog drops a background-subagent result turn whole; this keeps the agent's reply
-      #   and drops only the notice. Pinned to the installed file: any other version fails init, so refresh it then
-      honcho-delegation-reply.py: |
+      # The Honcho plugin from the catalog, edited at every start (pinned to the installed files; any other version
+      #   fails init, so refresh it then): only the user's own words go to the user peer, recent events come from
+      #   this chat's Honcho session only, a resumed chat recalls on the current message (with talaria-hermes 0075)
+      honcho-recall.py: |
         import hashlib
         import os
         import sys
 
-        # The Honcho memory plugin (catalog version 1.1.0) drops every turn whose user side is a gateway
-        # notice. For a background-subagent result that loses the agent's reply too: keep the reply and drop
-        # only the notice. Applied to exactly the pinned file; any other file fails this step, so a plugin
-        # update cannot silently lose or clobber the change.
-        PATH = "/opt/data/hermes/plugins/honcho/__init__.py"
-        ORIGINAL = "ccfd3bbbe3631d2418e84d13cca0fcd4fecc7f6aca988feded633e155a996614"
-        PATCHED = "e94585e875785d305e0287968542d57227c232b2a4df96396d09973a37678972"
-        EDITS = (
+        # The Honcho memory plugin (catalog version 1.1.0), edited in place at every start. Each file is accepted
+        # only in a known state and must end in the pinned result, so a plugin update fails this step instead of
+        # being silently clobbered or left unedited; refresh this script for the new version then.
+        # - __init__.py: a turn's user side goes to the user peer only when a person wrote it (Hermes' own
+        #   user-message classifier): for a subagent result, a relayed agent message or a gateway notice only the
+        #   agent's reply is stored, so agent actions are not concluded as the user's. A resumed process recalls
+        #   on the current message, not the previous one. The dialectic answer is headed, so a cap keeps it whole.
+        # - session_context.py: timestamped observations (recent events) come from this chat's Honcho session
+        #   only; durable facts and the peer card stay peer-wide.
+        DIR = "/opt/data/hermes/plugins/honcho"
+        # 1.1.0 as installed, and the older edit of this step (delegation replies kept) applied on top.
+        INIT_ORIGINAL = "ccfd3bbbe3631d2418e84d13cca0fcd4fecc7f6aca988feded633e155a996614"
+        INIT_DELEGATION = "e94585e875785d305e0287968542d57227c232b2a4df96396d09973a37678972"
+        DELEGATION_EDITS = (
             ('_INTERNAL_GATEWAY_TURN_RE = re.compile(\n',
-             '_DELEGATION_RESULT_NOTICE_RE = re.compile(\n'
-             '    r"^\\s*(?:\\[ASYNC (?:DELEGATION )?(?:BATCH )?COMPLETE[^\\]]*\\]|"\n'
-             '    r"A background fan-out of \\d+ subagent\\(s\\) you dispatched earlier has finished\\.|"\n'
-             '    r"A background subagent you dispatched earlier has finished\\.)",\n'
-             '    re.IGNORECASE,\n'
-             ')\n'
-             '_INTERNAL_GATEWAY_TURN_RE = re.compile(\n'),
-            ('        if _is_internal_gateway_turn(user_content):\n'
-             '            logger.debug("Honcho sync skipped machine-generated gateway turn")\n'
-             '            return\n',
-             '        if _is_internal_gateway_turn(user_content):\n'
-             '            if not _DELEGATION_RESULT_NOTICE_RE.match(user_content or ""):\n'
-             '                logger.debug("Honcho sync skipped machine-generated gateway turn")\n'
-             '                return\n'
-             '            user_content = ""\n'),
+             '_DELEGATION_RESULT_NOTICE_RE = re.compile(\n    r"^\\s*(?:\\[ASYNC (?:DELEGATION )?(?:BATCH )?COMPLETE[^\\]]*\\]|"\n    r"A background fan-out of \\d+ subagent\\(s\\) you dispatched earlier has finished\\.|"\n    r"A background subagent you dispatched earlier has finished\\.)",\n    re.IGNORECASE,\n)\n_INTERNAL_GATEWAY_TURN_RE = re.compile(\n'),
+            ('        if _is_internal_gateway_turn(user_content):\n            logger.debug("Honcho sync skipped machine-generated gateway turn")\n            return\n',
+             '        if _is_internal_gateway_turn(user_content):\n            if not _DELEGATION_RESULT_NOTICE_RE.match(user_content or ""):\n                logger.debug("Honcho sync skipped machine-generated gateway turn")\n                return\n            user_content = ""\n'),
         )
+        FILES = {
+            "__init__.py": ("e94585e875785d305e0287968542d57227c232b2a4df96396d09973a37678972", "022be789ac9e93d571968bee983838e041086cfb12a6b0fe8148aff883ca933e", (
+                ('    """Return True for machine-generated gateway notifications and harnesses."""\n    return bool(_INTERNAL_GATEWAY_TURN_RE.match(text or ""))\n\n\n',
+                 '    """Return True for machine-generated gateway notifications and harnesses."""\n    return bool(_INTERNAL_GATEWAY_TURN_RE.match(text or ""))\n\n\ndef _user_words(text: str) -> str:\n    """What the user wrote in a turn\'s user side, or "" when no person wrote it (a subagent result, a relayed\n    agent message, a process notice), so an agent\'s words are never stored as the user\'s."""\n    try:\n        from agent.conversation_compression_scaffolding import user_authored_text_of\n    except Exception:\n        return "" if _DELEGATION_RESULT_NOTICE_RE.match(text or "") else (text or "")\n    return user_authored_text_of(text or "") or ""\n\n\n'),
+                ('        if not waited:\n            self._first_turn_dialectic_wait(query)\n        # Consume only results that are already ready; later turns never wait.\n        parts.append(self._consume_pending_dialectic())\n        parts = [p for p in parts if p and p.strip()]\n        if not parts:\n',
+                 '        if not waited:\n            self._first_turn_dialectic_wait(query)\n        # Consume only results that are already ready; later turns never wait. Headed, so a cap keeps it whole.\n        answer = self._consume_pending_dialectic()\n        parts.append(f"## Dialectic Answer\\n{answer}" if answer else "")\n        parts = [p for p in parts if p and p.strip()]\n        if not parts:\n'),
+                ('        # Recall on what the user typed, as prefetch() does: Hermes strips slash-skill scaffolding there.\n        query = extract_user_instruction_from_skill_message(message)\n        if resumed:\n            # A trivial previous turn queued no refresh; the current message stands in for it.\n            previous = extract_user_instruction_from_skill_message(self._previous_user_message())\n            if previous and not self._is_trivial_prompt(previous):\n',
+                 '        # Recall on what the user typed, as prefetch() does: Hermes strips slash-skill scaffolding there.\n        query = extract_user_instruction_from_skill_message(message)\n        if resumed and query and self._is_trivial_prompt(query):\n            # Recall on what this turn asks; only a trivial reply ("ok, go on") borrows the previous ask.\n            previous = extract_user_instruction_from_skill_message(self._previous_user_message())\n            if previous and not self._is_trivial_prompt(previous):\n'),
+                ('        if not self._writes_enabled():\n            return\n        if _is_internal_gateway_turn(user_content):\n            if not _DELEGATION_RESULT_NOTICE_RE.match(user_content or ""):\n                logger.debug("Honcho sync skipped machine-generated gateway turn")\n                return\n            user_content = ""\n        if not self._ready_or_kick_init():\n            return\n',
+                 '        if not self._writes_enabled():\n            return\n        if _is_internal_gateway_turn(user_content) and not _DELEGATION_RESULT_NOTICE_RE.match(user_content or ""):\n            logger.debug("Honcho sync skipped machine-generated gateway turn")\n            return\n        # Only the user\'s own words go to the user peer; a turn no person wrote keeps only the agent\'s reply.\n        user_content = _user_words(user_content)\n        if not self._ready_or_kick_init():\n            return\n'),
+        )),
+            "session_context.py": ("4bd17f41f2280eb9a377fcefdb63bbdc27563eb97fc9e49cba9477b22b63ec5c", "da9040ddaf150185ce3ab6218783f1cd67bbb2ea90e194d2f77a0ca7cd7a13d4", (
+                (')\n_THINK_CLOSE_RE = re.compile(r"</\\s*think\\s*>", re.IGNORECASE)\n_PLANNING_HEAD_RE = re.compile(\n    r"^(?:i need to create a thorough|the instruction says to focus on capturing key facts|first, let me review)",\n',
+                 ')\n_THINK_CLOSE_RE = re.compile(r"</\\s*think\\s*>", re.IGNORECASE)\n# A timestamped observation ("[2026-11-13 10:00:00] ...") is an event from one chat, not a durable fact.\n_STAMPED_LINE_RE = re.compile(r"^\\[\\d{4}-\\d\\d-\\d\\d[ T]\\d\\d:\\d\\d(?::\\d\\d)?[^\\]]*\\] ")\n\n\ndef durable_representation(text: object) -> str:\n    """A peer-wide representation without its timestamped observations (and the lines that continue them),\n    and without headings left with nothing under them."""\n    lines, skipping = [], False\n    for line in ("" if text is None else str(text)).splitlines():\n        if _STAMPED_LINE_RE.match(line):\n            skipping = True\n            continue\n        if skipping and line.strip() and not line.startswith("#") and not _STAMPED_LINE_RE.match(line):\n            continue\n        skipping = False\n        lines.append(line)\n    out: list[str] = []\n    for i, line in enumerate(lines):\n        if line.startswith("#"):\n            rest = next((l for l in lines[i + 1:] if l.strip()), "")\n            if not rest or rest.startswith("#"):\n                continue\n        out.append(line)\n    return "\\n".join(out).strip()\n\n\n_PLANNING_HEAD_RE = re.compile(\n    r"^(?:i need to create a thorough|the instruction says to focus on capturing key facts|first, let me review)",\n'),
+                ('                result["representation"] = getattr(ctx, "representation", None) or getattr(ctx, "peer_representation", None) or ""\n                result["card"] = "\\n".join(self._normalize_card(getattr(ctx, "peer_card", None)))\n                return\n            result["representation"], result["card"] = self._peer_context_strings(\n                observer_peer_id, search_query=user_message or None, target=target_peer_id or session.user_peer_id,\n            )\n\n        def _ai() -> None:\n',
+                 '                result["representation"] = getattr(ctx, "representation", None) or getattr(ctx, "peer_representation", None) or ""\n                result["card"] = "\\n".join(self._normalize_card(getattr(ctx, "peer_card", None)))\n            else:\n                result["representation"], result["card"] = self._peer_context_strings(\n                    observer_peer_id, search_query=user_message or None, target=target_peer_id or session.user_peer_id,\n                )\n            result["representation"] = self._this_chat_representation(\n                session, observer_peer_id, target_peer_id or session.user_peer_id, user_message,\n                result["representation"])\n\n        def _ai() -> None:\n'),
+                ('                session.assistant_peer_id, target=session.assistant_peer_id,\n            )\n        for step, level, msg in (\n            (_summary, logging.DEBUG, "Failed to fetch session summary from Honcho: %s"),\n',
+                 '                session.assistant_peer_id, target=session.assistant_peer_id,\n            )\n            result["ai_representation"] = self._this_chat_representation(\n                session, session.assistant_peer_id, session.assistant_peer_id, None, result["ai_representation"])\n        for step, level, msg in (\n            (_summary, logging.DEBUG, "Failed to fetch session summary from Honcho: %s"),\n'),
+                ('                logger.log(level, msg, e)\n        return result\n\n    def get_session_context(self, session_key: str, peer: str = "user") -> dict[str, Any]:\n',
+                 '                logger.log(level, msg, e)\n        return result\n\n    def _this_chat_representation(\n        self, session: Any, observer_peer_id: str, target_peer_id: str, query: str | None, peer_wide: str,\n    ) -> str:\n        """Durable facts from the peer-wide representation plus the timestamped observations of this chat\'s\n        Honcho session only: recent events from other chats stay out of this chat\'s recall."""\n        durable = durable_representation(peer_wide)\n        scoped = ""\n        if session.honcho_session_id in self._sessions_cache:\n            scoped = self._guarded_authed(\n                "session representation fetch",\n                lambda: self._get_or_create_peer(observer_peer_id).representation(\n                    session=session.honcho_session_id, target=target_peer_id, search_query=query or None),\n                "", logging.DEBUG, "Session-scoped representation for \'%s\' failed: %s", observer_peer_id,\n            ) or ""\n        return "\\n\\n".join(part for part in (str(scoped).strip(), durable) if part)\n\n    def get_session_context(self, session_key: str, peer: str = "user") -> dict[str, Any]:\n'),
+        )),
+        }
 
 
-        def patched(text):
-            for old, new in EDITS:
+        def sha(text):
+            return hashlib.sha256(text.encode()).hexdigest()
+
+
+        def apply(text, edits, name):
+            for old, new in edits:
                 if text.count(old) != 1:
-                    sys.exit(f"honcho plugin: expected one copy of {old.splitlines()[0]!r}")
+                    sys.exit(f"honcho plugin: {name}: expected one copy of {old.splitlines()[0]!r}")
                 text = text.replace(old, new)
             return text
 
 
         if __name__ == "__main__":
-            data = open(PATH, "rb").read()
-            digest = hashlib.sha256(data).hexdigest()
-            if digest == PATCHED:
-                print("honcho plugin: delegation replies already kept")
-            elif digest == ORIGINAL:
-                new = patched(data.decode()).encode()
-                if hashlib.sha256(new).hexdigest() != PATCHED:
-                    sys.exit("honcho plugin: patched file does not match the pinned result")
-                with open(PATH + ".new", "wb") as f:
+            for name, (start, done, edits) in FILES.items():
+                path = os.path.join(DIR, name)
+                text = open(path, encoding="utf-8").read()
+                if sha(text) == done:
+                    print(f"honcho plugin: {name} already edited")
+                    continue
+                if name == "__init__.py" and sha(text) == INIT_ORIGINAL:
+                    text = apply(text, DELEGATION_EDITS, name)
+                if sha(text) != start:
+                    sys.exit(f"honcho plugin: {path} is not the pinned 1.1.0 file ({sha(text)}); refresh honcho-recall.py")
+                new = apply(text, edits, name)
+                if sha(new) != done:
+                    sys.exit(f"honcho plugin: {name}: edited file does not match the pinned result")
+                with open(path + ".new", "w", encoding="utf-8") as f:
                     f.write(new)
-                os.replace(PATH + ".new", PATH)
-                print("honcho plugin: now keeps the reply to a background-subagent result")
-            else:
-                sys.exit(f"honcho plugin: {PATH} is not the pinned 1.1.0 file ({digest}); refresh "
-                         "honcho-delegation-reply.py for the new version")
+                os.replace(path + ".new", path)
+                print(f"honcho plugin: {name} edited")
       merge-managed.py: |
         import os
         from hermes_yaml import safe_dump, safe_load
