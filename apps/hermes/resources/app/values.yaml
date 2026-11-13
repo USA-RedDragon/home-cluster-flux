@@ -651,6 +651,11 @@ configMaps:
         #   once; without it they finish first (up to 9 minutes, under the hub's 10-minute prompt hold) while
         #   approvals stay answerable and new prompts wait for the new pod; then a short drain
         # Settings Flux pins here show read-only in the hub; writes to them are refused (talaria-hermes 0062)
+        # Screenshots keep small text readable: up to 2000 px and 512 KB, scaled to fit instead of halved (talaria-hermes 0061)
+        vision:
+          embed_max_dimension: 2000
+          embed_target_bytes: 524288
+          resize_mode: fit
         dashboard:
           managed_read_only: true
         agent:
