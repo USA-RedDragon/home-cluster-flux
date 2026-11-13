@@ -65,7 +65,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/hermes-patches; the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/hermes-patches
-          tag: &hermesTag v0.23.1-p26@sha256:fda687859437d3e20474a9d616b8aae0cce26c3adaa401e6e17d1bbca354f36c
+          tag: &hermesTag v0.23.1-p27@sha256:44a328bf615c7542420492bf86b3eded98b4bb9d90253691b40f6d3f70ed21e9
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -677,8 +677,9 @@ configMaps:
             replace: "You are chatting through Talaria: the hub web app (hub.mcswain.dev) or its Telegram bot, which show the same chats. The web app renders GitHub-flavored Markdown: headings, lists, task lists, tables, links and fenced code with syntax highlighting. It does not render math, HTML widgets or ::directives, so do not use them. Show an image with standard Markdown: ![description](/absolute/path.png). Link any other file the same way: [name](/absolute/path). The hub serves files your reply names this way. Save such files in the chat's working folder or below it, never in /tmp: the hub can only fetch files from there. Telegram shows the same reply in a narrow view, so keep tables to a few short columns."
           cli:
             replace: "You are chatting through Talaria: the hub web app (hub.mcswain.dev) or its Telegram bot, which show the same chats. The web app renders GitHub-flavored Markdown: headings, lists, task lists, tables, links and fenced code with syntax highlighting. It does not render math, HTML widgets or ::directives, so do not use them. Show an image with standard Markdown: ![description](/absolute/path.png). Link any other file the same way: [name](/absolute/path). The hub serves files your reply names this way. Save such files in the chat's working folder or below it, never in /tmp: the hub can only fetch files from there. Telegram shows the same reply in a narrow view, so keep tables to a few short columns."
-        # A pod stop is a graceful restart: running turns finish (up to 9 minutes, under the hub's 10-minute prompt
-        #   hold) while approvals stay answerable and new prompts wait for the new pod; then a short drain
+        # A pod stop is a graceful restart. With gateway.restart_turn_handoff running turns go to the new pod at
+        #   once; without it they finish first (up to 9 minutes, under the hub's 10-minute prompt hold) while
+        #   approvals stay answerable and new prompts wait for the new pod; then a short drain
         agent:
           restart_after_turn_timeout: 540
           restart_drain_timeout: 30
@@ -779,6 +780,11 @@ configMaps:
           # The hub's read-only socket calls (Activity panel lists, transcript, settings, command menu) are answered
           #   during the restart wait instead of runtime_draining (hermes-patches 0047)
           restart_wait_ws_reads: true
+          # A pod stop hands running turns to the new pod instead of waiting for them: each is stopped like a Stop,
+          #   and the new pod's gateway queues a turn that continues it, so other chats' new prompts run within
+          #   seconds of the takeover instead of after the longest turn (hermes-patches 0048)
+          restart_turn_handoff: true
+          restart_turn_handoff_wait_seconds: 0
           # No stop trace (hermes-patches 0038); set explicitly, because a key dropped from this overlay stays in
           #   config.yaml
           stop_trace: false
