@@ -113,6 +113,12 @@ configMaps:
         # container stays healthy. Nothing else we collect can see this failure.
         counter pot_alderon_pulse_total by code
 
+        # Build 53835 and later keep the server-list session over XMPP and log
+        # no pulse. Closes show a lost session; update checks run every 15
+        # minutes and show the Alderon API is reachable.
+        counter pot_alderon_xmpp_events_total by event
+        counter pot_alderon_update_checks_total
+
         # BattlEye master reachability. Failures here mean bans stop being
         # verified.
         counter pot_battleye_master_events_total by event
@@ -175,6 +181,13 @@ configMaps:
           # HTTP code keeps cardinality to the handful of statuses seen.
           /AlderonLog: (Error: )?\((?P<code>\d+)\) https:\/\/servers\.alderongames\.com\/\S+\/pulse Success:/ {
             pot_alderon_pulse_total[$code]++
+          }
+
+          /LogXmpp: Warning: WS CLOSED/ {
+            pot_alderon_xmpp_events_total["ws_closed"]++
+          }
+          /AlderonLog: IAlderonCommon: Checking for new updates/ {
+            pot_alderon_update_checks_total++
           }
 
           # Split into three patterns so the label values are short and stable,
