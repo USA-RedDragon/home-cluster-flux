@@ -240,13 +240,12 @@ controllers:
           limits:
             memory: 64Mi
         securityContext: *securityContext
-      # One gateway per home. As a native sidecar it takes the lock before the dashboard starts, so the dashboard
-      #   attaches to it instead of spawning its own
+      # One gateway per home, as a native sidecar
       gateway:
         dependsOn: init
         restartPolicy: Always
         image: *image
-        # Once the pod is stopping (the hermes container's preStop marks it), a gateway that exited is not started
+        # Once the pod is stopping (the acp-host container's preStop marks it), a gateway that exited is not started
         #   again: it would contend with the new pod's gateway for the lock
         command:
           - /bin/sh
@@ -264,8 +263,7 @@ controllers:
               secretKeyRef:
                 name: hermes-kittykat-api
                 key: API_SERVER_KEY
-        # The gateway serves the Webapp listener (webapp: in the managed config) that talaria-hub signs in to; the
-        #   dashboard container never gets this provider, so its loopback listener stays open behind the proxy
+        # The gateway serves the Webapp listener (webapp: in the managed config) that talaria-hub signs in to
         envFrom:
           - secretRef:
               name: hermes-kittykat-hub-auth
@@ -343,16 +341,6 @@ controllers:
           limits:
             memory: 4Gi
         probes:
-          liveness:
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /healthz
-                port: 9130
-              periodSeconds: 30
-              timeoutSeconds: 5
-              failureThreshold: 3
           readiness:
             enabled: true
             custom: true
@@ -363,85 +351,14 @@ controllers:
               periodSeconds: 1
               timeoutSeconds: 2
               failureThreshold: 2
-        # Stays up, so the pod stays ready, until the gateway leaves its restart wait
-        lifecycle:
-          preStop:
-            exec:
-              command: ["/opt/hermes/.venv/bin/python", "-I", "/etc/hermes-prestop.py"]
-        securityContext: *securityContext
-      hermes:
-        image: *image
-        command:
-          - /opt/hermes/.venv/bin/hermes
-          - dashboard
-          - --host
-          - 127.0.0.1
-          - --port
-          - "9119"
-          - --no-open
-        workingDir: /opt/data/hermes
-        env: *env
-        resources:
-          requests:
-            cpu: 100m
-            memory: 1Gi
-          limits:
-            memory: 8Gi
-        # No probes: only the operator uses the dashboard, so the hub's traffic need not wait for it, and its preStop
-        #   below must run only on a pod stop, never on a liveness restart
         # A pod stop restarts the gateway gracefully: SIGTERM with gateway.sigterm_restart_wait opens the restart
-        #   wait, where running turns finish and approvals stay answerable. The main containers stay up (and the
-        #   pod ready) until it ends; only then does the kubelet stop the gateway sidecar
+        #   wait, where running turns finish and approvals stay answerable. This container stays up (and the pod
+        #   ready) until it ends; only then does the kubelet stop the gateway sidecar. No liveness probe: this
+        #   preStop must run only on a pod stop, never on a container restart
         lifecycle:
           preStop:
             exec:
               command: ["/opt/hermes/.venv/bin/python", "-I", "/etc/hermes-prestop.py", "signal"]
-        securityContext: *securityContext
-      # The dashboard demands a login on any non-loopback bind. It stays on loopback, and this proxy presents
-      #   requests as loopback ones; the network policy is the only access control, and it admits nothing yet
-      proxy:
-        image:
-          repository: jacob.pub/docker.io/nginxinc/nginx-unprivileged
-          tag: 1.31.6-alpine@sha256:884e0b7f42f303641b0f4e78755aea647521dca0b89ca3be7992ad78b5c07434
-          pullPolicy: IfNotPresent
-        resources:
-          requests:
-            cpu: 10m
-            memory: 16Mi
-          limits:
-            memory: 128Mi
-        probes:
-          liveness:
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /healthz
-                port: 8080
-          readiness:
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /healthz
-                port: 8080
-              periodSeconds: 1
-              failureThreshold: 2
-        # Stays up, so the pod stays ready, until the gateway leaves its restart wait
-        lifecycle:
-          preStop:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - |
-                  i=0
-                  while [ ! -e /tmp/pod-stopping ]; do [ $i -ge 25 ] && exit 0; sleep 0.2; i=$((i+1)); done
-                  f=0 i=0
-                  while [ $i -lt 760 ] && [ $f -lt 3 ]; do
-                    if wget -q -T 2 -O /dev/null http://127.0.0.1:9120/api/health; then f=0; else f=$((f+1)); fi
-                    sleep 1; i=$((i+1))
-                  done
         securityContext: *securityContext
 
 # No ingress or route: talaria-hub, her front end, will reach this Service in-cluster
@@ -449,8 +366,6 @@ service:
   hermes:
     controller: hermes
     ports:
-      http:
-        port: 8080
       api:
         port: 8642
       webapp:
@@ -461,8 +376,8 @@ service:
 configMaps:
   managed:
     data:
-      # Pinned on top of /opt/data/hermes/config.yaml, and merged into it at start; other settings changed in the
-      #   dashboard persist on the PVC
+      # Pinned on top of /opt/data/hermes/config.yaml, and merged into it at start; other settings
+      #   persist on the PVC
       config.yaml: |
         # New chats start on Sonnet 5.5 with its 1M window, through the Claude account pool
         model:
@@ -672,7 +587,7 @@ configMaps:
           check: false
         # Cron schedules ("every monday 9am") and the agent's clock use US Central, not the pod's UTC
         timezone: America/Chicago
-        # For talaria-hub. A wildcard bind is behind dashboard sign-in: the gateway's basic provider, user hub
+        # For talaria-hub
         # Hub chats run as platform "desktop", and chats imported from Claude Code as "cli"; upstream's hint describes the Hermes desktop app (widgets, math), which the
         #   hub does not render
         platform_hints:
@@ -885,9 +800,9 @@ configMaps:
         with open(path + ".tmp", "w") as f:
             safe_dump(config, f, sort_keys=False)
         os.replace(path + ".tmp", path)
-      # preStop of the main containers: keep the container, and so the pod's readiness, up while the gateway
-      #   sidecar is in its restart wait, so the hub still reaches it to answer approvals. With "signal" (the
-      #   dashboard, which has no liveness probe, so its preStop runs only on a pod stop) it first marks the pod
+      # preStop of acp-host: keeps the container, and so the pod's readiness, up while the gateway
+      #   sidecar is in its restart wait, so the hub still reaches it to answer approvals. With "signal" (acp-host has
+      #   no liveness probe, so its preStop runs only on a pod stop) it first marks the pod
       #   stopping and sends the gateway SIGTERM, which opens that wait (gateway.sigterm_restart_wait)
       hermes-prestop.py: |
         import os
@@ -988,39 +903,6 @@ configMaps:
             }
           }
         }
-      nginx.conf: |
-        pid /tmp/nginx.pid;
-        events {}
-        http {
-          access_log off;
-          client_body_temp_path /tmp/cb; proxy_temp_path /tmp/p; fastcgi_temp_path /tmp/f;
-          uwsgi_temp_path /tmp/u; scgi_temp_path /tmp/s;
-          map $http_upgrade $connection_upgrade {
-            default upgrade;
-            '' close;
-          }
-          server {
-            listen 8080;
-            client_max_body_size 512m;
-            location = /healthz { return 200 "ok\n"; }
-            include /etc/nginx/dashboard.conf;
-          }
-        }
-      # The Chat tab's TUI would be a shell in this pod
-      dashboard.conf: |
-        location /api/pty { return 403; }
-        location / {
-          proxy_pass http://127.0.0.1:9119;
-          proxy_http_version 1.1;
-          proxy_set_header Host 127.0.0.1:9119;
-          proxy_set_header Origin http://127.0.0.1:9119;
-          proxy_set_header Upgrade $http_upgrade;
-          proxy_set_header Connection $connection_upgrade;
-          proxy_set_header X-Forwarded-For "";
-          proxy_buffering off;
-          proxy_read_timeout 24h;
-          proxy_send_timeout 24h;
-        }
 
 persistence:
   data:
@@ -1035,8 +917,6 @@ persistence:
         init:
           - path: /opt/data
         gateway:
-          - path: /opt/data
-        hermes:
           - path: /opt/data
         acp-host:
           - path: /opt/data
@@ -1053,12 +933,10 @@ persistence:
     identifier: managed
     advancedMounts:
       hermes:
-        hermes:
+        init:
           - &managed
             path: /etc/hermes-managed
             readOnly: true
-        init:
-          - *managed
         gateway:
           - *managed
         acp-host:
@@ -1085,23 +963,11 @@ persistence:
         gateway:
           - *passwd
           - *group
-        hermes:
-          - *passwd
-          - *group
-          - &prestop
-            path: /etc/hermes-prestop.py
-            subPath: hermes-prestop.py
-            readOnly: true
         acp-host:
           - *passwd
           - *group
-          - *prestop
-        proxy:
-          - path: /etc/nginx/nginx.conf
-            subPath: nginx.conf
-            readOnly: true
-          - path: /etc/nginx/dashboard.conf
-            subPath: dashboard.conf
+          - path: /etc/hermes-prestop.py
+            subPath: hermes-prestop.py
             readOnly: true
   tmp:
     type: emptyDir
@@ -1110,10 +976,6 @@ persistence:
         init:
           - path: /tmp
         gateway:
-          - path: /tmp
-        hermes:
-          - path: /tmp
-        proxy:
           - path: /tmp
         acp-host:
           - path: /tmp
