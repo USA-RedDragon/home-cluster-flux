@@ -6,7 +6,8 @@ defaultPodOptions:
 controllers:
   talaria-hub:
     # Two replicas share PostgreSQL; one of them, elected through an advisory lock, polls Telegram
-    replicas: 2
+    # One replica until a resumed event stream works on either replica (a reconnect to the other one resent the whole chat every few seconds)
+    replicas: 1
     strategy: RollingUpdate
     rollingUpdate:
       surge: 1
