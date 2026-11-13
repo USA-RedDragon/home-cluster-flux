@@ -509,6 +509,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: rtz}
     - {kind: Kustomization, name: '*', namespace: rtz}
     - {kind: OCIRepository, name: '*', namespace: rtz}
+    - {kind: GitRepository, name: '*', namespace: searxng}
+    - {kind: HelmChart, name: '*', namespace: searxng}
+    - {kind: HelmRelease, name: '*', namespace: searxng}
+    - {kind: HelmRepository, name: '*', namespace: searxng}
+    - {kind: Kustomization, name: '*', namespace: searxng}
+    - {kind: OCIRepository, name: '*', namespace: searxng}
     - {kind: GitRepository, name: '*', namespace: ses-email-service}
     - {kind: HelmChart, name: '*', namespace: ses-email-service}
     - {kind: HelmRelease, name: '*', namespace: ses-email-service}

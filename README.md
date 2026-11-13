@@ -103,6 +103,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#rmfakecloud">rmfakecloud</a></li>
   <li><a href="#rtl-433">rtl-433</a></li>
   <li><a href="#rtz">rtz</a></li>
+  <li><a href="#searxng">searxng</a></li>
   <li><a href="#ses-email-service">ses-email-service</a></li>
   <li><a href="#smartctl-exporter">smartctl-exporter</a></li>
   <li><a href="#srs-hosting">srs-hosting</a></li>
@@ -1666,6 +1667,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <tr>
     <td><code>HelmRelease</code></td>
     <td><a href="apps/rtz/resources/app/helm.yaml">rtz</a></td>
+  </tr>
+</table>
+
+<h4>searxng</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>searxng</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/searxng/resources/app/helm.yaml">searxng</a></td>
+    <td></td>
   </tr>
 </table>
 

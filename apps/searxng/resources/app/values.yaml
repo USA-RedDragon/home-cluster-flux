@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+
+defaultPodOptions:
+  automountServiceAccountToken: false
+
+controllers:
+  searxng:
+    replicas: 1
+    pod:
+      labels:
+        policy.mcswain.dev/egress-coredns: "true"
+        policy.mcswain.dev/egress-internet: "true"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    containers:
+      app:
+        image:
+          repository: jacob.pub/docker.io/searxng/searxng
+          tag: 2026.11.12-de722ab1b@sha256:0b104e2e1117b0ca83a36f3ac6ecda7d9ee948ccea6ead74750a03e1b856229a
+          pullPolicy: IfNotPresent
+        env:
+          HOME: /tmp
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits:
+            memory: 1Gi
+        probes:
+          liveness: &probe
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              periodSeconds: 30
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness: *probe
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              periodSeconds: 5
+              timeoutSeconds: 5
+              failureThreshold: 30
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
+
+service:
+  searxng:
+    controller: searxng
+    ports:
+      http:
+        port: 8080
+
+# Internal gateway only (LAN and tailnet), never public. Hermes reaches the Service directly in the cluster.
+route:
+  searxng:
+    enabled: true
+    kind: HTTPRoute
+    parentRefs:
+      - name: internal
+        namespace: envoy-gateway-system
+        sectionName: https
+    hostnames:
+      - search.mcswain.dev
+    rules:
+      - backendRefs:
+          - name: searxng
+            port: 8080
+        matches:
+          - path:
+              type: PathPrefix
+              value: /
+
+# SearXNG keeps no state worth backing up (no database; the cache is a throwaway emptyDir), so there is no restic backup.
+# settings.yml, with the secret key, comes from the SOPS secret searxng-settings in home-cluster-secrets.
+persistence:
+  settings:
+    type: secret
+    name: searxng-settings
+    defaultMode: 0444
+    advancedMounts:
+      searxng:
+        app:
+          - path: /etc/searxng/settings.yml
+            subPath: settings.yml
+            readOnly: true
+  cache:
+    type: emptyDir
+    advancedMounts:
+      searxng:
+        app:
+          - path: /var/cache/searxng
+  tmp:
+    type: emptyDir
+    advancedMounts:
+      searxng:
+        app:
+          - path: /tmp
