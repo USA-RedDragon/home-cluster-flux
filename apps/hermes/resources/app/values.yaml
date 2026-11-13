@@ -226,6 +226,8 @@ controllers:
             MCowBQYDK2VwAyEAiuaEZ3j30C2FUMJrm1r10rJZyt1EwAYGKor/3LZqjSA=
             -----END PUBLIC KEY-----
           HERMES_MANAGED_DIR: /etc/hermes-managed
+          # Web search goes to the in-cluster SearXNG (web.search_backend in the managed config)
+          SEARXNG_URL: http://searxng.searxng.svc.cluster.local:8080
           HERMES_API_TIMEOUT: "1800"
           HONCHO_API_KEY:
             valueFrom:
@@ -698,6 +700,8 @@ configMaps:
           reclaim_orphaned_turn_leases: true
           # Editors (ACP session/list) also offer chats the hub, TUI and CLI started (talaria-hermes 0008)
           acp_list_sources: [acp, gui, local, tui, cli]
+        web:
+          search_backend: searxng
         browser:
           chromium_args:
             - --no-sandbox

@@ -65,6 +65,15 @@ spec:
         - ports:
             - port: "53"
               protocol: ANY
+    # SearXNG, the web search backend
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: searxng
+            app.kubernetes.io/controller: searxng
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
     # Honcho, the memory server
     - toEndpoints:
         - matchLabels:
