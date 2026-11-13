@@ -1,0 +1,17 @@
+# A page that reconnects its event stream sends the last event id, "<replica>.<seq>". Only the replica that
+#   issued it can resume from it; the other sends the whole chat again (about 1.4 MB for a big one). Pinning a
+#   client address to one replica keeps a reconnect a few bytes instead.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: talaria-hub-sticky
+  namespace: talaria-hub
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: talaria-hub
+  loadBalancer:
+    type: ConsistentHash
+    consistentHash:
+      type: SourceIP
