@@ -351,31 +351,10 @@ controllers:
               periodSeconds: 1
               timeoutSeconds: 2
               failureThreshold: 2
-          # Failures leave a marker for the preStop (hermes-prestop.py); a pass removes it. Slow on purpose: a
-          #   restart drops the editor sessions' hermes acp children
-          liveness:
-            enabled: true
-            custom: true
-            spec:
-              exec:
-                command:
-                  - /bin/sh
-                  - -c
-                  - |
-                    if curl -fsS -m 4 -o /dev/null http://127.0.0.1:9130/healthz; then
-                      rm -f /tmp/liveness-failed
-                    else
-                      touch /tmp/liveness-failed
-                      exit 1
-                    fi
-              periodSeconds: 10
-              timeoutSeconds: 6
-              failureThreshold: 3
         # A pod stop restarts the gateway gracefully: SIGTERM with gateway.sigterm_restart_wait opens the restart
         #   wait, where running turns finish and approvals stay answerable. This container stays up (and the pod
-        #   ready) until it ends; only then does the kubelet stop the gateway sidecar. The kubelet runs this
-        #   preStop on a liveness restart too: the liveness probe leaves /tmp/liveness-failed when it fails and the
-        #   preStop then skips the stop sequence
+        #   ready) until it ends; only then does the kubelet stop the gateway sidecar. No liveness probe: this
+        #   preStop must run only on a pod stop, never on a container restart
         lifecycle:
           preStop:
             exec:
@@ -851,14 +830,6 @@ configMaps:
         import urllib.request
 
         marker = "/tmp/pod-stopping"
-        # The kubelet runs this preStop on a liveness restart as well. The liveness probe touches this file on every
-        #   failure and removes it on a pass, so a fresh one means this container alone is being restarted: leave
-        #   the gateway alone
-        try:
-            if time.time() - os.path.getmtime("/tmp/liveness-failed") < 60:
-                sys.exit(0)
-        except OSError:
-            pass
         if sys.argv[1:] == ["signal"]:
             open(marker, "w").close()
             # Serve on until the new pod's gateway has warmed up and waits for the lock (gateway.standby), so it
