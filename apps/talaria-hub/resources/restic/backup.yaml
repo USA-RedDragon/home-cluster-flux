@@ -2,20 +2,20 @@ apiVersion: b2backup.mcswain.dev/v1
 kind: Repository
 metadata:
   name: restic
-  namespace: hermes-hub
+  namespace: talaria-hub
 spec:
   bucket: mcswain-kubernetes-backups
   mode: Prefix
   passwordSecretRef:
     key: RESTIC_PASSWORD
     name: restic-envs
-  path: k8s/hermes-hub
+  path: k8s/talaria-hub
 ---
 apiVersion: b2backup.mcswain.dev/v1
 kind: ScheduledBackup
 metadata:
   name: restic
-  namespace: hermes-hub
+  namespace: talaria-hub
 spec:
   cache:
     enabled: false

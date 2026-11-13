@@ -2,7 +2,7 @@ apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: default-deny
-  namespace: hermes-hub
+  namespace: talaria-hub
 spec:
   endpointSelector: {}
   ingress:
@@ -13,14 +13,14 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: hermes-hub
-  namespace: hermes-hub
+  name: talaria-hub
+  namespace: talaria-hub
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/controller: hermes-hub
-      app.kubernetes.io/instance: hermes-hub
-      app.kubernetes.io/name: hermes-hub
+      app.kubernetes.io/controller: talaria-hub
+      app.kubernetes.io/instance: talaria-hub
+      app.kubernetes.io/name: talaria-hub
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -149,7 +149,7 @@ apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: restic-init-egress
-  namespace: hermes-hub
+  namespace: talaria-hub
 spec:
   endpointSelector:
     matchLabels:
@@ -181,7 +181,7 @@ apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: restic-backup-egress
-  namespace: hermes-hub
+  namespace: talaria-hub
 spec:
   endpointSelector:
     matchLabels:
@@ -202,7 +202,7 @@ apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: b2bk-egress
-  namespace: hermes-hub
+  namespace: talaria-hub
 spec:
   endpointSelector:
     matchLabels:

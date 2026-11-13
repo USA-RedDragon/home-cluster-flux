@@ -2,7 +2,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: postgresql
-  namespace: hermes-hub
+  namespace: talaria-hub
 spec:
   inheritedMetadata:
     labels:
@@ -12,13 +12,30 @@ spec:
   instances: 2
   imageName: jacob.pub/ghcr.io/cloudnative-pg/postgresql:17.11-system-bookworm@sha256:d2a149bc3de0161d37ca21e7e0869ee6e8c9050a8825b8ba9e6d185ee940a2c9
   enableSuperuserAccess: false
+  # Recovered from hermes-hub's barman archive, which also proves that archive restores; at the cutover the hub's
+  #   data is brought current with pg_dump/pg_restore from hermes-hub after its hub is stopped
   bootstrap:
-    initdb:
+    recovery:
       database: hub
       owner: hub
+      source: postgresql
+  externalClusters:
+    - name: postgresql
+      barmanObjectStore:
+        destinationPath: s3://cnpg/hermes-hub
+        endpointURL: https://s3.mcswain.dev
+        s3Credentials:
+          accessKeyId:
+            name: cnpg-minio
+            key: AWS_ACCESS_KEY_ID
+          secretAccessKey:
+            name: cnpg-minio
+            key: AWS_SECRET_ACCESS_KEY
+        wal:
+          compression: zstd
   backup:
     barmanObjectStore:
-      destinationPath: "s3://cnpg/hermes-hub"
+      destinationPath: "s3://cnpg/talaria-hub"
       endpointURL: "https://s3.mcswain.dev"
       s3Credentials:
         accessKeyId:

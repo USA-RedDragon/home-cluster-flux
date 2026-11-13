@@ -57,6 +57,7 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
   <li><a href="#golink">golink</a></li>
   <li><a href="#gpu-operator">gpu-operator</a></li>
   <li><a href="#hermes">hermes</a></li>
+  <li><a href="#hermes-hub-legacy">hermes-hub-legacy</a></li>
   <li><a href="#hermes-kittykat">hermes-kittykat</a></li>
   <li><a href="#hermes-kittykat-sandbox">hermes-kittykat-sandbox</a></li>
   <li><a href="#hermes-sandbox">hermes-sandbox</a></li>
@@ -741,6 +742,22 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <td><code>HelmRelease</code></td>
     <td><a href="apps/hermes/resources/app/helm.yaml">hermes</a></td>
     <td></td>
+  </tr>
+</table>
+
+<h4>hermes-hub-legacy</h2>
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Kind</th>
+    <th>Name</th>
+    <th>Supporting Services</th>
+  </tr>
+  <tr>
+    <td>hermes-hub</td>
+    <td><code>HelmRelease</code></td>
+    <td><a href="apps/hermes-hub-legacy/resources/app/helm.yaml">hermes-hub</a></td>
+    <td><a href="apps/hermes-hub-legacy/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
 </table>
 
@@ -1749,9 +1766,9 @@ This cluster runs on [Talos](https://www.talos.dev/) and my configuration files 
     <th>Supporting Services</th>
   </tr>
   <tr>
-    <td>hermes-hub</td>
+    <td>talaria-hub</td>
     <td><code>HelmRelease</code></td>
-    <td><a href="apps/talaria-hub/resources/app/helm.yaml">hermes-hub</a></td>
+    <td><a href="apps/talaria-hub/resources/app/helm.yaml">talaria-hub</a></td>
     <td><a href="apps/talaria-hub/resources/app/postgres.yaml">postgresql</a></td>
   </tr>
 </table>

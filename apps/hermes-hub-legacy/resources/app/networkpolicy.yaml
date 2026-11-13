@@ -1,0 +1,237 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: hermes-hub
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: hermes-hub
+  namespace: hermes-hub
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/controller: hermes-hub
+      app.kubernetes.io/instance: hermes-hub
+      app.kubernetes.io/name: hermes-hub
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: internal
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    # Agent sandboxes, for their device connection
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-sandbox
+            app.kubernetes.io/controller: hermes-sandbox
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-kittykat-sandbox
+            app.kubernetes.io/controller: hermes-kittykat-sandbox
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "8081"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "**.cluster.local"
+              - matchName: "authentik.mcswain.dev"
+              - matchName: "api.telegram.org"
+              # Web Push services
+              - matchName: "fcm.googleapis.com"
+              - matchName: "updates.push.services.mozilla.com"
+              - matchName: "web.push.apple.com"
+              - matchPattern: "*.push.apple.com"
+              - matchPattern: "*.notify.windows.com"
+    # The hub's PostgreSQL cluster
+    - toEndpoints:
+        - matchLabels:
+            cnpg.io/cluster: postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    # The Webapp listeners of the Hermes backends
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes
+            app.kubernetes.io/controller: hermes
+            app.kubernetes.io/instance: hermes
+        - matchLabels:
+            io.kubernetes.pod.namespace: hermes-kittykat
+            app.kubernetes.io/controller: hermes
+            app.kubernetes.io/instance: hermes-kittykat
+      toPorts:
+        - ports:
+            - port: "9120"
+              protocol: TCP
+            # acp-host, for editors on paired devices
+            - port: "9130"
+              protocol: TCP
+    # Honcho's API, for the Memory page
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: honcho
+            app.kubernetes.io/controller: honcho
+            app.kubernetes.io/name: honcho
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    # OIDC discovery, keys and token exchange: authentik.mcswain.dev resolves to the public gateway, and the policy
+    #   sees the envoy pods behind its address
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
+            gateway.envoyproxy.io/owning-gateway-name: public
+      toPorts:
+        - ports:
+            - port: "10443"
+              protocol: TCP
+    # The Telegram bot, when it is turned on
+    - toFQDNs:
+        - matchName: "api.telegram.org"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # Prometheus, for the GPU busy time on the Usage page
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
+    # Web Push: browsers' push services (Chrome FCM, Firefox, Apple, Edge)
+    - toFQDNs:
+        - matchName: "fcm.googleapis.com"
+        - matchName: "updates.push.services.mozilla.com"
+        - matchName: "web.push.apple.com"
+        - matchPattern: "*.push.apple.com"
+        - matchPattern: "*.notify.windows.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+---
+# The b2-backup-operator's restic-init Job can't carry the policy.mcswain.dev egress labels (a Repository has no podLabels),
+# so under default-deny it gets the same DNS and internet egress here
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: restic-init-egress
+  namespace: hermes-hub
+spec:
+  endpointSelector:
+    matchLabels:
+      batch.kubernetes.io/job-name: restic-init
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
+        - cidr: ::/0
+          except:
+            - fc00::/7
+            - fe80::/10
+            - ff00::/8
+---
+# The b2-backup-operator's backup pods dump the database; their DNS and internet egress come from podLabels
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: restic-backup-egress
+  namespace: hermes-hub
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: restic
+      app.kubernetes.io/managed-by: b2-backup-operator
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            cnpg.io/cluster: postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+---
+# b2bk's helper pods (snapshots, restore, shell) don't get the ScheduledBackup's podLabels, so under default-deny they
+# get DNS, internet and the database here
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: b2bk-egress
+  namespace: hermes-hub
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/managed-by: b2bk
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            - 100.64.0.0/10
+        - cidr: ::/0
+          except:
+            - fc00::/7
+            - fe80::/10
+            - ff00::/8
+    - toEndpoints:
+        - matchLabels:
+            cnpg.io/cluster: postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP

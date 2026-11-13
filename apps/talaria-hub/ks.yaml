@@ -1,11 +1,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: hermes-hub
-  namespace: hermes-hub
+  name: talaria-hub
+  namespace: talaria-hub
 spec:
   interval: 1h
-  targetNamespace: hermes-hub
+  targetNamespace: talaria-hub
   path: ./apps/talaria-hub/resources
   prune: true
   sourceRef:

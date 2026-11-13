@@ -545,6 +545,12 @@ spec:
     - {kind: HelmRepository, name: '*', namespace: tailscale-peer-relay}
     - {kind: Kustomization, name: '*', namespace: tailscale-peer-relay}
     - {kind: OCIRepository, name: '*', namespace: tailscale-peer-relay}
+    - {kind: GitRepository, name: '*', namespace: talaria-hub}
+    - {kind: HelmChart, name: '*', namespace: talaria-hub}
+    - {kind: HelmRelease, name: '*', namespace: talaria-hub}
+    - {kind: HelmRepository, name: '*', namespace: talaria-hub}
+    - {kind: Kustomization, name: '*', namespace: talaria-hub}
+    - {kind: OCIRepository, name: '*', namespace: talaria-hub}
     - {kind: GitRepository, name: '*', namespace: tandoor}
     - {kind: HelmChart, name: '*', namespace: tandoor}
     - {kind: HelmRelease, name: '*', namespace: tandoor}

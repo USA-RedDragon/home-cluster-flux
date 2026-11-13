@@ -1,8 +1,8 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: hermes-hub
-  namespace: hermes-hub
+  name: talaria-hub
+  namespace: talaria-hub
 spec:
   chartRef:
     kind: OCIRepository
