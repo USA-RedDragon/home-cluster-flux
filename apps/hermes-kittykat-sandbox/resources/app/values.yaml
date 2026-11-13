@@ -26,8 +26,8 @@ controllers:
     containers:
       sandbox:
         image:
-          repository: jacob.pub/ghcr.io/usa-reddragon/hermes-device-sandbox
-          tag: v0.25.0@sha256:6da8e55b13d3f8c97c1abfb1f70143e991ebeaa5402ca0b99ba1c939434d4ab6
+          repository: jacob.pub/ghcr.io/usa-reddragon/talaria-sandbox
+          tag: v0.26.4@sha256:1318b0133495af284b60e6b8d639c46e93eda64e1d1f16592f62496344d01dab
           pullPolicy: IfNotPresent
         env:
           # The hub's Service, not its public route: the sandbox reaches nothing on the LAN
@@ -36,7 +36,7 @@ controllers:
         resources:
           requests:
             cpu: 50m
-            memory: 128Mi
+            memory: 384Mi
           limits:
             memory: 8Gi
         securityContext:
@@ -70,3 +70,10 @@ persistence:
     type: emptyDir
     globalMounts:
       - path: /tmp
+  # The sandbox's headless Firefox (talaria browser.headless) keeps page memory here; the default 64 MiB crashes tabs
+  shm:
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 1Gi
+    globalMounts:
+      - path: /dev/shm
