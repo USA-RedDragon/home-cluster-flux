@@ -31,7 +31,7 @@ controllers:
           pullPolicy: IfNotPresent
         env:
           # The hub's Service, not its public route: the sandbox reaches nothing on the LAN
-          TALARIA_HUB_URL: http://hermes-hub.hermes-hub.svc.cluster.local:8080
+          TALARIA_HUB_URL: http://talaria-hub.talaria-hub.svc.cluster.local:8080
           TALARIA_HUB_TOKEN_FILE: /secrets/token
         resources:
           requests:
