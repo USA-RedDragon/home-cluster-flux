@@ -1075,12 +1075,32 @@ persistence:
           - path: /tmp
         acp-host:
           - path: /tmp
+  # The API token and CA, for acp-host only (the gateway and the init containers get none)
+  kube-api:
+    type: custom
+    volumeSpec:
+      projected:
+        defaultMode: 0444
+        sources:
+          - serviceAccountToken:
+              path: token
+              expirationSeconds: 3607
+          - configMap:
+              name: kube-root-ca.crt
+              items:
+                - key: ca.crt
+                  path: ca.crt
+    advancedMounts:
+      hermes:
+        acp-host:
+          - path: /var/run/secrets/kubernetes.io/serviceaccount
+            readOnly: true
   # The talaria binary, for acp-host
   talaria-bin:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/talaria:v0.26.1@sha256:1e8f144c123695b0b5044e85204dc353e4429b48cc5c2460f6dc4c79ef07401b
+        reference: jacob.pub/ghcr.io/usa-reddragon/talaria:v0.26.2@sha256:81376bc0927d8baf9313c166953f62067be7e1ebca655ca69989eb93a43eb396
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
