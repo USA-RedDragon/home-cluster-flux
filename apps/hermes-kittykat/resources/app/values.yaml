@@ -687,6 +687,8 @@ configMaps:
           restart_after_turn_timeout: 540
           # One warning at 80% of the step budget so a subagent wraps up and reports instead of being cut off
           budget_warning_ratio: 0.8
+          # A question to the user waits 30 minutes; the 90-second default timed out before anyone saw it
+          clarify_timeout: 1800
           restart_drain_timeout: 30
           # No paragraph pointing at the Hermes docs (talaria-hermes 0017)
           product_help_guidance: false
