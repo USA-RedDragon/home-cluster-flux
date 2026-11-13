@@ -326,10 +326,10 @@ controllers:
         securityContext: *securityContext
     containers:
       # Hosts one hermes acp per editor connection that the hub forwards. Its own container, so editor sessions
-      #   outlive gateway restarts; the binary comes from the hermes-device image, mounted read-only
+      #   outlive gateway restarts; the binary comes from the talaria image, mounted read-only
       acp-host:
         image: *image
-        command: ["/opt/hermes-device/hermes-device", "acp-host"]
+        command: ["/opt/talaria/talaria", "acp-host"]
         workingDir: /opt/data/hermes
         envFrom:
           - *anthropic
@@ -1058,15 +1058,15 @@ persistence:
           - path: /tmp
         acp-host:
           - path: /tmp
-  # The hermes-device binary, for acp-host
-  device-bin:
+  # The talaria binary, for acp-host
+  talaria-bin:
     type: custom
     volumeSpec:
       image:
-        reference: jacob.pub/ghcr.io/usa-reddragon/hermes-device:v0.20.0@sha256:dafeed26fe1adcd4ef40abd9f8a49e63eabcb63c7f265045078eb9a5cf4a9dca
+        reference: jacob.pub/ghcr.io/usa-reddragon/talaria:v0.26.1@sha256:1e8f144c123695b0b5044e85204dc353e4429b48cc5c2460f6dc4c79ef07401b
         pullPolicy: IfNotPresent
     advancedMounts:
       hermes:
         acp-host:
-          - path: /opt/hermes-device
+          - path: /opt/talaria
             readOnly: true

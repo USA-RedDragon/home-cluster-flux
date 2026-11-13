@@ -820,7 +820,7 @@ configMaps:
         os.replace(path + ".tmp", path)
       # preStop of acp-host: keeps the container, and so the pod's readiness, up while the gateway
       #   sidecar is in its restart wait, so the hub still reaches it to answer approvals. With "signal" (acp-host has
-      #   liveness marker, see below) it first marks the pod
+      #   no liveness probe, so its preStop runs only on a pod stop) it first marks the pod
       #   stopping and sends the gateway SIGTERM, which opens that wait (gateway.sigterm_restart_wait)
       hermes-prestop.py: |
         import os
