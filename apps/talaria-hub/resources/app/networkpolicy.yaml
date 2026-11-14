@@ -78,15 +78,6 @@ spec:
         - ports:
             - port: "5432"
               protocol: TCP
-    # hermes-hub's PostgreSQL cluster: during the cutover the hub runs here on the old database until the data moves
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: hermes-hub
-            cnpg.io/cluster: postgresql
-      toPorts:
-        - ports:
-            - port: "5432"
-              protocol: TCP
     # The Webapp listeners of the Hermes backends
     - toEndpoints:
         - matchLabels:
