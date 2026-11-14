@@ -758,6 +758,8 @@ configMaps:
           trusted_sources:
             - "git@github.com:USA-RedDragon/"
             - "https://github.com/USA-RedDragon/"
+            - "git@github.com:NousResearch/hermes-agent"
+            - "https://github.com/NousResearch/hermes-agent"
         agent:
           restart_after_turn_timeout: 540
           # A question to the user waits 30 minutes; the 90-second default timed out before anyone saw it
