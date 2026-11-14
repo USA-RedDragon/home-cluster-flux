@@ -758,6 +758,13 @@ configMaps:
           trusted_sources:
             - "git@github.com:USA-RedDragon/"
             - "https://github.com/USA-RedDragon/"
+          # Smart approval: Haiku first pass, Sonnet reviews anything it flags, both through the Claude pool
+          smart_fast_model:
+            provider: claude-pool
+            model: claude-haiku-5-5
+          smart_model:
+            provider: claude-pool
+            model: claude-sonnet-5-5
         agent:
           restart_after_turn_timeout: 540
           # A question to the user waits 30 minutes; the 90-second default timed out before anyone saw it
