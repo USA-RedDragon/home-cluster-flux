@@ -111,6 +111,8 @@ spec:
             (max by (disk) (truenas_disk_temperature_celsius) > 55 and on (disk) truenas_disk_info{type="hdd"})
               or
             (max by (disk) (truenas_disk_temperature_celsius) > 70 and on (disk) truenas_disk_info{type!="hdd"})
+              unless on (disk)
+            truenas_disk_info{serial="S50ANF0N368283"}
           for: 15m
           labels:
             severity: warning
@@ -118,7 +120,10 @@ spec:
             summary: "NAS disk {{ $labels.disk }} is at {{ $value }}°C"
             description: "{{ with printf \"truenas_disk_info{disk=%q}\" $labels.disk | query }}{{ . | first | label \"model\" }} {{ . | first | label \"serial\" }}{{ end }} has been above its limit (55°C for HDDs, 70°C for SSDs) for 15m. Check the NAS fans and airflow."
         - alert: TrueNASSMARTTestFailed
-          expr: max by (disk, test, status) (truenas_disk_smart_last_test_failed) == 1
+          expr: |
+            max by (disk, test, status) (truenas_disk_smart_last_test_failed) == 1
+              unless on (disk)
+            truenas_disk_info{serial="S50ANF0N368283"}
           labels:
             severity: warning
           annotations:
