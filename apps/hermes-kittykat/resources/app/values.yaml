@@ -43,7 +43,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria
-          tag: v0.26.7@sha256:d54f0b07796a231642e7c7e41c7d7d89409571d74a785658cd76ed1a2856f693
+          tag: v0.26.11@sha256:9f81515f2b33e86765a13c9dbdfa520a8d08a8a0f31b009f4fbdf8bde57b712e
           pullPolicy: IfNotPresent
         command: ["/talaria", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -232,7 +232,7 @@ controllers:
         dependsOn: claude-verify
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-private-plugins
-          tag: v0.2.13-tp0.1.5@sha256:af2b5910ea1ee5fec968f0a10afd588e7d9b9dac62b6a1100dfc79d4a15d81cb
+          tag: v0.2.14-tp0.1.6@sha256:d77b738186589dea7e2a724ee1dc45d487824d43f3396820ba281f01c551facf
           pullPolicy: IfNotPresent
         command: [/usr/local/bin/talaria-install-plugins, /opt/data/hermes/plugins]
         resources:
