@@ -64,7 +64,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p44@sha256:1a3fbfe3a933c2687dd245aa3040c3e82d54934561ad5aeaa65ddd16d94d6870
+          tag: &hermesTag v0.23.1-p48@sha256:73fa768ae9d5bd30bf62b831971540a04b767d8bb4b02c1c6427ee4ce1108f63
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -469,6 +469,8 @@ configMaps:
         #   claude-api-* providers are never routes. qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not)
         delegation:
           backend: model_map
+          # A subagent started as an orchestrator may run its own helpers, one level down
+          max_spawn_depth: 2
           # Room for a whole fix-test-release task; the default 250 cut off long tasks before they released
           max_iterations: 400
           # Each chat runs up to 10 background subagents (the default); more wait in a queue and start when one of
