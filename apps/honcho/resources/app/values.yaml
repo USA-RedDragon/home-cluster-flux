@@ -59,9 +59,10 @@ controllers:
           #   recall and dreams keep thinking
           - name: DERIVER_MODEL_CONFIG__THINKING_EFFORT
             value: "none"
-          # The default is one worker, which left the 5090 idle while the queue grew
+          # One worker: the proxy runs one low-priority request at a time, so more workers only stand in its queue
+          #   until their client timeout fires and they resend (a loop that drained nothing)
           - name: DERIVER_WORKERS
-            value: "4"
+            value: "1"
           # More messages per extraction call (default 1024)
           - name: DERIVER_REPRESENTATION_BATCH_TARGET_INPUT_TOKENS
             value: "4096"
@@ -90,6 +91,26 @@ controllers:
             value: *model
           - name: DIALECTIC_LEVELS__max__MODEL_CONFIG__MODEL
             value: *model
+          # Per-call client timeouts (default 600 s, resent 9 times per call). A dialectic answer is only useful to a
+          #   chat that waits 30 s, so give up at 60 s; background work gets 15 min per call
+          - name: DIALECTIC_LEVELS__minimal__MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
+            value: "60"
+          - name: DIALECTIC_LEVELS__low__MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
+            value: "60"
+          - name: DIALECTIC_LEVELS__medium__MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
+            value: "60"
+          - name: DIALECTIC_LEVELS__high__MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
+            value: "60"
+          - name: DIALECTIC_LEVELS__max__MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
+            value: "60"
+          - name: DERIVER_MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
+            value: "900"
+          - name: SUMMARY_MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
+            value: "900"
+          - name: DREAM_DEDUCTION_MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
+            value: "900"
+          - name: DREAM_INDUCTION_MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
+            value: "900"
           - name: EMBEDDING_MODEL_CONFIG__TRANSPORT
             value: openai
           - name: EMBEDDING_MODEL_CONFIG__MODEL
