@@ -64,7 +64,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p58@sha256:90d201c40490de901eb7b5d750c50cdf5dd50c9b4f186d99e97e1245f9640057
+          tag: &hermesTag v0.23.1-p59@sha256:0c29e391280477cd1859834111feee495698ef75f5f72b5e525f0d7f2383afc5
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
