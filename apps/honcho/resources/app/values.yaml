@@ -103,18 +103,6 @@ controllers:
             value: "60"
           - name: DIALECTIC_LEVELS__max__MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
             value: "60"
-          # Dialectic answers are chat recall, which a person is waiting on: send them at normal priority so they do
-          #   not queue behind the deriver's work (the proxy's low class), where a 60 s timeout would always fire
-          - name: DIALECTIC_LEVELS__minimal__MODEL_CONFIG__OVERRIDES__BASE_URL
-            value: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
-          - name: DIALECTIC_LEVELS__low__MODEL_CONFIG__OVERRIDES__BASE_URL
-            value: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
-          - name: DIALECTIC_LEVELS__medium__MODEL_CONFIG__OVERRIDES__BASE_URL
-            value: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
-          - name: DIALECTIC_LEVELS__high__MODEL_CONFIG__OVERRIDES__BASE_URL
-            value: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
-          - name: DIALECTIC_LEVELS__max__MODEL_CONFIG__OVERRIDES__BASE_URL
-            value: http://ollama-priority-proxy.ollama-priority-proxy.svc.cluster.local:11434/v1
           - name: DERIVER_MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
             value: "900"
           - name: SUMMARY_MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS__TIMEOUT
