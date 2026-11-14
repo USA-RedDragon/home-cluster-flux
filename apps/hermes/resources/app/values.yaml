@@ -754,6 +754,10 @@ configMaps:
         approvals:
           timeout: 1800
           smart_provenance: true
+          # A path cloned from these is not external code to smart approval (talaria-hermes 0090)
+          trusted_sources:
+            - "git@github.com:USA-RedDragon/"
+            - "https://github.com/USA-RedDragon/"
         agent:
           restart_after_turn_timeout: 540
           # A question to the user waits 30 minutes; the 90-second default timed out before anyone saw it
