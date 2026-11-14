@@ -67,7 +67,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p50@sha256:b240c7c74fc870a960eb32c8112e67cdabcff7c77cadfe0ef4f254fe7eac381d
+          tag: &hermesTag v0.23.1-p51@sha256:f0b60890a57e6abbf95ff4ac17624684ded0e2c4a7eee43fe173933b77b8c036
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -163,7 +163,7 @@ controllers:
         dependsOn: claude-verify
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-private-plugins
-          tag: v0.2.5-tp0.1.2@sha256:266ad9a148f40f7e4bac8024bc89f7fcb87417062b312424e0a39f4480c8ee98
+          tag: v0.2.7-tp0.1.4@sha256:147b9dcf36f89e17feacffb3683fb3a03dc4b9e35f4c81bf42e28cb16232a541
           pullPolicy: IfNotPresent
         command: [/usr/local/bin/talaria-install-plugins, /opt/data/hermes/plugins]
         resources:
@@ -772,6 +772,8 @@ configMaps:
             - connections
             - catalog
         plugins:
+          # Project notes reach the prompt up to their 8,000-character limit plus header (talaria-hermes 0091)
+          max_section_chars: 9000
           entries:
             # Subagents (each turn) and chats (once) are told to wait with terminal(background=true) and
             #   process_manage wait, and a foreground terminal command that waits by sleeping is refused with that
