@@ -174,7 +174,8 @@ controllers:
               failureThreshold: 60
         securityContext: *securityContext
   deriver:
-    replicas: 1
+    # Paused: its requests time out in the Ollama priority queue and are resent, so the backlog never drains
+    replicas: 0
     # Works from the queue in Postgres, so a short overlap of two is safe
     strategy: RollingUpdate
     rollingUpdate:
