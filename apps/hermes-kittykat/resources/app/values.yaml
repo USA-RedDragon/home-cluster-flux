@@ -686,6 +686,13 @@ configMaps:
           #   (talaria-hermes 0077)
           smart_provenance: true
           timeout: 1800
+          # Smart approval: Haiku first pass, Sonnet reviews anything it flags, both through the Claude pool
+          smart_fast_model:
+            provider: claude-pool
+            model: claude-haiku-5-5
+          smart_model:
+            provider: claude-pool
+            model: claude-sonnet-5-5
         agent:
           restart_after_turn_timeout: 540
           # One warning at 80% of the step budget so a subagent wraps up and reports instead of being cut off
