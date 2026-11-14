@@ -163,7 +163,7 @@ controllers:
         dependsOn: claude-verify
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-private-plugins
-          tag: v0.2.4-tp0.1.2@sha256:0fd23ff31f9b4d532079aee4f483f8cad738e537003fa64cdcc5e4fa73199cf2
+          tag: v0.2.5-tp0.1.2@sha256:266ad9a148f40f7e4bac8024bc89f7fcb87417062b312424e0a39f4480c8ee98
           pullPolicy: IfNotPresent
         command: [/usr/local/bin/talaria-install-plugins, /opt/data/hermes/plugins]
         resources:
