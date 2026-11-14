@@ -1131,7 +1131,8 @@ configMaps:
               "peerName": "jacob",
               "aiPeer": "hermes",
               "sessionStrategy": "per-session",
-              "pinUserPeer": true
+              "pinUserPeer": true,
+              "dialecticCadence": 1000
             }
           }
         }
