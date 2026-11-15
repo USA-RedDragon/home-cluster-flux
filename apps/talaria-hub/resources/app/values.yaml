@@ -27,7 +27,7 @@ controllers:
       talaria-hub:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-hub
-          tag: v0.26.110@sha256:08f69bb40761be0f48b59dd9e11533b52e9f997dd27e943a89f6a3444064f97d
+          tag: v0.26.111@sha256:14f1bf5d407cc7ac0d3232a3ac58f122be9570742b8a4130ddf7b1ee56eaf215
           pullPolicy: IfNotPresent
         # users and backends can only be set in the config file, so it comes from the talaria-hub Secret with the
         #   backend passwords; the other settings are here
