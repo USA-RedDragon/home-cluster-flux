@@ -754,6 +754,10 @@ configMaps:
         approvals:
           timeout: 1800
           smart_provenance: true
+          # Killing processes by name hits other agents' work; agents kill only what they started, by PID
+          deny:
+            - "pkill *"
+            - "killall *"
           # A path cloned from these is not external code to smart approval (talaria-hermes 0090)
           trusted_sources:
             - "git@github.com:USA-RedDragon/"
