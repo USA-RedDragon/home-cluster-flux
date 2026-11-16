@@ -64,7 +64,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p86@sha256:4be629d65dbb2488ec192381bfccd384ccd3bab8a48b40ced7ccec09d84ddfa3
+          tag: &hermesTag v0.23.1-p88@sha256:47f653d159b96d53def3b1141b9ecd9244a63382e69e805caf89e17316bdffb3
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -799,7 +799,12 @@ configMaps:
           #   and the new pod's gateway queues a turn that continues it, so other chats' new prompts run within
           #   seconds of the takeover instead of after the longest turn (talaria-hermes 0048)
           restart_turn_handoff: true
-          restart_turn_handoff_wait_seconds: 0
+          # The handoff happens at a step boundary: each turn finishes its model call or tool round (stored), then
+          #   goes to the new pod, which resumes it with no repeated step, no notice and the same prompt ids for a
+          #   waiting question or approval; a turn that reaches no boundary within 540 s is stopped as above
+          #   (talaria-hermes 0131). auto_background_seconds keeps every foreground command well inside that
+          restart_turn_handoff_boundary: true
+          restart_turn_handoff_wait_seconds: 540
           # No stop trace (talaria-hermes 0038); set explicitly, because a key dropped from this overlay stays in
           #   config.yaml
           stop_trace: false
