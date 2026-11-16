@@ -812,7 +812,7 @@ configMaps:
             #   reply); Hermes's web_search stays for other models. claude-pool and claude-<id> read this entry too
             claude-subscription-directsdk-experimental:
               settings:
-                native_web_search: true
+                native_web_search: false
                 native_web_search_max_uses: 5
                 native_web_search_version: web_search_20250305
             # One Claude subscription per slot; the login lives in /opt/data/hermes/claude/<id>. The pickers offer
