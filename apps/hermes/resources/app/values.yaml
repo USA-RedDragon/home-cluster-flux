@@ -274,10 +274,11 @@ controllers:
           - secretRef:
               name: hermes-deepinfra
               optional: true
-        # The takeover boot is CPU-bound (about 0.25 CPU-seconds); at 50m on a busy node it took 3 s
+        # The takeover boot is CPU-bound (about 0.25 CPU-seconds); at 50m on a busy node it took 3 s.
+        #   2 CPUs: under load it uses about 3, and with 500m it starved on a node busy with Folding@home
         resources:
           requests:
-            cpu: 500m
+            cpu: "2"
             memory: 512Mi
           limits:
             memory: 8Gi
