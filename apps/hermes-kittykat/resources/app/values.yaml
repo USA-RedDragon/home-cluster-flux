@@ -721,6 +721,13 @@ configMaps:
                 reconnect_wait_seconds: 60
                 # The one hub user of this backend: sandbox chats and scheduled jobs use this user's Firefox
                 user: kittykat
+            # Chats on Claude search with Anthropic's own web search tool inside their request (up to 5 searches a
+            #   reply); Hermes's web_search stays for other models. claude-pool and claude-<id> read this entry too
+            claude-subscription-directsdk-experimental:
+              settings:
+                native_web_search: true
+                native_web_search_max_uses: 5
+                native_web_search_version: web_search_20250305
             # One Claude subscription per slot; the login lives in /opt/data/hermes/claude/<id>. The pickers offer
             #   claude-pool, which runs each chat on a signed-in slot with room (the soonest weekly reset; a chat
             #   keeps its slot until that slot is at a limit). claude-<id> still serves chats that picked a slot
