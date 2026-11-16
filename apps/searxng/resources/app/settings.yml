@@ -40,7 +40,5 @@ engines:
     disabled: false
   - name: yahoo
     disabled: false
-  - name: google
-    disabled: false
   - name: mwmbl
     disabled: false
