@@ -40,9 +40,7 @@ engines:
     disabled: false
   - name: yahoo
     disabled: false
-  - name: qwant
-    disabled: false
-  - name: yep
+  - name: google
     disabled: false
   - name: mwmbl
     disabled: false
