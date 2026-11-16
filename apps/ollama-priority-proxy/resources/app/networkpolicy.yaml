@@ -28,8 +28,6 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: hermes-kittykat
         - matchLabels:
-            io.kubernetes.pod.namespace: honcho
-        - matchLabels:
             io.kubernetes.pod.namespace: envoy-gateway-system
             gateway.envoyproxy.io/owning-gateway-name: internal
       toPorts:
