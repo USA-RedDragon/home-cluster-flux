@@ -67,7 +67,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p82@sha256:a8a208aa4371e4ee5db496e04d5425d90172ba47fc23a075f9d43c79f2374e1a
+          tag: &hermesTag v0.23.1-p83@sha256:85bc7a371f194e0c8fad114998fb54587ca1c1dd567b893c9b46da79760163fc
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -163,7 +163,7 @@ controllers:
         dependsOn: claude-verify
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-private-plugins
-          tag: v0.2.15-tp0.1.8@sha256:cd2012a3006e0d84c9148b5b7bf9a6bcab04a8ff6ce3f4ba3dcab5ba25594410
+          tag: v0.2.15-tp0.1.8-r2@sha256:20e09a6a33a399115da7f76f3f408362cd08d3bb70158ee8b06387ebc0d2517c
           pullPolicy: IfNotPresent
         command: [/usr/local/bin/talaria-install-plugins, /opt/data/hermes/plugins]
         resources:
@@ -807,6 +807,13 @@ configMaps:
                 # Skills the agent writes are mirrored as commits to this git checkout on upstairs-pc (skillsync)
                 skill_repo_device: d_3b5ed12afed75798
                 skill_repo_path: /home/reddragon/Projects/hermes-skills
+            # Chats on Claude search with Anthropic's own web search tool inside their request (up to 5 searches a
+            #   reply); Hermes's web_search stays for other models. claude-pool and claude-<id> read this entry too
+            claude-subscription-directsdk-experimental:
+              settings:
+                native_web_search: true
+                native_web_search_max_uses: 5
+                native_web_search_version: web_search_20250305
             # One Claude subscription per slot; the login lives in /opt/data/hermes/claude/<id>. The pickers offer
             #   claude-pool, which runs each chat on a signed-in slot with room (the soonest weekly reset; a chat
             #   keeps its slot until that slot is at a limit). claude-<id> still serves chats that picked a slot
