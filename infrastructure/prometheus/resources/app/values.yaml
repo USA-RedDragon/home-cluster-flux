@@ -329,6 +329,11 @@ alertmanager:
         continue: false
       - receiver: 'telegram'
         matchers:
+          - severity=~"warning|info"
+        repeat_interval: 12h
+        continue: false
+      - receiver: 'telegram'
+        matchers:
           # pass all alerts
           - alertname != ""
     receivers:
