@@ -1,0 +1,48 @@
+# Non-secret SearXNG settings. The secret key comes from the SEARXNG_SECRET env var (Secret searxng-secret).
+use_default_settings: true
+
+general:
+  instance_name: SearXNG
+  enable_metrics: false
+
+search:
+  safe_search: 0
+  autocomplete: ""
+  # json is required by API clients; html serves the web UI
+  formats:
+    - html
+    - json
+  # recover from rate limits faster than the defaults (captcha 1h, too many requests 3m)
+  suspended_times:
+    SearxEngineAccessDenied: 120
+    SearxEngineCaptcha: 600
+    SearxEngineTooManyRequests: 60
+
+server:
+  # Only the cluster and the LAN reach this instance, so the bot limiter stays off.
+  limiter: false
+  public_instance: false
+  image_proxy: false
+
+outgoing:
+  request_timeout: 6.0
+  max_request_timeout: 10.0
+  enable_http2: true
+
+engines:
+  # Scraped engines that are rate limited or captcha blocked from a shared egress IP
+  - name: brave
+    disabled: true
+  - name: google cse
+    disabled: true
+  # Spread the load over more general web engines
+  - name: bing
+    disabled: false
+  - name: yahoo
+    disabled: false
+  - name: qwant
+    disabled: false
+  - name: yep
+    disabled: false
+  - name: mwmbl
+    disabled: false

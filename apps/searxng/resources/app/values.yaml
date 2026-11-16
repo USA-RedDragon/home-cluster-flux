@@ -6,6 +6,8 @@ defaultPodOptions:
 controllers:
   searxng:
     replicas: 1
+    annotations:
+      reloader.stakater.com/auto: "true"
     pod:
       labels:
         policy.mcswain.dev/egress-coredns: "true"
@@ -26,6 +28,11 @@ controllers:
           pullPolicy: IfNotPresent
         env:
           HOME: /tmp
+          SEARXNG_SECRET:
+            valueFrom:
+              secretKeyRef:
+                name: searxng-secret
+                key: secret_key
         resources:
           requests:
             cpu: 50m
@@ -90,10 +97,11 @@ route:
               value: /
 
 # SearXNG keeps no state worth backing up (no database; the cache is a throwaway emptyDir), so there is no restic backup.
-# settings.yml, with the secret key, comes from the SOPS secret searxng-settings in home-cluster-secrets.
+# settings.yml comes from the searxng-settings ConfigMap (settings.yml next to this file); the secret key comes from
+# the SOPS secret searxng-secret in home-cluster-secrets, passed as SEARXNG_SECRET.
 persistence:
   settings:
-    type: secret
+    type: configMap
     name: searxng-settings
     defaultMode: 0444
     advancedMounts:

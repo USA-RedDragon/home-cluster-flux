@@ -8,5 +8,10 @@ configMapGenerator:
   - name: chart-values
     files:
       - values.yaml=values.yaml
+  - name: searxng-settings
+    files:
+      - settings.yml
+    options:
+      disableNameSuffixHash: true
 configurations:
   - kustomizeconfig.yaml
