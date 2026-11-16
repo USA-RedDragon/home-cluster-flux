@@ -18,7 +18,7 @@ controllers:
     pod:
       # Waiting for the new pod's standby (up to 120 s), the restart wait for running turns
       #   (agent.restart_after_turn_timeout, 540 s), the drain (30 s), Hermes' shutdown watchdog (60 s) and a margin
-      terminationGracePeriodSeconds: 780
+      terminationGracePeriodSeconds: 1200
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -395,7 +395,7 @@ rbac:
       rules:
         - apiGroups: [""]
           resources: ["pods"]
-          verbs: ["get"]
+          verbs: ["get", "list"]
   bindings:
     hermes:
       type: RoleBinding
@@ -849,52 +849,84 @@ configMaps:
         import ssl
         import sys
         import time
+        import urllib.parse
         import urllib.request
 
         SA = "/var/run/secrets/kubernetes.io/serviceaccount"
         marker = "/tmp/pod-stopping"
 
 
-        def pod_is_restarting_alone():
-            """True only when the API answered and this pod has no deletionTimestamp."""
+        def api():
+            """(get, list) helpers for the API with this pod's token, or None when it cannot be asked."""
             try:
                 host = os.environ["KUBERNETES_SERVICE_HOST"]
                 if ":" in host:
                     host = f"[{host}]"
-                url = (f"https://{host}:{os.environ.get('KUBERNETES_SERVICE_PORT', '443')}"
-                       f"/api/v1/namespaces/{os.environ['POD_NAMESPACE']}/pods/{os.environ['POD_NAME']}")
+                base = (f"https://{host}:{os.environ.get('KUBERNETES_SERVICE_PORT', '443')}"
+                        f"/api/v1/namespaces/{os.environ['POD_NAMESPACE']}/pods")
                 with open(f"{SA}/token") as f:
                     token = f.read().strip()
                 ctx = ssl.create_default_context(cafile=f"{SA}/ca.crt")
             except Exception:
-                return False
+                return None
+
+            def call(path):
+                req = urllib.request.Request(base + path, headers={"Authorization": f"Bearer {token}"})
+                with urllib.request.urlopen(req, timeout=3, context=ctx) as r:
+                    return json.load(r)
+            return call
+
+
+        def own_pod(call):
+            """This pod as the API sees it, or None when the API did not answer."""
             for attempt in range(3):
                 try:
-                    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
-                    with urllib.request.urlopen(req, timeout=3, context=ctx) as r:
-                        pod = json.load(r)
-                    return not pod.get("metadata", {}).get("deletionTimestamp")
+                    return call("/" + os.environ["POD_NAME"])
                 except Exception:
                     time.sleep(1)
-            return False
+            return None
+
+
+        def successor_coming(call, labels):
+            """Another pod of this app exists that is not being deleted and has not failed: the rollout's new pod,
+            which will take the gateway over once its standby waits. True when the API cannot be asked."""
+            if call is None or not labels:
+                return True
+            selector = ",".join(f"{k}={v}" for k, v in sorted(labels.items()) if k.startswith("app.kubernetes.io/"))
+            try:
+                pods = call("?labelSelector=" + urllib.parse.quote(selector)).get("items", [])
+            except Exception:
+                return True
+            return any(p["metadata"]["name"] != os.environ["POD_NAME"] and not p["metadata"].get("deletionTimestamp")
+                       and p.get("status", {}).get("phase") not in ("Failed", "Succeeded") for p in pods)
 
 
         # Whatever happens, end before the pod's grace period does
-        signal.alarm(770)
+        signal.alarm(1170)
         if sys.argv[1:] == ["signal"]:
-            if pod_is_restarting_alone():
+            call = api()
+            pod = own_pod(call) if call else None
+            if pod is not None and not pod.get("metadata", {}).get("deletionTimestamp"):
                 sys.exit(0)
+            labels = (pod or {}).get("metadata", {}).get("labels") or {}
             open(marker, "w").close()
             # Serve on until the new pod's gateway has warmed up and waits for the lock (gateway.standby), so it
-            #   takes over within a second; a stop with no successor goes on after 2 minutes
+            #   takes over within a second. A new pod that pulls images and downloads Claude Code needs 3 minutes
+            #   or more; stopping before its standby left no gateway at all for over a minute. So this waits as
+            #   long as a successor pod exists (up to 10 minutes); a stop with no successor goes on after 20 s
             start = time.time()
             standby = "/opt/data/hermes/gateway.standby"
-            while time.time() - start < 120:
+            last_check, coming = 0.0, True
+            while time.time() - start < 600:
                 try:
                     if os.path.getmtime(standby) >= start - 1:
                         break
                 except OSError:
                     pass
+                if time.time() - last_check >= 5:
+                    coming, last_check = successor_coming(call, labels), time.time()
+                if not coming and time.time() - start >= 20:
+                    break
                 time.sleep(0.5)
             for pid in filter(str.isdigit, os.listdir("/proc")):
                 try:
@@ -904,7 +936,7 @@ configMaps:
                     continue
                 if b"gateway" in argv and b"run" in argv and b"--external-supervisor" in argv:
                     os.kill(int(pid), signal.SIGTERM)
-        deadline = time.monotonic() + 760
+        deadline = time.monotonic() + max(0, 1160 - (time.time() - start if sys.argv[1:] == ["signal"] else 0))
         failures = 0
         while time.monotonic() < deadline and failures < 3:
             try:
