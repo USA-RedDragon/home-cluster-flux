@@ -16,9 +16,10 @@ controllers:
       surge: 1
       unavailable: 1
     pod:
-      # Waiting for the new pod's standby (up to 120 s), the restart wait for running turns
-      #   (agent.restart_after_turn_timeout, 540 s), the drain (30 s), Hermes' shutdown watchdog (60 s) and a margin
-      terminationGracePeriodSeconds: 780
+      # Waiting for the new pod's standby (up to 600 s), the step-boundary handoff of running turns
+      #   (gateway.restart_turn_handoff_wait_seconds, 540 s), the drain (30 s) and Hermes' shutdown watchdog; in a
+      #   normal rollout the standby is up in 1 to 3 minutes
+      terminationGracePeriodSeconds: 1200
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -43,7 +44,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria
-          tag: v0.27.2@sha256:78140ffa03e120f256d5fa15bccc15ef234df0c48c1f667029ed16f4426c4a71
+          tag: v0.28.1@sha256:cdb5ccb8752d6c272eab70436bc7f6e35d8ee1f34b1c005a5126e4405e29b288
           pullPolicy: IfNotPresent
         command: ["/talaria", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -67,7 +68,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p83@sha256:85bc7a371f194e0c8fad114998fb54587ca1c1dd567b893c9b46da79760163fc
+          tag: &hermesTag v0.23.1-p89@sha256:41c0f74b93e1ca27eeed78726b73d4209ddaffc6044e2a709429c97f16b5621d
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -163,7 +164,7 @@ controllers:
         dependsOn: claude-verify
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-private-plugins
-          tag: v0.2.15-tp0.1.8-r2@sha256:20e09a6a33a399115da7f76f3f408362cd08d3bb70158ee8b06387ebc0d2517c
+          tag: v0.2.15-tp0.1.8-r3@sha256:98e64ede8873cf0496faf1bf5d3d850a0fe9b32e52dfb9721c7fd48e6455bdaf
           pullPolicy: IfNotPresent
         command: [/usr/local/bin/talaria-install-plugins, /opt/data/hermes/plugins]
         resources:
@@ -406,7 +407,7 @@ rbac:
       rules:
         - apiGroups: [""]
           resources: ["pods"]
-          verbs: ["get"]
+          verbs: ["get", "list"]
   bindings:
     hermes:
       type: RoleBinding
@@ -812,7 +813,7 @@ configMaps:
             #   reply); Hermes's web_search stays for other models. claude-pool and claude-<id> read this entry too
             claude-subscription-directsdk-experimental:
               settings:
-                native_web_search: false
+                native_web_search: true
                 native_web_search_max_uses: 5
                 native_web_search_version: web_search_20250305
             # One Claude subscription per slot; the login lives in /opt/data/hermes/claude/<id>. The pickers offer
@@ -886,7 +887,12 @@ configMaps:
           #   and the new pod's gateway queues a turn that continues it, so other chats' new prompts run within
           #   seconds of the takeover instead of after the longest turn (talaria-hermes 0048)
           restart_turn_handoff: true
-          restart_turn_handoff_wait_seconds: 0
+          # The handoff happens at a step boundary: each turn finishes its model call or tool round (stored), then
+          #   goes to the new pod, which resumes it with no repeated step, no notice and the same prompt ids for a
+          #   waiting question or approval; new turns keep starting here until then. A turn that reaches no
+          #   boundary within 540 s is stopped as above (talaria-hermes 0131, 0135)
+          restart_turn_handoff_boundary: true
+          restart_turn_handoff_wait_seconds: 540
           # No stop trace (talaria-hermes 0038); set explicitly, because a key dropped from this overlay stays in
           #   config.yaml
           stop_trace: false
@@ -974,52 +980,84 @@ configMaps:
         import ssl
         import sys
         import time
+        import urllib.parse
         import urllib.request
 
         SA = "/var/run/secrets/kubernetes.io/serviceaccount"
         marker = "/tmp/pod-stopping"
 
 
-        def pod_is_restarting_alone():
-            """True only when the API answered and this pod has no deletionTimestamp."""
+        def api():
+            """(get, list) helpers for the API with this pod's token, or None when it cannot be asked."""
             try:
                 host = os.environ["KUBERNETES_SERVICE_HOST"]
                 if ":" in host:
                     host = f"[{host}]"
-                url = (f"https://{host}:{os.environ.get('KUBERNETES_SERVICE_PORT', '443')}"
-                       f"/api/v1/namespaces/{os.environ['POD_NAMESPACE']}/pods/{os.environ['POD_NAME']}")
+                base = (f"https://{host}:{os.environ.get('KUBERNETES_SERVICE_PORT', '443')}"
+                        f"/api/v1/namespaces/{os.environ['POD_NAMESPACE']}/pods")
                 with open(f"{SA}/token") as f:
                     token = f.read().strip()
                 ctx = ssl.create_default_context(cafile=f"{SA}/ca.crt")
             except Exception:
-                return False
+                return None
+
+            def call(path):
+                req = urllib.request.Request(base + path, headers={"Authorization": f"Bearer {token}"})
+                with urllib.request.urlopen(req, timeout=3, context=ctx) as r:
+                    return json.load(r)
+            return call
+
+
+        def own_pod(call):
+            """This pod as the API sees it, or None when the API did not answer."""
             for attempt in range(3):
                 try:
-                    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
-                    with urllib.request.urlopen(req, timeout=3, context=ctx) as r:
-                        pod = json.load(r)
-                    return not pod.get("metadata", {}).get("deletionTimestamp")
+                    return call("/" + os.environ["POD_NAME"])
                 except Exception:
                     time.sleep(1)
-            return False
+            return None
+
+
+        def successor_coming(call, labels):
+            """Another pod of this app exists that is not being deleted and has not failed: the rollout's new pod,
+            which will take the gateway over once its standby waits. True when the API cannot be asked."""
+            if call is None or not labels:
+                return True
+            selector = ",".join(f"{k}={v}" for k, v in sorted(labels.items()) if k.startswith("app.kubernetes.io/"))
+            try:
+                pods = call("?labelSelector=" + urllib.parse.quote(selector)).get("items", [])
+            except Exception:
+                return True
+            return any(p["metadata"]["name"] != os.environ["POD_NAME"] and not p["metadata"].get("deletionTimestamp")
+                       and p.get("status", {}).get("phase") not in ("Failed", "Succeeded") for p in pods)
 
 
         # Whatever happens, end before the pod's grace period does
-        signal.alarm(770)
+        signal.alarm(1170)
         if sys.argv[1:] == ["signal"]:
-            if pod_is_restarting_alone():
+            call = api()
+            pod = own_pod(call) if call else None
+            if pod is not None and not pod.get("metadata", {}).get("deletionTimestamp"):
                 sys.exit(0)
+            labels = (pod or {}).get("metadata", {}).get("labels") or {}
             open(marker, "w").close()
             # Serve on until the new pod's gateway has warmed up and waits for the lock (gateway.standby), so it
-            #   takes over within a second; a stop with no successor goes on after 2 minutes
+            #   takes over within a second. A new pod that pulls images and downloads Claude Code needs 3 minutes
+            #   or more; stopping before its standby left no gateway at all for over a minute. So this waits as
+            #   long as a successor pod exists (up to 10 minutes); a stop with no successor goes on after 20 s
             start = time.time()
             standby = "/opt/data/hermes/gateway.standby"
-            while time.time() - start < 120:
+            last_check, coming = 0.0, True
+            while time.time() - start < 600:
                 try:
                     if os.path.getmtime(standby) >= start - 1:
                         break
                 except OSError:
                     pass
+                if time.time() - last_check >= 5:
+                    coming, last_check = successor_coming(call, labels), time.time()
+                if not coming and time.time() - start >= 20:
+                    break
                 time.sleep(0.5)
             for pid in filter(str.isdigit, os.listdir("/proc")):
                 try:
@@ -1029,7 +1067,7 @@ configMaps:
                     continue
                 if b"gateway" in argv and b"run" in argv and b"--external-supervisor" in argv:
                     os.kill(int(pid), signal.SIGTERM)
-        deadline = time.monotonic() + 760
+        deadline = time.monotonic() + max(0, 1160 - (time.time() - start if sys.argv[1:] == ["signal"] else 0))
         failures = 0
         while time.monotonic() < deadline and failures < 3:
             try:
