@@ -48,7 +48,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria
-          tag: v0.31.1@sha256:bfed263cb4c9e256cea46f70afbeea9060e280a1ad8f94f91777d7710d8ebd6b
+          tag: v0.32.3@sha256:b08aace4853766d5df99efb1c65f30ea291d7758e94f43fd84c25e6060681668
           pullPolicy: IfNotPresent
         command: ["/talaria", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -69,7 +69,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p97@sha256:23cad9eeea895b9ab8e8f4524f428c2eb15426624f62178b96cd04d833674c75
+          tag: &hermesTag v0.23.1-p100@sha256:91be3f5b6cb569bc49aa3568596c71b966b037e53ff4a7dc553742f725d4ecb6
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -465,7 +465,7 @@ configMaps:
         #   when stuck" (helper: true) keeps subagents on the chat's own model with one helper at a time on that route,
         #   and No subagents refuses them. A subagent with no route runs on the chat's own model. Claude routes go
         #   through claude-pool, which gives each subagent session an account by the soonest-reset rule; the
-        #   claude-api-* providers are never routes. qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not)
+        #   claude-api-* providers are never routes, but a chat on one runs the family: claude routes on its own provider (talaria-hermes 0147). qwen3.5:2b fits in VRAM next to the main model (qwen3.5:4b does not)
         delegation:
           backend: model_map
           # A subagent started as an orchestrator may run its own helpers, one level down
@@ -521,6 +521,7 @@ configMaps:
                   description: "Claude Haiku 5.5. Fast and the cheapest Claude route. Volume work and many parallel tasks: searches, reading and summarizing files, data gathering, simple code changes and checks."
                   provider: claude-pool
                   via: the Claude account pool
+                  family: claude
                   model: claude-haiku-5-5
                 - name: flash
                   title: DeepSeek V4.1 Flash
@@ -544,12 +545,14 @@ configMaps:
                   description: "Claude Sonnet 5.5. Normal coding and analysis: multi-step changes, debugging with clear evidence, reviews, writing tests. The default choice for real work that is not trivial."
                   provider: claude-pool
                   via: the Claude account pool
+                  family: claude
                   model: claude-sonnet-5-5
                 - name: opus
                   title: Opus 5.5
                   description: "Claude Opus 5.5. Hard judgment only: subtle bugs, design decisions, careful reviews of risky changes, or a task a cheaper route already failed. Uses the most of the accounts' limits."
                   provider: claude-pool
                   via: the Claude account pool
+                  family: claude
                   model: claude-opus-5-5
                   helper: true
                 - name: fable
@@ -557,6 +560,7 @@ configMaps:
                   description: "Claude Fable 5.2. Hard judgment only, like opus: a second strong model for the hardest problems, or when opus is stuck. Uses much of the accounts' limits."
                   provider: claude-pool
                   via: the Claude account pool
+                  family: claude
                   model: claude-fable-5-2
                   helper: true
         # Title generation runs in the background, so it goes through /low; compression holds up the turn, so it does not
