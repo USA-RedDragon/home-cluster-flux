@@ -18,7 +18,7 @@ controllers:
     pod:
       # Bumped to roll the pod with no other change (zero-downtime rollout tests)
       annotations:
-        talaria.dev/rollout-test: "5"
+        talaria.dev/rollout-test: "6"
       # Waiting for the new pod's standby (up to 600 s), the step-boundary handoff of running turns
       #   (gateway.restart_turn_handoff_wait_seconds, 540 s), the drain (30 s) and Hermes' shutdown watchdog; in a
       #   normal rollout the standby is up in 1 to 3 minutes; then turns still running here finish here, up to
