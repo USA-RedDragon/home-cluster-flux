@@ -23,7 +23,8 @@ spec:
       app.kubernetes.io/name: hermes-kittykat
   # The hub (hermes-hub, and talaria-hub after the rename), her front end, to the gateway's Webapp listener and acp-host
   ingress:
-    # The old pod's gateway relays its Webapp listener to the new pod's during a rollout
+    # The old pod's gateway relays its Webapp listener (9120) and API server (8642) to the new pod's during a
+    #   rollout (talaria-hermes 0137)
     #   (gateway.restart_listener_relay_seconds)
     - fromEndpoints:
         - matchLabels:
@@ -33,6 +34,8 @@ spec:
       toPorts:
         - ports:
             - port: "9120"
+              protocol: TCP
+            - port: "8642"
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
@@ -53,6 +56,8 @@ spec:
       toPorts:
         - ports:
             - port: "9120"
+              protocol: TCP
+            - port: "8642"
               protocol: TCP
     - toEndpoints:
         - matchLabels:
