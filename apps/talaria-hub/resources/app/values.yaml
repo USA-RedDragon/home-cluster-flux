@@ -65,7 +65,7 @@ controllers:
                 key: HUB_DEVICE_SIGNING_KEY
           HUB_TELEGRAM_DEFAULT_BACKENDS: reddragon=jacob,kittykat=kittykat
           # Who may sign Claude accounts in on which backend (the hub runs `claude auth login` in that Hermes pod)
-          HUB_CLAUDE_ADMINS: reddragon=jacob
+          HUB_CLAUDE_ADMINS: reddragon=jacob,reddragon=kittykat
           HUB_OIDC_CLIENT_SECRET:
             valueFrom:
               secretKeyRef:
