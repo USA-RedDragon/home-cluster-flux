@@ -48,7 +48,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria
-          tag: v0.32.5@sha256:a7c9eee0e0dc3af0fbe959c40b2058bb3a4f4c7b7e0b368634f56323ae4aecae
+          tag: v0.32.7@sha256:ca0fe6b3e9b6cfbf08b1f8cf5762ca0a73f493d691fc8fed5475ff57ecd9ca5e
           pullPolicy: IfNotPresent
         command: ["/talaria", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
