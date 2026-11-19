@@ -453,6 +453,7 @@ configMaps:
             - claude-caam
             - claude-maam
             - claude-jaaag
+            - claude-aaam
         # Claude API credits, one provider per account key (hermes-anthropic). Never part of the pool. The
         #   newest model of each family; all four have a 1M window on the API
         providers:
@@ -630,7 +631,7 @@ configMaps:
             #   talaria-hermes), and so does any chat whose window is larger than this model's (DeepInfra, ChatGPT);
             #   other chats use the small local model above
             main_model_when_larger: true
-            main_model_providers: [claude-pool, claude-jaam, claude-jamaag, claude-ja2000aag, claude-caam, claude-maam, claude-jaaag, anthropic,
+            main_model_providers: [claude-pool, claude-jaam, claude-jamaag, claude-ja2000aag, claude-aaam, claude-caam, claude-maam, claude-jaaag, anthropic,
                                    claude-api-caam, claude-api-ja2000aag, claude-api-jaam, claude-api-jamaag]
         # Code work happens in each device's own Hermes; this one's shell is a sandbox in its pod
         # Sessions bound to a PC run commands there; every other session runs in the person's sandbox pod, never here
@@ -845,6 +846,8 @@ configMaps:
                     label: Claude (maam)
                   - id: jaaag
                     label: Claude (jaaag)
+                  - id: aaam
+                    label: Claude (aaam)
         # Rolling updates (talaria-hermes 0010, 0011): SIGTERM opens the restart wait, and the new pod's gateway waits
         #   for this one's lock instead of exiting
         gateway:
