@@ -69,7 +69,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p114@sha256:fe82151b003a8fec0de77d9659077def2e1732090b374cacd85d8570737b90af
+          tag: &hermesTag v0.23.1-p115@sha256:3c4edf06da23face8229131e4ebb8c5b052d18c19404568fbfbb8d221a347758
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -230,7 +230,7 @@ controllers:
         dependsOn: claude-verify
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-private-plugins
-          tag: v0.2.15-tp0.1.8-r3@sha256:98e64ede8873cf0496faf1bf5d3d850a0fe9b32e52dfb9721c7fd48e6455bdaf
+          tag: v0.3.0-tp0.1.8@sha256:586c3146ed87d54be31a4a9dc7be82887a53eb8415e0b728f18cc91cb09b87d9
           pullPolicy: IfNotPresent
         command: [/usr/local/bin/talaria-install-plugins, /opt/data/hermes/plugins]
         resources:
@@ -445,6 +445,7 @@ configMaps:
             - claude-maam
             - claude-jaaag
             - claude-aaam
+            - claude-credits-keys
         providers:
           # Open-weight models on DeepInfra, pay per token (hermes-kittykat-deepinfra)
           deepinfra:
