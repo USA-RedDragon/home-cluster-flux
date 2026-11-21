@@ -111,7 +111,7 @@ controllers:
           HERMES_IMAGE_REPOSITORY: *hermesRepository
           HERMES_IMAGE_TAG: *hermesTag
           # The upstream image talaria-hermes builds on, which devices can pull when they cannot pull the patched one
-          HERMES_BASE_IMAGE: docker.io/nousresearch/hermes-agent:v0.23.1@sha256:276d44685c65c0cb2a25f190b63c65c8906f9dc76486fb1c05ae71b5826bda08
+          HERMES_BASE_IMAGE: docker.io/nousresearch/hermes-agent:v0.23.3@sha256:3e9fe4c6ef36490f43aa0d0d80f9df64e9c92a576eee3042f1a97c8813c05355
           # Commands run on her paired computers or in her sandbox pod; the devices enforce their own roots
           HERMES_WRITE_SAFE_ROOT: /opt/data/hermes:/home:/work
           HERMES_DEVICE_HUB_PUBLIC_KEY: |
