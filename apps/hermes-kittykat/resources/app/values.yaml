@@ -69,7 +69,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p115@sha256:3c4edf06da23face8229131e4ebb8c5b052d18c19404568fbfbb8d221a347758
+          tag: &hermesTag v0.23.1-p119@sha256:a1c9357fa3f648d1f9a124c5bcdf6e1676ebf4dcc3f165c0ba3b5bba6f8d953b
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -230,7 +230,7 @@ controllers:
         dependsOn: claude-verify
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-private-plugins
-          tag: v0.3.2-tp0.1.8@sha256:657dd8d7e00ce281d1006db279742902428b1cf91e7b5885a05c452728e3cf33
+          tag: v0.3.2-tp0.1.9@sha256:a834742c0b6f59829c420a5e52b46d5814a95a780a6bac98dfbfe5a794144b5a
           pullPolicy: IfNotPresent
         command: [/usr/local/bin/talaria-install-plugins, /opt/data/hermes/plugins]
         resources:
@@ -609,6 +609,12 @@ configMaps:
           summary_style: compact
           decision_ledger_chars: 6000
           keep_last_skill_chars: 20000
+          # After compaction up to 5 recent files and every loaded skill come back (talaria-hermes 0167); the user's
+          #   standing rules are pinned in the system prompt (0168), found in prose by a quote-checked background model
+          #   on the haiku route, then local (0169)
+          restore_budget_chars: 100000
+          pin_user_rules_chars: 8000
+          rule_extractor_routes: [haiku, local]
           # Old tool output is pruned once the context passes 100K tokens, keeping the last skill (talaria-hermes 0071)
           proactive_prune_tokens: 100000
           # Compact at 80% of the window (upstream default is 50% for windows of 512K and up)
