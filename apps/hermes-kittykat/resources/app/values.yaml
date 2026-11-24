@@ -48,7 +48,7 @@ controllers:
       device-plugin:
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria
-          tag: v0.32.9@sha256:168a825411467e5198bd7cd5efbb2b0a6229818680b7f6fa083cd1716ac6d219
+          tag: v0.32.10@sha256:4f7a02402bc1a36a8dfe54f9a93d7af06e1083f63638e52592da3aa7f9602761
           pullPolicy: IfNotPresent
         command: ["/talaria", "plugin", "install", "--dest", "/opt/data/hermes/plugins/device"]
         resources:
@@ -69,7 +69,7 @@ controllers:
         image: &image
           # Hermes Agent with the patches in github.com/USA-RedDragon/talaria (hermes/); the tag before -p is the upstream release
           repository: &hermesRepository jacob.pub/ghcr.io/usa-reddragon/talaria-hermes
-          tag: &hermesTag v0.23.1-p119@sha256:a1c9357fa3f648d1f9a124c5bcdf6e1676ebf4dcc3f165c0ba3b5bba6f8d953b
+          tag: &hermesTag v0.23.1-p123@sha256:e69919130a8302cf66c35a73169241a4d613ff3b88850ec5cbd1984aa2aa1d15
           pullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -230,7 +230,7 @@ controllers:
         dependsOn: claude-verify
         image:
           repository: jacob.pub/ghcr.io/usa-reddragon/talaria-private-plugins
-          tag: v0.3.2-tp0.1.9@sha256:a834742c0b6f59829c420a5e52b46d5814a95a780a6bac98dfbfe5a794144b5a
+          tag: v0.3.2-tp0.1.10@sha256:7a90ab8d9a690a29cf68b505636bb41f308f40b5bb5ae002a0ce93e025ff51f6
           pullPolicy: IfNotPresent
         command: [/usr/local/bin/talaria-install-plugins, /opt/data/hermes/plugins]
         resources:
