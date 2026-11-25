@@ -306,7 +306,8 @@ persistence:
   # read-only. A per-pod volume on the "fast" NVMes, not an emptyDir: rebuilds
   # write ~60 MB/s of 32-bit FITS, which saturated gamma's Talos system disk
   # (slowing containerd, kubelet and logs) and then its DRAM-less 980 (750 ms
-  # writes).
+  # writes). Six workers each hold a batch of up to ~3 GB beside ~7 GB of
+  # references, masters and publish output; 30 Gi filled to 99% on 2026-11-25.
   tmp:
     type: custom
     volumeSpec:
@@ -317,7 +318,7 @@ persistence:
             storageClassName: longhorn-fast-r1
             resources:
               requests:
-                storage: 30Gi
+                storage: 60Gi
     globalMounts:
       - path: /tmp
 
